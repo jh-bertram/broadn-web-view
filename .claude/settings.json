@@ -1,0 +1,55 @@
+{
+  "permissions": {
+    "allow": [
+      "Read", "Write", "Edit", "Glob", "Grep",
+      "Bash(git status*)", "Bash(git log*)", "Bash(git diff*)",
+      "Bash(git add*)", "Bash(git commit*)",
+      "Bash(npm*)", "Bash(npx*)", "Bash(node*)",
+      "Bash(ls*)", "Bash(mkdir*)", "Bash(echo*)", "Bash(cat*)"
+    ],
+    "deny": [
+      "Bash(rm*)",
+      "Bash(git push*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean*)"
+    ]
+  },
+  "enabledPlugins": {
+    "slack@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/jhber/projects/broadn-web-view/.claude/hooks/pre-spawn-output-check.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/jhber/projects/broadn-web-view/.claude/hooks/post-write-open-report.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/jhber/projects/broadn-web-view/.claude/hooks/agent-stop-checkpoint.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

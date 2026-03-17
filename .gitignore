@@ -1,0 +1,12 @@
+# Claude Code runtime artifacts
+.claude/agents/tasks/
+docs/events/
+docs/agent-logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
