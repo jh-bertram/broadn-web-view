@@ -1,0 +1,258 @@
+[
+  {
+    "code": "AU",
+    "site_name": "ARDEC — Upwind",
+    "collection_site": "ARDEC",
+    "lat": 40.656,
+    "lon": -104.993,
+    "description": "Upwind sampling position at the Agricultural Research, Development and Education Center (ARDEC) near Fort Collins, Colorado, used to characterize background aerobiome before exposure to agricultural activities."
+  },
+  {
+    "code": "AD",
+    "site_name": "ARDEC — Downwind",
+    "collection_site": "ARDEC",
+    "lat": 40.656,
+    "lon": -104.992,
+    "description": "Downwind sampling position at ARDEC near Fort Collins, Colorado, used to measure the aerobiome influence of livestock and crop agricultural operations."
+  },
+  {
+    "code": "BS",
+    "site_name": "Big Spring, Texas — SASS",
+    "collection_site": "Big Spring, Texas",
+    "lat": 32.2304,
+    "lon": -101.4834,
+    "description": "SASS high-volume air sampler deployment site in Big Spring, Texas, positioned in semi-arid rangeland to characterize aerobiome of the southern Great Plains."
+  },
+  {
+    "code": "BM",
+    "site_name": "Big Spring, Texas — Mini SASS",
+    "collection_site": "Big Spring, Texas",
+    "lat": 32.2304,
+    "lon": -101.4834,
+    "description": "Mini SASS lightweight air sampler deployment at Big Spring, Texas, enabling comparison of high-volume and compact aerobiome collection methods in semi-arid conditions."
+  },
+  {
+    "code": "CA",
+    "site_name": "CPER — Tower Top (A)",
+    "collection_site": "CPER",
+    "lat": 40.8155,
+    "lon": -104.7456,
+    "description": "Upper sampling position on the flux tower at the Central Plains Experimental Range (CPER) in Nunn, Colorado, capturing aerobiome at height above the shortgrass steppe surface."
+  },
+  {
+    "code": "CB",
+    "site_name": "CPER — Tower Bottom (B)",
+    "collection_site": "CPER",
+    "lat": 40.8155,
+    "lon": -104.7456,
+    "description": "Lower sampling position on the flux tower at CPER, measuring the near-surface aerobiome of the shortgrass steppe to quantify vertical gradients in microbial community composition."
+  },
+  {
+    "code": "CE",
+    "site_name": "CPER — Environment",
+    "collection_site": "CPER",
+    "lat": 40.815,
+    "lon": -104.749,
+    "description": "General environment sampling across the Central Plains Experimental Range in Nunn, Colorado, including soil, plant, and ambient air samples from the shortgrass steppe."
+  },
+  {
+    "code": "FN",
+    "site_name": "Foothills Campus — North (Atmospheric Chemistry)",
+    "collection_site": "Foothills Campus",
+    "lat": 40.5885,
+    "lon": -105.1479,
+    "description": "Northern rooftop sampling station on the CSU Foothills Campus Atmospheric Chemistry building, Fort Collins, used to monitor urban-influenced aerobiome at the mountain-plains interface."
+  },
+  {
+    "code": "FS",
+    "site_name": "Foothills Campus — South (RIC)",
+    "collection_site": "Foothills Campus",
+    "lat": 40.5804,
+    "lon": -105.1463,
+    "description": "Southern sampling station near the Regional Innovation Campus (RIC) on the CSU Foothills Campus, Fort Collins, providing a contrasting urban aerobiome measurement point."
+  },
+  {
+    "code": "IA",
+    "site_name": "IMPROVE — ACAD (Acadia National Park)",
+    "collection_site": "IMPROVE",
+    "lat": 44.339,
+    "lon": -68.273,
+    "description": "IMPROVE network aerosol monitoring station at Acadia National Park, Maine, providing eastern deciduous forest aerobiome data as part of the national long-term comparison network."
+  },
+  {
+    "code": "IE",
+    "site_name": "IMPROVE — EVER (Everglades National Park)",
+    "collection_site": "IMPROVE",
+    "lat": 25.306,
+    "lon": -80.885,
+    "description": "IMPROVE network aerosol monitoring station at Everglades National Park, Florida, capturing subtropical wetland aerobiome for comparison with Rocky Mountain sites."
+  },
+  {
+    "code": "IG",
+    "site_name": "IMPROVE — GRCA (Grand Canyon National Park)",
+    "collection_site": "IMPROVE",
+    "lat": 36.318,
+    "lon": -112.337,
+    "description": "IMPROVE network aerosol monitoring station at Grand Canyon National Park, Arizona, sampling aerobiome in arid canyon terrain of the Colorado Plateau."
+  },
+  {
+    "code": "IM",
+    "site_name": "IMPROVE — GRSM (Great Smoky Mountains National Park)",
+    "collection_site": "IMPROVE",
+    "lat": 37.461,
+    "lon": -111.593,
+    "description": "IMPROVE network aerosol monitoring station at Great Smoky Mountains National Park on the Tennessee-North Carolina border, capturing aerobiome in temperate deciduous forest."
+  },
+  {
+    "code": "IH",
+    "site_name": "IMPROVE — HAVO (Hawai'i Volcanoes National Park)",
+    "collection_site": "IMPROVE",
+    "lat": 19.504,
+    "lon": -155.435,
+    "description": "IMPROVE network aerosol monitoring station at Hawai'i Volcanoes National Park on the Big Island, providing a tropical island aerobiome baseline far removed from continental sources."
+  },
+  {
+    "code": "IR",
+    "site_name": "IMPROVE — ROMO (Rocky Mountain National Park)",
+    "collection_site": "IMPROVE",
+    "lat": 40.352,
+    "lon": -105.665,
+    "description": "IMPROVE network aerosol monitoring station at Rocky Mountain National Park, Colorado, the closest IMPROVE site to CSU and a key reference for montane aerobiome composition."
+  },
+  {
+    "code": "IO",
+    "site_name": "IMPROVE — OLYM (Olympic National Park)",
+    "collection_site": "IMPROVE",
+    "lat": 47.818,
+    "lon": -123.574,
+    "description": "IMPROVE network aerosol monitoring station at Olympic National Park, Washington, capturing temperate rainforest aerobiome on the Pacific coast for continental comparison."
+  },
+  {
+    "code": "IV",
+    "site_name": "IMPROVE — VOYA (Voyageurs National Park)",
+    "collection_site": "IMPROVE",
+    "lat": 48.478,
+    "lon": -92.844,
+    "description": "IMPROVE network aerosol monitoring station at Voyageurs National Park, Minnesota, capturing boreal forest and lake-dominated aerobiome of the northern Great Lakes region."
+  },
+  {
+    "code": "NT",
+    "site_name": "NWT — Top",
+    "collection_site": "NWT",
+    "lat": 40.061,
+    "lon": -105.613,
+    "description": "Upper elevation sampling position at Niwot Ridge Long-Term Ecological Research (NWT) site, Colorado, capturing high-alpine tundra aerobiome above treeline."
+  },
+  {
+    "code": "NM",
+    "site_name": "NWT — Middle",
+    "collection_site": "NWT",
+    "lat": 40.061,
+    "lon": -105.613,
+    "description": "Mid-elevation sampling position at Niwot Ridge LTER, Colorado, characterizing the subalpine forest-tundra ecotone aerobiome along an elevation gradient."
+  },
+  {
+    "code": "NB",
+    "site_name": "NWT — Bottom",
+    "collection_site": "NWT",
+    "lat": 40.061,
+    "lon": -105.613,
+    "description": "Lower elevation sampling position at Niwot Ridge LTER, Colorado, measuring montane forest aerobiome as the baseline for the altitudinal transect."
+  },
+  {
+    "code": "PI",
+    "site_name": "PGF — Incubation",
+    "collection_site": "PGF",
+    "lat": 40.572,
+    "lon": -105.081,
+    "description": "Incubation experiment area at the Plant Growth Facility (PGF) on the CSU campus, Fort Collins, used for controlled aerobiome exposure studies."
+  },
+  {
+    "code": "PG",
+    "site_name": "PGF — Greenhouse",
+    "collection_site": "PGF",
+    "lat": 40.572,
+    "lon": -105.081,
+    "description": "Greenhouse sampling area at the CSU Plant Growth Facility, Fort Collins, capturing aerobiome within controlled plant growth environments."
+  },
+  {
+    "code": "SE",
+    "site_name": "SGRC — East",
+    "collection_site": "SGRC",
+    "lat": 40.809,
+    "lon": -104.776,
+    "description": "Eastern sampling position at the Shortgrass Steppe Research Center (SGRC) in Nunn, Colorado, capturing aerobiome on the eastern perimeter of the primary grassland research area."
+  },
+  {
+    "code": "SS",
+    "site_name": "SGRC — South",
+    "collection_site": "SGRC",
+    "lat": 40.809,
+    "lon": -104.777,
+    "description": "Southern sampling position at the Shortgrass Steppe Research Center (SGRC) in Nunn, Colorado, providing directional contrast for aerobiome source attribution studies."
+  },
+  {
+    "code": "SN",
+    "site_name": "SGRC — Environment",
+    "collection_site": "SGRC",
+    "lat": 40.809,
+    "lon": -104.777,
+    "description": "General environment sampling across the Shortgrass Steppe Research Center (SGRC) in Nunn, Colorado, including soil and plant matrices in addition to air filters."
+  },
+  {
+    "code": "TA",
+    "site_name": "Turtle (CSU Pueblo) — Animal",
+    "collection_site": "Turtle (CSU Pueblo)",
+    "lat": 38.3094,
+    "lon": -104.6402,
+    "description": "Animal habitat sampling area at the CSU Pueblo Turtle Farm research station, focused on aerobiome associated with reptile and wildlife enclosures for OneHealth pathogen dispersal research."
+  },
+  {
+    "code": "TE",
+    "site_name": "Turtle (CSU Pueblo) — Environment",
+    "collection_site": "Turtle (CSU Pueblo)",
+    "lat": 38.3094,
+    "lon": -104.6402,
+    "description": "Environmental sampling area surrounding the CSU Pueblo Turtle Farm, capturing background aerobiome of semi-arid southern Colorado for comparison with animal enclosures."
+  },
+  {
+    "code": "OC",
+    "site_name": "Other — Carolinas",
+    "collection_site": "Other",
+    "lat": 34.6001,
+    "lon": -80.5001,
+    "description": "Field sampling sites across North and South Carolina collected as part of the BROADN Fragmented Landscape project, characterizing aerobiome of southeastern US mixed forest and agricultural landscapes."
+  },
+  {
+    "code": "OD",
+    "site_name": "Other — Doane University",
+    "collection_site": "Other",
+    "lat": 40.621,
+    "lon": -96.949,
+    "description": "Sampling site at Doane University in Crete, Nebraska, a BROADN partner institution collecting aerobiome data from tallgrass prairie and agricultural landscapes of the central Great Plains."
+  },
+  {
+    "code": "WR",
+    "site_name": "Weed Research Facility — Weed Research",
+    "collection_site": "Weed Research Facility",
+    "lat": 40.657,
+    "lon": -104.994,
+    "description": "Sampling area at the CSU Weed Research Facility near Fort Collins, Colorado, used to characterize aerobiome in agricultural research plots focused on invasive plant management."
+  },
+  {
+    "code": "HS",
+    "site_name": "M. Hernandez Chamber — Small",
+    "collection_site": "M. Hernandez Chamber",
+    "lat": 40.576,
+    "lon": -105.084,
+    "description": "Small controlled-environment aerosol chamber in the Hernandez lab at CSU, Fort Collins, used for experimental manipulation of aerobiome under defined atmospheric conditions."
+  },
+  {
+    "code": "HL",
+    "site_name": "M. Hernandez Chamber — Large",
+    "collection_site": "M. Hernandez Chamber",
+    "lat": 40.576,
+    "lon": -105.084,
+    "description": "Large controlled-environment aerosol chamber in the Hernandez lab at CSU, Fort Collins, enabling scaled aerobiome experiments including bioaerosol generation and fate studies."
+  }
+]
