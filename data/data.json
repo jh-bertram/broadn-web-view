@@ -1,0 +1,3332 @@
+{
+  "meta": {
+    "generated": "2026-03-18T01:23:12Z",
+    "total_rows": 8079,
+    "field_samples": 4571,
+    "derivatives": 3508
+  },
+  "kpis": {
+    "field_samples": 4571,
+    "unique_sites": 29,
+    "active_since": "2020",
+    "sequenced": 1475
+  },
+  "temporal": [
+    {
+      "month": "2020-03",
+      "count": 26
+    },
+    {
+      "month": "2021-01",
+      "count": 85
+    },
+    {
+      "month": "2021-02",
+      "count": 73
+    },
+    {
+      "month": "2021-03",
+      "count": 76
+    },
+    {
+      "month": "2021-04",
+      "count": 79
+    },
+    {
+      "month": "2021-05",
+      "count": 94
+    },
+    {
+      "month": "2021-06",
+      "count": 83
+    },
+    {
+      "month": "2021-07",
+      "count": 81
+    },
+    {
+      "month": "2021-08",
+      "count": 85
+    },
+    {
+      "month": "2021-09",
+      "count": 79
+    },
+    {
+      "month": "2021-10",
+      "count": 89
+    },
+    {
+      "month": "2021-11",
+      "count": 77
+    },
+    {
+      "month": "2021-12",
+      "count": 79
+    },
+    {
+      "month": "2022-01",
+      "count": 28
+    },
+    {
+      "month": "2022-03",
+      "count": 16
+    },
+    {
+      "month": "2022-05",
+      "count": 25
+    },
+    {
+      "month": "2022-06",
+      "count": 273
+    },
+    {
+      "month": "2022-07",
+      "count": 88
+    },
+    {
+      "month": "2022-09",
+      "count": 321
+    },
+    {
+      "month": "2022-10",
+      "count": 510
+    },
+    {
+      "month": "2022-11",
+      "count": 7
+    },
+    {
+      "month": "2022-12",
+      "count": 5
+    },
+    {
+      "month": "2023-01",
+      "count": 1
+    },
+    {
+      "month": "2023-02",
+      "count": 8
+    },
+    {
+      "month": "2023-05",
+      "count": 311
+    },
+    {
+      "month": "2023-06",
+      "count": 773
+    },
+    {
+      "month": "2023-07",
+      "count": 23
+    },
+    {
+      "month": "2023-08",
+      "count": 17
+    },
+    {
+      "month": "2023-09",
+      "count": 23
+    },
+    {
+      "month": "2023-10",
+      "count": 21
+    },
+    {
+      "month": "2024-02",
+      "count": 34
+    },
+    {
+      "month": "2024-04",
+      "count": 6
+    },
+    {
+      "month": "2024-05",
+      "count": 97
+    },
+    {
+      "month": "2024-06",
+      "count": 31
+    },
+    {
+      "month": "2024-07",
+      "count": 45
+    },
+    {
+      "month": "2024-08",
+      "count": 29
+    },
+    {
+      "month": "2024-09",
+      "count": 52
+    },
+    {
+      "month": "2024-10",
+      "count": 32
+    },
+    {
+      "month": "2024-11",
+      "count": 60
+    },
+    {
+      "month": "2025-02",
+      "count": 68
+    },
+    {
+      "month": "2025-06",
+      "count": 2
+    },
+    {
+      "month": "2025-07",
+      "count": 3
+    }
+  ],
+  "sample_types": [
+    {
+      "type": "Air",
+      "count": 2926
+    },
+    {
+      "type": "Plant",
+      "count": 870
+    },
+    {
+      "type": "Soil",
+      "count": 750
+    },
+    {
+      "type": "Liquid",
+      "count": 24
+    },
+    {
+      "type": "Unknown",
+      "count": 1
+    }
+  ],
+  "pipeline": {
+    "collected": 4571,
+    "dna_extracted": 3243,
+    "sequenced": 1475
+  },
+  "sites": [
+    {
+      "code": "SN",
+      "name": "SGRC — Environment",
+      "lat": 40.809,
+      "lon": -104.777,
+      "count": 1313,
+      "primary_types": [
+        "Air",
+        "Plant",
+        "Soil"
+      ]
+    },
+    {
+      "code": "SE",
+      "name": "SGRC — East",
+      "lat": 40.809,
+      "lon": -104.776,
+      "count": 744,
+      "primary_types": [
+        "Plant",
+        "Soil"
+      ]
+    },
+    {
+      "code": "OC",
+      "name": "Other — Carolinas",
+      "lat": 34.6001,
+      "lon": -80.5001,
+      "count": 623,
+      "primary_types": [
+        "Soil",
+        "Air",
+        "Plant"
+      ]
+    },
+    {
+      "code": "CE",
+      "name": "CPER — Environment",
+      "lat": 40.815,
+      "lon": -104.749,
+      "count": 327,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IE",
+      "name": "IMPROVE — EVER (Everglades National Park)",
+      "lat": 25.306,
+      "lon": -80.885,
+      "count": 175,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "CB",
+      "name": "CPER — Tower Bottom (B)",
+      "lat": 40.8155,
+      "lon": -104.7456,
+      "count": 169,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IO",
+      "name": "IMPROVE — OLYM (Olympic National Park)",
+      "lat": 47.818,
+      "lon": -123.574,
+      "count": 164,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "CA",
+      "name": "CPER — Tower Top (A)",
+      "lat": 40.8155,
+      "lon": -104.7456,
+      "count": 162,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IA",
+      "name": "IMPROVE — ACAD (Acadia National Park)",
+      "lat": 44.339,
+      "lon": -68.273,
+      "count": 127,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IM",
+      "name": "IMPROVE — GRSM (Great Smoky Mountains National Park)",
+      "lat": 37.461,
+      "lon": -111.593,
+      "count": 125,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IR",
+      "name": "IMPROVE — ROMO (Rocky Mountain National Park)",
+      "lat": 40.352,
+      "lon": -105.665,
+      "count": 122,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IH",
+      "name": "IMPROVE — HAVO (Hawai'i Volcanoes National Park)",
+      "lat": 19.504,
+      "lon": -155.435,
+      "count": 115,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IV",
+      "name": "IMPROVE — VOYA (Voyageurs National Park)",
+      "lat": 48.478,
+      "lon": -92.844,
+      "count": 114,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IX",
+      "name": "Unknown site (IX)",
+      "lat": null,
+      "lon": null,
+      "count": 78,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "FN",
+      "name": "Foothills Campus — North (Atmospheric Chemistry)",
+      "lat": 40.5885,
+      "lon": -105.1479,
+      "count": 43,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "IG",
+      "name": "IMPROVE — GRCA (Grand Canyon National Park)",
+      "lat": 36.318,
+      "lon": -112.337,
+      "count": 36,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "FS",
+      "name": "Foothills Campus — South (RIC)",
+      "lat": 40.5804,
+      "lon": -105.1463,
+      "count": 31,
+      "primary_types": [
+        "Plant",
+        "Air"
+      ]
+    },
+    {
+      "code": "NB",
+      "name": "NWT — Bottom",
+      "lat": 40.061,
+      "lon": -105.613,
+      "count": 20,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "NT",
+      "name": "NWT — Top",
+      "lat": 40.061,
+      "lon": -105.613,
+      "count": 16,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "NM",
+      "name": "NWT — Middle",
+      "lat": 40.061,
+      "lon": -105.613,
+      "count": 12,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "AU",
+      "name": "ARDEC — Upwind",
+      "lat": 40.656,
+      "lon": -104.993,
+      "count": 10,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "AD",
+      "name": "ARDEC — Downwind",
+      "lat": 40.656,
+      "lon": -104.992,
+      "count": 9,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "AX",
+      "name": "Unknown site (AX)",
+      "lat": 40.6574,
+      "lon": -104.9941,
+      "count": 8,
+      "primary_types": [
+        "Soil",
+        "Liquid"
+      ]
+    },
+    {
+      "code": "PX",
+      "name": "Unknown site (PX)",
+      "lat": 40.5719,
+      "lon": -105.0814,
+      "count": 8,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "BM",
+      "name": "Big Spring, Texas — Mini SASS",
+      "lat": 32.2304,
+      "lon": -101.4834,
+      "count": 6,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "BS",
+      "name": "Big Spring, Texas — SASS",
+      "lat": 32.2304,
+      "lon": -101.4834,
+      "count": 6,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "OD",
+      "name": "Other — Doane University",
+      "lat": 40.621,
+      "lon": -96.949,
+      "count": 5,
+      "primary_types": [
+        "Air",
+        "Liquid"
+      ]
+    },
+    {
+      "code": "XX",
+      "name": "Unknown site (XX)",
+      "lat": null,
+      "lon": null,
+      "count": 2,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "BX",
+      "name": "Unknown site (BX)",
+      "lat": 32.2304,
+      "lon": -101.4834,
+      "count": 1,
+      "primary_types": [
+        "Unknown"
+      ]
+    }
+  ],
+  "by_site": [
+    {
+      "site": "SGRC — Environment",
+      "code": "SN",
+      "count": 1313
+    },
+    {
+      "site": "SGRC — East",
+      "code": "SE",
+      "count": 744
+    },
+    {
+      "site": "Other — Carolinas",
+      "code": "OC",
+      "count": 623
+    },
+    {
+      "site": "CPER — Environment",
+      "code": "CE",
+      "count": 327
+    },
+    {
+      "site": "IMPROVE — EVER (Everglades National Park)",
+      "code": "IE",
+      "count": 175
+    },
+    {
+      "site": "CPER — Tower Bottom (B)",
+      "code": "CB",
+      "count": 169
+    },
+    {
+      "site": "IMPROVE — OLYM (Olympic National Park)",
+      "code": "IO",
+      "count": 164
+    },
+    {
+      "site": "CPER — Tower Top (A)",
+      "code": "CA",
+      "count": 162
+    },
+    {
+      "site": "IMPROVE — ACAD (Acadia National Park)",
+      "code": "IA",
+      "count": 127
+    },
+    {
+      "site": "IMPROVE — GRSM (Great Smoky Mountains National Park)",
+      "code": "IM",
+      "count": 125
+    },
+    {
+      "site": "IMPROVE — ROMO (Rocky Mountain National Park)",
+      "code": "IR",
+      "count": 122
+    },
+    {
+      "site": "IMPROVE — HAVO (Hawai'i Volcanoes National Park)",
+      "code": "IH",
+      "count": 115
+    },
+    {
+      "site": "IMPROVE — VOYA (Voyageurs National Park)",
+      "code": "IV",
+      "count": 114
+    },
+    {
+      "site": "IMPROVE — Unknown",
+      "code": "IX",
+      "count": 78
+    },
+    {
+      "site": "Foothills Campus — North (Atmospheric Chemistry)",
+      "code": "FN",
+      "count": 43
+    },
+    {
+      "site": "IMPROVE — GRCA (Grand Canyon National Park)",
+      "code": "IG",
+      "count": 36
+    },
+    {
+      "site": "Foothills Campus — South (RIC)",
+      "code": "FS",
+      "count": 31
+    },
+    {
+      "site": "NWT — Bottom",
+      "code": "NB",
+      "count": 20
+    },
+    {
+      "site": "NWT — Top",
+      "code": "NT",
+      "count": 16
+    },
+    {
+      "site": "NWT — Middle",
+      "code": "NM",
+      "count": 12
+    },
+    {
+      "site": "ARDEC — Upwind",
+      "code": "AU",
+      "count": 10
+    },
+    {
+      "site": "ARDEC — Downwind",
+      "code": "AD",
+      "count": 9
+    },
+    {
+      "site": "ARDEC — Unknown",
+      "code": "AX",
+      "count": 8
+    },
+    {
+      "site": "PGF — Unknown",
+      "code": "PX",
+      "count": 8
+    },
+    {
+      "site": "Big Spring, Texas — Mini SASS",
+      "code": "BM",
+      "count": 6
+    },
+    {
+      "site": "Big Spring, Texas — SASS",
+      "code": "BS",
+      "count": 6
+    },
+    {
+      "site": "Other — Doane University",
+      "code": "OD",
+      "count": 5
+    },
+    {
+      "site": "Unknown — Unknown",
+      "code": "XX",
+      "count": 2
+    },
+    {
+      "site": "Big Spring, Texas — Unknown",
+      "code": "BX",
+      "count": 1
+    }
+  ],
+  "recent_samples": [
+    {
+      "id": "BOD0005A",
+      "date": "2025-07-10",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0001A",
+      "date": "2025-07-02",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0003A",
+      "date": "2025-07-02",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0004L",
+      "date": "2025-06-10",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0002L",
+      "date": "2025-06-04",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0341A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0340A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0339A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0338A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0337A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0336A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0335A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0334A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0331A",
+      "date": "2025-02-21",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0328A",
+      "date": "2025-02-21",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0329A",
+      "date": "2025-02-21",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0330A",
+      "date": "2025-02-21",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0333A",
+      "date": "2025-02-21",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0332A",
+      "date": "2025-02-21",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0322A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0327A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0326A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0325A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0324A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0323A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0321A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0320A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0317A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0314A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0315A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0312A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0318A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0319A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0313A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0316A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0310A",
+      "date": "2025-02-17",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0311A",
+      "date": "2025-02-17",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0306A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0304A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0305A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0309A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0307A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0308A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0303A",
+      "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0302A",
+      "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0301A",
+      "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0300A",
+      "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0299A",
+      "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0298A",
+      "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0294A",
+      "date": "2025-02-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0292A",
+      "date": "2025-02-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0293A",
+      "date": "2025-02-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0295A",
+      "date": "2025-02-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0296A",
+      "date": "2025-02-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0297A",
+      "date": "2025-02-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0288A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0286A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0287A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0290A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0289A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0291A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0285A",
+      "date": "2025-02-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0283A",
+      "date": "2025-02-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0282A",
+      "date": "2025-02-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0281A",
+      "date": "2025-02-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0280A",
+      "date": "2025-02-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0284A",
+      "date": "2025-02-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0274A",
+      "date": "2025-02-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0279A",
+      "date": "2025-02-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0278A",
+      "date": "2025-02-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0277A",
+      "date": "2025-02-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0276A",
+      "date": "2025-02-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0275A",
+      "date": "2025-02-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0622A",
+      "date": "2024-11-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0623A",
+      "date": "2024-11-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0621A",
+      "date": "2024-11-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0620A",
+      "date": "2024-11-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0619A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0618A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0617A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0616A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0615A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0614A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0613A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0611A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0610A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0609A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0612A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0608A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0607A",
+      "date": "2024-11-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0606A",
+      "date": "2024-11-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0605A",
+      "date": "2024-11-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0604A",
+      "date": "2024-11-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0603A",
+      "date": "2024-11-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0602A",
+      "date": "2024-11-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0601A",
+      "date": "2024-11-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0600A",
+      "date": "2024-11-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0599A",
+      "date": "2024-11-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0594A",
+      "date": "2024-11-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0595A",
+      "date": "2024-11-06",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    }
+  ],
+  "slice_views": {
+    "project": [
+      {
+        "project_id": "IMPROVE Fungi",
+        "sample_count": 1056,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 1056
+          }
+        ],
+        "pipeline": {
+          "collected": 1056,
+          "dna_extracted": 862,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2021-01",
+            "count": 85
+          },
+          {
+            "month": "2021-02",
+            "count": 73
+          },
+          {
+            "month": "2021-03",
+            "count": 76
+          },
+          {
+            "month": "2021-04",
+            "count": 79
+          },
+          {
+            "month": "2021-05",
+            "count": 94
+          },
+          {
+            "month": "2021-06",
+            "count": 83
+          },
+          {
+            "month": "2021-07",
+            "count": 81
+          },
+          {
+            "month": "2021-08",
+            "count": 85
+          },
+          {
+            "month": "2021-09",
+            "count": 79
+          },
+          {
+            "month": "2021-10",
+            "count": 89
+          },
+          {
+            "month": "2021-11",
+            "count": 77
+          },
+          {
+            "month": "2021-12",
+            "count": 79
+          },
+          {
+            "month": "2023-08",
+            "count": 7
+          },
+          {
+            "month": "2023-10",
+            "count": 7
+          },
+          {
+            "month": "2024-02",
+            "count": 34
+          },
+          {
+            "month": "2024-05",
+            "count": 27
+          }
+        ]
+      },
+      {
+        "project_id": "Fragmented Landscape",
+        "sample_count": 623,
+        "sample_types": [
+          {
+            "type": "Soil",
+            "count": 312
+          },
+          {
+            "type": "Air",
+            "count": 194
+          },
+          {
+            "type": "Plant",
+            "count": 117
+          }
+        ],
+        "pipeline": {
+          "collected": 623,
+          "dna_extracted": 623,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2022-06",
+            "count": 106
+          },
+          {
+            "month": "2022-07",
+            "count": 88
+          }
+        ]
+      },
+      {
+        "project_id": "Fall Plant Circle",
+        "sample_count": 384,
+        "sample_types": [
+          {
+            "type": "Plant",
+            "count": 192
+          },
+          {
+            "type": "Soil",
+            "count": 192
+          }
+        ],
+        "pipeline": {
+          "collected": 384,
+          "dna_extracted": 211,
+          "sequenced": 211
+        },
+        "temporal": [
+          {
+            "month": "2022-09",
+            "count": 192
+          },
+          {
+            "month": "2022-10",
+            "count": 192
+          }
+        ]
+      },
+      {
+        "project_id": "Spring Plant Circle",
+        "sample_count": 360,
+        "sample_types": [
+          {
+            "type": "Plant",
+            "count": 270
+          },
+          {
+            "type": "Soil",
+            "count": 90
+          }
+        ],
+        "pipeline": {
+          "collected": 360,
+          "dna_extracted": 120,
+          "sequenced": 120
+        },
+        "temporal": [
+          {
+            "month": "2023-05",
+            "count": 96
+          },
+          {
+            "month": "2023-06",
+            "count": 264
+          }
+        ]
+      },
+      {
+        "project_id": "Fall Plants & Soil",
+        "sample_count": 306,
+        "sample_types": [
+          {
+            "type": "Plant",
+            "count": 204
+          },
+          {
+            "type": "Soil",
+            "count": 102
+          }
+        ],
+        "pipeline": {
+          "collected": 306,
+          "dna_extracted": 288,
+          "sequenced": 288
+        },
+        "temporal": [
+          {
+            "month": "2022-09",
+            "count": 54
+          },
+          {
+            "month": "2022-10",
+            "count": 252
+          }
+        ]
+      },
+      {
+        "project_id": "Flux",
+        "sample_count": 304,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 304
+          }
+        ],
+        "pipeline": {
+          "collected": 304,
+          "dna_extracted": 236,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2024-04",
+            "count": 6
+          },
+          {
+            "month": "2024-05",
+            "count": 70
+          },
+          {
+            "month": "2024-08",
+            "count": 16
+          },
+          {
+            "month": "2024-09",
+            "count": 52
+          },
+          {
+            "month": "2024-10",
+            "count": 32
+          },
+          {
+            "month": "2024-11",
+            "count": 60
+          },
+          {
+            "month": "2025-02",
+            "count": 68
+          }
+        ]
+      },
+      {
+        "project_id": "BACS",
+        "sample_count": 274,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 274
+          }
+        ],
+        "pipeline": {
+          "collected": 274,
+          "dna_extracted": 220,
+          "sequenced": 220
+        },
+        "temporal": [
+          {
+            "month": "2022-05",
+            "count": 13
+          },
+          {
+            "month": "2022-06",
+            "count": 41
+          }
+        ]
+      },
+      {
+        "project_id": "Spring SASS/Polycarbonate Top/Bottom",
+        "sample_count": 268,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 268
+          }
+        ],
+        "pipeline": {
+          "collected": 268,
+          "dna_extracted": 140,
+          "sequenced": 139
+        },
+        "temporal": [
+          {
+            "month": "2022-06",
+            "count": 17
+          },
+          {
+            "month": "2023-05",
+            "count": 79
+          },
+          {
+            "month": "2023-06",
+            "count": 162
+          },
+          {
+            "month": "2023-08",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "project_id": "Spring Sass/VIVAS",
+        "sample_count": 159,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 141
+          },
+          {
+            "type": "Liquid",
+            "count": 18
+          }
+        ],
+        "pipeline": {
+          "collected": 159,
+          "dna_extracted": 122,
+          "sequenced": 120
+        },
+        "temporal": [
+          {
+            "month": "2022-05",
+            "count": 5
+          },
+          {
+            "month": "2022-06",
+            "count": 13
+          },
+          {
+            "month": "2023-02",
+            "count": 2
+          },
+          {
+            "month": "2023-05",
+            "count": 43
+          },
+          {
+            "month": "2023-06",
+            "count": 95
+          }
+        ]
+      },
+      {
+        "project_id": "Ice-Nucleating Particles",
+        "sample_count": 151,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 148
+          },
+          {
+            "type": "Liquid",
+            "count": 3
+          }
+        ],
+        "pipeline": {
+          "collected": 151,
+          "dna_extracted": 51,
+          "sequenced": 51
+        },
+        "temporal": [
+          {
+            "month": "2022-05",
+            "count": 4
+          },
+          {
+            "month": "2022-06",
+            "count": 14
+          },
+          {
+            "month": "2022-09",
+            "count": 1
+          },
+          {
+            "month": "2023-05",
+            "count": 41
+          },
+          {
+            "month": "2023-06",
+            "count": 91
+          }
+        ]
+      },
+      {
+        "project_id": "Spring Plants & Soil",
+        "sample_count": 93,
+        "sample_types": [
+          {
+            "type": "Soil",
+            "count": 47
+          },
+          {
+            "type": "Plant",
+            "count": 29
+          },
+          {
+            "type": "Air",
+            "count": 17
+          }
+        ],
+        "pipeline": {
+          "collected": 93,
+          "dna_extracted": 51,
+          "sequenced": 50
+        },
+        "temporal": [
+          {
+            "month": "2022-05",
+            "count": 3
+          },
+          {
+            "month": "2022-06",
+            "count": 82
+          },
+          {
+            "month": "2022-09",
+            "count": 1
+          },
+          {
+            "month": "2023-02",
+            "count": 3
+          }
+        ]
+      },
+      {
+        "project_id": "Spring Chemistry",
+        "sample_count": 91,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 91
+          }
+        ],
+        "pipeline": {
+          "collected": 91,
+          "dna_extracted": 0,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2023-05",
+            "count": 31
+          },
+          {
+            "month": "2023-06",
+            "count": 60
+          }
+        ]
+      },
+      {
+        "project_id": "2022 Fall CPER",
+        "sample_count": 87,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 87
+          }
+        ],
+        "pipeline": {
+          "collected": 87,
+          "dna_extracted": 87,
+          "sequenced": 87
+        },
+        "temporal": [
+          {
+            "month": "2022-09",
+            "count": 47
+          },
+          {
+            "month": "2022-10",
+            "count": 40
+          }
+        ]
+      },
+      {
+        "project_id": "2023 Two Towers",
+        "sample_count": 68,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 68
+          }
+        ],
+        "pipeline": {
+          "collected": 68,
+          "dna_extracted": 68,
+          "sequenced": 68
+        },
+        "temporal": [
+          {
+            "month": "2023-06",
+            "count": 8
+          },
+          {
+            "month": "2023-07",
+            "count": 23
+          },
+          {
+            "month": "2023-09",
+            "count": 23
+          },
+          {
+            "month": "2023-10",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "project_id": "2024 Summer",
+        "sample_count": 68,
+        "sample_types": [
+          {
+            "type": "Plant",
+            "count": 58
+          },
+          {
+            "type": "Air",
+            "count": 10
+          }
+        ],
+        "pipeline": {
+          "collected": 68,
+          "dna_extracted": 0,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2024-06",
+            "count": 31
+          },
+          {
+            "month": "2024-07",
+            "count": 37
+          }
+        ]
+      },
+      {
+        "project_id": "2023 Summer",
+        "sample_count": 45,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 45
+          }
+        ],
+        "pipeline": {
+          "collected": 45,
+          "dna_extracted": 0,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2023-06",
+            "count": 45
+          }
+        ]
+      },
+      {
+        "project_id": "Optimization Tests",
+        "sample_count": 43,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 43
+          }
+        ],
+        "pipeline": {
+          "collected": 43,
+          "dna_extracted": 34,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2022-01",
+            "count": 28
+          },
+          {
+            "month": "2022-03",
+            "count": 15
+          }
+        ]
+      },
+      {
+        "project_id": "Spring SKC",
+        "sample_count": 40,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 40
+          }
+        ],
+        "pipeline": {
+          "collected": 40,
+          "dna_extracted": 40,
+          "sequenced": 38
+        },
+        "temporal": [
+          {
+            "month": "2023-05",
+            "count": 12
+          },
+          {
+            "month": "2023-06",
+            "count": 28
+          }
+        ]
+      },
+      {
+        "project_id": "2023 Spring CPER Chemistry",
+        "sample_count": 29,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 29
+          }
+        ],
+        "pipeline": {
+          "collected": 29,
+          "dna_extracted": 0,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2023-05",
+            "count": 9
+          },
+          {
+            "month": "2023-06",
+            "count": 20
+          }
+        ]
+      },
+      {
+        "project_id": "2022 Fall CPER FC",
+        "sample_count": 28,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 28
+          }
+        ],
+        "pipeline": {
+          "collected": 28,
+          "dna_extracted": 26,
+          "sequenced": 25
+        },
+        "temporal": [
+          {
+            "month": "2022-09",
+            "count": 17
+          },
+          {
+            "month": "2022-10",
+            "count": 11
+          }
+        ]
+      }
+    ],
+    "location": [
+      {
+        "site_code": "SGRC",
+        "site_name": "SGRC (Sagebrush Grassland Research Center)",
+        "sample_count": 2057,
+        "sub_sites": [
+          {
+            "sub_code": "Environment",
+            "sub_name": "Environment",
+            "count": 1313,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 879
+              },
+              {
+                "type": "Plant",
+                "count": 264
+              },
+              {
+                "type": "Soil",
+                "count": 149
+              },
+              {
+                "type": "Liquid",
+                "count": 21
+              }
+            ]
+          },
+          {
+            "sub_code": "East",
+            "sub_name": "East",
+            "count": 744,
+            "sample_types": [
+              {
+                "type": "Plant",
+                "count": 462
+              },
+              {
+                "type": "Soil",
+                "count": 282
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 879
+          },
+          {
+            "type": "Plant",
+            "count": 726
+          },
+          {
+            "type": "Soil",
+            "count": 431
+          },
+          {
+            "type": "Liquid",
+            "count": 21
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2022-05",
+            "count": 25
+          },
+          {
+            "month": "2022-06",
+            "count": 142
+          },
+          {
+            "month": "2022-09",
+            "count": 321
+          },
+          {
+            "month": "2022-10",
+            "count": 510
+          },
+          {
+            "month": "2022-12",
+            "count": 5
+          },
+          {
+            "month": "2023-02",
+            "count": 8
+          },
+          {
+            "month": "2023-05",
+            "count": 192
+          },
+          {
+            "month": "2023-06",
+            "count": 478
+          },
+          {
+            "month": "2024-04",
+            "count": 6
+          },
+          {
+            "month": "2024-05",
+            "count": 70
+          },
+          {
+            "month": "2024-07",
+            "count": 45
+          },
+          {
+            "month": "2024-08",
+            "count": 16
+          },
+          {
+            "month": "2024-09",
+            "count": 52
+          },
+          {
+            "month": "2024-10",
+            "count": 32
+          },
+          {
+            "month": "2024-11",
+            "count": 60
+          },
+          {
+            "month": "2025-02",
+            "count": 68
+          }
+        ],
+        "time_distribution": [
+          {
+            "time_period": "Night (00:00–05:59)",
+            "count": 18
+          },
+          {
+            "time_period": "Morning (06:00–11:59)",
+            "count": 70
+          },
+          {
+            "time_period": "Afternoon (12:00–17:59)",
+            "count": 320
+          },
+          {
+            "time_period": "Evening (18:00–23:59)",
+            "count": 83
+          }
+        ]
+      },
+      {
+        "site_code": "IMPROVE",
+        "site_name": "IMPROVE Network",
+        "sample_count": 1056,
+        "sub_sites": [
+          {
+            "sub_code": "EVER",
+            "sub_name": "EVER",
+            "count": 175,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 175
+              }
+            ]
+          },
+          {
+            "sub_code": "OLYM",
+            "sub_name": "OLYM",
+            "count": 164,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 164
+              }
+            ]
+          },
+          {
+            "sub_code": "ACAD",
+            "sub_name": "ACAD",
+            "count": 127,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 127
+              }
+            ]
+          },
+          {
+            "sub_code": "GRSM",
+            "sub_name": "GRSM",
+            "count": 125,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 125
+              }
+            ]
+          },
+          {
+            "sub_code": "ROMO",
+            "sub_name": "ROMO",
+            "count": 122,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 122
+              }
+            ]
+          },
+          {
+            "sub_code": "HAVO",
+            "sub_name": "HAVO",
+            "count": 115,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 115
+              }
+            ]
+          },
+          {
+            "sub_code": "VOYA",
+            "sub_name": "VOYA",
+            "count": 114,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 114
+              }
+            ]
+          },
+          {
+            "sub_code": "Unknown",
+            "sub_name": "Unknown",
+            "count": 78,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 78
+              }
+            ]
+          },
+          {
+            "sub_code": "GRCA",
+            "sub_name": "GRCA",
+            "count": 36,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 36
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 1056
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2021-01",
+            "count": 85
+          },
+          {
+            "month": "2021-02",
+            "count": 73
+          },
+          {
+            "month": "2021-03",
+            "count": 76
+          },
+          {
+            "month": "2021-04",
+            "count": 79
+          },
+          {
+            "month": "2021-05",
+            "count": 94
+          },
+          {
+            "month": "2021-06",
+            "count": 83
+          },
+          {
+            "month": "2021-07",
+            "count": 81
+          },
+          {
+            "month": "2021-08",
+            "count": 85
+          },
+          {
+            "month": "2021-09",
+            "count": 79
+          },
+          {
+            "month": "2021-10",
+            "count": 89
+          },
+          {
+            "month": "2021-11",
+            "count": 77
+          },
+          {
+            "month": "2021-12",
+            "count": 79
+          },
+          {
+            "month": "2023-08",
+            "count": 7
+          },
+          {
+            "month": "2023-10",
+            "count": 7
+          },
+          {
+            "month": "2024-02",
+            "count": 34
+          },
+          {
+            "month": "2024-05",
+            "count": 27
+          }
+        ]
+      },
+      {
+        "site_code": "CPER",
+        "site_name": "CPER (Central Plains Experimental Range)",
+        "sample_count": 658,
+        "sub_sites": [
+          {
+            "sub_code": "Environment",
+            "sub_name": "Environment",
+            "count": 327,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 327
+              }
+            ]
+          },
+          {
+            "sub_code": "Bottom (B)",
+            "sub_name": "Bottom (B)",
+            "count": 169,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 169
+              }
+            ]
+          },
+          {
+            "sub_code": "Top (A)",
+            "sub_name": "Top (A)",
+            "count": 162,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 162
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 658
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2022-06",
+            "count": 25
+          },
+          {
+            "month": "2023-05",
+            "count": 119
+          },
+          {
+            "month": "2023-06",
+            "count": 287
+          },
+          {
+            "month": "2023-07",
+            "count": 10
+          },
+          {
+            "month": "2023-08",
+            "count": 10
+          },
+          {
+            "month": "2023-09",
+            "count": 10
+          }
+        ],
+        "time_distribution": [
+          {
+            "time_period": "Night (00:00–05:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Morning (06:00–11:59)",
+            "count": 38
+          },
+          {
+            "time_period": "Afternoon (12:00–17:59)",
+            "count": 21
+          },
+          {
+            "time_period": "Evening (18:00–23:59)",
+            "count": 25
+          }
+        ]
+      },
+      {
+        "site_code": "Other",
+        "site_name": "Other",
+        "sample_count": 628,
+        "sub_sites": [
+          {
+            "sub_code": "Carolinas",
+            "sub_name": "Carolinas",
+            "count": 623,
+            "sample_types": [
+              {
+                "type": "Soil",
+                "count": 312
+              },
+              {
+                "type": "Air",
+                "count": 194
+              },
+              {
+                "type": "Plant",
+                "count": 117
+              }
+            ]
+          },
+          {
+            "sub_code": "Doane University",
+            "sub_name": "Doane University",
+            "count": 5,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 3
+              },
+              {
+                "type": "Liquid",
+                "count": 2
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Soil",
+            "count": 312
+          },
+          {
+            "type": "Air",
+            "count": 197
+          },
+          {
+            "type": "Plant",
+            "count": 117
+          },
+          {
+            "type": "Liquid",
+            "count": 2
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2022-06",
+            "count": 106
+          },
+          {
+            "month": "2022-07",
+            "count": 88
+          },
+          {
+            "month": "2025-06",
+            "count": 2
+          },
+          {
+            "month": "2025-07",
+            "count": 3
+          }
+        ],
+        "time_distribution": [
+          {
+            "time_period": "Night (00:00–05:59)",
+            "count": 27
+          },
+          {
+            "time_period": "Morning (06:00–11:59)",
+            "count": 61
+          },
+          {
+            "time_period": "Afternoon (12:00–17:59)",
+            "count": 85
+          },
+          {
+            "time_period": "Evening (18:00–23:59)",
+            "count": 21
+          }
+        ]
+      },
+      {
+        "site_code": "Foothills Campus",
+        "site_name": "Foothills Campus",
+        "sample_count": 74,
+        "sub_sites": [
+          {
+            "sub_code": "North",
+            "sub_name": "North",
+            "count": 43,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 43
+              }
+            ]
+          },
+          {
+            "sub_code": "South",
+            "sub_name": "South",
+            "count": 31,
+            "sample_types": [
+              {
+                "type": "Plant",
+                "count": 27
+              },
+              {
+                "type": "Air",
+                "count": 4
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 47
+          },
+          {
+            "type": "Plant",
+            "count": 27
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2022-01",
+            "count": 28
+          },
+          {
+            "month": "2022-03",
+            "count": 15
+          },
+          {
+            "month": "2024-06",
+            "count": 31
+          }
+        ],
+        "time_distribution": [
+          {
+            "time_period": "Night (00:00–05:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Morning (06:00–11:59)",
+            "count": 4
+          },
+          {
+            "time_period": "Afternoon (12:00–17:59)",
+            "count": 27
+          },
+          {
+            "time_period": "Evening (18:00–23:59)",
+            "count": 0
+          }
+        ]
+      },
+      {
+        "site_code": "NWT",
+        "site_name": "Niwot Ridge (NWT)",
+        "sample_count": 48,
+        "sub_sites": [
+          {
+            "sub_code": "Bottom",
+            "sub_name": "Bottom",
+            "count": 20,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 20
+              }
+            ]
+          },
+          {
+            "sub_code": "Top",
+            "sub_name": "Top",
+            "count": 16,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 16
+              }
+            ]
+          },
+          {
+            "sub_code": "Middle",
+            "sub_name": "Middle",
+            "count": 12,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 12
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 48
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2023-06",
+            "count": 8
+          },
+          {
+            "month": "2023-07",
+            "count": 13
+          },
+          {
+            "month": "2023-09",
+            "count": 13
+          },
+          {
+            "month": "2023-10",
+            "count": 14
+          }
+        ],
+        "time_distribution": [
+          {
+            "time_period": "Night (00:00–05:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Morning (06:00–11:59)",
+            "count": 24
+          },
+          {
+            "time_period": "Afternoon (12:00–17:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Evening (18:00–23:59)",
+            "count": 24
+          }
+        ]
+      },
+      {
+        "site_code": "ARDEC",
+        "site_name": "ARDEC",
+        "sample_count": 27,
+        "sub_sites": [
+          {
+            "sub_code": "Upwind",
+            "sub_name": "Upwind",
+            "count": 10,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 10
+              }
+            ]
+          },
+          {
+            "sub_code": "Downwind",
+            "sub_name": "Downwind",
+            "count": 9,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 9
+              }
+            ]
+          },
+          {
+            "sub_code": "Unknown",
+            "sub_name": "Unknown",
+            "count": 8,
+            "sample_types": [
+              {
+                "type": "Soil",
+                "count": 7
+              },
+              {
+                "type": "Liquid",
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 19
+          },
+          {
+            "type": "Soil",
+            "count": 7
+          },
+          {
+            "type": "Liquid",
+            "count": 1
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2020-03",
+            "count": 26
+          },
+          {
+            "month": "2022-03",
+            "count": 1
+          }
+        ],
+        "time_distribution": [
+          {
+            "time_period": "Night (00:00–05:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Morning (06:00–11:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Afternoon (12:00–17:59)",
+            "count": 7
+          },
+          {
+            "time_period": "Evening (18:00–23:59)",
+            "count": 0
+          }
+        ]
+      },
+      {
+        "site_code": "Big Spring, Texas",
+        "site_name": "Big Spring, Texas",
+        "sample_count": 13,
+        "sub_sites": [
+          {
+            "sub_code": "Mini SASS",
+            "sub_name": "Mini SASS",
+            "count": 6,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 6
+              }
+            ]
+          },
+          {
+            "sub_code": "SASS",
+            "sub_name": "SASS",
+            "count": 6,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 6
+              }
+            ]
+          },
+          {
+            "sub_code": "Unknown",
+            "sub_name": "Unknown",
+            "count": 1,
+            "sample_types": [
+              {
+                "type": "Unknown",
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 12
+          },
+          {
+            "type": "Unknown",
+            "count": 1
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2024-08",
+            "count": 13
+          }
+        ],
+        "time_distribution": [
+          {
+            "time_period": "Night (00:00–05:59)",
+            "count": 12
+          },
+          {
+            "time_period": "Morning (06:00–11:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Afternoon (12:00–17:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Evening (18:00–23:59)",
+            "count": 0
+          }
+        ]
+      },
+      {
+        "site_code": "PGF",
+        "site_name": "PGF",
+        "sample_count": 8,
+        "sub_sites": [
+          {
+            "sub_code": "Unknown",
+            "sub_name": "Unknown",
+            "count": 8,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 8
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 8
+          }
+        ],
+        "temporal": [
+          {
+            "month": "2022-11",
+            "count": 7
+          },
+          {
+            "month": "2023-01",
+            "count": 1
+          }
+        ],
+        "time_distribution": [
+          {
+            "time_period": "Night (00:00–05:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Morning (06:00–11:59)",
+            "count": 5
+          },
+          {
+            "time_period": "Afternoon (12:00–17:59)",
+            "count": 0
+          },
+          {
+            "time_period": "Evening (18:00–23:59)",
+            "count": 0
+          }
+        ]
+      },
+      {
+        "site_code": "Unknown",
+        "site_name": "Unknown",
+        "sample_count": 2,
+        "sub_sites": [
+          {
+            "sub_code": "Unknown",
+            "sub_name": "Unknown",
+            "count": 2,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 2
+              }
+            ]
+          }
+        ],
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 2
+          }
+        ],
+        "temporal": []
+      }
+    ],
+    "lab_group": [
+      {
+        "group_name": "Fierer",
+        "sample_count": 1679,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 1250
+          },
+          {
+            "type": "Soil",
+            "count": 312
+          },
+          {
+            "type": "Plant",
+            "count": 117
+          }
+        ],
+        "pipeline": {
+          "collected": 1679,
+          "dna_extracted": 1485,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2021-01",
+            "count": 85
+          },
+          {
+            "month": "2021-02",
+            "count": 73
+          },
+          {
+            "month": "2021-03",
+            "count": 76
+          },
+          {
+            "month": "2021-04",
+            "count": 79
+          },
+          {
+            "month": "2021-05",
+            "count": 94
+          },
+          {
+            "month": "2021-06",
+            "count": 83
+          },
+          {
+            "month": "2021-07",
+            "count": 81
+          },
+          {
+            "month": "2021-08",
+            "count": 85
+          },
+          {
+            "month": "2021-09",
+            "count": 79
+          },
+          {
+            "month": "2021-10",
+            "count": 89
+          },
+          {
+            "month": "2021-11",
+            "count": 77
+          },
+          {
+            "month": "2021-12",
+            "count": 79
+          },
+          {
+            "month": "2022-06",
+            "count": 106
+          },
+          {
+            "month": "2022-07",
+            "count": 88
+          },
+          {
+            "month": "2023-08",
+            "count": 7
+          },
+          {
+            "month": "2023-10",
+            "count": 7
+          },
+          {
+            "month": "2024-02",
+            "count": 34
+          },
+          {
+            "month": "2024-05",
+            "count": 27
+          }
+        ]
+      },
+      {
+        "group_name": "Kreidenweis",
+        "sample_count": 1263,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 1166
+          },
+          {
+            "type": "Soil",
+            "count": 47
+          },
+          {
+            "type": "Plant",
+            "count": 29
+          },
+          {
+            "type": "Liquid",
+            "count": 21
+          }
+        ],
+        "pipeline": {
+          "collected": 1263,
+          "dna_extracted": 771,
+          "sequenced": 732
+        },
+        "temporal": [
+          {
+            "month": "2020-03",
+            "count": 8
+          },
+          {
+            "month": "2022-01",
+            "count": 28
+          },
+          {
+            "month": "2022-03",
+            "count": 15
+          },
+          {
+            "month": "2022-05",
+            "count": 25
+          },
+          {
+            "month": "2022-06",
+            "count": 167
+          },
+          {
+            "month": "2022-09",
+            "count": 75
+          },
+          {
+            "month": "2022-10",
+            "count": 66
+          },
+          {
+            "month": "2022-12",
+            "count": 5
+          },
+          {
+            "month": "2023-02",
+            "count": 8
+          },
+          {
+            "month": "2023-05",
+            "count": 203
+          },
+          {
+            "month": "2023-06",
+            "count": 428
+          },
+          {
+            "month": "2023-08",
+            "count": 10
+          }
+        ]
+      },
+      {
+        "group_name": "Trivedi",
+        "sample_count": 1102,
+        "sample_types": [
+          {
+            "type": "Plant",
+            "count": 666
+          },
+          {
+            "type": "Soil",
+            "count": 388
+          },
+          {
+            "type": "Air",
+            "count": 47
+          },
+          {
+            "type": "Liquid",
+            "count": 1
+          }
+        ],
+        "pipeline": {
+          "collected": 1102,
+          "dna_extracted": 663,
+          "sequenced": 661
+        },
+        "temporal": [
+          {
+            "month": "2020-03",
+            "count": 11
+          },
+          {
+            "month": "2022-03",
+            "count": 1
+          },
+          {
+            "month": "2022-09",
+            "count": 246
+          },
+          {
+            "month": "2022-10",
+            "count": 444
+          },
+          {
+            "month": "2023-05",
+            "count": 108
+          },
+          {
+            "month": "2023-06",
+            "count": 292
+          }
+        ]
+      },
+      {
+        "group_name": "Farmer",
+        "sample_count": 304,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 304
+          }
+        ],
+        "pipeline": {
+          "collected": 304,
+          "dna_extracted": 236,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2024-04",
+            "count": 6
+          },
+          {
+            "month": "2024-05",
+            "count": 70
+          },
+          {
+            "month": "2024-08",
+            "count": 16
+          },
+          {
+            "month": "2024-09",
+            "count": 52
+          },
+          {
+            "month": "2024-10",
+            "count": 32
+          },
+          {
+            "month": "2024-11",
+            "count": 60
+          },
+          {
+            "month": "2025-02",
+            "count": 68
+          }
+        ]
+      },
+      {
+        "group_name": "Borlee",
+        "sample_count": 121,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 63
+          },
+          {
+            "type": "Plant",
+            "count": 58
+          }
+        ],
+        "pipeline": {
+          "collected": 121,
+          "dna_extracted": 0,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2023-06",
+            "count": 45
+          },
+          {
+            "month": "2024-06",
+            "count": 31
+          },
+          {
+            "month": "2024-07",
+            "count": 45
+          }
+        ]
+      },
+      {
+        "group_name": "Stewart",
+        "sample_count": 76,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 76
+          }
+        ],
+        "pipeline": {
+          "collected": 76,
+          "dna_extracted": 76,
+          "sequenced": 76
+        },
+        "temporal": [
+          {
+            "month": "2022-11",
+            "count": 7
+          },
+          {
+            "month": "2023-01",
+            "count": 1
+          },
+          {
+            "month": "2023-06",
+            "count": 8
+          },
+          {
+            "month": "2023-07",
+            "count": 23
+          },
+          {
+            "month": "2023-09",
+            "count": 23
+          },
+          {
+            "month": "2023-10",
+            "count": 14
+          }
+        ]
+      },
+      {
+        "group_name": "Magzamen",
+        "sample_count": 13,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 12
+          },
+          {
+            "type": "Unknown",
+            "count": 1
+          }
+        ],
+        "pipeline": {
+          "collected": 13,
+          "dna_extracted": 0,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2024-08",
+            "count": 13
+          }
+        ]
+      },
+      {
+        "group_name": "Hancock",
+        "sample_count": 5,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 3
+          },
+          {
+            "type": "Liquid",
+            "count": 2
+          }
+        ],
+        "pipeline": {
+          "collected": 5,
+          "dna_extracted": 5,
+          "sequenced": 0
+        },
+        "temporal": [
+          {
+            "month": "2025-06",
+            "count": 2
+          },
+          {
+            "month": "2025-07",
+            "count": 3
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BROADN Aerobiome Research Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    /* Design tokens — CSS custom properties */
+    :root {
+      --color-stone-50: #f5f5f4;
+      --color-stone-200: #e7e5e4;
+      --color-stone-300: #d6d3d1;
+      --color-stone-400: #a8a29e;
+      --color-green-800: #166534;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--color-stone-50); }
+    ::-webkit-scrollbar-thumb { background: var(--color-stone-300); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-stone-400); }
+
+    /* Nav active link */
+    .nav-link.active {
+      border-bottom: 2px solid var(--color-green-800);
+      color: var(--color-green-800);
+      font-weight: 600;
+    }
+
+    /* Chart containers */
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 350px;
+    }
+    @media (min-width: 768px) {
+      .chart-wrap { height: 400px; }
+    }
+
+    /* Map container */
+    #map {
+      height: 400px;
+      width: 100%;
+      border-radius: 0.75rem;
+    }
+    @media (min-width: 768px) {
+      #map { height: 450px; }
+    }
+
+    /* Pulse skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--color-stone-200) 25%, var(--color-stone-50) 50%, var(--color-stone-200) 75%);
+      background-size: 200% 100%;
+      animation: pulse-bg 1.5s infinite;
+      border-radius: 0.5rem;
+    }
+    @keyframes pulse-bg {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-900 antialiased flex flex-col min-h-screen">
+
+  <!-- STICKY NAV -->
+  <nav class="bg-white shadow-sm sticky top-0 z-50" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold text-green-800 tracking-tight select-none">&#10044; BROADN</span>
+          <span class="text-sm text-stone-500 hidden sm:block">Aerobiome Sample Dashboard</span>
+        </div>
+        <div class="flex items-center gap-1 sm:gap-4" role="list">
+          <a href="#overview"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="overview"   role="listitem">Overview</a>
+          <a href="#geography"  class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="geography"  role="listitem">Geography</a>
+          <a href="#pipeline"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="pipeline"   role="listitem">Pipeline</a>
+          <a href="#explorer"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="explorer"   role="listitem">Explorer</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO BANNER -->
+  <header class="bg-green-900 text-white py-14 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Exploring the Atmosphere's Hidden Microbiome</h1>
+      <p class="text-green-200 text-lg max-w-3xl mb-6">
+        The BROADN project (Bioaerosol Research and Observation of Atmospheric Dispersal Networks) is an NSF-funded initiative at Colorado State University investigating airborne microbial communities across diverse ecosystems. Our OneHealth mission connects atmospheric science, ecology, and public health.
+      </p>
+      <div class="flex flex-wrap gap-4" aria-label="Quick statistics">
+        <div class="bg-green-800 rounded-lg px-4 py-2 text-sm font-semibold" id="hero-samples">—</div>
+        <div class="bg-green-800 rounded-lg px-4 py-2 text-sm font-semibold" id="hero-sites">—</div>
+        <div class="bg-green-800 rounded-lg px-4 py-2 text-sm font-semibold" id="hero-since">—</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- LOADING SKELETON (shown while fetching) -->
+  <div id="loading-state" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" aria-live="polite" aria-label="Loading dashboard data">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div class="skeleton h-28"></div>
+      <div class="skeleton h-28"></div>
+      <div class="skeleton h-28"></div>
+      <div class="skeleton h-28"></div>
+    </div>
+    <div class="skeleton h-80 mb-8"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <div class="skeleton h-96 lg:col-span-2"></div>
+      <div class="skeleton h-96"></div>
+    </div>
+    <div class="skeleton h-64 mb-8"></div>
+    <div class="skeleton h-80"></div>
+  </div>
+
+  <!-- ERROR STATE (shown on fetch failure) -->
+  <div id="error-state" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" role="alert" aria-live="assertive">
+    <div class="bg-stone-100 border border-stone-200 rounded-xl p-8 text-center">
+      <p class="text-stone-600 text-lg font-medium mb-2">Data temporarily unavailable.</p>
+      <p class="text-stone-500">Please refresh the page to try again. If the problem persists, check that <code class="bg-stone-200 px-1 rounded">data/data.json</code> is accessible.</p>
+    </div>
+  </div>
+
+  <!-- MOBILE SIDEBAR OVERLAY -->
+  <div id="slice-sidebar-overlay"
+    class="hidden"
+    aria-hidden="true"></div>
+
+  <!-- MAIN CONTENT (hidden until data loads) -->
+  <main id="main-content" class="hidden flex-grow" aria-label="Dashboard content">
+    <div id="dashboard-layout" class="flex flex-col lg:flex-row gap-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+      <!-- SLICE SIDEBAR -->
+      <aside id="slice-sidebar"
+        class="hidden lg:flex lg:flex-col w-64 flex-shrink-0 sticky top-16 self-start max-h-[calc(100vh-4rem)] overflow-y-auto border-r border-stone-200"
+        aria-label="Slice filter panel">
+
+        <!-- Mobile close button (visible only on mobile, inside drawer) -->
+        <button type="button"
+          id="slice-sidebar-close"
+          class="block lg:hidden self-end mb-4 p-1 rounded-md text-stone-500 hover:text-stone-700 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-green-700"
+          aria-label="Close filter panel">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <!-- Sidebar content wrapper -->
+        <div class="flex flex-col gap-2 p-4">
+          <!-- Section header -->
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-1 px-1">Slice by</p>
+
+          <!-- Category navigation -->
+          <nav aria-label="Slice filter categories">
+            <ul role="list" id="slice-category-list">
+
+              <!-- Project category -->
+              <li role="listitem">
+                <button type="button"
+                  id="slice-btn-project"
+                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  aria-expanded="false"
+                  aria-controls="project-group-list">
+                  Project
+                </button>
+                <ul id="project-group-list"
+                  class="hidden mt-1 ml-2 space-y-0.5 max-h-64 overflow-y-auto"
+                  role="listbox"
+                  aria-label="Project filter options"></ul>
+              </li>
+
+              <!-- Location / Hub category -->
+              <li role="listitem">
+                <button type="button"
+                  id="slice-btn-location"
+                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  aria-expanded="false"
+                  aria-controls="location-group-list">
+                  Location / Hub
+                </button>
+                <ul id="location-group-list"
+                  class="hidden mt-1 ml-2 space-y-0.5 max-h-64 overflow-y-auto"
+                  role="listbox"
+                  aria-label="Location filter options"></ul>
+              </li>
+
+              <!-- Lab Group category -->
+              <li role="listitem">
+                <button type="button"
+                  id="slice-btn-labgroup"
+                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  aria-expanded="false"
+                  aria-controls="labgroup-group-list">
+                  Lab Group
+                </button>
+                <ul id="labgroup-group-list"
+                  class="hidden mt-1 ml-2 space-y-0.5 max-h-64 overflow-y-auto"
+                  role="listbox"
+                  aria-label="Lab Group filter options"></ul>
+              </li>
+
+            </ul>
+          </nav>
+
+          <!-- Active filter label -->
+          <p id="slice-active-label"
+            class="hidden mt-3 px-3 text-xs text-stone-500"></p>
+
+          <!-- Clear filter button -->
+          <button type="button"
+            id="slice-clear-btn"
+            class="hidden mt-4 w-full px-3 py-2 rounded-lg border border-stone-300 text-sm font-medium text-stone-600 bg-white hover:bg-stone-50 hover:text-stone-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-1 transition-colors"
+            aria-label="Clear active slice filter">
+            Clear filter
+          </button>
+        </div>
+      </aside>
+
+      <!-- DASHBOARD BODY -->
+      <div id="dashboard-body" class="flex-grow min-w-0 space-y-16">
+
+        <!-- Mobile drawer trigger (visible only on mobile) -->
+        <button type="button"
+          id="slice-drawer-trigger"
+          class="block lg:hidden mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-stone-300 bg-white text-sm font-medium text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 shadow-sm"
+          aria-label="Open slice filter panel"
+          aria-expanded="false"
+          aria-controls="slice-sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h18M3 8h12M3 12h9" />
+          </svg>
+          Filter by...
+        </button>
+
+        <!-- SLICE VIEW CONTAINER (hidden by default; shown when a group is selected) -->
+        <div id="slice-view-container"
+          class="hidden bg-stone-50 rounded-2xl border border-stone-200 p-6 mb-0 scroll-mt-20"
+          tabindex="-1">
+
+          <!-- Slice view header -->
+          <div class="slice-view-header mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <h2 id="slice-view-title" class="text-2xl font-extrabold text-stone-900"></h2>
+            <p id="slice-view-subtitle" class="text-sm text-stone-500"></p>
+          </div>
+
+          <!-- Project slice view -->
+          <div id="slice-project-view" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-project-grid">
+              <!-- Chart cards injected by 004b -->
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
+                <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type for this project.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceProjectTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected project" role="img"></canvas>
+                </div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
+                <p class="text-sm text-stone-500 mb-4">Sample counts at each pipeline stage for this project.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceProjectPipelineChart" aria-label="Horizontal bar chart showing pipeline stage counts for selected project" role="img"></canvas>
+                </div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 lg:col-span-2">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
+                <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume for this project.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceProjectTemporalChart" aria-label="Line chart showing monthly sampling activity for selected project" role="img"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location slice view -->
+          <div id="slice-location-view" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-location-grid">
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Sub-Location Breakdown</h3>
+                <p class="text-sm text-stone-500 mb-4">Sample count by sub-site within this location.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceLocationSubsitesChart" aria-label="Horizontal bar chart showing sample counts per sub-location" role="img"></canvas>
+                </div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
+                <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type at this location.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceLocationTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected location" role="img"></canvas>
+                </div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 lg:col-span-2">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
+                <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume at this location.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceLocationTemporalChart" aria-label="Line chart showing monthly sampling activity for selected location" role="img"></canvas>
+                </div>
+              </div>
+              <!-- Optional time-of-day chart injected by 004b if data present -->
+              <div id="slice-location-timeofday-card" class="hidden bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Time-of-Day Distribution</h3>
+                <p class="text-sm text-stone-500 mb-4">Sample collection frequency by time period.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceLocationTimeDistChart" aria-label="Polar area chart showing sample counts by time of day for selected location" role="img"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lab Group slice view -->
+          <div id="slice-labgroup-view" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-labgroup-grid">
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
+                <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type for this lab group.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceLabGroupTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected lab group" role="img"></canvas>
+                </div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
+                <p class="text-sm text-stone-500 mb-4">Sample counts at each pipeline stage for this lab group.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceLabGroupPipelineChart" aria-label="Horizontal bar chart showing pipeline stage counts for selected lab group" role="img"></canvas>
+                </div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 lg:col-span-2">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
+                <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume for this lab group.</p>
+                <div class="chart-wrap">
+                  <canvas id="sliceLabGroupTemporalChart" aria-label="Line chart showing monthly sampling activity for selected lab group" role="img"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /#slice-view-container -->
+
+        <!-- OVERVIEW -->
+        <section id="overview" class="scroll-mt-20">
+          <div class="mb-8">
+            <h2 class="text-3xl font-extrabold text-stone-900 mb-2">Overview</h2>
+            <p class="text-stone-600 text-lg max-w-3xl">High-level summary of field collection activity across all BROADN sites. KPIs reflect total field samples in the database.</p>
+          </div>
+
+          <!-- KPI CARDS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 flex items-center gap-4">
+              <div class="p-3 rounded-full bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#128200;</div>
+              <div>
+                <p class="text-sm font-medium text-stone-500">Field Samples</p>
+                <p class="text-2xl font-bold text-stone-900" id="kpi-field-samples">—</p>
+              </div>
+            </div>
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 flex items-center gap-4">
+              <div class="p-3 rounded-full bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#127759;</div>
+              <div>
+                <p class="text-sm font-medium text-stone-500">Unique Sites</p>
+                <p class="text-2xl font-bold text-stone-900" id="kpi-unique-sites">—</p>
+              </div>
+            </div>
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 flex items-center gap-4">
+              <div class="p-3 rounded-full bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#128197;</div>
+              <div>
+                <p class="text-sm font-medium text-stone-500">Active Since</p>
+                <p class="text-2xl font-bold text-stone-900" id="kpi-active-since">—</p>
+              </div>
+            </div>
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 flex items-center gap-4">
+              <div class="p-3 rounded-full bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#129514;</div>
+              <div>
+                <p class="text-sm font-medium text-stone-500">Sequenced</p>
+                <p class="text-2xl font-bold text-stone-900" id="kpi-sequenced">—</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TEMPORAL LINE CHART -->
+          <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity Over Time</h3>
+            <p class="text-sm text-stone-500 mb-6">Monthly field sample collection volume across all sites, 2020–2025.</p>
+            <div class="chart-wrap">
+              <canvas id="temporalChart"
+                aria-label="Line chart showing monthly sample counts from 2020 to 2025"
+                role="img"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- GEOGRAPHY -->
+        <section id="geography" class="scroll-mt-20">
+          <div class="mb-8">
+            <h2 class="text-3xl font-extrabold text-stone-900 mb-2">Geography</h2>
+            <p class="text-stone-600 text-lg max-w-3xl">Spatial distribution of collection sites across the United States. Marker size is proportional to sample count at each sub-site.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- MAP (2/3 width on desktop) -->
+            <div class="lg:col-span-2 bg-white border border-stone-200 rounded-xl shadow-sm p-4">
+              <h3 class="text-lg font-bold text-stone-800 mb-3">Collection Sites</h3>
+              <div id="map"
+                aria-label="Map of BROADN collection sites across Colorado and adjacent states"
+                role="application"></div>
+            </div>
+
+            <!-- SAMPLES BY SITE BAR (1/3 width on desktop) -->
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Samples by Site</h3>
+              <p class="text-sm text-stone-500 mb-4">Top sites by total field sample count, sorted descending.</p>
+              <div class="chart-wrap">
+                <canvas id="bySiteChart"
+                  aria-label="Horizontal bar chart showing sample counts per collection site, sorted by count descending"
+                  role="img"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SAMPLE BREAKDOWN / PIPELINE -->
+        <section id="pipeline" class="scroll-mt-20">
+          <div class="mb-8">
+            <h2 class="text-3xl font-extrabold text-stone-900 mb-2">Sample Breakdown</h2>
+            <p class="text-stone-600 text-lg max-w-3xl">Composition of the sample collection by material type, and the current state of the processing pipeline from collection through sequencing.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- SAMPLE TYPE DONUT -->
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Type Distribution</h3>
+              <p class="text-sm text-stone-500 mb-4">Proportion of field samples by material type.</p>
+              <div class="chart-wrap">
+                <canvas id="donutChart"
+                  aria-label="Donut chart showing proportion of samples by type: Air, Plant, Soil, Liquid, Unknown"
+                  role="img"></canvas>
+              </div>
+            </div>
+
+            <!-- PIPELINE BAR -->
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
+              <p class="text-sm text-stone-500 mb-4">Cumulative counts at each stage: Collected → DNA Extracted → Sequenced.</p>
+              <div class="chart-wrap">
+                <canvas id="pipelineChart"
+                  aria-label="Horizontal bar chart showing sample counts at three pipeline stages: Collected, DNA Extracted, and Sequenced"
+                  role="img"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DATA EXPLORER -->
+        <section id="explorer" class="scroll-mt-20 pb-8">
+          <div class="mb-8">
+            <h2 class="text-3xl font-extrabold text-stone-900 mb-2">Data Explorer</h2>
+            <p class="text-stone-600 text-lg max-w-3xl">Browse recent field samples. Filter by sample category, collection site, or year of collection.</p>
+          </div>
+
+          <div class="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden">
+            <!-- FILTER CONTROLS -->
+            <div class="p-4 border-b border-stone-200 bg-stone-50 flex flex-wrap gap-4 items-end">
+              <div>
+                <label for="filter-category" class="block text-xs font-medium text-stone-700 mb-1">Sample Category</label>
+                <select id="filter-category"
+                  class="bg-white border border-stone-300 text-stone-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
+                  <option value="">All Categories</option>
+                </select>
+              </div>
+              <div>
+                <label for="filter-site" class="block text-xs font-medium text-stone-700 mb-1">Collection Site</label>
+                <select id="filter-site"
+                  class="bg-white border border-stone-300 text-stone-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
+                  <option value="">All Sites</option>
+                </select>
+              </div>
+              <div>
+                <label for="filter-year" class="block text-xs font-medium text-stone-700 mb-1">Year</label>
+                <select id="filter-year"
+                  class="bg-white border border-stone-300 text-stone-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-28">
+                  <option value="">All Years</option>
+                </select>
+              </div>
+              <span class="text-sm text-stone-500 ml-auto self-center" id="table-row-count"></span>
+            </div>
+
+            <!-- TABLE -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left text-stone-600" aria-label="Recent field samples">
+                <thead class="text-xs text-stone-700 uppercase bg-stone-100">
+                  <tr>
+                    <th scope="col" class="px-6 py-3">Sample ID</th>
+                    <th scope="col" class="px-6 py-3">Date</th>
+                    <th scope="col" class="px-6 py-3">Site</th>
+                    <th scope="col" class="px-6 py-3">Type</th>
+                    <th scope="col" class="px-6 py-3">Category</th>
+                  </tr>
+                </thead>
+                <tbody id="explorer-tbody" class="divide-y divide-stone-200"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /#dashboard-body -->
+    </div><!-- /#dashboard-layout -->
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-stone-900 text-stone-400 py-10 px-4 sm:px-6 lg:px-8 mt-auto">
+    <div class="max-w-7xl mx-auto text-center text-sm space-y-2">
+      <p class="text-stone-200 font-semibold text-base">BROADN Aerobiome Research Dashboard</p>
+      <p>Colorado State University &mdash; Department of Atmospheric Science</p>
+      <p class="text-stone-500">
+        This material is based upon work supported by the
+        <strong class="text-stone-400">National Science Foundation (NSF)</strong>.
+        Any opinions, findings, and conclusions or recommendations expressed are those of the authors
+        and do not necessarily reflect the views of NSF.
+      </p>
+      <p class="text-stone-500">
+        Data updated: <span id="footer-updated" class="text-stone-400">—</span>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // =============================================================================
+    // CONSTANTS — design tokens and static maps
+    // =============================================================================
+
+    // Rule B: Static Tailwind class map for sample type badges.
+    // Full class string literals only — no dynamic partial construction.
+    const SAMPLE_TYPE_CLASSES = {
+      'Air':     'bg-green-100 text-green-800',
+      'Plant':   'bg-emerald-100 text-emerald-800',
+      'Soil':    'bg-amber-100 text-amber-800',
+      'Liquid':  'bg-blue-100 text-blue-800',
+      'Unknown': 'bg-stone-100 text-stone-600'
+    };
+
+    const CATEGORY_CLASSES = {
+      'Field Sample': 'bg-green-100 text-green-800',
+      'Derivative':   'bg-purple-100 text-purple-800',
+      'Other':        'bg-stone-100 text-stone-600'
+    };
+
+    // Rule A: Chart.js and Leaflet hex values — permitted ONLY inside dataset/marker
+    // configuration objects (Chart.js datasets arrays, Leaflet circleMarker options).
+    const CHART_COLORS = {
+      line:             '#166534',
+      lineArea:         'rgba(22,101,52,0.1)',
+      tooltip:          'rgba(28,25,23,0.9)',
+      gridLine:         '#e7e5e4',
+      axisLabel:        '#78716c',
+      donutBorder:      '#ffffff',
+      pipeline:         ['#166534', '#16a34a', '#4ade80'],
+      sampleTypes:      ['#166534', '#047857', '#d97706', '#2563eb', '#a8a29e'],
+      siteBar:          '#15803d',
+      pointBg:          '#166534',
+      mapMarkerFill:    '#166534',
+      mapMarkerBorder:  '#14532d',
+      // Slice panel chart colors — Section 7 of design spec
+      sliceSampleTypes:  ['#166534', '#0f766e', '#b45309', '#1d4ed8', '#78716c'],
+      slicePipeline:     ['#166534', '#0f766e', '#6d28d9'],
+      sliceTemporalLine: '#0f766e',
+      sliceTemporalArea: 'rgba(15,118,110,0.1)',
+      sliceLocationBar:  '#0369a1',
+      sliceTimeOfDay:    ['#166534', '#0f766e', '#b45309', '#6d28d9']
+    };
+
+    // =============================================================================
+    // SLICE PANEL CONSTANTS
+    // =============================================================================
+
+    // Single source of truth for category label strings.
+    // All button labels, state comparisons, and renderView() dispatch branches
+    // MUST reference this constant — no inline string duplicates elsewhere.
+    const SLICE_CATEGORIES = {
+      PROJECT:   'Project',
+      LOCATION:  'Location / Hub',
+      LAB_GROUP: 'Lab Group'
+    };
+
+    // =============================================================================
+    // STATE
+    // =============================================================================
+    let appData = null;
+    let chartInstances = {};
+
+    // Slice panel state — single active filter only
+    const sliceState = {
+      activeCategory: null,  // null | SLICE_CATEGORIES.PROJECT | SLICE_CATEGORIES.LOCATION | SLICE_CATEGORIES.LAB_GROUP
+      activeGroup: null      // null | string (project_id / site_code / group_name)
+    };
+
+    // =============================================================================
+    // HELPERS
+    // =============================================================================
+    function formatDate(isoString) {
+      try {
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return isoString;
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      } catch (_) {
+        return isoString;
+      }
+    }
+
+    function formatMonth(yyyyMm) {
+      try {
+        const [year, month] = yyyyMm.split('-');
+        const d = new Date(Number(year), Number(month) - 1, 1);
+        return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+      } catch (_) {
+        return yyyyMm;
+      }
+    }
+
+    function destroyChart(key) {
+      if (chartInstances[key]) {
+        chartInstances[key].destroy();
+        chartInstances[key] = null;
+      }
+    }
+
+    // Shared tooltip callback: percentage label for doughnut/pie charts
+    function tooltipLabelPct(ctx) {
+      var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0);
+      var pct = total > 0 ? Math.round((ctx.parsed / total) * 100) : 0;
+      return ' ' + ctx.label + ': ' + ctx.parsed.toLocaleString() + ' (' + pct + '%)';
+    }
+
+    // Shared tooltip callback: sample count label for horizontal bar charts
+    function tooltipLabelSamples(ctx) {
+      return ' ' + ctx.parsed.x.toLocaleString() + ' samples';
+    }
+
+    // =============================================================================
+    // KPI CARDS
+    // =============================================================================
+    function renderKPIs(kpis) {
+      document.getElementById('kpi-field-samples').textContent = kpis.field_samples.toLocaleString();
+      document.getElementById('kpi-unique-sites').textContent  = kpis.unique_sites.toLocaleString();
+      document.getElementById('kpi-active-since').textContent  = kpis.active_since;
+      document.getElementById('kpi-sequenced').textContent     = kpis.sequenced.toLocaleString();
+
+      document.getElementById('hero-samples').textContent = kpis.field_samples.toLocaleString() + ' field samples';
+      document.getElementById('hero-sites').textContent   = kpis.unique_sites + ' collection sites';
+      document.getElementById('hero-since').textContent   = 'Active since ' + kpis.active_since;
+    }
+
+    // =============================================================================
+    // TEMPORAL LINE CHART
+    // =============================================================================
+    function renderTemporalChart(temporal) {
+      destroyChart('temporal');
+      const ctx = document.getElementById('temporalChart').getContext('2d');
+      const labels = temporal.map(function(d) { return formatMonth(d.month); });
+      const counts = temporal.map(function(d) { return d.count; });
+
+      chartInstances.temporal = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Samples Collected',
+            data: counts,
+            borderColor: CHART_COLORS.line,
+            backgroundColor: CHART_COLORS.lineArea,
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: CHART_COLORS.pointBg,
+            pointRadius: 3,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              padding: 10,
+              titleFont: { size: 12 },
+              bodyFont: { size: 12 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: CHART_COLORS.gridLine },
+              title: { display: true, text: 'Samples', color: CHART_COLORS.axisLabel, font: { size: 11 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 18, font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // =============================================================================
+    // SAMPLE TYPE DONUT CHART
+    // =============================================================================
+    function renderDonutChart(sampleTypes) {
+      destroyChart('donut');
+      const ctx = document.getElementById('donutChart').getContext('2d');
+      const labels = sampleTypes.map(function(d) { return d.type; });
+      const counts = sampleTypes.map(function(d) { return d.count; });
+
+      chartInstances.donut = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: counts,
+            backgroundColor: CHART_COLORS.sampleTypes,
+            borderWidth: 2,
+            borderColor: CHART_COLORS.donutBorder
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } }
+            },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: tooltipLabelPct
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // =============================================================================
+    // PIPELINE HORIZONTAL BAR CHART
+    // =============================================================================
+    function renderPipelineChart(pipeline) {
+      destroyChart('pipeline');
+      const ctx = document.getElementById('pipelineChart').getContext('2d');
+
+      chartInstances.pipeline = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Collected', 'DNA Extracted', 'Sequenced'],
+          datasets: [{
+            label: 'Sample Count',
+            data: [pipeline.collected, pipeline.dna_extracted, pipeline.sequenced],
+            backgroundColor: CHART_COLORS.pipeline,
+            borderWidth: 0,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: tooltipLabelSamples
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: { color: CHART_COLORS.gridLine },
+              ticks: {
+                callback: function(val) {
+                  return val >= 1000 ? (val / 1000).toFixed(1) + 'k' : val;
+                }
+              }
+            },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // =============================================================================
+    // SAMPLES BY SITE HORIZONTAL BAR CHART
+    // =============================================================================
+    function renderBySiteChart(bySite) {
+      destroyChart('bySite');
+      const ctx = document.getElementById('bySiteChart').getContext('2d');
+
+      // Already sorted descending in data.json, but sort defensively
+      var sorted = bySite.slice().sort(function(a, b) { return b.count - a.count; });
+
+      var labels = sorted.map(function(d) { return d.code || d.site; });
+      var counts = sorted.map(function(d) { return d.count; });
+      // Full name for tooltip
+      var names  = sorted.map(function(d) { return d.site; });
+
+      chartInstances.bySite = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Samples',
+            data: counts,
+            backgroundColor: CHART_COLORS.siteBar,
+            borderWidth: 0,
+            borderRadius: 3
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                title: function(items) {
+                  return names[items[0].dataIndex] || items[0].label;
+                },
+                label: tooltipLabelSamples
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: { color: CHART_COLORS.gridLine },
+              ticks: {
+                callback: function(val) {
+                  return val >= 1000 ? (val / 1000).toFixed(1) + 'k' : val;
+                },
+                font: { size: 10 }
+              }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // =============================================================================
+    // LEAFLET MAP
+    // =============================================================================
+    var leafletMap = null;
+
+    function renderMap(sites) {
+      if (leafletMap) {
+        leafletMap.remove();
+        leafletMap = null;
+      }
+
+      leafletMap = L.map('map', { zoomControl: true }).setView([39.5, -98.35], 4);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
+      }).addTo(leafletMap);
+
+      sites.forEach(function(site) {
+        // Skip sites with null coordinates
+        if (site.lat === null || site.lon === null) return;
+
+        var radius = Math.max(6, Math.min(22, Math.sqrt(site.count) * 2));
+        var marker = L.circleMarker([site.lat, site.lon], {
+          radius: radius,
+          fillColor: CHART_COLORS.mapMarkerFill,
+          color: CHART_COLORS.mapMarkerBorder,
+          weight: 1.5,
+          opacity: 0.9,
+          fillOpacity: 0.55
+        });
+
+        var typesLabel = site.primary_types && site.primary_types.length
+          ? site.primary_types.join(', ')
+          : 'N/A';
+
+        marker.bindTooltip(
+          '<strong class="block">' + site.name + '</strong>' +
+          'Samples: <strong>' + site.count.toLocaleString() + '</strong><br>' +
+          'Types: ' + typesLabel,
+          { sticky: true, direction: 'top', offset: [0, -8] }
+        );
+
+        marker.addTo(leafletMap);
+      });
+    }
+
+    // =============================================================================
+    // DATA EXPLORER TABLE
+    // =============================================================================
+    function buildFilterOptions(samples) {
+      var cats   = new Set();
+      var sites  = new Set();
+      var years  = new Set();
+
+      samples.forEach(function(s) {
+        if (s.category) cats.add(s.category);
+        if (s.site)     sites.add(s.site);
+        if (s.date)     years.add(s.date.slice(0, 4));
+      });
+
+      function populateSelect(id, values) {
+        var sel = document.getElementById(id);
+        Array.from(values).sort().forEach(function(v) {
+          var opt = document.createElement('option');
+          opt.value = v;
+          opt.textContent = v;
+          sel.appendChild(opt);
+        });
+      }
+
+      populateSelect('filter-category', cats);
+      populateSelect('filter-site', sites);
+
+      // Populate year in descending order
+      var yearSel = document.getElementById('filter-year');
+      Array.from(years).sort().reverse().forEach(function(y) {
+        var opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        yearSel.appendChild(opt);
+      });
+    }
+
+    function getTypeBadgeClasses(type) {
+      return SAMPLE_TYPE_CLASSES[type] || 'bg-stone-100 text-stone-600';
+    }
+
+    function getCategoryBadgeClasses(cat) {
+      return CATEGORY_CLASSES[cat] || 'bg-stone-100 text-stone-600';
+    }
+
+    function renderTable(samples) {
+      var cat   = document.getElementById('filter-category').value;
+      var site  = document.getElementById('filter-site').value;
+      var year  = document.getElementById('filter-year').value;
+
+      var filtered = samples.filter(function(s) {
+        var matchCat  = !cat  || s.category === cat;
+        var matchSite = !site || s.site === site;
+        var matchYear = !year || (s.date && s.date.startsWith(year));
+        return matchCat && matchSite && matchYear;
+      });
+
+      var tbody = document.getElementById('explorer-tbody');
+      tbody.innerHTML = '';
+
+      document.getElementById('table-row-count').textContent =
+        'Showing ' + filtered.length + ' of ' + samples.length + ' samples';
+
+      if (filtered.length === 0) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="5" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
+        tbody.appendChild(tr);
+        return;
+      }
+
+      filtered.forEach(function(row) {
+        var tr = document.createElement('tr');
+        tr.className = 'bg-white hover:bg-stone-50 transition-colors';
+
+        var typeCls = getTypeBadgeClasses(row.type);
+        var catCls  = getCategoryBadgeClasses(row.category);
+
+        tr.innerHTML =
+          '<th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">' + escapeHtml(row.id) + '</th>' +
+          '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.date) + '</td>' +
+          '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.site) + '</td>' +
+          '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + typeCls + '">' + escapeHtml(row.type) + '</span></td>' +
+          '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>';
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function escapeHtml(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // =============================================================================
+    // FOOTER DATE
+    // =============================================================================
+    function renderFooterDate(generated) {
+      document.getElementById('footer-updated').textContent = formatDate(generated);
+    }
+
+    // =============================================================================
+    // SCROLL SPY
+    // =============================================================================
+    function initScrollSpy() {
+      var sections = document.querySelectorAll('section[id]');
+      var navLinks = document.querySelectorAll('.nav-link[data-section]');
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var id = entry.target.getAttribute('id');
+            navLinks.forEach(function(link) {
+              link.classList.remove('active');
+              if (link.getAttribute('data-section') === id) {
+                link.classList.add('active');
+              }
+            });
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+      sections.forEach(function(s) { observer.observe(s); });
+    }
+
+    // =============================================================================
+    // SLICE SIDEBAR — GROUP LIST POPULATION
+    // =============================================================================
+
+    /**
+     * Populate a group list <ul> with <li> items from an array.
+     * labelKey: property name for the display label
+     * idKey: property name used as the group identifier in sliceState.activeGroup
+     * countKey: property name for sample_count
+     */
+    function populateGroupList(listEl, items, labelKey, idKey, countKey) {
+      listEl.innerHTML = '';
+      items.forEach(function(item) {
+        var li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('aria-selected', 'false');
+        li.setAttribute('data-group-id', item[idKey]);
+        li.className = 'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-stone-600 cursor-pointer hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset';
+
+        var labelSpan = document.createElement('span');
+        labelSpan.textContent = item[labelKey];
+        labelSpan.className = 'flex-1 min-w-0 truncate';
+
+        var countSpan = document.createElement('span');
+        countSpan.setAttribute('aria-hidden', 'true');
+        countSpan.className = 'ml-auto text-xs text-stone-400 flex-shrink-0';
+        countSpan.textContent = item[countKey] != null ? item[countKey].toLocaleString() : '';
+
+        li.appendChild(labelSpan);
+        li.appendChild(countSpan);
+        listEl.appendChild(li);
+      });
+    }
+
+    // =============================================================================
+    // SLICE PANEL — DESTROY ALL SLICE CHART INSTANCES
+    // =============================================================================
+
+    var SLICE_CHART_KEYS = [
+      'sliceProjectTypesChart',
+      'sliceProjectPipelineChart',
+      'sliceProjectTemporalChart',
+      'sliceLocationSubsitesChart',
+      'sliceLocationTypesChart',
+      'sliceLocationTemporalChart',
+      'sliceLocationTimeDistChart',
+      'sliceLabGroupTypesChart',
+      'sliceLabGroupPipelineChart',
+      'sliceLabGroupTemporalChart'
+    ];
+
+    function destroyAllSliceCharts() {
+      SLICE_CHART_KEYS.forEach(function(key) {
+        destroyChart(key);
+      });
+    }
+
+    // =============================================================================
+    // SLICE PANEL — SHARED TEMPORAL LINE CHART OPTIONS BUILDER
+    // =============================================================================
+
+    function buildTemporalChartOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: CHART_COLORS.tooltip,
+            padding: 10,
+            titleFont: { size: 12 },
+            bodyFont: { size: 12 }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: CHART_COLORS.gridLine },
+            title: { display: true, text: 'Samples', color: CHART_COLORS.axisLabel, font: { size: 11 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 18, font: { size: 10 } }
+          }
+        }
+      };
+    }
+
+    // =============================================================================
+    // SLICE PANEL — NO-DATA FALLBACK HELPER
+    // =============================================================================
+
+    function showSliceNoData(gridEl, message) {
+      gridEl.classList.add('hidden');
+      var existing = gridEl.parentNode.querySelector('.slice-no-data-msg');
+      if (!existing) {
+        var p = document.createElement('p');
+        p.className = 'slice-no-data-msg py-12 text-center text-stone-500 text-sm';
+        p.textContent = message;
+        gridEl.parentNode.insertBefore(p, gridEl);
+      } else {
+        existing.textContent = message;
+        existing.classList.remove('hidden');
+      }
+    }
+
+    function hideSliceNoData(gridEl) {
+      gridEl.classList.remove('hidden');
+      var existing = gridEl.parentNode.querySelector('.slice-no-data-msg');
+      if (existing) {
+        existing.classList.add('hidden');
+      }
+    }
+
+    // =============================================================================
+    // SLICE PANEL — PROJECT VIEW RENDERER
+    // =============================================================================
+
+    function renderProjectView(groupId) {
+      var grid = document.getElementById('slice-project-grid');
+
+      if (!appData.slice_views || !appData.slice_views.project) {
+        showSliceNoData(grid, 'No data available for the selected project.');
+        return;
+      }
+
+      var entry = appData.slice_views.project.find(function(e) {
+        return e.project_id === groupId;
+      });
+
+      if (!entry) {
+        showSliceNoData(grid, 'No data available for the selected project.');
+        return;
+      }
+
+      hideSliceNoData(grid);
+
+      // Chart 1: Sample Types (Doughnut)
+      destroyChart('sliceProjectTypesChart');
+      var ctx1 = document.getElementById('sliceProjectTypesChart').getContext('2d');
+      chartInstances['sliceProjectTypesChart'] = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+          labels: entry.sample_types.map(function(d) { return d.type; }),
+          datasets: [{
+            data: entry.sample_types.map(function(d) { return d.count; }),
+            backgroundColor: CHART_COLORS.sliceSampleTypes,
+            borderColor: CHART_COLORS.donutBorder,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } }
+            },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: tooltipLabelPct
+              }
+            }
+          }
+        }
+      });
+
+      // Chart 2: Pipeline Progression (Horizontal Bar)
+      destroyChart('sliceProjectPipelineChart');
+      var ctx2 = document.getElementById('sliceProjectPipelineChart').getContext('2d');
+      chartInstances['sliceProjectPipelineChart'] = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: ['Collected', 'DNA Extracted', 'Sequenced'],
+          datasets: [{
+            data: [entry.pipeline.collected, entry.pipeline.dna_extracted, entry.pipeline.sequenced],
+            backgroundColor: CHART_COLORS.slicePipeline,
+            borderWidth: 0,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: tooltipLabelSamples
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: { color: CHART_COLORS.gridLine },
+              ticks: {
+                callback: function(val) {
+                  return val >= 1000 ? (val / 1000).toFixed(1) + 'k' : val;
+                }
+              }
+            },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // Chart 3: Temporal Activity (Line)
+      destroyChart('sliceProjectTemporalChart');
+      var ctx3 = document.getElementById('sliceProjectTemporalChart').getContext('2d');
+      chartInstances['sliceProjectTemporalChart'] = new Chart(ctx3, {
+        type: 'line',
+        data: {
+          labels: entry.temporal.map(function(d) { return formatMonth(d.month); }),
+          datasets: [{
+            label: 'Samples Collected',
+            data: entry.temporal.map(function(d) { return d.count; }),
+            borderColor: CHART_COLORS.sliceTemporalLine,
+            backgroundColor: CHART_COLORS.sliceTemporalArea,
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: CHART_COLORS.sliceTemporalLine,
+            pointRadius: 3,
+            pointHoverRadius: 6
+          }]
+        },
+        options: buildTemporalChartOptions()
+      });
+    }
+
+    // =============================================================================
+    // SLICE PANEL — LOCATION VIEW RENDERER
+    // =============================================================================
+
+    function renderLocationView(groupId) {
+      var grid = document.getElementById('slice-location-grid');
+      var timeDistCard = document.getElementById('slice-location-timeofday-card');
+
+      if (!appData.slice_views || !appData.slice_views.location) {
+        showSliceNoData(grid, 'No data available for the selected location.');
+        timeDistCard.classList.add('hidden');
+        return;
+      }
+
+      var entry = appData.slice_views.location.find(function(e) {
+        return e.site_code === groupId;
+      });
+
+      if (!entry) {
+        showSliceNoData(grid, 'No data available for the selected location.');
+        timeDistCard.classList.add('hidden');
+        return;
+      }
+
+      hideSliceNoData(grid);
+
+      // Chart 1: Sub-Location Sample Counts (Horizontal Bar)
+      destroyChart('sliceLocationSubsitesChart');
+      var ctx1 = document.getElementById('sliceLocationSubsitesChart').getContext('2d');
+      chartInstances['sliceLocationSubsitesChart'] = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: entry.sub_sites.map(function(d) { return d.sub_name; }),
+          datasets: [{
+            data: entry.sub_sites.map(function(d) { return d.count; }),
+            backgroundColor: CHART_COLORS.sliceLocationBar,
+            borderWidth: 0,
+            borderRadius: 3
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: tooltipLabelSamples
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: { color: CHART_COLORS.gridLine },
+              ticks: {
+                callback: function(val) {
+                  return val >= 1000 ? (val / 1000).toFixed(1) + 'k' : val;
+                }
+              }
+            },
+            y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+
+      // Chart 2: Sample Types at Location (Doughnut)
+      destroyChart('sliceLocationTypesChart');
+      var ctx2 = document.getElementById('sliceLocationTypesChart').getContext('2d');
+      chartInstances['sliceLocationTypesChart'] = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: entry.sample_types.map(function(d) { return d.type; }),
+          datasets: [{
+            data: entry.sample_types.map(function(d) { return d.count; }),
+            backgroundColor: CHART_COLORS.sliceSampleTypes,
+            borderColor: CHART_COLORS.donutBorder,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } }
+            },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: tooltipLabelPct
+              }
+            }
+          }
+        }
+      });
+
+      // Chart 3: Temporal Activity (Line)
+      destroyChart('sliceLocationTemporalChart');
+      var ctx3 = document.getElementById('sliceLocationTemporalChart').getContext('2d');
+      chartInstances['sliceLocationTemporalChart'] = new Chart(ctx3, {
+        type: 'line',
+        data: {
+          labels: entry.temporal.map(function(d) { return formatMonth(d.month); }),
+          datasets: [{
+            label: 'Samples Collected',
+            data: entry.temporal.map(function(d) { return d.count; }),
+            borderColor: CHART_COLORS.sliceTemporalLine,
+            backgroundColor: CHART_COLORS.sliceTemporalArea,
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: CHART_COLORS.sliceTemporalLine,
+            pointRadius: 3,
+            pointHoverRadius: 6
+          }]
+        },
+        options: buildTemporalChartOptions()
+      });
+
+      // Chart 4 (Optional): Time of Day Distribution (Polar Area)
+      destroyChart('sliceLocationTimeDistChart');
+      if (entry.time_distribution && entry.time_distribution.length > 0) {
+        timeDistCard.classList.remove('hidden');
+        var ctx4 = document.getElementById('sliceLocationTimeDistChart').getContext('2d');
+        chartInstances['sliceLocationTimeDistChart'] = new Chart(ctx4, {
+          type: 'polarArea',
+          data: {
+            labels: entry.time_distribution.map(function(d) { return d.time_period; }),
+            datasets: [{
+              data: entry.time_distribution.map(function(d) { return d.count; }),
+              backgroundColor: CHART_COLORS.sliceTimeOfDay,
+              borderColor: CHART_COLORS.donutBorder,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { usePointStyle: true, boxWidth: 10, font: { size: 11 } }
+              },
+              tooltip: {
+                backgroundColor: CHART_COLORS.tooltip,
+                callbacks: {
+                  label: function(ctx) {
+                    return ' ' + ctx.label + ': ' + ctx.parsed.r.toLocaleString() + ' samples';
+                  }
+                }
+              }
+            }
+          }
+        });
+      } else {
+        timeDistCard.classList.add('hidden');
+      }
+    }
+
+    // =============================================================================
+    // SLICE PANEL — LAB GROUP VIEW RENDERER
+    // =============================================================================
+
+    function renderLabGroupView(groupId) {
+      var grid = document.getElementById('slice-labgroup-grid');
+
+      // Guard: lab_group empty array — no charts, no errors
+      if (!appData.slice_views || !appData.slice_views.lab_group ||
+          appData.slice_views.lab_group.length === 0) {
+        showSliceNoData(grid, 'Lab Group data is not available.');
+        return;
+      }
+
+      var entry = appData.slice_views.lab_group.find(function(e) {
+        return e.group_name === groupId;
+      });
+
+      if (!entry) {
+        showSliceNoData(grid, 'No data available for the selected lab group.');
+        return;
+      }
+
+      hideSliceNoData(grid);
+
+      // Chart 1: Sample Types (Doughnut)
+      destroyChart('sliceLabGroupTypesChart');
+      var ctx1 = document.getElementById('sliceLabGroupTypesChart').getContext('2d');
+      chartInstances['sliceLabGroupTypesChart'] = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+          labels: entry.sample_types.map(function(d) { return d.type; }),
+          datasets: [{
+            data: entry.sample_types.map(function(d) { return d.count; }),
+            backgroundColor: CHART_COLORS.sliceSampleTypes,
+            borderColor: CHART_COLORS.donutBorder,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } }
+            },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: tooltipLabelPct
+              }
+            }
+          }
+        }
+      });
+
+      // Chart 2: Pipeline Progression (Horizontal Bar)
+      destroyChart('sliceLabGroupPipelineChart');
+      var ctx2 = document.getElementById('sliceLabGroupPipelineChart').getContext('2d');
+      chartInstances['sliceLabGroupPipelineChart'] = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: ['Collected', 'DNA Extracted', 'Sequenced'],
+          datasets: [{
+            data: [entry.pipeline.collected, entry.pipeline.dna_extracted, entry.pipeline.sequenced],
+            backgroundColor: CHART_COLORS.slicePipeline,
+            borderWidth: 0,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: tooltipLabelSamples
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: { color: CHART_COLORS.gridLine },
+              ticks: {
+                callback: function(val) {
+                  return val >= 1000 ? (val / 1000).toFixed(1) + 'k' : val;
+                }
+              }
+            },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // Chart 3: Temporal Activity (Line)
+      destroyChart('sliceLabGroupTemporalChart');
+      var ctx3 = document.getElementById('sliceLabGroupTemporalChart').getContext('2d');
+      chartInstances['sliceLabGroupTemporalChart'] = new Chart(ctx3, {
+        type: 'line',
+        data: {
+          labels: entry.temporal.map(function(d) { return formatMonth(d.month); }),
+          datasets: [{
+            label: 'Samples Collected',
+            data: entry.temporal.map(function(d) { return d.count; }),
+            borderColor: CHART_COLORS.sliceTemporalLine,
+            backgroundColor: CHART_COLORS.sliceTemporalArea,
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: CHART_COLORS.sliceTemporalLine,
+            pointRadius: 3,
+            pointHoverRadius: 6
+          }]
+        },
+        options: buildTemporalChartOptions()
+      });
+    }
+
+    // =============================================================================
+    // SLICE PANEL — RENDER VIEW
+    // =============================================================================
+
+    /**
+     * renderView — central dispatch for slice panel state.
+     * Called after any sliceState mutation.
+     * NEVER calls initDashboard().
+     */
+    function renderView() {
+      var cat   = sliceState.activeCategory;
+      var group = sliceState.activeGroup;
+
+      var sliceContainer  = document.getElementById('slice-view-container');
+      var projectView     = document.getElementById('slice-project-view');
+      var locationView    = document.getElementById('slice-location-view');
+      var labgroupView    = document.getElementById('slice-labgroup-view');
+      var activeLabel     = document.getElementById('slice-active-label');
+      var clearBtn        = document.getElementById('slice-clear-btn');
+      var viewTitle       = document.getElementById('slice-view-title');
+      var viewSubtitle    = document.getElementById('slice-view-subtitle');
+
+      // --- Update category button visual states ---
+      updateCategoryButtonStates();
+
+      // --- Branch on state ---
+
+      // Destroy all existing slice chart instances before any new rendering
+      destroyAllSliceCharts();
+
+      if (cat === null) {
+        // Default view: hide slice container, existing charts already rendered
+        sliceContainer.classList.add('hidden');
+        sliceContainer.classList.remove('block');
+
+        projectView.classList.add('hidden');
+        locationView.classList.add('hidden');
+        labgroupView.classList.add('hidden');
+
+        activeLabel.classList.add('hidden');
+        activeLabel.classList.remove('block');
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('block');
+
+        // Collapse all group lists
+        ['project-group-list', 'location-group-list', 'labgroup-group-list'].forEach(function(id) {
+          document.getElementById(id).classList.add('hidden');
+        });
+
+        return;
+      }
+
+      if (cat !== null && group === null) {
+        // Category selected, no group yet: show group list, hide slice container
+        sliceContainer.classList.add('hidden');
+        sliceContainer.classList.remove('block');
+
+        activeLabel.classList.add('hidden');
+        clearBtn.classList.add('hidden');
+
+        // Show the correct group list, hide others
+        var listMap = {};
+        listMap[SLICE_CATEGORIES.PROJECT]   = 'project-group-list';
+        listMap[SLICE_CATEGORIES.LOCATION]  = 'location-group-list';
+        listMap[SLICE_CATEGORIES.LAB_GROUP] = 'labgroup-group-list';
+
+        Object.keys(listMap).forEach(function(key) {
+          var listEl = document.getElementById(listMap[key]);
+          if (key === cat) {
+            listEl.classList.remove('hidden');
+          } else {
+            listEl.classList.add('hidden');
+          }
+        });
+
+        return;
+      }
+
+      // Both category and group are set: show slice view container
+      sliceContainer.classList.remove('hidden');
+      sliceContainer.classList.add('block');
+
+      // Show correct inner view, hide others
+      projectView.classList.add('hidden');
+      locationView.classList.add('hidden');
+      labgroupView.classList.add('hidden');
+
+      if (cat === SLICE_CATEGORIES.PROJECT) {
+        projectView.classList.remove('hidden');
+        viewTitle.textContent = SLICE_CATEGORIES.PROJECT + ': ' + group;
+        var projEntry = appData.slice_views && appData.slice_views.project
+          ? appData.slice_views.project.find(function(e) { return e.project_id === group; })
+          : null;
+        viewSubtitle.textContent = projEntry ? projEntry.sample_count.toLocaleString() + ' samples' : '';
+        renderProjectView(group);
+      } else if (cat === SLICE_CATEGORIES.LOCATION) {
+        locationView.classList.remove('hidden');
+        viewTitle.textContent = SLICE_CATEGORIES.LOCATION + ': ' + group;
+        var locEntry = appData.slice_views && appData.slice_views.location
+          ? appData.slice_views.location.find(function(e) { return e.site_code === group; })
+          : null;
+        viewSubtitle.textContent = locEntry ? locEntry.sample_count.toLocaleString() + ' samples' : '';
+        renderLocationView(group);
+      } else if (cat === SLICE_CATEGORIES.LAB_GROUP) {
+        labgroupView.classList.remove('hidden');
+        viewTitle.textContent = SLICE_CATEGORIES.LAB_GROUP + ': ' + group;
+        var lgEntry = appData.slice_views && appData.slice_views.lab_group
+          ? appData.slice_views.lab_group.find(function(e) { return e.group_name === group; })
+          : null;
+        viewSubtitle.textContent = lgEntry ? lgEntry.sample_count.toLocaleString() + ' samples' : '';
+        renderLabGroupView(group);
+      }
+
+      // Show active label and clear button
+      activeLabel.textContent = 'Showing: ' + group;
+      activeLabel.classList.remove('hidden');
+      activeLabel.classList.add('block');
+      clearBtn.classList.remove('hidden');
+      clearBtn.classList.add('block');
+
+      // Update aria-selected on group items
+      updateGroupItemSelection();
+
+      // Scroll slice container into view
+      sliceContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      sliceContainer.focus({ preventScroll: true });
+    }
+
+    // =============================================================================
+    // SLICE PANEL — BUTTON STATE HELPERS
+    // =============================================================================
+
+    function updateCategoryButtonStates() {
+      var buttonMap = {};
+      buttonMap[SLICE_CATEGORIES.PROJECT]   = 'slice-btn-project';
+      buttonMap[SLICE_CATEGORIES.LOCATION]  = 'slice-btn-location';
+      buttonMap[SLICE_CATEGORIES.LAB_GROUP] = 'slice-btn-labgroup';
+
+      Object.keys(buttonMap).forEach(function(cat) {
+        var btn = document.getElementById(buttonMap[cat]);
+        var isActive = sliceState.activeCategory === cat;
+
+        if (isActive) {
+          btn.className = 'relative w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-green-800 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors';
+          btn.setAttribute('aria-expanded', 'true');
+
+          // Add accent bar if not already present
+          if (!btn.querySelector('.slice-accent-bar')) {
+            var accent = document.createElement('span');
+            accent.className = 'slice-accent-bar absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-green-700 rounded-r-full';
+            accent.setAttribute('aria-hidden', 'true');
+            btn.insertBefore(accent, btn.firstChild);
+          }
+        } else {
+          // Remove accent bar if present
+          var existing = btn.querySelector('.slice-accent-bar');
+          if (existing) { btn.removeChild(existing); }
+
+          btn.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors';
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    function updateGroupItemSelection() {
+      var allItems = document.querySelectorAll('#project-group-list [role="option"], #location-group-list [role="option"], #labgroup-group-list [role="option"]');
+      allItems.forEach(function(li) {
+        var isSelected = li.getAttribute('data-group-id') === sliceState.activeGroup;
+        li.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        if (isSelected) {
+          li.className = 'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-semibold text-green-800 bg-green-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset';
+        } else {
+          li.className = 'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-stone-600 cursor-pointer hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset';
+        }
+      });
+    }
+
+    // =============================================================================
+    // SLICE SIDEBAR — MOBILE DRAWER
+    // =============================================================================
+
+    function openMobileDrawer() {
+      var sidebar  = document.getElementById('slice-sidebar');
+      var overlay  = document.getElementById('slice-sidebar-overlay');
+      var trigger  = document.getElementById('slice-drawer-trigger');
+
+      // Switch sidebar to fixed mobile drawer mode
+      sidebar.classList.remove('hidden', 'lg:flex', 'lg:flex-col', 'w-64', 'flex-shrink-0',
+        'sticky', 'top-16', 'self-start', 'max-h-[calc(100vh-4rem)]', 'border-r', 'border-stone-200');
+      sidebar.classList.add('fixed', 'left-0', 'top-0', 'h-full', 'w-72', 'z-40', 'bg-white',
+        'shadow-xl', 'overflow-y-auto', 'flex', 'flex-col', 'translate-x-0', 'transition-transform',
+        'duration-300', 'ease-in-out');
+
+      overlay.className = 'fixed inset-0 bg-black/40 z-30';
+
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMobileDrawer() {
+      var sidebar  = document.getElementById('slice-sidebar');
+      var overlay  = document.getElementById('slice-sidebar-overlay');
+      var trigger  = document.getElementById('slice-drawer-trigger');
+
+      // Restore sidebar to desktop sticky mode (hidden on mobile)
+      sidebar.className = 'hidden lg:flex lg:flex-col w-64 flex-shrink-0 sticky top-16 self-start max-h-[calc(100vh-4rem)] overflow-y-auto border-r border-stone-200';
+
+      overlay.className = 'hidden';
+
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.focus();
+    }
+
+    // =============================================================================
+    // SLICE SIDEBAR — KEYBOARD NAVIGATION
+    // =============================================================================
+
+    function getCategoryButtons() {
+      return [
+        document.getElementById('slice-btn-project'),
+        document.getElementById('slice-btn-location'),
+        document.getElementById('slice-btn-labgroup')
+      ];
+    }
+
+    function handleCategoryButtonKeydown(event, btnIndex) {
+      var buttons = getCategoryButtons();
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        var nextIndex = (btnIndex + 1) % buttons.length;
+        buttons[nextIndex].focus();
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        var prevIndex = (btnIndex - 1 + buttons.length) % buttons.length;
+        buttons[prevIndex].focus();
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        buttons[btnIndex].click();
+        // After click, if group list is now visible, focus first item
+        var listIds = ['project-group-list', 'location-group-list', 'labgroup-group-list'];
+        var list = document.getElementById(listIds[btnIndex]);
+        if (list && !list.classList.contains('hidden')) {
+          var firstItem = list.querySelector('[role="option"]');
+          if (firstItem) { firstItem.focus(); }
+        }
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        // Global: clear filter, collapse all, focus first button
+        clearSliceFilter();
+        buttons[0].focus();
+      }
+    }
+
+    function handleGroupItemKeydown(event, li, listEl, ownerBtnId) {
+      var items = Array.from(listEl.querySelectorAll('[role="option"]'));
+      var idx   = items.indexOf(li);
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (idx < items.length - 1) {
+          items[idx + 1].focus();
+        }
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (idx > 0) {
+          items[idx - 1].focus();
+        } else {
+          // First item: move focus back to category button
+          document.getElementById(ownerBtnId).focus();
+        }
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        li.click();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        // Collapse group list, return focus to category button, also clear if group selected
+        clearSliceFilter();
+        document.getElementById(ownerBtnId).focus();
+      }
+    }
+
+    // =============================================================================
+    // SLICE SIDEBAR — CLEAR FILTER
+    // =============================================================================
+
+    function clearSliceFilter() {
+      sliceState.activeCategory = null;
+      sliceState.activeGroup    = null;
+      renderView();
+    }
+
+    // =============================================================================
+    // SLICE SIDEBAR — CATEGORY BUTTON CLICK HANDLERS
+    // =============================================================================
+
+    function handleCategoryClick(category) {
+      if (!appData || !appData.slice_views) {
+        // slice_views key absent — show degradation message
+        return;
+      }
+
+      if (sliceState.activeCategory === category) {
+        // Toggle off: collapse category
+        sliceState.activeCategory = null;
+        sliceState.activeGroup = null;
+        renderView();
+        return;
+      }
+
+      sliceState.activeCategory = category;
+      sliceState.activeGroup    = null;
+
+      // Spec section 6.1: if lab_group array is empty, clicking Lab Group goes
+      // directly to the slice-view-container showing the empty-state message
+      // (no group list to display). Use a sentinel group value so renderView()
+      // enters the "both set" branch; renderLabGroupView() handles the empty guard.
+      if (category === SLICE_CATEGORIES.LAB_GROUP &&
+          Array.isArray(appData.slice_views.lab_group) &&
+          appData.slice_views.lab_group.length === 0) {
+        sliceState.activeGroup = '__empty__';
+      }
+
+      renderView();
+    }
+
+    // =============================================================================
+    // SLICE SIDEBAR — GROUP ITEM CLICK HANDLER
+    // =============================================================================
+
+    function handleGroupItemClick(groupId) {
+      sliceState.activeGroup = groupId;
+      renderView();
+    }
+
+    // =============================================================================
+    // SLICE SIDEBAR — POPULATE GROUP LISTS FROM DATA
+    // =============================================================================
+
+    function populateSidebarGroupLists(data) {
+      var projectList  = document.getElementById('project-group-list');
+      var locationList = document.getElementById('location-group-list');
+      var labgroupList = document.getElementById('labgroup-group-list');
+
+      if (!data.slice_views) {
+        // Graceful degradation: show inline message on each category button click
+        // The button click handler already guards against missing slice_views.
+        // Insert a static message node into each list so it's ready if needed.
+        var msg = 'Data not loaded yet \u2014 please re-run preprocess_data.py';
+
+        [projectList, locationList, labgroupList].forEach(function(listEl) {
+          var li = document.createElement('li');
+          li.className = 'px-3 py-2 text-xs text-stone-500 italic';
+          li.textContent = msg;
+          listEl.appendChild(li);
+        });
+        return;
+      }
+
+      // Project list
+      if (data.slice_views.project && data.slice_views.project.length > 0) {
+        populateGroupList(projectList, data.slice_views.project, 'project_id', 'project_id', 'sample_count');
+      }
+
+      // Location list
+      if (data.slice_views.location && data.slice_views.location.length > 0) {
+        populateGroupList(locationList, data.slice_views.location, 'site_name', 'site_code', 'sample_count');
+      }
+
+      // Lab Group list — may be empty per spec section 6.1
+      if (data.slice_views.lab_group && data.slice_views.lab_group.length > 0) {
+        populateGroupList(labgroupList, data.slice_views.lab_group, 'group_name', 'group_name', 'sample_count');
+      }
+      // If lab_group is empty array, clicking Lab Group button shows empty-state message
+      // in slice-view-container — handled in renderView() via 004b; this task just leaves
+      // the list empty (no items rendered).
+    }
+
+    // =============================================================================
+    // MAIN INIT — fetch data and render everything
+    // =============================================================================
+    function showError() {
+      document.getElementById('loading-state').classList.add('hidden');
+      document.getElementById('error-state').classList.remove('hidden');
+    }
+
+    function showContent() {
+      document.getElementById('loading-state').classList.add('hidden');
+      document.getElementById('main-content').classList.remove('hidden');
+      document.getElementById('main-content').classList.add('flex');
+    }
+
+    function initDashboard(data) {
+      // Validate expected top-level shape before using.
+      // Checks 8 required keys (meta is optional, slice_views is new and optional).
+      if (
+        typeof data !== 'object' || data === null ||
+        typeof data.kpis !== 'object' ||
+        !Array.isArray(data.temporal) ||
+        !Array.isArray(data.sample_types) ||
+        typeof data.pipeline !== 'object' ||
+        !Array.isArray(data.sites) ||
+        !Array.isArray(data.by_site) ||
+        !Array.isArray(data.recent_samples)
+      ) {
+        showError();
+        return;
+      }
+
+      appData = data;
+
+      // -- Wire event listeners ONCE (not in renderView) --
+
+      // Clear filter button
+      document.getElementById('slice-clear-btn').addEventListener('click', function() {
+        clearSliceFilter();
+      });
+
+      // Mobile drawer trigger
+      document.getElementById('slice-drawer-trigger').addEventListener('click', function() {
+        openMobileDrawer();
+      });
+
+      // Mobile close button
+      document.getElementById('slice-sidebar-close').addEventListener('click', function() {
+        closeMobileDrawer();
+      });
+
+      // Overlay click to close drawer
+      document.getElementById('slice-sidebar-overlay').addEventListener('click', function() {
+        closeMobileDrawer();
+      });
+
+      // Category button: Project
+      var btnProject = document.getElementById('slice-btn-project');
+      btnProject.addEventListener('click', function() {
+        handleCategoryClick(SLICE_CATEGORIES.PROJECT);
+      });
+      btnProject.addEventListener('keydown', function(e) {
+        handleCategoryButtonKeydown(e, 0);
+      });
+
+      // Category button: Location / Hub
+      var btnLocation = document.getElementById('slice-btn-location');
+      btnLocation.addEventListener('click', function() {
+        handleCategoryClick(SLICE_CATEGORIES.LOCATION);
+      });
+      btnLocation.addEventListener('keydown', function(e) {
+        handleCategoryButtonKeydown(e, 1);
+      });
+
+      // Category button: Lab Group
+      var btnLabgroup = document.getElementById('slice-btn-labgroup');
+      btnLabgroup.addEventListener('click', function() {
+        handleCategoryClick(SLICE_CATEGORIES.LAB_GROUP);
+      });
+      btnLabgroup.addEventListener('keydown', function(e) {
+        handleCategoryButtonKeydown(e, 2);
+      });
+
+      // Group list item click and keydown — delegated on each list
+      function wireGroupList(listId, ownerBtnId) {
+        var listEl = document.getElementById(listId);
+        listEl.addEventListener('click', function(e) {
+          var li = e.target.closest('[role="option"]');
+          if (!li) return;
+          handleGroupItemClick(li.getAttribute('data-group-id'));
+        });
+        listEl.addEventListener('keydown', function(e) {
+          var li = e.target.closest('[role="option"]');
+          if (!li) return;
+          handleGroupItemKeydown(e, li, listEl, ownerBtnId);
+        });
+      }
+
+      wireGroupList('project-group-list',  'slice-btn-project');
+      wireGroupList('location-group-list', 'slice-btn-location');
+      wireGroupList('labgroup-group-list', 'slice-btn-labgroup');
+
+      // Populate sidebar group lists from data
+      populateSidebarGroupLists(data);
+
+      // -- Existing charts --
+      renderKPIs(data.kpis);
+      renderTemporalChart(data.temporal);
+      renderDonutChart(data.sample_types);
+      renderPipelineChart(data.pipeline);
+      renderBySiteChart(data.by_site);
+      renderMap(data.sites);
+
+      buildFilterOptions(data.recent_samples);
+      renderTable(data.recent_samples);
+
+      renderFooterDate(data.meta && data.meta.generated ? data.meta.generated : '');
+
+      showContent();
+      // Leaflet must recalculate dimensions after parent becomes visible
+      if (leafletMap) { leafletMap.invalidateSize(); }
+      initScrollSpy();
+
+      // Wire up filter dropdowns
+      document.getElementById('filter-category').addEventListener('change', function() {
+        renderTable(appData.recent_samples);
+      });
+      document.getElementById('filter-site').addEventListener('change', function() {
+        renderTable(appData.recent_samples);
+      });
+      document.getElementById('filter-year').addEventListener('change', function() {
+        renderTable(appData.recent_samples);
+      });
+
+      // Initial render pass — shows default 7-chart view
+      renderView();
+    }
+
+    // Fetch with try/catch + shape validation
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('data/data.json')
+        .then(function(resp) {
+          if (!resp.ok) {
+            throw new Error('HTTP ' + resp.status);
+          }
+          return resp.text();
+        })
+        .then(function(text) {
+          var parsed;
+          try {
+            parsed = JSON.parse(text);
+          } catch (parseErr) {
+            showError();
+            return;
+          }
+          // Shape validation inside initDashboard
+          initDashboard(parsed);
+        })
+        .catch(function() {
+          showError();
+        });
+    });
+  </script>
+</body>
+</html>
