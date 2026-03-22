@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-03-18T01:23:12Z",
+    "generated": "2026-03-22T21:46:00Z",
     "total_rows": 8079,
     "field_samples": 4571,
     "derivatives": 3508
@@ -1438,7 +1438,14 @@
             "month": "2024-05",
             "count": 27
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 1056
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "project_id": "Fragmented Landscape",
@@ -1471,7 +1478,14 @@
             "month": "2022-07",
             "count": 88
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "UPAS",
+            "count": 194
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "project_id": "Fall Plant Circle",
@@ -1500,6 +1514,54 @@
             "month": "2022-10",
             "count": 192
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "Salsola",
+            "count": 96
+          },
+          {
+            "sampler": "Sagegrass",
+            "count": 96
+          }
+        ],
+        "replicate_tags": [
+          "Q1, am",
+          "Q1, pm",
+          "Q1/2, am",
+          "Q1/2, pm",
+          "Q10, am",
+          "Q10, pm",
+          "Q11, am",
+          "Q11, pm",
+          "Q11/12, am",
+          "Q11/12, pm",
+          "Q12, am",
+          "Q12, pm",
+          "Q2, am",
+          "Q2, pm",
+          "Q3, am",
+          "Q3, pm",
+          "Q3/4, am",
+          "Q3/4, pm",
+          "Q4, am",
+          "Q4, pm",
+          "Q5, am",
+          "Q5, pm",
+          "Q5/6, am",
+          "Q5/6, pm",
+          "Q6, am",
+          "Q6, pm",
+          "Q7, am",
+          "Q7, pm",
+          "Q7/8, am",
+          "Q7/8, pm",
+          "Q8, am",
+          "Q8, pm",
+          "Q9, am",
+          "Q9, pm",
+          "Q9/10, am",
+          "Q9/10, pm"
         ]
       },
       {
@@ -1529,6 +1591,45 @@
             "month": "2023-06",
             "count": 264
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "RusThistle",
+            "count": 90
+          },
+          {
+            "sampler": "Tall Grass",
+            "count": 90
+          },
+          {
+            "sampler": "Sagegrass",
+            "count": 90
+          }
+        ],
+        "replicate_tags": [
+          "Extra, ",
+          "Extra,  Q1, am",
+          "Extra, Q1, am",
+          "Extra, Q1, pm",
+          "Extra, Q2, am",
+          "Extra, Q2, pm",
+          "Extra, Q3, am",
+          "Extra, Q3, pm",
+          "Extra, Q4, am",
+          "Extra, Q4, pm",
+          "Extra, Q5, am",
+          "Extra, Q5, pm",
+          "Extra, Q6, am",
+          "Extra, Q6, pm",
+          "Q2, am",
+          "Q2, pm",
+          "Q3, am",
+          "Q3, pm",
+          "Q4, am",
+          "Q5, am",
+          "Q5, pm",
+          "Q6, am",
+          "Q6, pm"
         ]
       },
       {
@@ -1558,6 +1659,24 @@
             "month": "2022-10",
             "count": 252
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "Hetero",
+            "count": 102
+          },
+          {
+            "sampler": "Salsola",
+            "count": 102
+          }
+        ],
+        "replicate_tags": [
+          "R1, am",
+          "R1, pm",
+          "R2, am",
+          "R2, pm",
+          "R3, am",
+          "R3, pm"
         ]
       },
       {
@@ -1603,6 +1722,23 @@
             "month": "2025-02",
             "count": 68
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 304
+          }
+        ],
+        "replicate_tags": [
+          "B",
+          "B, Blank",
+          "B, L",
+          "B, R",
+          "PT",
+          "T",
+          "T, Blank",
+          "T, L",
+          "T, R"
         ]
       },
       {
@@ -1628,6 +1764,27 @@
             "month": "2022-06",
             "count": 41
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "Impactor",
+            "count": 162
+          },
+          {
+            "sampler": "SASS",
+            "count": 54
+          }
+        ],
+        "replicate_tags": [
+          "A",
+          "A1",
+          "A2",
+          "A3",
+          "B",
+          "FB",
+          "FC",
+          "KB",
+          "LB"
         ]
       },
       {
@@ -1661,6 +1818,25 @@
             "month": "2023-08",
             "count": 10
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 145
+          },
+          {
+            "sampler": "Polycarbonate",
+            "count": 121
+          }
+        ],
+        "replicate_tags": [
+          "A",
+          "A, AM",
+          "A, PM",
+          "B",
+          "B, AM",
+          "B, PM",
+          "FC"
         ]
       },
       {
@@ -1702,6 +1878,30 @@
             "month": "2023-06",
             "count": 95
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 79
+          },
+          {
+            "sampler": "BioSpot VIVAS",
+            "count": 78
+          }
+        ],
+        "replicate_tags": [
+          "A, AM",
+          "AM",
+          "C, AM",
+          "C, PM",
+          "Extra, ",
+          "Extra, AM",
+          "Extra, C, PM",
+          "Extra, PM",
+          "FB",
+          "FC",
+          "LB",
+          "PM"
         ]
       },
       {
@@ -1743,6 +1943,24 @@
             "month": "2023-06",
             "count": 91
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 72
+          },
+          {
+            "sampler": "ADS",
+            "count": 12
+          },
+          {
+            "sampler": "Pipette",
+            "count": 2
+          }
+        ],
+        "replicate_tags": [
+          "Extra, ",
+          "Extra, AM"
         ]
       },
       {
@@ -1784,6 +2002,20 @@
             "month": "2023-02",
             "count": 3
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 13
+          }
+        ],
+        "replicate_tags": [
+          "7a, A",
+          "A, FC",
+          "B, FC",
+          "C, FC",
+          "FB",
+          "KB"
         ]
       },
       {
@@ -1809,7 +2041,9 @@
             "month": "2023-06",
             "count": 60
           }
-        ]
+        ],
+        "sampler_type_dist": [],
+        "replicate_tags": []
       },
       {
         "project_id": "2022 Fall CPER",
@@ -1834,6 +2068,21 @@
             "month": "2022-10",
             "count": 40
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 87
+          }
+        ],
+        "replicate_tags": [
+          "7a, A",
+          "7a, B",
+          "7a, C",
+          "7p, A",
+          "7p, B",
+          "7p, C",
+          "A"
         ]
       },
       {
@@ -1867,7 +2116,14 @@
             "month": "2023-10",
             "count": 14
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 60
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "project_id": "2024 Summer",
@@ -1896,7 +2152,42 @@
             "month": "2024-07",
             "count": 37
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "Cactus flower",
+            "count": 22
+          },
+          {
+            "sampler": "Grass",
+            "count": 16
+          },
+          {
+            "sampler": "Cactus",
+            "count": 10
+          },
+          {
+            "sampler": "Pine needles",
+            "count": 6
+          },
+          {
+            "sampler": "SASS",
+            "count": 6
+          },
+          {
+            "sampler": "UPAS",
+            "count": 4
+          },
+          {
+            "sampler": "Thistle",
+            "count": 2
+          },
+          {
+            "sampler": "Leaf of bush",
+            "count": 2
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "project_id": "2023 Summer",
@@ -1917,6 +2208,15 @@
             "month": "2023-06",
             "count": 45
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "Polycarbonate",
+            "count": 45
+          }
+        ],
+        "replicate_tags": [
+          "B, PM"
         ]
       },
       {
@@ -1942,6 +2242,20 @@
             "month": "2022-03",
             "count": 15
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 15
+          },
+          {
+            "sampler": "SKC BioSampler",
+            "count": 1
+          }
+        ],
+        "replicate_tags": [
+          "A",
+          "B"
         ]
       },
       {
@@ -1967,7 +2281,14 @@
             "month": "2023-06",
             "count": 28
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SKC BioSampler",
+            "count": 40
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "project_id": "2023 Spring CPER Chemistry",
@@ -1992,7 +2313,9 @@
             "month": "2023-06",
             "count": 20
           }
-        ]
+        ],
+        "sampler_type_dist": [],
+        "replicate_tags": []
       },
       {
         "project_id": "2022 Fall CPER FC",
@@ -2017,6 +2340,17 @@
             "month": "2022-10",
             "count": 11
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 28
+          }
+        ],
+        "replicate_tags": [
+          "FC",
+          "FC, AM",
+          "FC, PM"
         ]
       }
     ],
@@ -2148,6 +2482,158 @@
             "month": "2025-02",
             "count": 68
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 643
+          },
+          {
+            "sampler": "Salsola",
+            "count": 198
+          },
+          {
+            "sampler": "Sagegrass",
+            "count": 186
+          },
+          {
+            "sampler": "Hetero",
+            "count": 102
+          },
+          {
+            "sampler": "RusThistle",
+            "count": 90
+          },
+          {
+            "sampler": "Tall Grass",
+            "count": 90
+          },
+          {
+            "sampler": "BioSpot VIVAS",
+            "count": 78
+          },
+          {
+            "sampler": "SKC BioSampler",
+            "count": 40
+          },
+          {
+            "sampler": "Cactus flower",
+            "count": 22
+          },
+          {
+            "sampler": "ADS",
+            "count": 12
+          },
+          {
+            "sampler": "Grass",
+            "count": 9
+          },
+          {
+            "sampler": "Coriolis",
+            "count": 8
+          },
+          {
+            "sampler": "Pipette",
+            "count": 2
+          }
+        ],
+        "replicate_tags": [
+          "1a",
+          "1p",
+          "7a, A",
+          "7a, B",
+          "7a, C",
+          "7p, A",
+          "7p, B",
+          "7p, C",
+          "A",
+          "A, AM",
+          "A, FC",
+          "A1",
+          "A2",
+          "A3",
+          "AM",
+          "B",
+          "B, Blank",
+          "B, FC",
+          "B, L",
+          "B, R",
+          "C, AM",
+          "C, FC",
+          "C, PM",
+          "Extra, ",
+          "Extra,  Q1, am",
+          "Extra, AM",
+          "Extra, C, PM",
+          "Extra, PM",
+          "Extra, Q1, am",
+          "Extra, Q1, pm",
+          "Extra, Q2, am",
+          "Extra, Q2, pm",
+          "Extra, Q3, am",
+          "Extra, Q3, pm",
+          "Extra, Q4, am",
+          "Extra, Q4, pm",
+          "Extra, Q5, am",
+          "Extra, Q5, pm",
+          "Extra, Q6, am",
+          "Extra, Q6, pm",
+          "FB",
+          "FC",
+          "FC, AM",
+          "FC, PM",
+          "KB",
+          "LB",
+          "PM",
+          "PT",
+          "Q1, am",
+          "Q1, pm",
+          "Q1/2, am",
+          "Q1/2, pm",
+          "Q10, am",
+          "Q10, pm",
+          "Q11, am",
+          "Q11, pm",
+          "Q11/12, am",
+          "Q11/12, pm",
+          "Q12, am",
+          "Q12, pm",
+          "Q2, am",
+          "Q2, pm",
+          "Q3, am",
+          "Q3, pm",
+          "Q3/4, am",
+          "Q3/4, pm",
+          "Q4, am",
+          "Q4, pm",
+          "Q5, am",
+          "Q5, pm",
+          "Q5/6, am",
+          "Q5/6, pm",
+          "Q6, am",
+          "Q6, pm",
+          "Q7, am",
+          "Q7, pm",
+          "Q7/8, am",
+          "Q7/8, pm",
+          "Q8, am",
+          "Q8, pm",
+          "Q9, am",
+          "Q9, pm",
+          "Q9/10, am",
+          "Q9/10, pm",
+          "R1, am",
+          "R1, pm",
+          "R2, am",
+          "R2, pm",
+          "R3, am",
+          "R3, pm",
+          "RH, 1a",
+          "RH, 1p",
+          "T",
+          "T, Blank",
+          "T, L",
+          "T, R"
         ],
         "time_distribution": [
           {
@@ -2344,7 +2830,14 @@
             "month": "2024-05",
             "count": 27
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 1056
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "site_code": "CPER",
@@ -2416,6 +2909,32 @@
             "month": "2023-09",
             "count": 10
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 193
+          },
+          {
+            "sampler": "Polycarbonate",
+            "count": 166
+          },
+          {
+            "sampler": "Impactor",
+            "count": 161
+          }
+        ],
+        "replicate_tags": [
+          "A",
+          "A, AM",
+          "A, PM",
+          "B",
+          "B, AM",
+          "B, PM",
+          "FB",
+          "FC",
+          "KB",
+          "LB"
         ],
         "time_distribution": [
           {
@@ -2512,6 +3031,17 @@
             "count": 3
           }
         ],
+        "sampler_type_dist": [
+          {
+            "sampler": "UPAS",
+            "count": 194
+          },
+          {
+            "sampler": "SASS",
+            "count": 3
+          }
+        ],
+        "replicate_tags": [],
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -2586,6 +3116,44 @@
             "month": "2024-06",
             "count": 31
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 15
+          },
+          {
+            "sampler": "Cactus",
+            "count": 10
+          },
+          {
+            "sampler": "Grass",
+            "count": 7
+          },
+          {
+            "sampler": "Pine needles",
+            "count": 6
+          },
+          {
+            "sampler": "UPAS",
+            "count": 4
+          },
+          {
+            "sampler": "Thistle",
+            "count": 2
+          },
+          {
+            "sampler": "Leaf of bush",
+            "count": 2
+          },
+          {
+            "sampler": "SKC BioSampler",
+            "count": 1
+          }
+        ],
+        "replicate_tags": [
+          "A",
+          "B"
         ],
         "time_distribution": [
           {
@@ -2669,6 +3237,13 @@
             "count": 14
           }
         ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 44
+          }
+        ],
+        "replicate_tags": [],
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -2755,6 +3330,20 @@
             "count": 1
           }
         ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SKC BioSampler",
+            "count": 8
+          },
+          {
+            "sampler": "SASS",
+            "count": 4
+          }
+        ],
+        "replicate_tags": [
+          "AM",
+          "PM"
+        ],
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -2829,6 +3418,19 @@
             "count": 13
           }
         ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 7
+          },
+          {
+            "sampler": "Light SASS Drone",
+            "count": 6
+          }
+        ],
+        "replicate_tags": [
+          "LB"
+        ],
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -2881,6 +3483,15 @@
             "count": 1
           }
         ],
+        "sampler_type_dist": [
+          {
+            "sampler": "BioSpot VIVAS",
+            "count": 8
+          }
+        ],
+        "replicate_tags": [
+          "EC"
+        ],
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -2923,7 +3534,14 @@
             "count": 2
           }
         ],
-        "temporal": []
+        "temporal": [],
+        "sampler_type_dist": [
+          {
+            "sampler": "Impactor",
+            "count": 1
+          }
+        ],
+        "replicate_tags": []
       }
     ],
     "lab_group": [
@@ -3022,7 +3640,18 @@
             "month": "2024-05",
             "count": 27
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 1056
+          },
+          {
+            "sampler": "UPAS",
+            "count": 194
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "group_name": "Kreidenweis",
@@ -3099,6 +3728,74 @@
             "month": "2023-08",
             "count": 10
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 525
+          },
+          {
+            "sampler": "Impactor",
+            "count": 162
+          },
+          {
+            "sampler": "Polycarbonate",
+            "count": 121
+          },
+          {
+            "sampler": "BioSpot VIVAS",
+            "count": 78
+          },
+          {
+            "sampler": "ADS",
+            "count": 12
+          },
+          {
+            "sampler": "Pipette",
+            "count": 2
+          },
+          {
+            "sampler": "SKC BioSampler",
+            "count": 1
+          }
+        ],
+        "replicate_tags": [
+          "1a",
+          "1p",
+          "7a, A",
+          "7a, B",
+          "7a, C",
+          "7p, A",
+          "7p, B",
+          "7p, C",
+          "A",
+          "A, AM",
+          "A, FC",
+          "A, PM",
+          "A1",
+          "A2",
+          "A3",
+          "AM",
+          "B",
+          "B, AM",
+          "B, FC",
+          "B, PM",
+          "C, AM",
+          "C, FC",
+          "C, PM",
+          "Extra, ",
+          "Extra, AM",
+          "Extra, C, PM",
+          "Extra, PM",
+          "FB",
+          "FC",
+          "FC, AM",
+          "FC, PM",
+          "KB",
+          "LB",
+          "PM",
+          "RH, 1a",
+          "RH, 1p"
         ]
       },
       {
@@ -3152,6 +3849,92 @@
             "month": "2023-06",
             "count": 292
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "Salsola",
+            "count": 198
+          },
+          {
+            "sampler": "Sagegrass",
+            "count": 186
+          },
+          {
+            "sampler": "Hetero",
+            "count": 102
+          },
+          {
+            "sampler": "RusThistle",
+            "count": 90
+          },
+          {
+            "sampler": "Tall Grass",
+            "count": 90
+          },
+          {
+            "sampler": "SKC BioSampler",
+            "count": 48
+          }
+        ],
+        "replicate_tags": [
+          "AM",
+          "Extra, ",
+          "Extra,  Q1, am",
+          "Extra, Q1, am",
+          "Extra, Q1, pm",
+          "Extra, Q2, am",
+          "Extra, Q2, pm",
+          "Extra, Q3, am",
+          "Extra, Q3, pm",
+          "Extra, Q4, am",
+          "Extra, Q4, pm",
+          "Extra, Q5, am",
+          "Extra, Q5, pm",
+          "Extra, Q6, am",
+          "Extra, Q6, pm",
+          "PM",
+          "Q1, am",
+          "Q1, pm",
+          "Q1/2, am",
+          "Q1/2, pm",
+          "Q10, am",
+          "Q10, pm",
+          "Q11, am",
+          "Q11, pm",
+          "Q11/12, am",
+          "Q11/12, pm",
+          "Q12, am",
+          "Q12, pm",
+          "Q2, am",
+          "Q2, pm",
+          "Q3, am",
+          "Q3, pm",
+          "Q3/4, am",
+          "Q3/4, pm",
+          "Q4, am",
+          "Q4, pm",
+          "Q5, am",
+          "Q5, pm",
+          "Q5/6, am",
+          "Q5/6, pm",
+          "Q6, am",
+          "Q6, pm",
+          "Q7, am",
+          "Q7, pm",
+          "Q7/8, am",
+          "Q7/8, pm",
+          "Q8, am",
+          "Q8, pm",
+          "Q9, am",
+          "Q9, pm",
+          "Q9/10, am",
+          "Q9/10, pm",
+          "R1, am",
+          "R1, pm",
+          "R2, am",
+          "R2, pm",
+          "R3, am",
+          "R3, pm"
         ]
       },
       {
@@ -3197,6 +3980,23 @@
             "month": "2025-02",
             "count": 68
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 304
+          }
+        ],
+        "replicate_tags": [
+          "B",
+          "B, Blank",
+          "B, L",
+          "B, R",
+          "PT",
+          "T",
+          "T, Blank",
+          "T, L",
+          "T, R"
         ]
       },
       {
@@ -3230,7 +4030,50 @@
             "month": "2024-07",
             "count": 45
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "Polycarbonate",
+            "count": 45
+          },
+          {
+            "sampler": "Cactus flower",
+            "count": 22
+          },
+          {
+            "sampler": "Grass",
+            "count": 16
+          },
+          {
+            "sampler": "Cactus",
+            "count": 10
+          },
+          {
+            "sampler": "Coriolis",
+            "count": 8
+          },
+          {
+            "sampler": "Pine needles",
+            "count": 6
+          },
+          {
+            "sampler": "SASS",
+            "count": 6
+          },
+          {
+            "sampler": "UPAS",
+            "count": 4
+          },
+          {
+            "sampler": "Thistle",
+            "count": 2
+          },
+          {
+            "sampler": "Leaf of bush",
+            "count": 2
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "group_name": "Stewart",
@@ -3271,7 +4114,18 @@
             "month": "2023-10",
             "count": 14
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 60
+          },
+          {
+            "sampler": "BioSpot VIVAS",
+            "count": 8
+          }
+        ],
+        "replicate_tags": []
       },
       {
         "group_name": "Magzamen",
@@ -3296,6 +4150,19 @@
             "month": "2024-08",
             "count": 13
           }
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 7
+          },
+          {
+            "sampler": "Light SASS Drone",
+            "count": 6
+          }
+        ],
+        "replicate_tags": [
+          "LB"
         ]
       },
       {
@@ -3325,7 +4192,14 @@
             "month": "2025-07",
             "count": 3
           }
-        ]
+        ],
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 3
+          }
+        ],
+        "replicate_tags": []
       }
     ]
   }

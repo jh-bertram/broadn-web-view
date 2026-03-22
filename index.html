@@ -16,6 +16,8 @@
       --color-stone-300: #d6d3d1;
       --color-stone-400: #a8a29e;
       --color-green-800: #166534;
+      --color-orange-500: #f97316;
+      --color-orange-700: #c2410c;
     }
 
     /* Scrollbar styling */
@@ -65,6 +67,23 @@
 
     /* Smooth scroll */
     html { scroll-behavior: smooth; }
+
+    /* Slice panel active section title */
+    .slice-chart-title-active { color: var(--color-orange-700); }
+
+    #custom-tooltip {
+      position: fixed;
+      z-index: 9999;
+      display: none;
+      background: rgba(28,25,23,0.9);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      pointer-events: none;
+      max-width: 220px;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body class="bg-stone-50 text-stone-900 antialiased flex flex-col min-h-screen">
@@ -274,6 +293,14 @@
                   <canvas id="sliceProjectTemporalChart" aria-label="Line chart showing monthly sampling activity for selected project" role="img"></canvas>
                 </div>
               </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
+                <div id="sliceProjectReplicateBadges" class="flex flex-wrap gap-2"></div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
+                <div class="chart-wrap"><canvas id="sliceProjectSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected project" role="img"></canvas></div>
+              </div>
             </div>
           </div>
 
@@ -309,6 +336,14 @@
                   <canvas id="sliceLocationTimeDistChart" aria-label="Polar area chart showing sample counts by time of day for selected location" role="img"></canvas>
                 </div>
               </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
+                <div id="sliceLocationReplicateBadges" class="flex flex-wrap gap-2"></div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
+                <div class="chart-wrap"><canvas id="sliceLocationSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected location" role="img"></canvas></div>
+              </div>
             </div>
           </div>
 
@@ -335,6 +370,14 @@
                 <div class="chart-wrap">
                   <canvas id="sliceLabGroupTemporalChart" aria-label="Line chart showing monthly sampling activity for selected lab group" role="img"></canvas>
                 </div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
+                <div id="sliceLabGroupReplicateBadges" class="flex flex-wrap gap-2"></div>
+              </div>
+              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
+                <div class="chart-wrap"><canvas id="sliceLabGroupSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected lab group" role="img"></canvas></div>
               </div>
             </div>
           </div>
@@ -449,6 +492,14 @@
                   aria-label="Horizontal bar chart showing sample counts at three pipeline stages: Collected, DNA Extracted, and Sequenced"
                   role="img"></canvas>
               </div>
+            </div>
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <h3 class="text-lg font-bold slice-chart-title-active mb-3">Sampler Replicate Tags (All)</h3>
+              <div id="globalReplicateBadges" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type Distribution (All)</h3>
+              <div class="chart-wrap"><canvas id="globalSamplerChart" aria-label="Doughnut chart showing sampler type distribution across all samples" role="img"></canvas></div>
             </div>
           </div>
         </section>
@@ -568,7 +619,10 @@
       sliceTemporalLine: '#0f766e',
       sliceTemporalArea: 'rgba(15,118,110,0.1)',
       sliceLocationBar:  '#0369a1',
-      sliceTimeOfDay:    ['#166534', '#0f766e', '#b45309', '#6d28d9']
+      sliceTimeOfDay:    ['#166534', '#0f766e', '#b45309', '#6d28d9'],
+      orangeAccent:      '#f97316',
+      orangeAccentDim:   'rgba(249,115,22,0.3)',
+      samplerType:       ['#166534', '#0f766e', '#b45309', '#1d4ed8', '#78716c']
     };
 
     // =============================================================================
@@ -596,6 +650,10 @@
       activeGroup: null      // null | string (project_id / site_code / group_name)
     };
 
+    // Cross-link state — bidirectional map-marker ↔ bySite bar chart highlight
+    var activeHighlightSite = null;
+    var mapMarkersBySite = {};
+
     // =============================================================================
     // HELPERS
     // =============================================================================
@@ -611,12 +669,14 @@
 
     function formatMonth(yyyyMm) {
       try {
-        const [year, month] = yyyyMm.split('-');
-        const d = new Date(Number(year), Number(month) - 1, 1);
-        return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-      } catch (_) {
-        return yyyyMm;
-      }
+        var parts = yyyyMm.split('-');
+        var year  = parseInt(parts[0], 10);
+        var month = parseInt(parts[1], 10) - 1;
+        var d     = new Date(year, month, 1);
+        var abbr  = d.toLocaleDateString('en-US', { month: 'short' });
+        var yy    = String(year).slice(-2);
+        return abbr + " '" + yy;
+      } catch (_) { return yyyyMm; }
     }
 
     function destroyChart(key) {
@@ -636,6 +696,35 @@
     // Shared tooltip callback: sample count label for horizontal bar charts
     function tooltipLabelSamples(ctx) {
       return ' ' + ctx.parsed.x.toLocaleString() + ' samples';
+    }
+
+    function renderSamplerTypeChart(canvasId, samplerData) {
+      destroyChart(canvasId);
+      var canvas = document.getElementById(canvasId);
+      if (!canvas) { return; }
+      var wrap = canvas.parentElement;
+      if (!samplerData || samplerData.length === 0) {
+        wrap.innerHTML = '<p class="text-sm text-stone-400 py-8 text-center">No sampler data available</p>';
+        return;
+      }
+      chartInstances[canvasId] = new Chart(canvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: samplerData.map(function(d) { return d.sampler; }),
+          datasets: [{
+            data: samplerData.map(function(d) { return d.count; }),
+            backgroundColor: CHART_COLORS.samplerType,
+            borderColor: CHART_COLORS.donutBorder
+          }]
+        },
+        options: {
+          cutout: '65%',
+          plugins: {
+            legend: { position: 'right' },
+            tooltip: { callbacks: { label: tooltipLabelPct } }
+          }
+        }
+      });
     }
 
     // =============================================================================
@@ -698,7 +787,8 @@
             },
             x: {
               grid: { display: false },
-              ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 18, font: { size: 10 } }
+              ticks: { maxRotation: 45, autoSkip: false, font: { size: 10 } },
+              title: { display: true, text: 'Collection Date (Month/Year)', color: CHART_COLORS.axisLabel, font: { size: 11 } }
             }
           }
         }
@@ -735,9 +825,29 @@
               labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } }
             },
             tooltip: {
-              backgroundColor: CHART_COLORS.tooltip,
-              callbacks: {
-                label: tooltipLabelPct
+              enabled: false,
+              external: function(context) {
+                if (context.tooltip.opacity === 0) { hideCustomTooltip(); return; }
+                var rect = context.chart.canvas.getBoundingClientRect();
+                var label = context.tooltip.dataPoints[0].label;
+                if (!appData || !appData.slice_views || !appData.slice_views.project) {
+                  showCustomTooltip(rect.left + context.tooltip.caretX, rect.top + context.tooltip.caretY,
+                    buildTooltipHtml(label, []));
+                  return;
+                }
+                var projects = appData.slice_views.project;
+                var breakdown = [];
+                for (var i = 0; i < projects.length; i++) {
+                  var types = projects[i].sample_types;
+                  for (var j = 0; j < types.length; j++) {
+                    if (types[j].type === label && types[j].count > 0) {
+                      breakdown.push({ name: projects[i].project_id, count: types[j].count });
+                      break;
+                    }
+                  }
+                }
+                showCustomTooltip(rect.left + context.tooltip.caretX, rect.top + context.tooltip.caretY,
+                  buildTooltipHtml(label, breakdown));
               }
             }
           }
@@ -771,9 +881,26 @@
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: CHART_COLORS.tooltip,
-              callbacks: {
-                label: tooltipLabelSamples
+              enabled: false,
+              external: function(context) {
+                if (context.tooltip.opacity === 0) { hideCustomTooltip(); return; }
+                var rect = context.chart.canvas.getBoundingClientRect();
+                var label = context.tooltip.dataPoints[0].label;
+                var keyMap = { 'Collected': 'collected', 'DNA Extracted': 'dna_extracted', 'Sequenced': 'sequenced' };
+                var pKey = keyMap[label];
+                if (!appData || !appData.slice_views || !appData.slice_views.project) {
+                  showCustomTooltip(rect.left + context.tooltip.caretX, rect.top + context.tooltip.caretY,
+                    buildTooltipHtml(label, []));
+                  return;
+                }
+                var projects = appData.slice_views.project;
+                var breakdown = [];
+                for (var i = 0; i < projects.length; i++) {
+                  var c = pKey ? (projects[i].pipeline[pKey] || 0) : 0;
+                  if (c > 0) { breakdown.push({ name: projects[i].project_id, count: c }); }
+                }
+                showCustomTooltip(rect.left + context.tooltip.caretX, rect.top + context.tooltip.caretY,
+                  buildTooltipHtml(label, breakdown));
               }
             }
           },
@@ -824,6 +951,12 @@
           indexAxis: 'y',
           responsive: true,
           maintainAspectRatio: false,
+          onClick: function(evt, elements) {
+            if (!elements || elements.length === 0) return;
+            var idx = elements[0].index;
+            var code = chartInstances.bySiteCodes[idx];
+            if (code) highlightSite(code);
+          },
           plugins: {
             legend: { display: false },
             tooltip: {
@@ -854,6 +987,7 @@
           }
         }
       });
+      chartInstances.bySiteCodes = sorted.map(function(d) { return d.code || d.site; });
     }
 
     // =============================================================================
@@ -866,6 +1000,7 @@
         leafletMap.remove();
         leafletMap = null;
       }
+      mapMarkersBySite = {};
 
       leafletMap = L.map('map', { zoomControl: true }).setView([39.5, -98.35], 4);
 
@@ -888,6 +1023,9 @@
           fillOpacity: 0.55
         });
 
+        mapMarkersBySite[site.code] = marker;
+        marker.on('click', function() { highlightSite(site.code); });
+
         var typesLabel = site.primary_types && site.primary_types.length
           ? site.primary_types.join(', ')
           : 'N/A';
@@ -900,6 +1038,55 @@
         );
 
         marker.addTo(leafletMap);
+      });
+    }
+
+    // =============================================================================
+    // SITE CROSS-LINK HIGHLIGHT
+    // =============================================================================
+    function highlightSite(code) {
+      if (activeHighlightSite === code) {
+        clearSiteHighlight();
+        return;
+      }
+      activeHighlightSite = code;
+
+      // Update bySite bar chart
+      if (chartInstances.bySite && chartInstances.bySiteCodes) {
+        var matchIdx = chartInstances.bySiteCodes.indexOf(code);
+        chartInstances.bySite.data.datasets[0].backgroundColor =
+          chartInstances.bySiteCodes.map(function(c, i) {
+            return i === matchIdx ? CHART_COLORS.orangeAccent : CHART_COLORS.orangeAccentDim;
+          });
+        chartInstances.bySite.update();
+      }
+
+      // Update map markers
+      Object.keys(mapMarkersBySite).forEach(function(siteCode) {
+        var m = mapMarkersBySite[siteCode];
+        if (siteCode === code) {
+          m.setStyle({ fillColor: CHART_COLORS.orangeAccent, color: CHART_COLORS.orangeAccentDim });
+        } else {
+          m.setStyle({ fillColor: CHART_COLORS.mapMarkerFill, color: CHART_COLORS.mapMarkerBorder });
+        }
+      });
+    }
+
+    function clearSiteHighlight() {
+      activeHighlightSite = null;
+
+      // Restore bySite bar chart to uniform color
+      if (chartInstances.bySite) {
+        chartInstances.bySite.data.datasets[0].backgroundColor = CHART_COLORS.siteBar;
+        chartInstances.bySite.update();
+      }
+
+      // Restore all map markers to original style
+      Object.keys(mapMarkersBySite).forEach(function(siteCode) {
+        mapMarkersBySite[siteCode].setStyle({
+          fillColor: CHART_COLORS.mapMarkerFill,
+          color: CHART_COLORS.mapMarkerBorder
+        });
       });
     }
 
@@ -1000,6 +1187,47 @@
         .replace(/"/g, '&quot;');
     }
 
+    function showCustomTooltip(x, y, htmlContent) {
+      var el = document.getElementById('custom-tooltip');
+      el.innerHTML = htmlContent;
+      el.style.display = 'block';
+      el.style.left = (x + 12) + 'px';
+      el.style.top  = (y + 12) + 'px';
+    }
+
+    function hideCustomTooltip() {
+      document.getElementById('custom-tooltip').style.display = 'none';
+    }
+
+    function buildTooltipHtml(label, breakdown) {
+      var html = '<strong>' + escapeHtml(label) + '</strong><br>';
+      breakdown.sort(function(a, b) { return b.count - a.count; });
+      var top = breakdown.slice(0, 5);
+      for (var i = 0; i < top.length; i++) {
+        html += escapeHtml(top[i].name) + ': ' + top[i].count + '<br>';
+      }
+      return html;
+    }
+
+    function renderReplicateBadges(containerId, replicateData) {
+      var container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = '';
+      if (!replicateData || replicateData.length === 0) {
+        var fallback = document.createElement('span');
+        fallback.className = 'text-sm text-stone-400';
+        fallback.textContent = 'None recorded';
+        container.appendChild(fallback);
+        return;
+      }
+      replicateData.forEach(function(tag) {
+        var span = document.createElement('span');
+        span.className = 'px-2 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700';
+        span.textContent = escapeHtml(tag);
+        container.appendChild(span);
+      });
+    }
+
     // =============================================================================
     // FOOTER DATE
     // =============================================================================
@@ -1080,7 +1308,13 @@
       'sliceLocationTimeDistChart',
       'sliceLabGroupTypesChart',
       'sliceLabGroupPipelineChart',
-      'sliceLabGroupTemporalChart'
+      'sliceLabGroupTemporalChart',
+      'sliceProjectReplicateBadges',
+      'sliceLocationReplicateBadges',
+      'sliceLabGroupReplicateBadges',
+      'sliceProjectSamplerChart',
+      'sliceLocationSamplerChart',
+      'sliceLabGroupSamplerChart'
     ];
 
     function destroyAllSliceCharts() {
@@ -1114,7 +1348,8 @@
           },
           x: {
             grid: { display: false },
-            ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 18, font: { size: 10 } }
+            ticks: { maxRotation: 45, autoSkip: false, font: { size: 10 } },
+            title: { display: true, text: 'Collection Date (Month/Year)', color: CHART_COLORS.axisLabel, font: { size: 11 } }
           }
         }
       };
@@ -1266,6 +1501,9 @@
         },
         options: buildTemporalChartOptions()
       });
+
+      renderReplicateBadges('sliceProjectReplicateBadges', entry.replicate_tags);
+      renderSamplerTypeChart('sliceProjectSamplerChart', entry.sampler_type_dist);
     }
 
     // =============================================================================
@@ -1430,6 +1668,9 @@
       } else {
         timeDistCard.classList.add('hidden');
       }
+
+      renderReplicateBadges('sliceLocationReplicateBadges', entry.replicate_tags);
+      renderSamplerTypeChart('sliceLocationSamplerChart', entry.sampler_type_dist);
     }
 
     // =============================================================================
@@ -1554,6 +1795,9 @@
         },
         options: buildTemporalChartOptions()
       });
+
+      renderReplicateBadges('sliceLabGroupReplicateBadges', entry.replicate_tags);
+      renderSamplerTypeChart('sliceLabGroupSamplerChart', entry.sampler_type_dist);
     }
 
     // =============================================================================
@@ -1589,7 +1833,7 @@
       if (cat === null) {
         // Default view: hide slice container, existing charts already rendered
         sliceContainer.classList.add('hidden');
-        sliceContainer.classList.remove('block');
+        sliceContainer.classList.remove('block', 'bg-orange-50', 'transition-colors', 'duration-300');
 
         projectView.classList.add('hidden');
         locationView.classList.add('hidden');
@@ -1611,7 +1855,7 @@
       if (cat !== null && group === null) {
         // Category selected, no group yet: show group list, hide slice container
         sliceContainer.classList.add('hidden');
-        sliceContainer.classList.remove('block');
+        sliceContainer.classList.remove('block', 'bg-orange-50', 'transition-colors', 'duration-300');
 
         activeLabel.classList.add('hidden');
         clearBtn.classList.add('hidden');
@@ -1636,7 +1880,7 @@
 
       // Both category and group are set: show slice view container
       sliceContainer.classList.remove('hidden');
-      sliceContainer.classList.add('block');
+      sliceContainer.classList.add('block', 'bg-orange-50', 'transition-colors', 'duration-300');
 
       // Show correct inner view, hide others
       projectView.classList.add('hidden');
@@ -1726,7 +1970,7 @@
         var isSelected = li.getAttribute('data-group-id') === sliceState.activeGroup;
         li.setAttribute('aria-selected', isSelected ? 'true' : 'false');
         if (isSelected) {
-          li.className = 'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-semibold text-green-800 bg-green-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset';
+          li.className = 'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-semibold text-orange-700 bg-orange-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset';
         } else {
           li.className = 'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-stone-600 cursor-pointer hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset';
         }
@@ -2045,6 +2289,36 @@
       renderBySiteChart(data.by_site);
       renderMap(data.sites);
 
+      // Global replicate badges — flat deduplicated sorted list across all project entries
+      var globalTags = [];
+      if (data.slice_views && Array.isArray(data.slice_views.project)) {
+        data.slice_views.project.forEach(function(e) {
+          if (Array.isArray(e.replicate_tags)) {
+            e.replicate_tags.forEach(function(t) {
+              if (globalTags.indexOf(t) === -1) { globalTags.push(t); }
+            });
+          }
+        });
+      }
+      globalTags.sort();
+      renderReplicateBadges('globalReplicateBadges', globalTags);
+
+      var samplerMap = {};
+      if (data.slice_views && Array.isArray(data.slice_views.project)) {
+        data.slice_views.project.forEach(function(e) {
+          if (Array.isArray(e.sampler_type_dist)) {
+            e.sampler_type_dist.forEach(function(d) {
+              samplerMap[d.sampler] = (samplerMap[d.sampler] || 0) + d.count;
+            });
+          }
+        });
+      }
+      var globalSamplerDist = Object.keys(samplerMap)
+        .map(function(k) { return { sampler: k, count: samplerMap[k] }; })
+        .sort(function(a, b) { return b.count - a.count; });
+      destroyChart('globalSamplerChart');
+      renderSamplerTypeChart('globalSamplerChart', globalSamplerDist);
+
       buildFilterOptions(data.recent_samples);
       renderTable(data.recent_samples);
 
@@ -2095,5 +2369,6 @@
         });
     });
   </script>
+<div id="custom-tooltip"></div>
 </body>
 </html>
