@@ -66,6 +66,8 @@ COL_PRODUCT = "Product"                               # 'DNA', 'Isolate', or NaN
 COL_PROJECT_ID = "Project ID"
 COL_PROJECT_LEAD = "Project Lead"
 COL_COLLECTED_TIME = "Sample Collected Time"
+COL_SAMPLER_TYPE = "Sampler Type"       # device/method used (e.g. 'SASS', 'SKC BioSampler') — 73.9% fill on field samples (verified 2026-03-22)
+COL_SAMPLE_REPLICATE = "Sample Replicate"  # batch/replicate tag (e.g. 'AM', 'PM') — 45.9% fill on field samples (verified 2026-03-22)
 
 # Sequencing columns — values are run IDs (filenames/strings) stored on
 # derivative rows only.  Empty / NaN = not sequenced.
@@ -378,6 +380,44 @@ def build_time_distribution(subset: pd.DataFrame) -> list:
     return [{"time_period": label, "count": counts[label]} for label, _, _ in TIME_PERIODS]
 
 
+def build_sampler_type_dist(group: pd.DataFrame) -> list:
+    """Return sampler type distribution sorted descending by count.
+
+    Uses COL_SAMPLER_TYPE ('Sampler Type') which was verified at 73.9% fill
+    on field samples (2026-03-22).  Returns [] if the column is absent or the
+    fill rate within this group is below 5%.
+    """
+    if COL_SAMPLER_TYPE not in group.columns:
+        # Column absent from xlsx — emit empty list per task spec
+        return []
+    valid = group[COL_SAMPLER_TYPE].dropna()
+    fill_rate = len(valid) / len(group) if len(group) > 0 else 0.0
+    if fill_rate < 0.05:
+        # Below 5% fill threshold — emit empty list per task spec
+        return []
+    counts = valid.value_counts()
+    return [{"sampler": str(s), "count": int(c)} for s, c in counts.items()]
+
+
+def build_replicate_tags(group: pd.DataFrame) -> list:
+    """Return sorted list of unique replicate/batch tag strings.
+
+    Uses COL_SAMPLE_REPLICATE ('Sample Replicate') which was verified at 45.9%
+    fill on field samples (2026-03-22).  Returns [] if the column is absent or
+    the fill rate within this group is below 5%.
+    """
+    if COL_SAMPLE_REPLICATE not in group.columns:
+        # Column absent from xlsx — emit empty list per task spec
+        return []
+    valid = group[COL_SAMPLE_REPLICATE].dropna()
+    fill_rate = len(valid) / len(group) if len(group) > 0 else 0.0
+    if fill_rate < 0.05:
+        # Below 5% fill threshold — emit empty list per task spec
+        return []
+    unique_tags = sorted(valid.astype(str).unique().tolist())
+    return unique_tags
+
+
 def build_slice_project(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
@@ -421,6 +461,8 @@ def build_slice_project(
                 "sequenced": sequenced,
             },
             "temporal": temporal,
+            "sampler_type_dist": build_sampler_type_dist(group),
+            "replicate_tags": build_replicate_tags(group),
         })
 
     # Sort by sample_count descending, cap at 20
@@ -480,6 +522,8 @@ def build_slice_location(
             "sub_sites": sub_sites,
             "sample_types": sample_types,
             "temporal": temporal,
+            "sampler_type_dist": build_sampler_type_dist(group),
+            "replicate_tags": build_replicate_tags(group),
         }
         if time_dist:
             entry["time_distribution"] = time_dist
@@ -534,6 +578,8 @@ def build_slice_lab_group(
                 "sequenced": sequenced,
             },
             "temporal": temporal,
+            "sampler_type_dist": build_sampler_type_dist(group),
+            "replicate_tags": build_replicate_tags(group),
         })
 
     # Sort by sample_count descending, cap at 20
@@ -729,6 +775,21 @@ def main() -> None:
 
     all_keys_pass = "PASS" if not missing_keys else "FAIL"
     print(f"All 9 required keys present: {all_keys_pass}")
+
+    # Spot-check: sampler_type_dist and replicate_tags present in first entry of each slice
+    for label, entries in [
+        ("slice_views.project[0]", slice_project),
+        ("slice_views.location[0]", slice_location),
+        ("slice_views.lab_group[0]", slice_lab_group),
+    ]:
+        if entries:
+            has_sampler = "sampler_type_dist" in entries[0]
+            has_replicate = "replicate_tags" in entries[0]
+            sampler_pass = "PASS" if has_sampler else "FAIL"
+            replicate_pass = "PASS" if has_replicate else "FAIL"
+            print(f"  {label}: sampler_type_dist={sampler_pass}, replicate_tags={replicate_pass}")
+        else:
+            print(f"  {label}: SKIP (no entries)")
 
     print("\nDone.")
 
