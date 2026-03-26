@@ -655,3 +655,30 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - Scope note: Sample-level filtering only (via tag_sample_counts); chart data filtering deferred (charts still display full dataset regardless of badge selection)
   </retention_keys>
 </archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-26T00:00:00Z</timestamp>
+  <task_id>broadn-p3-tag-filter-postmortem</task_id>
+  <event_type>POST_MORTEM</event_type>
+  <rationale>Post-mortem documenting broadn-p3-tag-filter sprint completion (2026-03-23 → 2026-03-26). Three delivery phases: (1) BE pipeline infrastructure (tag_sample_counts emitter), (2) FE applyFilter wiring (sample-level filtering), (3) badge display + chart filtering (tag_groups grouped by source column, Option C slice charts re-render per active tags). Phases 1 and 2 completed with formal Critic review, agent dispatch, and full audit/archive cycle. Phase 3 (the largest feature surface: 3 new FE helpers, BE cross-tab generation, chart filtering logic) was implemented directly in main session by Orchestrator during iterative human feedback without dispatch-task invocation, Critic review, formal audit, or Archivist logging. This protocol bypass created three observable issues: (1a) Data contract drift: Phase 1 emitted `tag_sample_counts` (flat dict); Phase 3 superseded it with `tag_groups` (per-column dict) and added `tag_charts` (cross-tab). The key rename happened in main session without formal revision notice. Phase 2 code (applyFilter, getFilteredCount) was built against the old contract and would silently receive undefined if it attempted to read tag_sample_counts post-Phase-3. This was mitigated because Phase 3 also updated call sites in the same session, but if any consumer had been asynchronous or cached, invisible regression would have occurred. (1b) Validation baseline staleness: xlsx update increased sequenced sample count from 1475 to 2098; hardcoded validation constant was stale. Caught manually during Phase 3, not by agent-run script. (1c) Phase 3 shipped without audit or log trail. Root cause: Orchestrator entered implementation mode during iterative human conversation describing column values and selecting options (a natural interaction pattern); the conversational cadence suppressed the explicit "dispatch or direct?" protocol gate. Five protocol gaps identified for future sprints: (G1) Orchestrator must ask "dispatch or direct?" before implementing when human feedback is iterative/detaily rather than scope-only. (G2) Auditor spec needs cross-task data contract key validation: grep prior task keys in all downstream consumers. (G3) Validation constants in preprocess_data.py must be comment-flagged with verification date. (G4) Main-session direct implementation must write SPAWN/COMPLETE events to event log (treat as ORC#0 task). (G5) SESSION-CHECKPOINT must be updated at sprint close by Archivist, not left stale. Agents within formal pipeline: BE#1 (Phase 1) and FE#1 (Phase 2) both achieved 100% first-pass rate with zero remediation cycles. BE#1 self-corrected when brief referenced non-existent function; FE#1 delivered 157 net lines with correct textContent safety pattern. Both delivered to full audit spec. Chart filtering and tag badge display all confirmed working in live browser by human after Phase 3.</rationale>
+  <dependencies>
+    - Depends on: broadn-p3-t1-pipeline (Phase 1, formal delivery) and broadn-p3-t2-filter-fe (Phase 2, formal delivery)
+    - Discovered gap blocking future sprints: Orchestrator protocol must be updated to enforce "dispatch or direct?" gate before main-session implementation of multi-domain features
+  </dependencies>
+  <retention_keys>
+    - Post-mortem location: docs/post-mortems/broadn-p3-tag-filter.md
+    - Phase 3 data contract change: entry.tag_sample_counts (Phase 1 output) does NOT exist in final data.json; superseded by entry.tag_groups = { colLabel: { token: count } } and entry.tag_charts = { colLabel: { token: { temporal, sample_types, pipeline, sampler_type_dist } } }
+    - Any code reading entry.tag_sample_counts will silently receive undefined — no error thrown
+    - Validation constant update: kpis.sequenced confirmed as 2098 (not 1475) after xlsx column expansion
+    - Protocol gap G1: Add "dispatch or direct?" gate to orchestrator spec when human provides iterative detail during active session
+    - Protocol gap G2: Auditor BE spec must grep prior task's data contract keys in all downstream consumers before PASS
+    - Protocol gap G3: Validation constants in preprocess_data.py must have "# VERIFIED: YYYY-MM-DD" comment; auditor should flag constants older than most recent xlsx commit
+    - Protocol gap G4: Orchestrator must write SPAWN/COMPLETE events for main-session direct work (agent_id: "ORC#0-direct")
+    - Protocol gap G5: Archivist must update SESSION-CHECKPOINT as part of sprint-close procedure
+    - 14 of 20 projects in final data.json have populated tag_groups; tag_charts cross-tab present for all 20
+    - Location sub-sites chart and time-of-day polar chart are NOT filtered by active tags (no cross-tab dimensions for those)
+    - Live browser verification: badge display (grouped by column), sidebar filtering, and Option C chart filtering all functional as of human confirmation 2026-03-26
+    - FE helpers added in Phase 3: getSliceEntry(fs, entryId), mergeTagChartData(base, override), updateSliceCharts(fs, charts) — all internal utilities for chart filtering
+    - Files modified: scripts/preprocess_data.py (updated hardcoded constant and added build_tag_groups + build_tag_charts functions), index.html (rewritten renderTagGroups, extended applyFilter section d for chart updates, added 3 FE helpers)
+  </retention_keys>
+</archive_entry>
