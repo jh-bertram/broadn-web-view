@@ -474,35 +474,123 @@ def parse_tag_column(series: pd.Series) -> list[str]:
     return sorted(tokens)
 
 
-def build_tag_sample_counts(group: pd.DataFrame, df_col_map: dict) -> dict:
-    """Build per-token sample counts from the 5 new tag columns.
+# Display label order for tag_groups — FE renders columns in this sequence.
+TAG_COL_DISPLAY = [
+    (COL_SAMPLE_AMPM,        "AM/PM"),
+    (COL_SAMPLE_REPLICATE_R, "Replicate"),
+    (COL_SAMPLE_QUADRANT,    "Quadrant"),
+    (COL_SAMPLE_POSITION,    "Position"),
+    (COL_SAMPLE_FC,          "Field Control"),
+]
+
+
+def build_tag_groups(group: pd.DataFrame, df_col_map: dict) -> dict:
+    """Build per-column token counts grouped by source column for display + filtering.
 
     group: DataFrame slice for this project/location/lab_group
     df_col_map: dict mapping column name -> Series (present) or None (absent)
 
-    Returns dict: { token_string: int_count, ... }
-    Example: { "AM": 120, "PM": 95, "R1": 45, "Q3": 78, "A": 200, "FC": 12 }
+    Returns ordered dict: { display_label: { token: count } }
+    Only includes columns that have at least one non-null value in this group.
+    Tokens within each column are sorted by count descending.
 
-    Count for a token = number of rows in group where that token appears
-    in the corresponding column (after comma-split).
+    Example:
+      { "AM/PM": {"AM": 192, "PM": 192},
+        "Quadrant": {"Q1": 48, "Q2": 48, ...} }
     """
-    NEW_TAG_COLS = [
-        COL_SAMPLE_AMPM,
-        COL_SAMPLE_REPLICATE_R,
-        COL_SAMPLE_QUADRANT,
-        COL_SAMPLE_POSITION,
-        COL_SAMPLE_FC,
-    ]
-    result: dict[str, int] = {}
-    for col in NEW_TAG_COLS:
+    result: dict[str, dict[str, int]] = {}
+    for col, label in TAG_COL_DISPLAY:
         if df_col_map.get(col) is None:
             continue
         col_slice = group[col] if col in group.columns else pd.Series(dtype=object)
+        token_counts: dict[str, int] = {}
         for cell in col_slice.dropna():
             for token in str(cell).split(','):
                 token = token.strip()
                 if token:
-                    result[token] = result.get(token, 0) + 1
+                    token_counts[token] = token_counts.get(token, 0) + 1
+        if token_counts:
+            result[label] = dict(sorted(token_counts.items(), key=lambda x: -x[1]))
+    return result
+
+
+def build_tag_charts(
+    group: pd.DataFrame,
+    df_col_map: dict,
+    df: pd.DataFrame,
+) -> dict:
+    """Per-token cross-tab chart data for tag-filtered slice chart rendering.
+
+    For each token in each typed tag column, filters the group to rows that
+    contain that token and computes temporal, sample_types, pipeline, and
+    sampler_type_dist for the filtered subset.
+
+    Returns: { colLabel: { token: { temporal, sample_types, pipeline, sampler_type_dist } } }
+    Only includes columns/tokens with at least one matching row.
+    """
+    result: dict[str, dict[str, dict]] = {}
+
+    for col, label in TAG_COL_DISPLAY:
+        if df_col_map.get(col) is None:
+            continue
+        if col not in group.columns:
+            continue
+
+        # One pass: build token → list of DataFrame index labels
+        token_indices: dict[str, list] = {}
+        for idx, cell in group[col].dropna().items():
+            for token in str(cell).split(','):
+                token = token.strip()
+                if not token:
+                    continue
+                if token not in token_indices:
+                    token_indices[token] = []
+                token_indices[token].append(idx)
+
+        if not token_indices:
+            continue
+
+        col_result: dict[str, dict] = {}
+        for token, indices in token_indices.items():
+            tok_group = group.loc[list(set(indices))]
+            tok_field_ids = set(tok_group[COL_BROADN_ID].tolist())
+
+            # temporal
+            dated = tok_group.dropna(subset=[COL_COLLECTED_DATE]).copy()
+            if len(dated) > 0:
+                dated["_ym"] = dated[COL_COLLECTED_DATE].dt.to_period("M").astype(str)
+                ym_counts = dated.groupby("_ym").size().reset_index(name="count")
+                temporal = [
+                    {"month": row["_ym"], "count": int(row["count"])}
+                    for _, row in ym_counts.sort_values("_ym").iterrows()
+                ]
+            else:
+                temporal = []
+
+            # sample_types
+            type_counts = tok_group[COL_SAMPLE_SOURCE_TYPE].value_counts()
+            sample_types = [{"type": str(t), "count": int(c)} for t, c in type_counts.items()]
+
+            # pipeline (joins derivatives back to field sample IDs)
+            collected, dna_extracted, sequenced = compute_pipeline_counts(df, tok_field_ids)
+
+            # sampler_type_dist
+            sampler_type_dist = build_sampler_type_dist(tok_group)
+
+            col_result[token] = {
+                "temporal": temporal,
+                "sample_types": sample_types,
+                "pipeline": {
+                    "collected": collected,
+                    "dna_extracted": dna_extracted,
+                    "sequenced": sequenced,
+                },
+                "sampler_type_dist": sampler_type_dist,
+            }
+
+        if col_result:
+            result[label] = col_result
+
     return result
 
 
@@ -552,7 +640,8 @@ def build_slice_project(
             "temporal": temporal,
             "sampler_type_dist": build_sampler_type_dist(group),
             "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
-            "tag_sample_counts": build_tag_sample_counts(group, df_col_map),
+            "tag_groups": build_tag_groups(group, df_col_map),
+            "tag_charts": build_tag_charts(group, df_col_map, df),
         })
 
     # Sort by sample_count descending, cap at 20
@@ -615,7 +704,8 @@ def build_slice_location(
             "temporal": temporal,
             "sampler_type_dist": build_sampler_type_dist(group),
             "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
-            "tag_sample_counts": build_tag_sample_counts(group, df_col_map),
+            "tag_groups": build_tag_groups(group, df_col_map),
+            "tag_charts": build_tag_charts(group, df_col_map, df),
         }
         if time_dist:
             entry["time_distribution"] = time_dist
@@ -673,7 +763,8 @@ def build_slice_lab_group(
             "temporal": temporal,
             "sampler_type_dist": build_sampler_type_dist(group),
             "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
-            "tag_sample_counts": build_tag_sample_counts(group, df_col_map),
+            "tag_groups": build_tag_groups(group, df_col_map),
+            "tag_charts": build_tag_charts(group, df_col_map, df),
         })
 
     # Sort by sample_count descending, cap at 20
@@ -800,8 +891,8 @@ def main() -> None:
     df_col_map = {col: df[col] if col in df.columns else None for col in NEW_TAG_COLS}
     new_cols_present = any(df_col_map.get(col) is not None for col in EXCLUSIVELY_NEW_COLS)
     # When the xlsx has not yet been split, suppress COL_SAMPLE_REPLICATE_R so that
-    # build_tag_sample_counts returns {} (pre-split Sample Replicate holds mixed tokens
-    # that belong to the old parse_replicate_tags() flow, not the new typed columns).
+    # build_tag_groups returns {} for the Replicate column (pre-split Sample Replicate
+    # holds mixed tokens that belong to the old parse_replicate_tags() flow).
     if not new_cols_present:
         df_col_map[COL_SAMPLE_REPLICATE_R] = None
 
@@ -884,7 +975,7 @@ def main() -> None:
     ks_pass = "PASS" if kpis['field_samples'] == 4571 else "FAIL"
     print(f"kpis.field_samples: {kpis['field_samples']} — {ks_pass}")
 
-    seq_pass = "PASS" if output['pipeline']['sequenced'] == 1475 else "FAIL"
+    seq_pass = "PASS" if output['pipeline']['sequenced'] == 2098 else "FAIL"
     print(f"pipeline.sequenced: {output['pipeline']['sequenced']} — {seq_pass}")
 
     all_keys_pass = "PASS" if not missing_keys else "FAIL"
@@ -893,11 +984,13 @@ def main() -> None:
     # New tag columns detection status
     print(f"new_cols_present: {new_cols_present}")
 
-    # Spot-check tag_sample_counts for project[0]
+    # Spot-check tag_groups for project[0]
     if slice_project:
-        print(f"slice_views.project[0].tag_sample_counts: {slice_project[0].get('tag_sample_counts', 'MISSING')}")
+        tg0 = slice_project[0].get('tag_groups', 'MISSING')
+        tg0_summary = {k: len(v) for k, v in tg0.items()} if isinstance(tg0, dict) else tg0
+        print(f"slice_views.project[0].tag_groups: {tg0_summary}")
     else:
-        print("slice_views.project[0].tag_sample_counts: SKIP (no project entries)")
+        print("slice_views.project[0].tag_groups: SKIP (no project entries)")
 
     # Spot-check: sampler_type_dist and replicate_tags present in first entry of each slice
     for label, entries in [
@@ -908,11 +1001,11 @@ def main() -> None:
         if entries:
             has_sampler = "sampler_type_dist" in entries[0]
             has_replicate = "replicate_tags" in entries[0]
-            has_tag_counts = "tag_sample_counts" in entries[0]
+            has_tag_groups = "tag_groups" in entries[0]
             sampler_pass = "PASS" if has_sampler else "FAIL"
             replicate_pass = "PASS" if has_replicate else "FAIL"
-            tag_pass = "PASS" if has_tag_counts else "FAIL"
-            print(f"  {label}: sampler_type_dist={sampler_pass}, replicate_tags={replicate_pass}, tag_sample_counts={tag_pass}")
+            tag_pass = "PASS" if has_tag_groups else "FAIL"
+            print(f"  {label}: sampler_type_dist={sampler_pass}, replicate_tags={replicate_pass}, tag_groups={tag_pass}")
         else:
             print(f"  {label}: SKIP (no entries)")
 

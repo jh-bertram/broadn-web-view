@@ -674,7 +674,8 @@
     };
 
     // Global tag dict — populated in initDashboard, accessible to clearSliceFilter
-    var globalTagsDict = { time_of_day: [], replicate: [], position: [], clock_quadrant: [], field_controls: [], other: [] };
+    // Structure: { colLabel: { token: count } } — mirrors slice entry tag_groups format.
+    var globalTagsDict = {};
 
     // Returns true when any filter dimension is active
     function isFilterActive() {
@@ -685,32 +686,207 @@
      * getFilteredCount(entry, activeTags)
      * Returns the effective sample count for a slice entry given active tag filters.
      *
-     * If activeTags is empty OR entry.tag_sample_counts is empty/absent:
+     * If activeTags is empty OR entry.tag_groups is empty/absent:
      *   return entry.sample_count (unfiltered)
      *
      * Otherwise:
-     *   return sum of entry.tag_sample_counts[token] for each token in activeTags
-     *   where that token exists in tag_sample_counts.
-     *   If no selected tokens exist in tag_sample_counts, return 0.
-     *
-     * Note: union approximation — individual token counts may overlap.
+     *   Searches each column group in tag_groups for selected tokens.
+     *   Returns sum of matched token counts (union approximation — counts may overlap).
+     *   If no selected tokens exist in tag_groups, return 0.
      */
     function getFilteredCount(entry, activeTags) {
       if (!activeTags || activeTags.length === 0) {
         return entry.sample_count;
       }
-      var tsc = entry.tag_sample_counts;
-      if (!tsc || typeof tsc !== 'object' || Object.keys(tsc).length === 0) {
+      var tg = entry.tag_groups;
+      if (!tg || typeof tg !== 'object' || Object.keys(tg).length === 0) {
         return entry.sample_count;
       }
       var total = 0;
-      for (var i = 0; i < activeTags.length; i++) {
-        var token = activeTags[i];
-        if (Object.prototype.hasOwnProperty.call(tsc, token) && typeof tsc[token] === 'number') {
-          total += tsc[token];
+      var found = false;
+      var colLabels = Object.keys(tg);
+      for (var c = 0; c < colLabels.length; c++) {
+        var tokenCounts = tg[colLabels[c]];
+        if (!tokenCounts || typeof tokenCounts !== 'object') continue;
+        for (var i = 0; i < activeTags.length; i++) {
+          var token = activeTags[i];
+          if (Object.prototype.hasOwnProperty.call(tokenCounts, token) && typeof tokenCounts[token] === 'number') {
+            total += tokenCounts[token];
+            found = true;
+          }
         }
       }
-      return total;
+      return found ? total : 0;
+    }
+
+    // Return the slice entry for the currently-selected group, or null.
+    function getSliceEntry(category, groupId) {
+      if (!appData || !appData.slice_views) return null;
+      if (category === SLICE_CATEGORIES.PROJECT) {
+        return (appData.slice_views.project || []).find(function(e) { return e.project_id === groupId; }) || null;
+      }
+      if (category === SLICE_CATEGORIES.LOCATION) {
+        return (appData.slice_views.location || []).find(function(e) { return e.site_code === groupId; }) || null;
+      }
+      if (category === SLICE_CATEGORIES.LAB_GROUP) {
+        return (appData.slice_views.lab_group || []).find(function(e) { return e.group_name === groupId; }) || null;
+      }
+      return null;
+    }
+
+    // Merge per-token chart data from tag_charts for a set of active tags (union).
+    // Returns { temporal, sample_types, pipeline, sampler_type_dist } or null if
+    // none of the active tags exist in tagCharts.
+    function mergeTagChartData(tagCharts, activeTags) {
+      if (!tagCharts || !activeTags || activeTags.length === 0) return null;
+      var temporal = {};
+      var sampleTypes = {};
+      var pipeline = { collected: 0, dna_extracted: 0, sequenced: 0 };
+      var samplerTypes = {};
+      var found = false;
+
+      Object.keys(tagCharts).forEach(function(colLabel) {
+        var colData = tagCharts[colLabel];
+        if (!colData || typeof colData !== 'object') return;
+        activeTags.forEach(function(token) {
+          if (!Object.prototype.hasOwnProperty.call(colData, token)) return;
+          var tc = colData[token];
+          if (!tc) return;
+          found = true;
+          (tc.temporal || []).forEach(function(pt) {
+            temporal[pt.month] = (temporal[pt.month] || 0) + pt.count;
+          });
+          (tc.sample_types || []).forEach(function(pt) {
+            sampleTypes[pt.type] = (sampleTypes[pt.type] || 0) + pt.count;
+          });
+          if (tc.pipeline) {
+            pipeline.collected     += tc.pipeline.collected     || 0;
+            pipeline.dna_extracted += tc.pipeline.dna_extracted || 0;
+            pipeline.sequenced     += tc.pipeline.sequenced     || 0;
+          }
+          (tc.sampler_type_dist || []).forEach(function(pt) {
+            samplerTypes[pt.sampler] = (samplerTypes[pt.sampler] || 0) + pt.count;
+          });
+        });
+      });
+
+      if (!found) return null;
+
+      var temporalArr = Object.keys(temporal).sort().map(function(m) { return { month: m, count: temporal[m] }; });
+      var sampleTypesArr = Object.keys(sampleTypes)
+        .sort(function(a, b) { return sampleTypes[b] - sampleTypes[a]; })
+        .map(function(t) { return { type: t, count: sampleTypes[t] }; });
+      var samplerArr = Object.keys(samplerTypes)
+        .sort(function(a, b) { return samplerTypes[b] - samplerTypes[a]; })
+        .map(function(s) { return { sampler: s, count: samplerTypes[s] }; });
+
+      return {
+        temporal: temporalArr,
+        sample_types: sampleTypesArr,
+        pipeline: pipeline,
+        sampler_type_dist: samplerArr,
+      };
+    }
+
+    // Re-render the 4 common slice charts (types, pipeline, temporal, sampler)
+    // for the given category using the provided chartData.
+    // Does NOT re-render header, group info, badges, or location-only charts.
+    function updateSliceCharts(category, chartData) {
+      var typesId, pipelineId, temporalId, samplerChartId;
+      if (category === SLICE_CATEGORIES.PROJECT) {
+        typesId        = 'sliceProjectTypesChart';
+        pipelineId     = 'sliceProjectPipelineChart';
+        temporalId     = 'sliceProjectTemporalChart';
+        samplerChartId = 'sliceProjectSamplerChart';
+      } else if (category === SLICE_CATEGORIES.LOCATION) {
+        typesId        = 'sliceLocationTypesChart';
+        pipelineId     = null;
+        temporalId     = 'sliceLocationTemporalChart';
+        samplerChartId = 'sliceLocationSamplerChart';
+      } else if (category === SLICE_CATEGORIES.LAB_GROUP) {
+        typesId        = 'sliceLabGroupTypesChart';
+        pipelineId     = 'sliceLabGroupPipelineChart';
+        temporalId     = 'sliceLabGroupTemporalChart';
+        samplerChartId = 'sliceLabGroupSamplerChart';
+      } else {
+        return;
+      }
+
+      // Sample Types doughnut
+      if (typesId && chartData.sample_types && chartData.sample_types.length > 0) {
+        destroyChart(typesId);
+        var ctxT = document.getElementById(typesId);
+        if (ctxT) {
+          chartInstances[typesId] = new Chart(ctxT.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+              labels: chartData.sample_types.map(function(d) { return d.type; }),
+              datasets: [{ data: chartData.sample_types.map(function(d) { return d.count; }),
+                backgroundColor: CHART_COLORS.sliceSampleTypes, borderColor: CHART_COLORS.donutBorder, borderWidth: 2 }]
+            },
+            options: {
+              responsive: true, maintainAspectRatio: false, cutout: '65%',
+              plugins: {
+                legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } } },
+                tooltip: { backgroundColor: CHART_COLORS.tooltip, callbacks: { label: tooltipLabelPct } }
+              }
+            }
+          });
+        }
+      }
+
+      // Pipeline horizontal bar
+      if (pipelineId && chartData.pipeline) {
+        destroyChart(pipelineId);
+        var ctxP = document.getElementById(pipelineId);
+        if (ctxP) {
+          chartInstances[pipelineId] = new Chart(ctxP.getContext('2d'), {
+            type: 'bar',
+            data: {
+              labels: ['Collected', 'DNA Extracted', 'Sequenced'],
+              datasets: [{ data: [chartData.pipeline.collected, chartData.pipeline.dna_extracted, chartData.pipeline.sequenced],
+                backgroundColor: CHART_COLORS.slicePipeline, borderWidth: 0, borderRadius: 4 }]
+            },
+            options: {
+              indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: CHART_COLORS.tooltip, callbacks: { label: tooltipLabelSamples } }
+              },
+              scales: {
+                x: { beginAtZero: true, grid: { color: CHART_COLORS.gridLine },
+                  ticks: { callback: function(val) { return val >= 1000 ? (val/1000).toFixed(1)+'k' : val; } } },
+                y: { grid: { display: false } }
+              }
+            }
+          });
+        }
+      }
+
+      // Temporal line chart
+      if (temporalId && chartData.temporal) {
+        destroyChart(temporalId);
+        var ctxTm = document.getElementById(temporalId);
+        if (ctxTm) {
+          var gapped = insertGapMarkers(chartData.temporal);
+          chartInstances[temporalId] = new Chart(ctxTm.getContext('2d'), {
+            type: 'line',
+            data: {
+              labels: gapped.labels,
+              datasets: [{ label: 'Samples Collected', data: gapped.counts,
+                borderColor: CHART_COLORS.sliceTemporalLine, backgroundColor: CHART_COLORS.sliceTemporalArea,
+                borderWidth: 2, tension: 0.4, fill: true,
+                pointBackgroundColor: CHART_COLORS.sliceTemporalLine, pointRadius: 3, pointHoverRadius: 6 }]
+            },
+            options: buildTemporalChartOptions()
+          });
+        }
+      }
+
+      // Sampler type doughnut (uses existing helper)
+      if (samplerChartId) {
+        renderSamplerTypeChart(samplerChartId, chartData.sampler_type_dist);
+      }
     }
 
     // Refresh badge visual states AND re-render the active sidebar group list
@@ -848,6 +1024,24 @@
                 }
               }
             }
+          }
+        }
+      }
+
+      // --- d) Update slice charts to reflect tag filter ---
+      if (cat !== null && group !== null) {
+        var activeEntry = getSliceEntry(cat, group);
+        if (activeEntry) {
+          if (fs.tags.length > 0 && activeEntry.tag_charts) {
+            var merged = mergeTagChartData(activeEntry.tag_charts, fs.tags);
+            if (merged) { updateSliceCharts(cat, merged); }
+          } else if (fs.tags.length === 0) {
+            updateSliceCharts(cat, {
+              temporal:          activeEntry.temporal,
+              sample_types:      activeEntry.sample_types,
+              pipeline:          activeEntry.pipeline,
+              sampler_type_dist: activeEntry.sampler_type_dist,
+            });
           }
         }
       }
@@ -1498,8 +1692,17 @@
       return html;
     }
 
-    var TAG_GROUP_ORDER = ['time_of_day', 'replicate', 'position', 'clock_quadrant', 'field_controls', 'other'];
+    // Canonical column display order — matches TAG_COL_DISPLAY in preprocess_data.py
+    var TAG_COL_ORDER = ['AM/PM', 'Replicate', 'Quadrant', 'Position', 'Field Control'];
 
+    /**
+     * renderTagGroups(containerId, data)
+     * Renders tag badges grouped by source column.
+     *
+     * data: { colLabel: { token: count } }
+     * Each column renders as a labeled row of clickable badges showing "token (count)".
+     * Falls back to "None recorded" when data is empty.
+     */
     function renderTagGroups(containerId, data) {
       var container = document.getElementById(containerId);
       if (!container) return;
@@ -1508,8 +1711,9 @@
       // Empty-data fallback
       var hasAny = false;
       if (data && typeof data === 'object') {
-        TAG_GROUP_ORDER.forEach(function(k) {
-          if (Array.isArray(data[k]) && data[k].length > 0) { hasAny = true; }
+        Object.keys(data).forEach(function(k) {
+          var v = data[k];
+          if (v && typeof v === 'object' && Object.keys(v).length > 0) { hasAny = true; }
         });
       }
       if (!hasAny) {
@@ -1520,26 +1724,34 @@
         return;
       }
 
-      TAG_GROUP_ORDER.forEach(function(k) {
-        if (!Array.isArray(data[k]) || data[k].length === 0) return;
+      // Render in canonical order; append any unlisted column keys after
+      var allKeys = Object.keys(data);
+      var orderedKeys = TAG_COL_ORDER.filter(function(k) { return allKeys.indexOf(k) !== -1; });
+      var extraKeys = allKeys.filter(function(k) { return TAG_COL_ORDER.indexOf(k) === -1; });
+      var renderOrder = orderedKeys.concat(extraKeys);
+
+      renderOrder.forEach(function(colLabel) {
+        var tokenCounts = data[colLabel];
+        if (!tokenCounts || typeof tokenCounts !== 'object' || Object.keys(tokenCounts).length === 0) return;
 
         var groupRow = document.createElement('div');
         groupRow.className = 'flex flex-wrap items-center gap-1 mb-1';
 
-        var label = document.createElement('span');
-        label.className = 'text-xs text-stone-400 mr-1';
-        label.textContent = k.replace(/_/g, ' ');
-        groupRow.appendChild(label);
+        var colLabelEl = document.createElement('span');
+        colLabelEl.className = 'text-xs text-stone-400 mr-1 shrink-0';
+        colLabelEl.textContent = colLabel;
+        groupRow.appendChild(colLabelEl);
 
-        data[k].forEach(function(token) {
-          var badge = document.createElement('span');
+        Object.keys(tokenCounts).forEach(function(token) {
+          var count = tokenCounts[token];
+          var badge = document.createElement('button');
           var isActive = filterState.tags.indexOf(token) !== -1;
           badge.className = isActive ? TAG_BADGE_CLASSES.active : TAG_BADGE_CLASSES.inactive;
           badge.setAttribute('data-tag', token);
           badge.setAttribute('tabindex', '0');
           badge.setAttribute('role', 'button');
           badge.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-          badge.textContent = token;
+          badge.textContent = token + ' (' + count + ')';
 
           function toggleTag() {
             var idx = filterState.tags.indexOf(token);
@@ -1841,7 +2053,7 @@
         options: buildTemporalChartOptions()
       });
 
-      renderTagGroups('sliceProjectReplicateBadges', entry.replicate_tags);
+      renderTagGroups('sliceProjectReplicateBadges', entry.tag_groups);
       renderSamplerTypeChart('sliceProjectSamplerChart', entry.sampler_type_dist);
     }
 
@@ -2009,7 +2221,7 @@
         timeDistCard.classList.add('hidden');
       }
 
-      renderTagGroups('sliceLocationReplicateBadges', entry.replicate_tags);
+      renderTagGroups('sliceLocationReplicateBadges', entry.tag_groups);
       renderSamplerTypeChart('sliceLocationSamplerChart', entry.sampler_type_dist);
     }
 
@@ -2137,7 +2349,7 @@
         options: buildTemporalChartOptions()
       });
 
-      renderTagGroups('sliceLabGroupReplicateBadges', entry.replicate_tags);
+      renderTagGroups('sliceLabGroupReplicateBadges', entry.tag_groups);
       renderSamplerTypeChart('sliceLabGroupSamplerChart', entry.sampler_type_dist);
     }
 
@@ -2643,22 +2855,23 @@
       renderBySiteChart(data.by_site);
       renderMap(data.sites);
 
-      // Global replicate badges — deduplicated dict across all project entries
-      globalTagsDict = { time_of_day: [], replicate: [], position: [], clock_quadrant: [], field_controls: [], other: [] };
+      // Global tag badges — sum of tag_groups counts across all project entries
+      globalTagsDict = {};
       if (data.slice_views && Array.isArray(data.slice_views.project)) {
         data.slice_views.project.forEach(function(e) {
-          if (e.replicate_tags && typeof e.replicate_tags === 'object') {
-            Object.keys(globalTagsDict).forEach(function(k) {
-              if (Array.isArray(e.replicate_tags[k])) {
-                e.replicate_tags[k].forEach(function(t) {
-                  if (globalTagsDict[k].indexOf(t) === -1) { globalTagsDict[k].push(t); }
+          if (e.tag_groups && typeof e.tag_groups === 'object') {
+            Object.keys(e.tag_groups).forEach(function(colLabel) {
+              if (!globalTagsDict[colLabel]) { globalTagsDict[colLabel] = {}; }
+              var tokenCounts = e.tag_groups[colLabel];
+              if (tokenCounts && typeof tokenCounts === 'object') {
+                Object.keys(tokenCounts).forEach(function(token) {
+                  globalTagsDict[colLabel][token] = (globalTagsDict[colLabel][token] || 0) + tokenCounts[token];
                 });
               }
             });
           }
         });
       }
-      Object.keys(globalTagsDict).forEach(function(k) { globalTagsDict[k].sort(); });
       renderTagGroups('globalReplicateBadges', globalTagsDict);
 
       var samplerMap = {};
