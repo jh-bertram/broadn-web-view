@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-03-22T21:46:00Z",
+    "generated": "2026-03-26T20:01:07Z",
     "total_rows": 8079,
     "field_samples": 4571,
     "derivatives": 3508
@@ -9,7 +9,7 @@
     "field_samples": 4571,
     "unique_sites": 29,
     "active_since": "2020",
-    "sequenced": 1475
+    "sequenced": 2098
   },
   "temporal": [
     {
@@ -206,7 +206,7 @@
   "pipeline": {
     "collected": 4571,
     "dna_extracted": 3243,
-    "sequenced": 1475
+    "sequenced": 2098
   },
   "sites": [
     {
@@ -1445,7 +1445,15 @@
             "count": 1056
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       },
       {
         "project_id": "Fragmented Landscape",
@@ -1467,7 +1475,7 @@
         "pipeline": {
           "collected": 623,
           "dna_extracted": 623,
-          "sequenced": 0
+          "sequenced": 623
         },
         "temporal": [
           {
@@ -1485,7 +1493,15 @@
             "count": 194
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       },
       {
         "project_id": "Fall Plant Circle",
@@ -1525,44 +1541,30 @@
             "count": 96
           }
         ],
-        "replicate_tags": [
-          "Q1, am",
-          "Q1, pm",
-          "Q1/2, am",
-          "Q1/2, pm",
-          "Q10, am",
-          "Q10, pm",
-          "Q11, am",
-          "Q11, pm",
-          "Q11/12, am",
-          "Q11/12, pm",
-          "Q12, am",
-          "Q12, pm",
-          "Q2, am",
-          "Q2, pm",
-          "Q3, am",
-          "Q3, pm",
-          "Q3/4, am",
-          "Q3/4, pm",
-          "Q4, am",
-          "Q4, pm",
-          "Q5, am",
-          "Q5, pm",
-          "Q5/6, am",
-          "Q5/6, pm",
-          "Q6, am",
-          "Q6, pm",
-          "Q7, am",
-          "Q7, pm",
-          "Q7/8, am",
-          "Q7/8, pm",
-          "Q8, am",
-          "Q8, pm",
-          "Q9, am",
-          "Q9, pm",
-          "Q9/10, am",
-          "Q9/10, pm"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 192,
+          "PM": 192,
+          "Q1": 48,
+          "Q2": 48,
+          "Q11": 48,
+          "Q12": 48,
+          "Q3": 48,
+          "Q4": 48,
+          "Q5": 48,
+          "Q6": 48,
+          "Q7": 48,
+          "Q8": 48,
+          "Q9": 48,
+          "Q10": 48
+        }
       },
       {
         "project_id": "Spring Plant Circle",
@@ -1606,31 +1608,27 @@
             "count": 90
           }
         ],
-        "replicate_tags": [
-          "Extra, ",
-          "Extra,  Q1, am",
-          "Extra, Q1, am",
-          "Extra, Q1, pm",
-          "Extra, Q2, am",
-          "Extra, Q2, pm",
-          "Extra, Q3, am",
-          "Extra, Q3, pm",
-          "Extra, Q4, am",
-          "Extra, Q4, pm",
-          "Extra, Q5, am",
-          "Extra, Q5, pm",
-          "Extra, Q6, am",
-          "Extra, Q6, pm",
-          "Q2, am",
-          "Q2, pm",
-          "Q3, am",
-          "Q3, pm",
-          "Q4, am",
-          "Q5, am",
-          "Q5, pm",
-          "Q6, am",
-          "Q6, pm"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": [
+            "Extra"
+          ]
+        },
+        "tag_sample_counts": {
+          "AM": 240,
+          "PM": 120,
+          "Extra": 240,
+          "Q1": 59,
+          "Q2": 60,
+          "Q3": 60,
+          "Q5": 60,
+          "Q6": 60,
+          "Q4": 59
+        }
       },
       {
         "project_id": "Fall Plants & Soil",
@@ -1670,14 +1668,25 @@
             "count": 102
           }
         ],
-        "replicate_tags": [
-          "R1, am",
-          "R1, pm",
-          "R2, am",
-          "R2, pm",
-          "R3, am",
-          "R3, pm"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [
+            "R1",
+            "R2",
+            "R3"
+          ],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 153,
+          "PM": 153,
+          "R1": 102,
+          "R2": 102,
+          "R3": 102
+        }
       },
       {
         "project_id": "Flux",
@@ -1729,17 +1738,25 @@
             "count": 304
           }
         ],
-        "replicate_tags": [
-          "B",
-          "B, Blank",
-          "B, L",
-          "B, R",
-          "PT",
-          "T",
-          "T, Blank",
-          "T, L",
-          "T, R"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [
+            "L",
+            "R"
+          ],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "L": 2,
+          "R": 2,
+          "Bottom": 142,
+          "Top": 142,
+          "Blank": 32,
+          "Precision Test": 20
+        }
       },
       {
         "project_id": "BACS",
@@ -1775,17 +1792,29 @@
             "count": 54
           }
         ],
-        "replicate_tags": [
-          "A",
-          "A1",
-          "A2",
-          "A3",
-          "B",
-          "FB",
-          "FC",
-          "KB",
-          "LB"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [
+            "A1",
+            "A2",
+            "A3"
+          ],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "A1": 9,
+          "A2": 7,
+          "A3": 3,
+          "A (top)": 4,
+          "B (bottom)": 4,
+          "Field Blank": 15,
+          "Lab Blank": 4,
+          "Kit Blank": 4,
+          "Field Control": 4
+        }
       },
       {
         "project_id": "Spring SASS/Polycarbonate Top/Bottom",
@@ -1829,15 +1858,21 @@
             "count": 121
           }
         ],
-        "replicate_tags": [
-          "A",
-          "A, AM",
-          "A, PM",
-          "B",
-          "B, AM",
-          "B, PM",
-          "FC"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 129,
+          "PM": 112,
+          "A (top)": 120,
+          "B (bottom)": 123,
+          "Field Control": 6
+        }
       },
       {
         "project_id": "Spring Sass/VIVAS",
@@ -1889,20 +1924,26 @@
             "count": 78
           }
         ],
-        "replicate_tags": [
-          "A, AM",
-          "AM",
-          "C, AM",
-          "C, PM",
-          "Extra, ",
-          "Extra, AM",
-          "Extra, C, PM",
-          "Extra, PM",
-          "FB",
-          "FC",
-          "LB",
-          "PM"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": [
+            "Extra"
+          ]
+        },
+        "tag_sample_counts": {
+          "AM": 59,
+          "PM": 58,
+          "Extra": 19,
+          "C (nearby)": 66,
+          "A (top)": 1,
+          "Lab Blank": 8,
+          "Field Blank": 5,
+          "Field Control": 9
+        }
       },
       {
         "project_id": "Ice-Nucleating Particles",
@@ -1958,10 +1999,21 @@
             "count": 2
           }
         ],
-        "replicate_tags": [
-          "Extra, ",
-          "Extra, AM"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": [
+            "Extra"
+          ]
+        },
+        "tag_sample_counts": {
+          "PM": 31,
+          "AM": 33,
+          "Extra": 100
+        }
       },
       {
         "project_id": "Spring Plants & Soil",
@@ -2009,14 +2061,22 @@
             "count": 13
           }
         ],
-        "replicate_tags": [
-          "7a, A",
-          "A, FC",
-          "B, FC",
-          "C, FC",
-          "FB",
-          "KB"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 1,
+          "C (nearby)": 1,
+          "A (top)": 2,
+          "Field Control": 3,
+          "Kit Blank": 3,
+          "Field Blank": 2
+        }
       },
       {
         "project_id": "Spring Chemistry",
@@ -2043,7 +2103,15 @@
           }
         ],
         "sampler_type_dist": [],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       },
       {
         "project_id": "2022 Fall CPER",
@@ -2075,15 +2143,21 @@
             "count": 87
           }
         ],
-        "replicate_tags": [
-          "7a, A",
-          "7a, B",
-          "7a, C",
-          "7p, A",
-          "7p, B",
-          "7p, C",
-          "A"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 41,
+          "PM": 46,
+          "A (top)": 33,
+          "B (bottom)": 49,
+          "C (nearby)": 5
+        }
       },
       {
         "project_id": "2023 Two Towers",
@@ -2120,10 +2194,21 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 60
+            "count": 62
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 35,
+          "PM": 32
+        }
       },
       {
         "project_id": "2024 Summer",
@@ -2187,7 +2272,15 @@
             "count": 2
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       },
       {
         "project_id": "2023 Summer",
@@ -2215,9 +2308,18 @@
             "count": 45
           }
         ],
-        "replicate_tags": [
-          "B, PM"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "PM": 5,
+          "B (bottom)": 5
+        }
       },
       {
         "project_id": "Optimization Tests",
@@ -2253,10 +2355,21 @@
             "count": 1
           }
         ],
-        "replicate_tags": [
-          "A",
-          "B"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [
+            "A",
+            "B"
+          ],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "A": 12,
+          "B": 12
+        }
       },
       {
         "project_id": "Spring SKC",
@@ -2288,7 +2401,15 @@
             "count": 40
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       },
       {
         "project_id": "2023 Spring CPER Chemistry",
@@ -2315,7 +2436,15 @@
           }
         ],
         "sampler_type_dist": [],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       },
       {
         "project_id": "2022 Fall CPER FC",
@@ -2347,11 +2476,19 @@
             "count": 28
           }
         ],
-        "replicate_tags": [
-          "FC",
-          "FC, AM",
-          "FC, PM"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 3,
+          "PM": 2,
+          "Field Control": 28
+        }
       }
     ],
     "location": [
@@ -2537,104 +2674,64 @@
             "count": 2
           }
         ],
-        "replicate_tags": [
-          "1a",
-          "1p",
-          "7a, A",
-          "7a, B",
-          "7a, C",
-          "7p, A",
-          "7p, B",
-          "7p, C",
-          "A",
-          "A, AM",
-          "A, FC",
-          "A1",
-          "A2",
-          "A3",
-          "AM",
-          "B",
-          "B, Blank",
-          "B, FC",
-          "B, L",
-          "B, R",
-          "C, AM",
-          "C, FC",
-          "C, PM",
-          "Extra, ",
-          "Extra,  Q1, am",
-          "Extra, AM",
-          "Extra, C, PM",
-          "Extra, PM",
-          "Extra, Q1, am",
-          "Extra, Q1, pm",
-          "Extra, Q2, am",
-          "Extra, Q2, pm",
-          "Extra, Q3, am",
-          "Extra, Q3, pm",
-          "Extra, Q4, am",
-          "Extra, Q4, pm",
-          "Extra, Q5, am",
-          "Extra, Q5, pm",
-          "Extra, Q6, am",
-          "Extra, Q6, pm",
-          "FB",
-          "FC",
-          "FC, AM",
-          "FC, PM",
-          "KB",
-          "LB",
-          "PM",
-          "PT",
-          "Q1, am",
-          "Q1, pm",
-          "Q1/2, am",
-          "Q1/2, pm",
-          "Q10, am",
-          "Q10, pm",
-          "Q11, am",
-          "Q11, pm",
-          "Q11/12, am",
-          "Q11/12, pm",
-          "Q12, am",
-          "Q12, pm",
-          "Q2, am",
-          "Q2, pm",
-          "Q3, am",
-          "Q3, pm",
-          "Q3/4, am",
-          "Q3/4, pm",
-          "Q4, am",
-          "Q4, pm",
-          "Q5, am",
-          "Q5, pm",
-          "Q5/6, am",
-          "Q5/6, pm",
-          "Q6, am",
-          "Q6, pm",
-          "Q7, am",
-          "Q7, pm",
-          "Q7/8, am",
-          "Q7/8, pm",
-          "Q8, am",
-          "Q8, pm",
-          "Q9, am",
-          "Q9, pm",
-          "Q9/10, am",
-          "Q9/10, pm",
-          "R1, am",
-          "R1, pm",
-          "R2, am",
-          "R2, pm",
-          "R3, am",
-          "R3, pm",
-          "RH, 1a",
-          "RH, 1p",
-          "T",
-          "T, Blank",
-          "T, L",
-          "T, R"
-        ],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [
+            "A1",
+            "A2",
+            "A3",
+            "R1",
+            "R2",
+            "R3"
+          ],
+          "position": [
+            "L",
+            "R"
+          ],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": [
+            "Extra",
+            "RH"
+          ]
+        },
+        "tag_sample_counts": {
+          "AM": 735,
+          "PM": 613,
+          "Extra": 359,
+          "RH": 9,
+          "A1": 9,
+          "A2": 7,
+          "A3": 3,
+          "L": 2,
+          "R": 2,
+          "R1": 102,
+          "R2": 102,
+          "R3": 102,
+          "Q1": 107,
+          "Q2": 108,
+          "Q11": 48,
+          "Q12": 48,
+          "Q3": 108,
+          "Q4": 107,
+          "Q5": 108,
+          "Q6": 108,
+          "Q7": 48,
+          "Q8": 48,
+          "Q9": 48,
+          "Q10": 48,
+          "C (nearby)": 72,
+          "A (top)": 36,
+          "Bottom": 142,
+          "Top": 142,
+          "B (bottom)": 49,
+          "Field Control": 40,
+          "Field Blank": 10,
+          "Kit Blank": 3,
+          "Blank": 32,
+          "Precision Test": 20,
+          "Lab Blank": 8
+        },
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -2642,7 +2739,7 @@
           },
           {
             "time_period": "Morning (06:00–11:59)",
-            "count": 70
+            "count": 69
           },
           {
             "time_period": "Afternoon (12:00–17:59)",
@@ -2650,7 +2747,7 @@
           },
           {
             "time_period": "Evening (18:00–23:59)",
-            "count": 83
+            "count": 84
           }
         ]
       },
@@ -2837,7 +2934,15 @@
             "count": 1056
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       },
       {
         "site_code": "CPER",
@@ -2913,7 +3018,7 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 193
+            "count": 194
           },
           {
             "sampler": "Polycarbonate",
@@ -2924,18 +3029,24 @@
             "count": 161
           }
         ],
-        "replicate_tags": [
-          "A",
-          "A, AM",
-          "A, PM",
-          "B",
-          "B, AM",
-          "B, PM",
-          "FB",
-          "FC",
-          "KB",
-          "LB"
-        ],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 139,
+          "PM": 126,
+          "A (top)": 124,
+          "B (bottom)": 132,
+          "Field Control": 10,
+          "Field Blank": 15,
+          "Lab Blank": 4,
+          "Kit Blank": 4
+        },
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -3041,7 +3152,15 @@
             "count": 3
           }
         ],
-        "replicate_tags": [],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {},
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -3151,10 +3270,21 @@
             "count": 1
           }
         ],
-        "replicate_tags": [
-          "A",
-          "B"
-        ],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [
+            "A",
+            "B"
+          ],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "A": 12,
+          "B": 12
+        },
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -3240,10 +3370,21 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 44
+            "count": 45
           }
         ],
-        "replicate_tags": [],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 25,
+          "PM": 23
+        },
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -3340,10 +3481,18 @@
             "count": 4
           }
         ],
-        "replicate_tags": [
-          "AM",
-          "PM"
-        ],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 9,
+          "PM": 10
+        },
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -3428,9 +3577,17 @@
             "count": 6
           }
         ],
-        "replicate_tags": [
-          "LB"
-        ],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "Lab Blank": 1
+        },
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -3489,9 +3646,17 @@
             "count": 8
           }
         ],
-        "replicate_tags": [
-          "EC"
-        ],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "Extraction Control": 1
+        },
         "time_distribution": [
           {
             "time_period": "Night (00:00–05:59)",
@@ -3541,7 +3706,15 @@
             "count": 1
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       }
     ],
     "lab_group": [
@@ -3565,7 +3738,7 @@
         "pipeline": {
           "collected": 1679,
           "dna_extracted": 1485,
-          "sequenced": 0
+          "sequenced": 623
         },
         "temporal": [
           {
@@ -3651,7 +3824,15 @@
             "count": 194
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       },
       {
         "group_name": "Kreidenweis",
@@ -3759,44 +3940,42 @@
             "count": 1
           }
         ],
-        "replicate_tags": [
-          "1a",
-          "1p",
-          "7a, A",
-          "7a, B",
-          "7a, C",
-          "7p, A",
-          "7p, B",
-          "7p, C",
-          "A",
-          "A, AM",
-          "A, FC",
-          "A, PM",
-          "A1",
-          "A2",
-          "A3",
-          "AM",
-          "B",
-          "B, AM",
-          "B, FC",
-          "B, PM",
-          "C, AM",
-          "C, FC",
-          "C, PM",
-          "Extra, ",
-          "Extra, AM",
-          "Extra, C, PM",
-          "Extra, PM",
-          "FB",
-          "FC",
-          "FC, AM",
-          "FC, PM",
-          "KB",
-          "LB",
-          "PM",
-          "RH, 1a",
-          "RH, 1p"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [
+            "A1",
+            "A2",
+            "A3"
+          ],
+          "position": [
+            "A",
+            "B"
+          ],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": [
+            "Extra",
+            "RH"
+          ]
+        },
+        "tag_sample_counts": {
+          "AM": 283,
+          "PM": 264,
+          "A": 12,
+          "B": 12,
+          "RH": 9,
+          "Extra": 119,
+          "A1": 9,
+          "A2": 7,
+          "A3": 3,
+          "A (top)": 160,
+          "B (bottom)": 176,
+          "C (nearby)": 72,
+          "Field Control": 50,
+          "Field Blank": 25,
+          "Lab Blank": 12,
+          "Kit Blank": 7
+        }
       },
       {
         "group_name": "Trivedi",
@@ -3876,66 +4055,40 @@
             "count": 48
           }
         ],
-        "replicate_tags": [
-          "AM",
-          "Extra, ",
-          "Extra,  Q1, am",
-          "Extra, Q1, am",
-          "Extra, Q1, pm",
-          "Extra, Q2, am",
-          "Extra, Q2, pm",
-          "Extra, Q3, am",
-          "Extra, Q3, pm",
-          "Extra, Q4, am",
-          "Extra, Q4, pm",
-          "Extra, Q5, am",
-          "Extra, Q5, pm",
-          "Extra, Q6, am",
-          "Extra, Q6, pm",
-          "PM",
-          "Q1, am",
-          "Q1, pm",
-          "Q1/2, am",
-          "Q1/2, pm",
-          "Q10, am",
-          "Q10, pm",
-          "Q11, am",
-          "Q11, pm",
-          "Q11/12, am",
-          "Q11/12, pm",
-          "Q12, am",
-          "Q12, pm",
-          "Q2, am",
-          "Q2, pm",
-          "Q3, am",
-          "Q3, pm",
-          "Q3/4, am",
-          "Q3/4, pm",
-          "Q4, am",
-          "Q4, pm",
-          "Q5, am",
-          "Q5, pm",
-          "Q5/6, am",
-          "Q5/6, pm",
-          "Q6, am",
-          "Q6, pm",
-          "Q7, am",
-          "Q7, pm",
-          "Q7/8, am",
-          "Q7/8, pm",
-          "Q8, am",
-          "Q8, pm",
-          "Q9, am",
-          "Q9, pm",
-          "Q9/10, am",
-          "Q9/10, pm",
-          "R1, am",
-          "R1, pm",
-          "R2, am",
-          "R2, pm",
-          "R3, am",
-          "R3, pm"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [
+            "R1",
+            "R2",
+            "R3"
+          ],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": [
+            "Extra"
+          ]
+        },
+        "tag_sample_counts": {
+          "AM": 588,
+          "PM": 469,
+          "Extra": 240,
+          "R1": 102,
+          "R2": 102,
+          "R3": 102,
+          "Q1": 107,
+          "Q2": 108,
+          "Q11": 48,
+          "Q12": 48,
+          "Q3": 108,
+          "Q4": 107,
+          "Q5": 108,
+          "Q6": 108,
+          "Q7": 48,
+          "Q8": 48,
+          "Q9": 48,
+          "Q10": 48
+        }
       },
       {
         "group_name": "Farmer",
@@ -3987,17 +4140,25 @@
             "count": 304
           }
         ],
-        "replicate_tags": [
-          "B",
-          "B, Blank",
-          "B, L",
-          "B, R",
-          "PT",
-          "T",
-          "T, Blank",
-          "T, L",
-          "T, R"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [
+            "L",
+            "R"
+          ],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "L": 2,
+          "R": 2,
+          "Bottom": 142,
+          "Top": 142,
+          "Blank": 32,
+          "Precision Test": 20
+        }
       },
       {
         "group_name": "Borlee",
@@ -4073,7 +4234,18 @@
             "count": 2
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "PM": 5,
+          "B (bottom)": 5
+        }
       },
       {
         "group_name": "Stewart",
@@ -4118,14 +4290,26 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 60
+            "count": 62
           },
           {
             "sampler": "BioSpot VIVAS",
             "count": 8
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "AM": 35,
+          "PM": 32,
+          "Extraction Control": 1
+        }
       },
       {
         "group_name": "Magzamen",
@@ -4161,9 +4345,17 @@
             "count": 6
           }
         ],
-        "replicate_tags": [
-          "LB"
-        ]
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {
+          "Lab Blank": 1
+        }
       },
       {
         "group_name": "Hancock",
@@ -4199,7 +4391,15 @@
             "count": 3
           }
         ],
-        "replicate_tags": []
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_sample_counts": {}
       }
     ]
   }

@@ -69,6 +69,14 @@ COL_COLLECTED_TIME = "Sample Collected Time"
 COL_SAMPLER_TYPE = "Sampler Type"       # device/method used (e.g. 'SASS', 'SKC BioSampler') — 73.9% fill on field samples (verified 2026-03-22)
 COL_SAMPLE_REPLICATE = "Sample Replicate"  # batch/replicate tag (e.g. 'AM', 'PM') — 45.9% fill on field samples (verified 2026-03-22)
 
+# New typed tag columns (added in xlsx split — may not yet exist in current xlsx).
+# parse_replicate_tags() still references COL_SAMPLE_REPLICATE for the legacy single-column flow.
+COL_SAMPLE_AMPM        = "Sample AM/PM"
+COL_SAMPLE_REPLICATE_R = "Sample Replicate"   # alias for new typed replicate column
+COL_SAMPLE_QUADRANT    = "Sample Quadrant"
+COL_SAMPLE_POSITION    = "Sample Position"
+COL_SAMPLE_FC          = "Sample Field Control"
+
 # Sequencing columns — values are run IDs (filenames/strings) stored on
 # derivative rows only.  Empty / NaN = not sequenced.
 SEQ_COLS = [
@@ -399,28 +407,109 @@ def build_sampler_type_dist(group: pd.DataFrame) -> list:
     return [{"sampler": str(s), "count": int(c)} for s, c in counts.items()]
 
 
-def build_replicate_tags(group: pd.DataFrame) -> list:
-    """Return sorted list of unique replicate/batch tag strings.
+def parse_replicate_tags(raw_tags_series: pd.Series) -> dict:
+    """Parse and group Sample Replicate tags from a pandas Series.
 
-    Uses COL_SAMPLE_REPLICATE ('Sample Replicate') which was verified at 45.9%
-    fill on field samples (2026-03-22).  Returns [] if the column is absent or
-    the fill rate within this group is below 5%.
+    Splits each cell on comma, strips whitespace, drops empty tokens.
+    Returns dict with 6 keys always present:
+      time_of_day, replicate, position, clock_quadrant, field_controls, other.
+    Each value is a deduplicated sorted list of atomic token strings.
+
+    Grouping rules (human-confirmed 2026-03-23, revised 2026-03-23):
+      time_of_day    -- 'am', 'pm', '7a', '7p' (case-insensitive)
+      replicate      -- matches ^R[0-9]+$ or ^A[0-9]+$ (case-insensitive)
+      position       -- 'A', 'B', 'T', 'C', 'L', 'R' exact match (case-insensitive)
+      clock_quadrant -- matches ^Q[0-9]+(/[0-9]+)?$ (e.g. Q1, Q11/12)
+      field_controls -- 'FC', 'FB', 'LB', 'KB', 'PT', 'Blank', 'EC' (case-insensitive)
+      other          -- everything else (RH, Extra, 1a, 1p, ...)
     """
-    if COL_SAMPLE_REPLICATE not in group.columns:
-        # Column absent from xlsx — emit empty list per task spec
-        return []
-    valid = group[COL_SAMPLE_REPLICATE].dropna()
-    fill_rate = len(valid) / len(group) if len(group) > 0 else 0.0
-    if fill_rate < 0.05:
-        # Below 5% fill threshold — emit empty list per task spec
-        return []
-    unique_tags = sorted(valid.astype(str).unique().tolist())
-    return unique_tags
+    import re
+    TIME_OF_DAY = {'am', 'pm', '7a', '7p'}
+    POSITION = {'a', 'b', 't', 'c', 'l', 'r'}
+    FIELD_CONTROLS = {'fc', 'fb', 'lb', 'kb', 'pt', 'blank', 'ec'}
+
+    groups: dict = {
+        'time_of_day': set(),
+        'replicate': set(),
+        'position': set(),
+        'clock_quadrant': set(),
+        'field_controls': set(),
+        'other': set(),
+    }
+
+    for cell in raw_tags_series.dropna():
+        for token in str(cell).split(','):
+            token = token.strip()
+            if not token:
+                continue
+            tl = token.lower()
+            if tl in TIME_OF_DAY:
+                groups['time_of_day'].add(token)
+            elif re.match(r'^[RA]\d+$', token, re.IGNORECASE):
+                groups['replicate'].add(token.upper())
+            elif tl in POSITION:
+                groups['position'].add(token.upper())
+            elif re.match(r'^Q\d+(/\d+)?$', token, re.IGNORECASE):
+                groups['clock_quadrant'].add(token.upper())
+            elif tl in FIELD_CONTROLS:
+                groups['field_controls'].add(token)
+            else:
+                groups['other'].add(token)
+
+    return {k: sorted(v) for k, v in groups.items()}
+
+
+def parse_tag_column(series: pd.Series) -> list[str]:
+    """Return deduplicated sorted list of all token values from a column.
+
+    Handles comma-separated values within cells.
+    Returns [] if series is all-NaN or column was absent.
+    """
+    tokens: set[str] = set()
+    for cell in series.dropna():
+        for token in str(cell).split(','):
+            token = token.strip()
+            if token:
+                tokens.add(token)
+    return sorted(tokens)
+
+
+def build_tag_sample_counts(group: pd.DataFrame, df_col_map: dict) -> dict:
+    """Build per-token sample counts from the 5 new tag columns.
+
+    group: DataFrame slice for this project/location/lab_group
+    df_col_map: dict mapping column name -> Series (present) or None (absent)
+
+    Returns dict: { token_string: int_count, ... }
+    Example: { "AM": 120, "PM": 95, "R1": 45, "Q3": 78, "A": 200, "FC": 12 }
+
+    Count for a token = number of rows in group where that token appears
+    in the corresponding column (after comma-split).
+    """
+    NEW_TAG_COLS = [
+        COL_SAMPLE_AMPM,
+        COL_SAMPLE_REPLICATE_R,
+        COL_SAMPLE_QUADRANT,
+        COL_SAMPLE_POSITION,
+        COL_SAMPLE_FC,
+    ]
+    result: dict[str, int] = {}
+    for col in NEW_TAG_COLS:
+        if df_col_map.get(col) is None:
+            continue
+        col_slice = group[col] if col in group.columns else pd.Series(dtype=object)
+        for cell in col_slice.dropna():
+            for token in str(cell).split(','):
+                token = token.strip()
+                if token:
+                    result[token] = result.get(token, 0) + 1
+    return result
 
 
 def build_slice_project(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
+    df_col_map: dict,
 ) -> list:
     """Build slice_views.project — group field samples by 'Project ID'.
 
@@ -462,7 +551,8 @@ def build_slice_project(
             },
             "temporal": temporal,
             "sampler_type_dist": build_sampler_type_dist(group),
-            "replicate_tags": build_replicate_tags(group),
+            "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
+            "tag_sample_counts": build_tag_sample_counts(group, df_col_map),
         })
 
     # Sort by sample_count descending, cap at 20
@@ -473,6 +563,7 @@ def build_slice_project(
 def build_slice_location(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
+    df_col_map: dict,
 ) -> list:
     """Build slice_views.location — group field samples by 'Sample Collection Location'.
 
@@ -523,7 +614,8 @@ def build_slice_location(
             "sample_types": sample_types,
             "temporal": temporal,
             "sampler_type_dist": build_sampler_type_dist(group),
-            "replicate_tags": build_replicate_tags(group),
+            "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
+            "tag_sample_counts": build_tag_sample_counts(group, df_col_map),
         }
         if time_dist:
             entry["time_distribution"] = time_dist
@@ -538,6 +630,7 @@ def build_slice_location(
 def build_slice_lab_group(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
+    df_col_map: dict,
 ) -> list:
     """Build slice_views.lab_group — group field samples by 'Project Lead'.
 
@@ -579,7 +672,8 @@ def build_slice_lab_group(
             },
             "temporal": temporal,
             "sampler_type_dist": build_sampler_type_dist(group),
-            "replicate_tags": build_replicate_tags(group),
+            "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
+            "tag_sample_counts": build_tag_sample_counts(group, df_col_map),
         })
 
     # Sort by sample_count descending, cap at 20
@@ -691,13 +785,33 @@ def main() -> None:
     # Slice views
     print("\n[7b] Building slice_views sections...")
 
-    slice_project = build_slice_project(df, field_samples)
+    # Detect which new typed tag columns exist in the xlsx.
+    # Absent columns are mapped to None so slice builders can skip them safely.
+    # COL_SAMPLE_REPLICATE_R aliases "Sample Replicate" which already exists in the
+    # pre-split xlsx, so it is always included in the map.  However, new_cols_present
+    # signals only whether the *exclusively new* columns (AM/PM, Quadrant, Position,
+    # FC) have been added — not the replicate column that exists in both schemas.
+    NEW_TAG_COLS = [COL_SAMPLE_AMPM, COL_SAMPLE_REPLICATE_R, COL_SAMPLE_QUADRANT,
+                    COL_SAMPLE_POSITION, COL_SAMPLE_FC]
+    # new_cols_present checks only the 4 exclusively-new columns (not Sample Replicate
+    # which exists in both old and new xlsx schemas under the same name).
+    EXCLUSIVELY_NEW_COLS = [COL_SAMPLE_AMPM, COL_SAMPLE_QUADRANT,
+                             COL_SAMPLE_POSITION, COL_SAMPLE_FC]
+    df_col_map = {col: df[col] if col in df.columns else None for col in NEW_TAG_COLS}
+    new_cols_present = any(df_col_map.get(col) is not None for col in EXCLUSIVELY_NEW_COLS)
+    # When the xlsx has not yet been split, suppress COL_SAMPLE_REPLICATE_R so that
+    # build_tag_sample_counts returns {} (pre-split Sample Replicate holds mixed tokens
+    # that belong to the old parse_replicate_tags() flow, not the new typed columns).
+    if not new_cols_present:
+        df_col_map[COL_SAMPLE_REPLICATE_R] = None
+
+    slice_project = build_slice_project(df, field_samples, df_col_map)
     print(f"  slice_views.project: {len(slice_project)} entries")
 
-    slice_location = build_slice_location(df, field_samples)
+    slice_location = build_slice_location(df, field_samples, df_col_map)
     print(f"  slice_views.location: {len(slice_location)} entries")
 
-    slice_lab_group = build_slice_lab_group(df, field_samples)
+    slice_lab_group = build_slice_lab_group(df, field_samples, df_col_map)
     print(f"  slice_views.lab_group: {len(slice_lab_group)} entries")
 
     slice_views = {
@@ -776,6 +890,15 @@ def main() -> None:
     all_keys_pass = "PASS" if not missing_keys else "FAIL"
     print(f"All 9 required keys present: {all_keys_pass}")
 
+    # New tag columns detection status
+    print(f"new_cols_present: {new_cols_present}")
+
+    # Spot-check tag_sample_counts for project[0]
+    if slice_project:
+        print(f"slice_views.project[0].tag_sample_counts: {slice_project[0].get('tag_sample_counts', 'MISSING')}")
+    else:
+        print("slice_views.project[0].tag_sample_counts: SKIP (no project entries)")
+
     # Spot-check: sampler_type_dist and replicate_tags present in first entry of each slice
     for label, entries in [
         ("slice_views.project[0]", slice_project),
@@ -785,9 +908,11 @@ def main() -> None:
         if entries:
             has_sampler = "sampler_type_dist" in entries[0]
             has_replicate = "replicate_tags" in entries[0]
+            has_tag_counts = "tag_sample_counts" in entries[0]
             sampler_pass = "PASS" if has_sampler else "FAIL"
             replicate_pass = "PASS" if has_replicate else "FAIL"
-            print(f"  {label}: sampler_type_dist={sampler_pass}, replicate_tags={replicate_pass}")
+            tag_pass = "PASS" if has_tag_counts else "FAIL"
+            print(f"  {label}: sampler_type_dist={sampler_pass}, replicate_tags={replicate_pass}, tag_sample_counts={tag_pass}")
         else:
             print(f"  {label}: SKIP (no entries)")
 

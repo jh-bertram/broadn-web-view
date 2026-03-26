@@ -16,8 +16,10 @@
       --color-stone-300: #d6d3d1;
       --color-stone-400: #a8a29e;
       --color-green-800: #166534;
-      --color-orange-500: #f97316;
-      --color-orange-700: #c2410c;
+      /* === ORANGE ACCENT — adjust these two values to change the orange hue site-wide === */
+      --color-orange-500: #ea6c00;
+      --color-orange-500-rgb: 234, 108, 0;
+      --color-orange-700: #b33a00;
     }
 
     /* Scrollbar styling */
@@ -47,7 +49,6 @@
     #map {
       height: 400px;
       width: 100%;
-      border-radius: 0.75rem;
     }
     @media (min-width: 768px) {
       #map { height: 450px; }
@@ -67,9 +68,15 @@
 
     /* Smooth scroll */
     html { scroll-behavior: smooth; }
+    body { font-family: Helvetica, Arial, system-ui, sans-serif; }
 
     /* Slice panel active section title */
     .slice-chart-title-active { color: var(--color-orange-700); }
+
+    /* Global charts area orange envelope — active when a filter is applied */
+    .filter-active-envelope {
+      background: rgba(var(--color-orange-500-rgb), 0.07);
+    }
 
     #custom-tooltip {
       position: fixed;
@@ -78,7 +85,6 @@
       background: rgba(28,25,23,0.9);
       color: #fff;
       padding: 10px 14px;
-      border-radius: 6px;
       font-size: 12px;
       pointer-events: none;
       max-width: 220px;
@@ -89,7 +95,7 @@
 <body class="bg-stone-50 text-stone-900 antialiased flex flex-col min-h-screen">
 
   <!-- STICKY NAV -->
-  <nav class="bg-white shadow-sm sticky top-0 z-50" aria-label="Main navigation">
+  <nav class="bg-white sticky top-0 z-50" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
         <div class="flex items-center gap-2">
@@ -114,9 +120,9 @@
         The BROADN project (Bioaerosol Research and Observation of Atmospheric Dispersal Networks) is an NSF-funded initiative at Colorado State University investigating airborne microbial communities across diverse ecosystems. Our OneHealth mission connects atmospheric science, ecology, and public health.
       </p>
       <div class="flex flex-wrap gap-4" aria-label="Quick statistics">
-        <div class="bg-green-800 rounded-lg px-4 py-2 text-sm font-semibold" id="hero-samples">—</div>
-        <div class="bg-green-800 rounded-lg px-4 py-2 text-sm font-semibold" id="hero-sites">—</div>
-        <div class="bg-green-800 rounded-lg px-4 py-2 text-sm font-semibold" id="hero-since">—</div>
+        <div class="bg-green-800 px-4 py-2 text-sm font-semibold" id="hero-samples">—</div>
+        <div class="bg-green-800 px-4 py-2 text-sm font-semibold" id="hero-sites">—</div>
+        <div class="bg-green-800 px-4 py-2 text-sm font-semibold" id="hero-since">—</div>
       </div>
     </div>
   </header>
@@ -140,9 +146,9 @@
 
   <!-- ERROR STATE (shown on fetch failure) -->
   <div id="error-state" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" role="alert" aria-live="assertive">
-    <div class="bg-stone-100 border border-stone-200 rounded-xl p-8 text-center">
+    <div class="bg-stone-100 border border-stone-200 p-8 text-center">
       <p class="text-stone-600 text-lg font-medium mb-2">Data temporarily unavailable.</p>
-      <p class="text-stone-500">Please refresh the page to try again. If the problem persists, check that <code class="bg-stone-200 px-1 rounded">data/data.json</code> is accessible.</p>
+      <p class="text-stone-500">Please refresh the page to try again. If the problem persists, check that <code class="bg-stone-200 px-1">data/data.json</code> is accessible.</p>
     </div>
   </div>
 
@@ -163,7 +169,7 @@
         <!-- Mobile close button (visible only on mobile, inside drawer) -->
         <button type="button"
           id="slice-sidebar-close"
-          class="block lg:hidden self-end mb-4 p-1 rounded-md text-stone-500 hover:text-stone-700 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-green-700"
+          class="block lg:hidden self-end mb-4 p-1 text-stone-500 hover:text-stone-700 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-green-700"
           aria-label="Close filter panel">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -183,7 +189,7 @@
               <li role="listitem">
                 <button type="button"
                   id="slice-btn-project"
-                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
                   aria-expanded="false"
                   aria-controls="project-group-list">
                   Project
@@ -198,7 +204,7 @@
               <li role="listitem">
                 <button type="button"
                   id="slice-btn-location"
-                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
                   aria-expanded="false"
                   aria-controls="location-group-list">
                   Location / Hub
@@ -213,7 +219,7 @@
               <li role="listitem">
                 <button type="button"
                   id="slice-btn-labgroup"
-                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
                   aria-expanded="false"
                   aria-controls="labgroup-group-list">
                   Lab Group
@@ -234,7 +240,7 @@
           <!-- Clear filter button -->
           <button type="button"
             id="slice-clear-btn"
-            class="hidden mt-4 w-full px-3 py-2 rounded-lg border border-stone-300 text-sm font-medium text-stone-600 bg-white hover:bg-stone-50 hover:text-stone-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-1 transition-colors"
+            class="hidden mt-4 w-full px-3 py-2 border border-stone-300 text-sm font-medium text-stone-600 bg-white hover:bg-stone-50 hover:text-stone-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-1 transition-colors"
             aria-label="Clear active slice filter">
             Clear filter
           </button>
@@ -247,7 +253,7 @@
         <!-- Mobile drawer trigger (visible only on mobile) -->
         <button type="button"
           id="slice-drawer-trigger"
-          class="block lg:hidden mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-stone-300 bg-white text-sm font-medium text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 shadow-sm"
+          class="block lg:hidden mb-6 inline-flex items-center gap-2 px-4 py-2 border border-stone-300 bg-white text-sm font-medium text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"
           aria-label="Open slice filter panel"
           aria-expanded="false"
           aria-controls="slice-sidebar">
@@ -259,7 +265,7 @@
 
         <!-- SLICE VIEW CONTAINER (hidden by default; shown when a group is selected) -->
         <div id="slice-view-container"
-          class="hidden bg-stone-50 rounded-2xl border border-stone-200 p-6 mb-0 scroll-mt-20"
+          class="hidden bg-stone-50 border border-stone-200 p-6 mb-0 scroll-mt-20"
           tabindex="-1">
 
           <!-- Slice view header -->
@@ -272,32 +278,32 @@
           <div id="slice-project-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-project-grid">
               <!-- Chart cards injected by 004b -->
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type for this project.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceProjectTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected project" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample counts at each pipeline stage for this project.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceProjectPipelineChart" aria-label="Horizontal bar chart showing pipeline stage counts for selected project" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 lg:col-span-2">
+              <div class="bg-white border border-stone-200 p-6 lg:col-span-2">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume for this project.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceProjectTemporalChart" aria-label="Line chart showing monthly sampling activity for selected project" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceProjectReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceProjectSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected project" role="img"></canvas></div>
               </div>
@@ -307,21 +313,21 @@
           <!-- Location slice view -->
           <div id="slice-location-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-location-grid">
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sub-Location Breakdown</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample count by sub-site within this location.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLocationSubsitesChart" aria-label="Horizontal bar chart showing sample counts per sub-location" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type at this location.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLocationTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected location" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 lg:col-span-2">
+              <div class="bg-white border border-stone-200 p-6 lg:col-span-2">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume at this location.</p>
                 <div class="chart-wrap">
@@ -329,18 +335,18 @@
                 </div>
               </div>
               <!-- Optional time-of-day chart injected by 004b if data present -->
-              <div id="slice-location-timeofday-card" class="hidden bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div id="slice-location-timeofday-card" class="hidden bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Time-of-Day Distribution</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample collection frequency by time period.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLocationTimeDistChart" aria-label="Polar area chart showing sample counts by time of day for selected location" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceLocationReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceLocationSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected location" role="img"></canvas></div>
               </div>
@@ -350,32 +356,32 @@
           <!-- Lab Group slice view -->
           <div id="slice-labgroup-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-labgroup-grid">
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type for this lab group.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLabGroupTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected lab group" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample counts at each pipeline stage for this lab group.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLabGroupPipelineChart" aria-label="Horizontal bar chart showing pipeline stage counts for selected lab group" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 lg:col-span-2">
+              <div class="bg-white border border-stone-200 p-6 lg:col-span-2">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume for this lab group.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLabGroupTemporalChart" aria-label="Line chart showing monthly sampling activity for selected lab group" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceLabGroupReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
-              <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+              <div class="bg-white border border-stone-200 p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceLabGroupSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected lab group" role="img"></canvas></div>
               </div>
@@ -383,6 +389,9 @@
           </div>
 
         </div><!-- /#slice-view-container -->
+
+        <!-- GLOBAL CHARTS AREA — orange envelope applied here when filter is active -->
+        <div id="global-charts-area">
 
         <!-- OVERVIEW -->
         <section id="overview" class="scroll-mt-20">
@@ -393,29 +402,29 @@
 
           <!-- KPI CARDS -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 flex items-center gap-4">
-              <div class="p-3 rounded-full bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#128200;</div>
+            <div class="bg-white border border-stone-200 p-6 flex items-center gap-4">
+              <div class="p-3 bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#128200;</div>
               <div>
                 <p class="text-sm font-medium text-stone-500">Field Samples</p>
                 <p class="text-2xl font-bold text-stone-900" id="kpi-field-samples">—</p>
               </div>
             </div>
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 flex items-center gap-4">
-              <div class="p-3 rounded-full bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#127759;</div>
+            <div class="bg-white border border-stone-200 p-6 flex items-center gap-4">
+              <div class="p-3 bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#127759;</div>
               <div>
                 <p class="text-sm font-medium text-stone-500">Unique Sites</p>
                 <p class="text-2xl font-bold text-stone-900" id="kpi-unique-sites">—</p>
               </div>
             </div>
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 flex items-center gap-4">
-              <div class="p-3 rounded-full bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#128197;</div>
+            <div class="bg-white border border-stone-200 p-6 flex items-center gap-4">
+              <div class="p-3 bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#128197;</div>
               <div>
                 <p class="text-sm font-medium text-stone-500">Active Since</p>
                 <p class="text-2xl font-bold text-stone-900" id="kpi-active-since">—</p>
               </div>
             </div>
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6 flex items-center gap-4">
-              <div class="p-3 rounded-full bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#129514;</div>
+            <div class="bg-white border border-stone-200 p-6 flex items-center gap-4">
+              <div class="p-3 bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#129514;</div>
               <div>
                 <p class="text-sm font-medium text-stone-500">Sequenced</p>
                 <p class="text-2xl font-bold text-stone-900" id="kpi-sequenced">—</p>
@@ -424,7 +433,7 @@
           </div>
 
           <!-- TEMPORAL LINE CHART -->
-          <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+          <div class="bg-white border border-stone-200 p-6">
             <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity Over Time</h3>
             <p class="text-sm text-stone-500 mb-6">Monthly field sample collection volume across all sites, 2020–2025.</p>
             <div class="chart-wrap">
@@ -444,7 +453,7 @@
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- MAP (2/3 width on desktop) -->
-            <div class="lg:col-span-2 bg-white border border-stone-200 rounded-xl shadow-sm p-4">
+            <div class="lg:col-span-2 bg-white border border-stone-200 p-4">
               <h3 class="text-lg font-bold text-stone-800 mb-3">Collection Sites</h3>
               <div id="map"
                 aria-label="Map of BROADN collection sites across Colorado and adjacent states"
@@ -452,7 +461,7 @@
             </div>
 
             <!-- SAMPLES BY SITE BAR (1/3 width on desktop) -->
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+            <div class="bg-white border border-stone-200 p-6">
               <h3 class="text-lg font-bold text-stone-800 mb-1">Samples by Site</h3>
               <p class="text-sm text-stone-500 mb-4">Top sites by total field sample count, sorted descending.</p>
               <div class="chart-wrap">
@@ -473,7 +482,7 @@
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- SAMPLE TYPE DONUT -->
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+            <div class="bg-white border border-stone-200 p-6">
               <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Type Distribution</h3>
               <p class="text-sm text-stone-500 mb-4">Proportion of field samples by material type.</p>
               <div class="chart-wrap">
@@ -484,7 +493,7 @@
             </div>
 
             <!-- PIPELINE BAR -->
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+            <div class="bg-white border border-stone-200 p-6">
               <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
               <p class="text-sm text-stone-500 mb-4">Cumulative counts at each stage: Collected → DNA Extracted → Sequenced.</p>
               <div class="chart-wrap">
@@ -493,16 +502,18 @@
                   role="img"></canvas>
               </div>
             </div>
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+            <div class="bg-white border border-stone-200 p-6">
               <h3 class="text-lg font-bold slice-chart-title-active mb-3">Sampler Replicate Tags (All)</h3>
               <div id="globalReplicateBadges" class="flex flex-wrap gap-2"></div>
             </div>
-            <div class="bg-white border border-stone-200 rounded-xl shadow-sm p-6">
+            <div class="bg-white border border-stone-200 p-6">
               <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type Distribution (All)</h3>
               <div class="chart-wrap"><canvas id="globalSamplerChart" aria-label="Doughnut chart showing sampler type distribution across all samples" role="img"></canvas></div>
             </div>
           </div>
         </section>
+
+        </div><!-- /#global-charts-area -->
 
         <!-- DATA EXPLORER -->
         <section id="explorer" class="scroll-mt-20 pb-8">
@@ -511,27 +522,27 @@
             <p class="text-stone-600 text-lg max-w-3xl">Browse recent field samples. Filter by sample category, collection site, or year of collection.</p>
           </div>
 
-          <div class="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="bg-white border border-stone-200 overflow-hidden">
             <!-- FILTER CONTROLS -->
             <div class="p-4 border-b border-stone-200 bg-stone-50 flex flex-wrap gap-4 items-end">
               <div>
                 <label for="filter-category" class="block text-xs font-medium text-stone-700 mb-1">Sample Category</label>
                 <select id="filter-category"
-                  class="bg-white border border-stone-300 text-stone-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
+                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
                   <option value="">All Categories</option>
                 </select>
               </div>
               <div>
                 <label for="filter-site" class="block text-xs font-medium text-stone-700 mb-1">Collection Site</label>
                 <select id="filter-site"
-                  class="bg-white border border-stone-300 text-stone-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
+                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
                   <option value="">All Sites</option>
                 </select>
               </div>
               <div>
                 <label for="filter-year" class="block text-xs font-medium text-stone-700 mb-1">Year</label>
                 <select id="filter-year"
-                  class="bg-white border border-stone-300 text-stone-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-28">
+                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-28">
                   <option value="">All Years</option>
                 </select>
               </div>
@@ -620,10 +631,13 @@
       sliceTemporalArea: 'rgba(15,118,110,0.1)',
       sliceLocationBar:  '#0369a1',
       sliceTimeOfDay:    ['#166534', '#0f766e', '#b45309', '#6d28d9'],
-      orangeAccent:      '#f97316',
-      orangeAccentDim:   'rgba(249,115,22,0.3)',
+      orangeAccent:      '#ea6c00',
+      orangeAccentDim:   'rgba(234,108,0,0.3)',
       samplerType:       ['#166534', '#0f766e', '#b45309', '#1d4ed8', '#78716c']
     };
+
+    const MAP_CENTER_DEFAULT = [39.5, -98.35];
+    const MAP_ZOOM_DEFAULT   = 4;
 
     // =============================================================================
     // SLICE PANEL CONSTANTS
@@ -638,21 +652,211 @@
       LAB_GROUP: 'Lab Group'
     };
 
+    // Tag badge CSS classes — full static strings required for Tailwind scanning
+    const TAG_BADGE_CLASSES = {
+      active:   'px-2 py-1 text-xs font-semibold cursor-pointer bg-orange-700 text-white',
+      inactive: 'px-2 py-1 text-xs font-semibold cursor-pointer bg-stone-700 text-stone-200 hover:bg-stone-600'
+    };
+
     // =============================================================================
     // STATE
     // =============================================================================
     let appData = null;
     let chartInstances = {};
 
-    // Slice panel state — single active filter only
-    const sliceState = {
-      activeCategory: null,  // null | SLICE_CATEGORIES.PROJECT | SLICE_CATEGORIES.LOCATION | SLICE_CATEGORIES.LAB_GROUP
-      activeGroup: null      // null | string (project_id / site_code / group_name)
+    // Filter state — slice + tag dimensions; replaces former sliceState
+    const filterState = {
+      slice: {
+        category: null,  // null | SLICE_CATEGORIES.PROJECT | SLICE_CATEGORIES.LOCATION | SLICE_CATEGORIES.LAB_GROUP
+        group:    null   // null | string (project_id / site_code / group_name)
+      },
+      tags: []  // array of active tag token strings
     };
+
+    // Global tag dict — populated in initDashboard, accessible to clearSliceFilter
+    var globalTagsDict = { time_of_day: [], replicate: [], position: [], clock_quadrant: [], field_controls: [], other: [] };
+
+    // Returns true when any filter dimension is active
+    function isFilterActive() {
+      return filterState.slice.category !== null || filterState.tags.length > 0;
+    }
+
+    /**
+     * getFilteredCount(entry, activeTags)
+     * Returns the effective sample count for a slice entry given active tag filters.
+     *
+     * If activeTags is empty OR entry.tag_sample_counts is empty/absent:
+     *   return entry.sample_count (unfiltered)
+     *
+     * Otherwise:
+     *   return sum of entry.tag_sample_counts[token] for each token in activeTags
+     *   where that token exists in tag_sample_counts.
+     *   If no selected tokens exist in tag_sample_counts, return 0.
+     *
+     * Note: union approximation — individual token counts may overlap.
+     */
+    function getFilteredCount(entry, activeTags) {
+      if (!activeTags || activeTags.length === 0) {
+        return entry.sample_count;
+      }
+      var tsc = entry.tag_sample_counts;
+      if (!tsc || typeof tsc !== 'object' || Object.keys(tsc).length === 0) {
+        return entry.sample_count;
+      }
+      var total = 0;
+      for (var i = 0; i < activeTags.length; i++) {
+        var token = activeTags[i];
+        if (Object.prototype.hasOwnProperty.call(tsc, token) && typeof tsc[token] === 'number') {
+          total += tsc[token];
+        }
+      }
+      return total;
+    }
+
+    // Refresh badge visual states AND re-render the active sidebar group list
+    // to reflect the current tag filter selection.
+    // IMPORTANT: does NOT call renderView() — only updates DOM directly.
+    function applyFilter(fs) {
+      // --- a) Refresh badge visual states ---
+      var containers = ['globalReplicateBadges', 'sliceProjectReplicateBadges', 'sliceLocationReplicateBadges', 'sliceLabGroupReplicateBadges'];
+      containers.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.querySelectorAll('[data-tag]').forEach(function(badge) {
+          var tag = badge.getAttribute('data-tag');
+          var active = fs.tags.indexOf(tag) !== -1;
+          badge.className = active ? TAG_BADGE_CLASSES.active : TAG_BADGE_CLASSES.inactive;
+          badge.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+      });
+
+      // --- b) Filter and re-render the active sidebar group list ---
+      var cat = filterState.slice.category;
+
+      // Map category to list element id, data array, and key names
+      var listConfig = null;
+      if (cat === SLICE_CATEGORIES.PROJECT && appData && appData.slice_views && appData.slice_views.project) {
+        listConfig = {
+          listId:   'project-group-list',
+          entries:  appData.slice_views.project,
+          labelKey: 'project_id',
+          idKey:    'project_id',
+          countKey: 'sample_count'
+        };
+      } else if (cat === SLICE_CATEGORIES.LOCATION && appData && appData.slice_views && appData.slice_views.location) {
+        listConfig = {
+          listId:   'location-group-list',
+          entries:  appData.slice_views.location,
+          labelKey: 'site_name',
+          idKey:    'site_code',
+          countKey: 'sample_count'
+        };
+      } else if (cat === SLICE_CATEGORIES.LAB_GROUP && appData && appData.slice_views && appData.slice_views.lab_group) {
+        listConfig = {
+          listId:   'labgroup-group-list',
+          entries:  appData.slice_views.lab_group,
+          labelKey: 'group_name',
+          idKey:    'group_name',
+          countKey: 'sample_count'
+        };
+      }
+
+      if (listConfig) {
+        var listEl = document.getElementById(listConfig.listId);
+        if (listEl) {
+          // Remove any prior "no match" message
+          var priorMsg = listEl.querySelector('.tag-filter-no-match');
+          if (priorMsg) { listEl.removeChild(priorMsg); }
+
+          if (fs.tags.length === 0) {
+            // Restore full list with original counts
+            populateGroupList(listEl, listConfig.entries, listConfig.labelKey, listConfig.idKey, listConfig.countKey);
+            updateGroupItemSelection();
+          } else {
+            // Build filtered items — entries with filtered count > 0
+            var filteredItems = [];
+            listConfig.entries.forEach(function(entry) {
+              var fc = getFilteredCount(entry, fs.tags);
+              if (fc > 0) {
+                // Clone entry shape expected by populateGroupList, overriding sample_count
+                var clone = {};
+                clone[listConfig.labelKey] = entry[listConfig.labelKey];
+                clone[listConfig.idKey]    = entry[listConfig.idKey];
+                clone[listConfig.countKey] = fc;
+                filteredItems.push(clone);
+              }
+            });
+
+            if (filteredItems.length === 0) {
+              // All groups filtered to zero — show message
+              listEl.innerHTML = '';
+              var noMatchP = document.createElement('p');
+              noMatchP.className = 'tag-filter-no-match text-sm text-stone-400 px-4 py-2';
+              noMatchP.textContent = 'No samples match the selected tags.';
+              listEl.appendChild(noMatchP);
+            } else {
+              populateGroupList(listEl, filteredItems, listConfig.labelKey, listConfig.idKey, listConfig.countKey);
+              updateGroupItemSelection();
+            }
+          }
+        }
+      }
+
+      // --- c) Update the selected group's displayed sample count ---
+      var group = filterState.slice.group;
+      if (group && cat && appData && appData.slice_views) {
+        // Find the entry for the selected group
+        var selectedEntry = null;
+        if (cat === SLICE_CATEGORIES.PROJECT && appData.slice_views.project) {
+          selectedEntry = appData.slice_views.project.find(function(e) { return e.project_id === group; });
+        } else if (cat === SLICE_CATEGORIES.LOCATION && appData.slice_views.location) {
+          selectedEntry = appData.slice_views.location.find(function(e) { return e.site_code === group; });
+        } else if (cat === SLICE_CATEGORIES.LAB_GROUP && appData.slice_views.lab_group) {
+          selectedEntry = appData.slice_views.lab_group.find(function(e) { return e.group_name === group; });
+        }
+
+        if (selectedEntry) {
+          var filteredCount = fs.tags.length > 0 ? getFilteredCount(selectedEntry, fs.tags) : selectedEntry.sample_count;
+
+          // Update the subtitle element that shows "N samples"
+          var viewSubtitle = document.getElementById('slice-view-subtitle');
+          if (viewSubtitle) {
+            viewSubtitle.textContent = filteredCount.toLocaleString() + ' samples';
+          }
+
+          // Determine the slice charts area for the zero-match notice
+          var sliceChartsAreaId = null;
+          if (cat === SLICE_CATEGORIES.PROJECT)   { sliceChartsAreaId = 'slice-project-grid'; }
+          if (cat === SLICE_CATEGORIES.LOCATION)  { sliceChartsAreaId = 'slice-location-grid'; }
+          if (cat === SLICE_CATEGORIES.LAB_GROUP) { sliceChartsAreaId = 'slice-labgroup-grid'; }
+
+          if (sliceChartsAreaId) {
+            var chartsArea = document.getElementById(sliceChartsAreaId);
+            if (chartsArea) {
+              var chartsParent = chartsArea.parentNode;
+              // Remove any prior zero-match amber notice
+              var priorNotice = chartsParent ? chartsParent.querySelector('.tag-filter-zero-notice') : null;
+              if (priorNotice) { priorNotice.parentNode.removeChild(priorNotice); }
+
+              if (fs.tags.length > 0 && filteredCount === 0) {
+                // Show amber notice at top of slice charts area
+                var notice = document.createElement('p');
+                notice.className = 'tag-filter-zero-notice text-sm text-amber-400 mb-2';
+                notice.textContent = 'No samples match the selected tags for this group.';
+                if (chartsParent) {
+                  chartsParent.insertBefore(notice, chartsArea);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
 
     // Cross-link state — bidirectional map-marker ↔ bySite bar chart highlight
     var activeHighlightSite = null;
     var mapMarkersBySite = {};
+    var siteLatLonByCode = {};
 
     // =============================================================================
     // HELPERS
@@ -707,21 +911,50 @@
         wrap.innerHTML = '<p class="text-sm text-stone-400 py-8 text-center">No sampler data available</p>';
         return;
       }
+      // Zero guard: log scale breaks on log(0) — exclude entries with zero count.
+      var filtered = samplerData.filter(function(d) { return d.count > 0; });
+      if (filtered.length === 0) {
+        wrap.innerHTML = '<p class="text-sm text-stone-400 py-8 text-center">No sampler data available</p>';
+        return;
+      }
       chartInstances[canvasId] = new Chart(canvas.getContext('2d'), {
-        type: 'doughnut',
+        type: 'bar',
         data: {
-          labels: samplerData.map(function(d) { return d.sampler; }),
+          labels: filtered.map(function(d) { return d.sampler; }),
           datasets: [{
-            data: samplerData.map(function(d) { return d.count; }),
-            backgroundColor: CHART_COLORS.samplerType,
-            borderColor: CHART_COLORS.donutBorder
+            data: filtered.map(function(d) { return d.count; }),
+            backgroundColor: CHART_COLORS.samplerType
           }]
         },
         options: {
-          cutout: '65%',
+          responsive: true,
+          maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'right' },
-            tooltip: { callbacks: { label: tooltipLabelPct } }
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: CHART_COLORS.tooltip,
+              callbacks: {
+                label: function(ctx) {
+                  return ' ' + ctx.parsed.y.toLocaleString() + ' samples';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 10 } }
+            },
+            y: {
+              type: 'logarithmic',
+              grid: { color: CHART_COLORS.gridLine },
+              ticks: {
+                font: { size: 10 },
+                callback: function(val) {
+                  return val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val;
+                }
+              }
+            }
           }
         }
       });
@@ -742,13 +975,58 @@
     }
 
     // =============================================================================
+    // TEMPORAL GAP MARKER HELPER
+    // =============================================================================
+    /**
+     * insertGapMarkers(temporal)
+     * Accepts the raw temporal array [{month: "YYYY-MM", count: N}, ...]
+     * Scans for non-consecutive month transitions (year-boundary aware).
+     * When a gap is detected, inserts {month: '···', count: null} between the two months.
+     * Returns {labels: string[], counts: (number|null)[]}
+     *
+     * Consecutive examples:
+     *   "2020-12" -> "2021-01"  → consecutive (no gap marker inserted)
+     *   "2020-11" -> "2021-01"  → NOT consecutive (one gap marker inserted)
+     */
+    function insertGapMarkers(temporal) {
+      var labels = [];
+      var counts = [];
+
+      for (var i = 0; i < temporal.length; i++) {
+        var entry = temporal[i];
+        if (i > 0) {
+          var prev = temporal[i - 1];
+          var prevParts = prev.month.split('-');
+          var currParts = entry.month.split('-');
+          var prevYear  = parseInt(prevParts[0], 10);
+          var prevMonth = parseInt(prevParts[1], 10);
+          var currYear  = parseInt(currParts[0], 10);
+          var currMonth = parseInt(currParts[1], 10);
+          // Compute expected next year/month from prev
+          var expYear  = prevMonth === 12 ? prevYear + 1 : prevYear;
+          var expMonth = prevMonth === 12 ? 1 : prevMonth + 1;
+          // If the current entry does not match the expected next month, insert a gap marker
+          if (currYear !== expYear || currMonth !== expMonth) {
+            labels.push('\u00B7\u00B7\u00B7');
+            counts.push(null);
+          }
+        }
+        labels.push(formatMonth(entry.month));
+        counts.push(entry.count);
+      }
+
+      return { labels: labels, counts: counts };
+    }
+
+    // =============================================================================
     // TEMPORAL LINE CHART
     // =============================================================================
     function renderTemporalChart(temporal) {
       destroyChart('temporal');
       const ctx = document.getElementById('temporalChart').getContext('2d');
-      const labels = temporal.map(function(d) { return formatMonth(d.month); });
-      const counts = temporal.map(function(d) { return d.count; });
+      var gapped = insertGapMarkers(temporal);
+      const labels = gapped.labels;
+      const counts = gapped.counts;
 
       chartInstances.temporal = new Chart(ctx, {
         type: 'line',
@@ -944,7 +1222,7 @@
             data: counts,
             backgroundColor: CHART_COLORS.siteBar,
             borderWidth: 0,
-            borderRadius: 3
+            borderRadius: 0
           }]
         },
         options: {
@@ -1002,7 +1280,7 @@
       }
       mapMarkersBySite = {};
 
-      leafletMap = L.map('map', { zoomControl: true }).setView([39.5, -98.35], 4);
+      leafletMap = L.map('map', { zoomControl: true }).setView(MAP_CENTER_DEFAULT, MAP_ZOOM_DEFAULT);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -1024,6 +1302,7 @@
         });
 
         mapMarkersBySite[site.code] = marker;
+        siteLatLonByCode[site.code] = { lat: site.lat, lon: site.lon };
         marker.on('click', function() { highlightSite(site.code); });
 
         var typesLabel = site.primary_types && site.primary_types.length
@@ -1070,6 +1349,11 @@
           m.setStyle({ fillColor: CHART_COLORS.mapMarkerFill, color: CHART_COLORS.mapMarkerBorder });
         }
       });
+
+      // Fly map to the selected site
+      if (leafletMap && siteLatLonByCode[code]) {
+        leafletMap.flyTo([siteLatLonByCode[code].lat, siteLatLonByCode[code].lon], 12);
+      }
     }
 
     function clearSiteHighlight() {
@@ -1088,6 +1372,11 @@
           color: CHART_COLORS.mapMarkerBorder
         });
       });
+
+      // Reset map view to default
+      if (leafletMap) {
+        leafletMap.setView(MAP_CENTER_DEFAULT, MAP_ZOOM_DEFAULT);
+      }
     }
 
     // =============================================================================
@@ -1209,22 +1498,71 @@
       return html;
     }
 
-    function renderReplicateBadges(containerId, replicateData) {
+    var TAG_GROUP_ORDER = ['time_of_day', 'replicate', 'position', 'clock_quadrant', 'field_controls', 'other'];
+
+    function renderTagGroups(containerId, data) {
       var container = document.getElementById(containerId);
       if (!container) return;
       container.innerHTML = '';
-      if (!replicateData || replicateData.length === 0) {
+
+      // Empty-data fallback
+      var hasAny = false;
+      if (data && typeof data === 'object') {
+        TAG_GROUP_ORDER.forEach(function(k) {
+          if (Array.isArray(data[k]) && data[k].length > 0) { hasAny = true; }
+        });
+      }
+      if (!hasAny) {
         var fallback = document.createElement('span');
         fallback.className = 'text-sm text-stone-400';
         fallback.textContent = 'None recorded';
         container.appendChild(fallback);
         return;
       }
-      replicateData.forEach(function(tag) {
-        var span = document.createElement('span');
-        span.className = 'px-2 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-700';
-        span.textContent = escapeHtml(tag);
-        container.appendChild(span);
+
+      TAG_GROUP_ORDER.forEach(function(k) {
+        if (!Array.isArray(data[k]) || data[k].length === 0) return;
+
+        var groupRow = document.createElement('div');
+        groupRow.className = 'flex flex-wrap items-center gap-1 mb-1';
+
+        var label = document.createElement('span');
+        label.className = 'text-xs text-stone-400 mr-1';
+        label.textContent = k.replace(/_/g, ' ');
+        groupRow.appendChild(label);
+
+        data[k].forEach(function(token) {
+          var badge = document.createElement('span');
+          var isActive = filterState.tags.indexOf(token) !== -1;
+          badge.className = isActive ? TAG_BADGE_CLASSES.active : TAG_BADGE_CLASSES.inactive;
+          badge.setAttribute('data-tag', token);
+          badge.setAttribute('tabindex', '0');
+          badge.setAttribute('role', 'button');
+          badge.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+          badge.textContent = token;
+
+          function toggleTag() {
+            var idx = filterState.tags.indexOf(token);
+            if (idx === -1) {
+              filterState.tags.push(token);
+            } else {
+              filterState.tags.splice(idx, 1);
+            }
+            applyFilter(filterState);
+          }
+
+          badge.addEventListener('click', toggleTag);
+          badge.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleTag();
+            }
+          });
+
+          groupRow.appendChild(badge);
+        });
+
+        container.appendChild(groupRow);
       });
     }
 
@@ -1266,7 +1604,7 @@
     /**
      * Populate a group list <ul> with <li> items from an array.
      * labelKey: property name for the display label
-     * idKey: property name used as the group identifier in sliceState.activeGroup
+     * idKey: property name used as the group identifier in filterState.slice.group
      * countKey: property name for sample_count
      */
     function populateGroupList(listEl, items, labelKey, idKey, countKey) {
@@ -1482,13 +1820,14 @@
       // Chart 3: Temporal Activity (Line)
       destroyChart('sliceProjectTemporalChart');
       var ctx3 = document.getElementById('sliceProjectTemporalChart').getContext('2d');
+      var projectGapped = insertGapMarkers(entry.temporal);
       chartInstances['sliceProjectTemporalChart'] = new Chart(ctx3, {
         type: 'line',
         data: {
-          labels: entry.temporal.map(function(d) { return formatMonth(d.month); }),
+          labels: projectGapped.labels,
           datasets: [{
             label: 'Samples Collected',
-            data: entry.temporal.map(function(d) { return d.count; }),
+            data: projectGapped.counts,
             borderColor: CHART_COLORS.sliceTemporalLine,
             backgroundColor: CHART_COLORS.sliceTemporalArea,
             borderWidth: 2,
@@ -1502,7 +1841,7 @@
         options: buildTemporalChartOptions()
       });
 
-      renderReplicateBadges('sliceProjectReplicateBadges', entry.replicate_tags);
+      renderTagGroups('sliceProjectReplicateBadges', entry.replicate_tags);
       renderSamplerTypeChart('sliceProjectSamplerChart', entry.sampler_type_dist);
     }
 
@@ -1610,13 +1949,14 @@
       // Chart 3: Temporal Activity (Line)
       destroyChart('sliceLocationTemporalChart');
       var ctx3 = document.getElementById('sliceLocationTemporalChart').getContext('2d');
+      var locationGapped = insertGapMarkers(entry.temporal);
       chartInstances['sliceLocationTemporalChart'] = new Chart(ctx3, {
         type: 'line',
         data: {
-          labels: entry.temporal.map(function(d) { return formatMonth(d.month); }),
+          labels: locationGapped.labels,
           datasets: [{
             label: 'Samples Collected',
-            data: entry.temporal.map(function(d) { return d.count; }),
+            data: locationGapped.counts,
             borderColor: CHART_COLORS.sliceTemporalLine,
             backgroundColor: CHART_COLORS.sliceTemporalArea,
             borderWidth: 2,
@@ -1669,7 +2009,7 @@
         timeDistCard.classList.add('hidden');
       }
 
-      renderReplicateBadges('sliceLocationReplicateBadges', entry.replicate_tags);
+      renderTagGroups('sliceLocationReplicateBadges', entry.replicate_tags);
       renderSamplerTypeChart('sliceLocationSamplerChart', entry.sampler_type_dist);
     }
 
@@ -1776,13 +2116,14 @@
       // Chart 3: Temporal Activity (Line)
       destroyChart('sliceLabGroupTemporalChart');
       var ctx3 = document.getElementById('sliceLabGroupTemporalChart').getContext('2d');
+      var labGroupGapped = insertGapMarkers(entry.temporal);
       chartInstances['sliceLabGroupTemporalChart'] = new Chart(ctx3, {
         type: 'line',
         data: {
-          labels: entry.temporal.map(function(d) { return formatMonth(d.month); }),
+          labels: labGroupGapped.labels,
           datasets: [{
             label: 'Samples Collected',
-            data: entry.temporal.map(function(d) { return d.count; }),
+            data: labGroupGapped.counts,
             borderColor: CHART_COLORS.sliceTemporalLine,
             backgroundColor: CHART_COLORS.sliceTemporalArea,
             borderWidth: 2,
@@ -1796,7 +2137,7 @@
         options: buildTemporalChartOptions()
       });
 
-      renderReplicateBadges('sliceLabGroupReplicateBadges', entry.replicate_tags);
+      renderTagGroups('sliceLabGroupReplicateBadges', entry.replicate_tags);
       renderSamplerTypeChart('sliceLabGroupSamplerChart', entry.sampler_type_dist);
     }
 
@@ -1806,12 +2147,12 @@
 
     /**
      * renderView — central dispatch for slice panel state.
-     * Called after any sliceState mutation.
+     * Called after any filterState mutation.
      * NEVER calls initDashboard().
      */
     function renderView() {
-      var cat   = sliceState.activeCategory;
-      var group = sliceState.activeGroup;
+      var cat   = filterState.slice.category;
+      var group = filterState.slice.group;
 
       var sliceContainer  = document.getElementById('slice-view-container');
       var projectView     = document.getElementById('slice-project-view');
@@ -1824,6 +2165,17 @@
 
       // --- Update category button visual states ---
       updateCategoryButtonStates();
+
+      // --- Orange envelope on global charts area ---
+      var globalChartsArea = document.getElementById('global-charts-area');
+      if (globalChartsArea) {
+        if (isFilterActive()) {
+          globalChartsArea.classList.add('filter-active-envelope');
+          applyFilter(filterState);
+        } else {
+          globalChartsArea.classList.remove('filter-active-envelope');
+        }
+      }
 
       // --- Branch on state ---
 
@@ -1940,7 +2292,7 @@
 
       Object.keys(buttonMap).forEach(function(cat) {
         var btn = document.getElementById(buttonMap[cat]);
-        var isActive = sliceState.activeCategory === cat;
+        var isActive = filterState.slice.category === cat;
 
         if (isActive) {
           btn.className = 'relative w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-green-800 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors';
@@ -1967,7 +2319,7 @@
     function updateGroupItemSelection() {
       var allItems = document.querySelectorAll('#project-group-list [role="option"], #location-group-list [role="option"], #labgroup-group-list [role="option"]');
       allItems.forEach(function(li) {
-        var isSelected = li.getAttribute('data-group-id') === sliceState.activeGroup;
+        var isSelected = li.getAttribute('data-group-id') === filterState.slice.group;
         li.setAttribute('aria-selected', isSelected ? 'true' : 'false');
         if (isSelected) {
           li.className = 'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-semibold text-orange-700 bg-orange-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset';
@@ -2086,9 +2438,11 @@
     // =============================================================================
 
     function clearSliceFilter() {
-      sliceState.activeCategory = null;
-      sliceState.activeGroup    = null;
+      filterState.slice.category = null;
+      filterState.slice.group    = null;
+      filterState.tags = [];
       renderView();
+      renderTagGroups('globalReplicateBadges', globalTagsDict);
     }
 
     // =============================================================================
@@ -2101,16 +2455,16 @@
         return;
       }
 
-      if (sliceState.activeCategory === category) {
+      if (filterState.slice.category === category) {
         // Toggle off: collapse category
-        sliceState.activeCategory = null;
-        sliceState.activeGroup = null;
+        filterState.slice.category = null;
+        filterState.slice.group    = null;
         renderView();
         return;
       }
 
-      sliceState.activeCategory = category;
-      sliceState.activeGroup    = null;
+      filterState.slice.category = category;
+      filterState.slice.group    = null;
 
       // Spec section 6.1: if lab_group array is empty, clicking Lab Group goes
       // directly to the slice-view-container showing the empty-state message
@@ -2119,7 +2473,7 @@
       if (category === SLICE_CATEGORIES.LAB_GROUP &&
           Array.isArray(appData.slice_views.lab_group) &&
           appData.slice_views.lab_group.length === 0) {
-        sliceState.activeGroup = '__empty__';
+        filterState.slice.group = '__empty__';
       }
 
       renderView();
@@ -2130,7 +2484,7 @@
     // =============================================================================
 
     function handleGroupItemClick(groupId) {
-      sliceState.activeGroup = groupId;
+      filterState.slice.group = groupId;
       renderView();
     }
 
@@ -2289,19 +2643,23 @@
       renderBySiteChart(data.by_site);
       renderMap(data.sites);
 
-      // Global replicate badges — flat deduplicated sorted list across all project entries
-      var globalTags = [];
+      // Global replicate badges — deduplicated dict across all project entries
+      globalTagsDict = { time_of_day: [], replicate: [], position: [], clock_quadrant: [], field_controls: [], other: [] };
       if (data.slice_views && Array.isArray(data.slice_views.project)) {
         data.slice_views.project.forEach(function(e) {
-          if (Array.isArray(e.replicate_tags)) {
-            e.replicate_tags.forEach(function(t) {
-              if (globalTags.indexOf(t) === -1) { globalTags.push(t); }
+          if (e.replicate_tags && typeof e.replicate_tags === 'object') {
+            Object.keys(globalTagsDict).forEach(function(k) {
+              if (Array.isArray(e.replicate_tags[k])) {
+                e.replicate_tags[k].forEach(function(t) {
+                  if (globalTagsDict[k].indexOf(t) === -1) { globalTagsDict[k].push(t); }
+                });
+              }
             });
           }
         });
       }
-      globalTags.sort();
-      renderReplicateBadges('globalReplicateBadges', globalTags);
+      Object.keys(globalTagsDict).forEach(function(k) { globalTagsDict[k].sort(); });
+      renderTagGroups('globalReplicateBadges', globalTagsDict);
 
       var samplerMap = {};
       if (data.slice_views && Array.isArray(data.slice_views.project)) {
