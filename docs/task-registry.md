@@ -381,3 +381,215 @@ To recover: git reset --hard 20d1cbfcb274abcbedbab42807e1848a105f2679
 </expectation_manifest>
 ```
 
+---
+
+# Task Registry — broadn-p2-dashboard-v2
+
+## Rollback Point
+commit: a2650643e67b828e0de2e0f75efa431359f56169
+recorded: 2026-03-23T12:10:00Z
+task_id: broadn-p2-dashboard-v2
+
+To recover: git -C /home/jhber/projects/broadn-web-view reset --hard a265064
+
+## Plan Revision
+- Rev 0 (2026-03-22): Initial decomposition (5 tasks, t2-charts undivided)
+- Rev 1 (2026-03-23): CRITIQUE_BLOCK addressed — 6 tasks, t2 split into t2a/t2b, all BLOCKERs and WARNINGs resolved
+
+## Human Review Gates
+- After broadn-p2-t4-tags-be discovery report: human must review tag groupings before Wave 3 (broadn-p2-t5-tags-fe) is dispatched.
+
+## Expectation Manifest (Rev 1 — 6 tasks)
+
+| task_id | agent | wave | status | depends_on |
+|---|---|---|---|---|
+| broadn-p2-t2a-gap-markers | FE#1 | 1a | PENDING | — |
+| broadn-p2-t2b-charts-map | FE#2 | 1b | PENDING | t2a (file-conflict seq) |
+| broadn-p2-t1-design | FE#3 | 1c | PENDING | t2b (file-conflict seq) |
+| broadn-p2-t3-filter | FE#4 | 1d | PENDING | t1-design (file-conflict seq) |
+| broadn-p2-t4-tags-be | BE#1 | 2 | PENDING | — |
+| broadn-p2-t5-tags-fe | FE#5 | 3 | PENDING | t4-tags-be, t3-filter |
+
+```xml
+<expectation_manifest>
+  <sprint_id>broadn-p2-dashboard-v2</sprint_id>
+  <generated>2026-03-23T00:00:00Z</generated>
+  <revision>1</revision>
+  <assignments>
+
+    <assignment>
+      <task_id>broadn-p2-t2a-gap-markers</task_id>
+      <agent>FE#1</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p2-t2a-gap-markers-FE-*.md</expected_file>
+      <wave>1a</wave>
+      <blocks>broadn-p2-t2b-charts-map</blocks>
+      <receipt_check>
+        <item>insertGapMarkers() function definition present in index.html</item>
+        <item>Called from renderTemporalChart() — confirmed in packet</item>
+        <item>Called from renderProjectView() temporal chart render — confirmed in packet</item>
+        <item>Called from renderLocationView() temporal chart render — confirmed in packet</item>
+        <item>Called from renderLabGroupView() temporal chart render — confirmed in packet</item>
+        <item>Year-boundary test documented: 2020-12 → 2021-01 = consecutive (no gap), 2020-11 → 2021-01 = gap</item>
+        <item>No new CDN script tags in index.html</item>
+        <item>No changes to non-temporal charts</item>
+        <item>estimated_new_lines value stated in packet and ≤ 50</item>
+      </receipt_check>
+    </assignment>
+
+    <assignment>
+      <task_id>broadn-p2-t2b-charts-map</task_id>
+      <agent>FE#2</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p2-t2b-charts-map-FE-*.md</expected_file>
+      <wave>1b</wave>
+      <blocks>broadn-p2-t1-design</blocks>
+      <receipt_check>
+        <item>MAP_CENTER_DEFAULT constant declared in CONSTANTS section</item>
+        <item>MAP_ZOOM_DEFAULT constant declared in CONSTANTS section</item>
+        <item>renderMap() references MAP_CENTER_DEFAULT and MAP_ZOOM_DEFAULT — no raw coordinate or zoom literals in renderMap() or clearSiteHighlight()</item>
+        <item>siteLatLonByCode declared at module level, populated in renderMap()</item>
+        <item>highlightSite() contains leafletMap.flyTo() call</item>
+        <item>clearSiteHighlight() contains leafletMap.setView(MAP_CENTER_DEFAULT, MAP_ZOOM_DEFAULT)</item>
+        <item>renderSamplerTypeChart() uses type: 'bar' (not 'doughnut')</item>
+        <item>renderSamplerTypeChart() y-axis scale has type: 'logarithmic'</item>
+        <item>Zero-count guard present in renderSamplerTypeChart() — data.json check result reported in packet</item>
+        <item>Local tooltip callback in renderSamplerTypeChart uses ctx.parsed.y (not ctx.parsed.x)</item>
+        <item>Shared tooltipLabelSamples function unchanged</item>
+        <item>No new CDN script tags</item>
+        <item>estimated_new_lines value stated in packet and ≤ 50</item>
+      </receipt_check>
+    </assignment>
+
+    <assignment>
+      <task_id>broadn-p2-t1-design</task_id>
+      <agent>FE#3</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p2-t1-design-FE-*.md</expected_file>
+      <wave>1c</wave>
+      <blocks>broadn-p2-t3-filter</blocks>
+      <receipt_check>
+        <item>grep -n "rounded-" index.html returns zero results (excluding rounded-none)</item>
+        <item>grep -n "shadow-" index.html returns zero results</item>
+        <item>grep -n "border-radius" index.html returns exactly 2 lines: scrollbar-thumb (line 26) and skeleton (line 61)</item>
+        <item>borderRadius: 3 in bySite chart dataset config removed or set to 0 — confirmed in packet</item>
+        <item>#map border-radius removed or set to 0 — confirmed in packet</item>
+        <item>#custom-tooltip border-radius removed or set to 0 — confirmed in packet</item>
+        <item>::-webkit-scrollbar-thumb border-radius explicitly preserved — confirmed in packet</item>
+        <item>.skeleton border-radius explicitly preserved — confirmed in packet</item>
+        <item>font-family: Helvetica (or equivalent stack) present in CSS</item>
+        <item>--color-orange-500 value darker than #f97316</item>
+        <item>--color-orange-700 value darker than #c2410c</item>
+        <item>Locator comment present immediately above --color-orange-500 declaration</item>
+        <item>Skeleton loader gradient animation CSS unchanged</item>
+        <item>No JS logic modified</item>
+        <item>estimated_new_lines value stated in packet and ≤ 50</item>
+      </receipt_check>
+    </assignment>
+
+    <assignment>
+      <task_id>broadn-p2-t3-filter</task_id>
+      <agent>FE#4</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p2-t3-filter-FE-*.md</expected_file>
+      <wave>1d</wave>
+      <blocks>broadn-p2-t5-tags-fe</blocks>
+      <receipt_check>
+        <item>filterState object declared with .slice.category, .slice.group, and .tags fields</item>
+        <item>grep for "sliceState" in index.html returns zero results</item>
+        <item>isFilterActive() function present and returns boolean</item>
+        <item>applyFilter(filterState) stub present with documented comment</item>
+        <item>.filter-active-envelope CSS class present in style block using var(--color-orange-500) or derived custom property — NOT bg-orange-50 Tailwind utility</item>
+        <item>Visual type: full background fill (not border-only) — confirmed by class definition in packet</item>
+        <item>Envelope class toggled on correct wrapper element — element ID or selector stated in packet</item>
+        <item>No hardcoded #f97316 or rgba(249,115,22,...) outside :root or CHART_COLORS block</item>
+        <item>All existing slice panel behavior unchanged (regression confirmed in manual test trace)</item>
+        <item>Manual test trace present with all 5 required items:
+          (1) activate filter → envelope visible;
+          (2) clear filter → envelope disappears;
+          (3) isFilterActive() false when both null/empty;
+          (4) isFilterActive() true when slice set;
+          (5) applyFilter() callable without error</item>
+        <item>estimated_new_lines value stated in packet and ≤ 50</item>
+      </receipt_check>
+    </assignment>
+
+    <assignment>
+      <task_id>broadn-p2-t4-tags-be</task_id>
+      <agent>BE#1</agent>
+      <expected_tag>completion_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p2-t4-tags-be-BE-*.md</expected_file>
+      <wave>2</wave>
+      <blocks>broadn-p2-t5-tags-fe</blocks>
+      <receipt_check>
+        <item>Discovery report written to .claude/agents/tasks/outputs/broadn-p2-t4-tags-be-discovery-*.md</item>
+        <item>Discovery report contains all unique raw tag values with counts</item>
+        <item>Discovery report contains list of comma-separated multi-value entries</item>
+        <item>Discovery report contains proposed grouping for each value</item>
+        <item>Discovery report flags any ambiguous values (especially B)</item>
+        <item>Human review confirmed (Orchestrator gate) before implementation proceeds</item>
+        <item>parse_replicate_tags() function present in preprocess_data.py</item>
+        <item>build_slice_project() emits replicate_tags as dict (not list) — line 465 call site updated</item>
+        <item>build_slice_location() emits replicate_tags as dict (not list) — line 526 call site updated</item>
+        <item>build_slice_lab_group() emits replicate_tags as dict (not list) — line 582 call site updated</item>
+        <item>python3 scripts/preprocess_data.py exits 0</item>
+        <item>data/data.json: replicate_tags in at least one slice entry is a JSON object (not array)</item>
+        <item>All 6 grouping keys present: time_of_day, replicate, position, clock_quadrant, field_controls, other</item>
+      </receipt_check>
+    </assignment>
+
+    <assignment>
+      <task_id>broadn-p2-t5-tags-fe</task_id>
+      <agent>FE#5</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p2-t5-tags-fe-FE-*.md</expected_file>
+      <wave>3</wave>
+      <blocks>NONE</blocks>
+      <receipt_check>
+        <item>renderTagGroups() function present in index.html</item>
+        <item>grep -n "renderReplicateBadges" index.html returns zero results — confirmed in packet</item>
+        <item>TAG_BADGE_CLASSES constant defined with full static string literals for active and inactive states</item>
+        <item>No dynamic Tailwind class construction in renderTagGroups or click handlers</item>
+        <item>Global aggregation block rewritten to iterate dict shape — dict-walk logic confirmed in packet</item>
+        <item>renderTagGroups called at all 4 former renderReplicateBadges call sites (lines 1505, 1672, 1799, 2304)</item>
+        <item>Tag badge click handler adds tag to filterState.tags</item>
+        <item>Clicking same badge removes from filterState.tags (toggle)</item>
+        <item>applyFilter(filterState) called on each toggle</item>
+        <item>Clear filter resets filterState.tags to []</item>
+        <item>Active badge: full background fill (not border-only) — TAG_BADGE_CLASSES.active value stated in packet</item>
+        <item>WCAG AA contrast on active badge — confirmed in packet</item>
+        <item>All badges keyboard-navigable: Enter and Space toggle — confirmed in manual test trace</item>
+        <item>No new CDN dependencies</item>
+        <item>No hardcoded #f97316 or rgba(249,115,22,...) outside :root or CHART_COLORS</item>
+        <item>Manual test trace present with all 6 required items:
+          (1) click badge → active state + envelope;
+          (2) click same → removed + envelope clears;
+          (3) keyboard Enter/Space toggles;
+          (4) clear filter resets tags;
+          (5) active badge has full bg fill confirmed by class name;
+          (6) accepted-risk note for Playwright Tier 2</item>
+        <item>estimated_new_lines value stated in packet; justification for exceeding 50-line ceiling documented</item>
+      </receipt_check>
+    </assignment>
+
+  </assignments>
+</expectation_manifest>
+```
+
+---
+
+# Task Registry — broadn-p3-tag-filter
+
+## Rollback Point
+commit: a2650643e67b828e0de2e0f75efa431359f56169
+recorded: 2026-03-23T00:00:00Z
+task_id: broadn-p3-tag-filter
+
+To recover: git -C /home/jhber/projects/broadn-web-view reset --hard a2650643e67b828e0de2e0f75efa431359f56169
+
+## Expectation Manifest
+
+| task_id | agent | wave | depends_on |
+|---|---|---|---|
+| broadn-p3-t1-pipeline | BE#1 | 1 | — |
+| broadn-p3-t2-filter-fe | FE#1 | 2 | t1-pipeline |

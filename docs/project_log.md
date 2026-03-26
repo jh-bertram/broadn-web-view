@@ -462,3 +462,196 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - Metrics: 4 protocol-level improvements, 2 specification-level improvements, 0 gaps unresolved, 6/6 post-mortem findings closed.
   </retention_keys>
 </archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-23T00:20:00Z</timestamp>
+  <task_id>broadn-p2-t2a-gap-markers</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Gap marker insertion for temporal charts in broadn-p2-dashboard-v2 sprint (wave 1a). FE#1 delivered pure transformation helper `insertGapMarkers(temporal)` that detects non-consecutive months in temporal data arrays and inserts null gap markers to render line breaks instead of continuous line segments across gaps. Rationale: Data may have sparse temporal coverage (e.g., samples collected in Jan, Mar, Jun, with no Feb/Apr/May data); connecting Jan→Mar directly obscures the gap visually. Solution: function iterates temporal array, detects month→month discontinuities (where consecutive array items have diff > 1 month or year boundary transition), inserts {label: '···', count: null} objects at gap positions. Chart.js treats null data values as breaks in line rendering. Implementation is stateless pure transformation — reads raw array, returns {labels, counts} object with null slots inserted. Zero side effects. No new Chart.js dependencies. Label uses U+00B7 (middle dot) as visual ellipsis indicator in x-axis ticks, chosen for compactness and chart-native rendering (non-UTF8 code point issues ruled out via browser console test). Year-boundary handling special-cased: Dec→Jan transition treated as expected 1-month gap, no marker inserted (timeline is contiguous). 4 wiring sites updated: renderTemporalChart() (line ~760), renderProjectView() (line ~1440), renderLocationView() (line ~1600), renderLabGroupView() (line ~1770) — each now calls insertGapMarkers(entry.temporal) before passing to Chart.js. Audit verdict PASS (SA: pure function no side effects, no DRY violation; QA: tested Dec→Jan boundary, Feb→May gap, single-month isolated entry; SX: no injection vectors, no external data fetch).</rationale>
+  <dependencies>
+    - Depends on: broadn-p2-dashboard-v2 sprint data schema (temporal array structure with month/year fields)
+    - Unblocks: broadn-p2-t2b-charts-map (wave 1b, relies on temporal charts rendering cleanly)
+  </dependencies>
+  <retention_keys>
+    - Function signature: insertGapMarkers(temporal) at line 744; takes array of {month: number, year: number, count: number} objects; returns {labels: [], counts: []} with null-marker objects inserted
+    - Gap detection logic: iterates temporal array with index i; for each pair temporal[i] and temporal[i+1], calculates month distance as (temporal[i+1].year - temporal[i].year) * 12 + (temporal[i+1].month - temporal[i].month); if distance > 1, inserts {label: '···', count: null} at position i+1
+    - Year boundary special case: Dec (month 12)→Jan (month 1) transition from year N to year N+1 evaluates to distance = 1 (correct: 12 months apart); no gap marker inserted (expected behavior)
+    - Label format: '···' (three U+00B7 middle-dot characters, not '...' ASCII period chars); renders in Chart.js x-axis without font-rendering issues
+    - Call sites (4 total): renderTemporalChart() reads entry.temporal, calls insertGapMarkers, destructures {labels, counts}, passes to new Chart.js instance; renderProjectView() wiring at line ~1440; renderLocationView() at line ~1600; renderLabGroupView() at line ~1770
+    - Data contract: Consumes temporal array with {month: 1-12, year: 4-digit, count: number} structure; produces {labels: string[], counts: (number|null)[]} matching Chart.js line/bar dataset format
+    - Performance: O(n) single pass through temporal array; no aggregation or sorting (assumes input is pre-sorted by time)
+    - Chart integration: null count values in Chart.js dataset create line breaks (native Chart.js behavior, no custom plugin needed)
+    - Files changed: index.html (insertGapMarkers function definition ~15 net new lines, 4 wiring calls ~4 lines = ~19 net new lines total)
+    - Scope note: Temporal chart rendering only; does not affect sampler type, pipeline stage, or site-bar charts
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-23T01:15:00Z</timestamp>
+  <task_id>broadn-p2-t2b-charts-map</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Chart and map interactivity for broadn-p2-dashboard-v2 sprint (wave 1b). FE#2 delivered DRY extraction of map constants, bi-directional chart-map linking, and sampler-type chart conversion to logarithmic scale. Rationale for each change: (1) MAP_CENTER_DEFAULT and MAP_ZOOM_DEFAULT extracted to CONSTANTS section at module top — coordinates appeared as raw literals [39.5, -98.35] in renderMap() and flyTo() calls; extraction eliminates duplication and enables single-point maintenance if map bounds change. (2) siteLatLonByCode object declared at module level and populated during renderMap() pass — enables highlightSite() callback (invoked on bar chart click) to look up site coordinates without re-scanning the site data structure. (3) highlightSite() now calls leafletMap.flyTo([lat, lon], 12) after lookup — provides visual feedback by centering map on selected site at zoom level 12. (4) clearSiteHighlight() resets map via leafletMap.setView(MAP_CENTER_DEFAULT, MAP_ZOOM_DEFAULT) — restores overview context when selection clears. (5) renderSamplerTypeChart() changed chart.js type from 'doughnut' to 'bar' with logarithmic y-axis (type: 'logarithmic') — enables detection of sampler types with very low counts that would be invisible in pie/doughnut (log scale compresses large count ranges into visible bar heights). Zero guard added for log scale safety: min value for dataset clamped to 1 (log(1) = 0, log(0) = undefined). (6) Tooltip customization verified: local bar chart uses ctx.parsed.y (vertical axis, correct for bars), shared tooltip function tooltipLabelSamples unchanged (still uses ctx.parsed.x, correct for horizontal bars in other charts). All wiring verified via console inspection and manual interaction test. Audit verdict PASS (SA: DRY extract + log-scale guard pattern sound, no code duplication; QA: bar rendering verified with low-count samplers, log scale edge case tested, map flyTo interaction confirmed; SX: no injection vectors, log scale safe-guarded, no new external data fetch).</rationale>
+  <dependencies>
+    - Depends on: broadn-p2-t2a-gap-markers (wave 1a, temporal charts must render cleanly for context)
+    - Depends on: broadn-p2-dashboard-v2 sprint data schema (site lat/lon and sampler type cardinality)
+    - Unblocks: broadn-p2-t1-design (wave 2, design polish applied after interactivity verified)
+  </dependencies>
+  <retention_keys>
+    - CONSTANTS section additions: MAP_CENTER_DEFAULT = [39.5, -98.35], MAP_ZOOM_DEFAULT = 4
+    - Module-level: var siteLatLonByCode = {} declared at top, populated in renderMap() loop as site.code → {lat, lon}
+    - highlightSite(siteCode) function: looks up lat/lon in siteLatLonByCode[siteCode], calls leafletMap.flyTo([lat, lon], 12)
+    - clearSiteHighlight() function: calls leafletMap.setView(MAP_CENTER_DEFAULT, MAP_ZOOM_DEFAULT)
+    - renderSamplerTypeChart() change: options.scales.y = {type: 'logarithmic'} added; dataset values clamped to min: 1 for safety
+    - Tooltip function state: bar chart's local tooltip uses ctx.parsed.y (vertical), tooltipLabelSamples callback unchanged (ctx.parsed.x for horizontal)
+    - Files changed: index.html (~45 net new lines for constants, lookups, flyTo/setView calls, log scale config)
+    - Integration points: renderMap() populates siteLatLonByCode; renderSamplerTypeChart() configures log axis and datasets; highlightSite() and clearSiteHighlight() wired to chart.js onClick and context-clear handlers
+    - Edge cases verified: Log scale with count=0 (clamped to 1), count=1 (log(1)=0 displayed correctly), count>1000 (compressed visible in bar height)
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-23T01:45:00Z</timestamp>
+  <task_id>broadn-p2-t1-design</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Design polish for broadn-p2-dashboard-v2 sprint (wave 2). FE#3 delivered color darkening, CSS cleanup, and font-family standardization per design spec. Rationale for each change: (1) Site-wide orange color darkened: --color-orange-500 changed from #f97316 to #ea6c00 and --color-orange-700 from #c2410c to #b33a00 — provides higher contrast and visual weight alignment with dashboard aesthetic. Change applied in :root CSS block (body styles). (2) CHART_COLORS.orangeAccent and orangeAccentDim synced to match new orange values #ea6c00 and #b33a00 respectively — ensures chart elements respect brand color update (caught in audit, required remediation). (3) Locator comment added above --color-orange-500 CSS variable for discoverability ("/* Primary orange accent, darkened to #ea6c00 in P2 redesign */"). (4) All rounded-* and shadow-* Tailwind classes removed from static HTML markup (inline class strings in divs/buttons/etc.) — reduces CSS footprint and simplifies layout engine. Special note: JS-generated class strings left untouched per scope boundary (task scope explicitly excludes dynamic class generation; if rounded/shadow appear in JS string concatenation, they remain). (5) Structural CSS rules cleaned: #map border-radius removed, #custom-tooltip border-radius removed; scrollbar and skeleton loader border-radius rules explicitly preserved as required per spec. (6) Chart.js config cleanup: borderRadius: 3 in bySite chart dataset config removed and set to 0 — provides crisp bar edges consistent with minimalist design. (7) Font-family baseline added to body: "font-family: Helvetica, Arial, system-ui, sans-serif" — ensures consistent typography across all browsers. First audit cycle caught that CHART_COLORS.orangeAccent still held old #f97316 value — immediate remediation pushed new orange values into color constants block. Second audit cycle verified all colors synced and CSS cleanup complete. Audit verdict PASS (SA after remediation: color constant synchronization required, CSS cleanup verified no duplicates; QA: visual regression testing on site-orange affected elements, rounded-edge removal verified no layout shift, font-family baseline confirmed consistent rendering; SX: no injection vectors, no hardcoded brand colors, no external font CDN introduced).</rationale>
+  <dependencies>
+    - Depends on: broadn-p2-t2b-charts-map (wave 1b, interactivity must be verified before design polish applied)
+    - Design source: broadn-p2-design-spec (UI Designer deliverable, colors and typography defined)
+  </dependencies>
+  <retention_keys>
+    - Color changes in :root CSS: --color-orange-500: #ea6c00 (was #f97316), --color-orange-700: #b33a00 (was #c2410c)
+    - CHART_COLORS object updates: orangeAccent: '#ea6c00', orangeAccentDim: '#b33a00'
+    - Locator comment added above --color-orange-500 in CSS for future maintenance reference
+    - Tailwind cleanup: Removed rounded-md, rounded-lg, rounded-none, shadow-sm, shadow-md, shadow-lg from inline class strings in HTML markup (divs, buttons, sections)
+    - Structural CSS changes: #map CSS rule border-radius removed; #custom-tooltip CSS rule border-radius removed; scrollbar and skeleton-loader rules retained (not modified)
+    - Chart.js bySite dataset: borderRadius: 3 changed to borderRadius: 0
+    - Font baseline: body { font-family: Helvetica, Arial, system-ui, sans-serif } added to CSS block
+    - Files changed: index.html (~60 net modified lines: CSS var updates, class string cleanup, Chart.js config, font-family addition)
+    - Audit remediation: First cycle identified CHART_COLORS.orangeAccent mismatch (still #f97316); remediation pushed new #ea6c00 value; second cycle verified sync complete
+    - Edge cases verified: Orange color used in site selector highlights, chart legend, sampler-type bars — all rendered with new #ea6c00 shade; font-family fallback chain confirmed in dev console
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-23T20:46:57Z</timestamp>
+  <task_id>broadn-p2-t3-filter</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Filter state model formalization for broadn-p2-dashboard-v2 sprint (wave 1a). FE#1 delivered complete slice+tag filter architecture refactoring and visual envelope styling. Problem: prior sprint used loose `sliceState` singleton containing only slice choices (category, group); new requirement adds tag-based filtering (multiple tags can be active simultaneously). Solution: (1) Formalized filterState data structure: filterState = { slice: { category: null|string, group: null|string }, tags: [] } — category and group coexist in slice subobject, tags array holds active tag identifiers. (2) Replaced all 13 read/write sites of sliceState with filterState, updating call sites across 6 functions (renderView, onSliceChange, isFilterActive, applyFilter, tag click handlers, panel updates). (3) Created isFilterActive() predicate returning true when any filter is active (slice.category OR slice.group OR tags.length > 0), used to toggle visual envelope. (4) Stubbed applyFilter(fs) function with documented comment explaining that T5 (tag-click-to-filter task) will implement the filtering logic; stub preserves contract signature for T5 dispatch. (5) Visual envelope architecture: created new `<div id="global-charts-area">` wrapper containing 3 global chart sections (overview, geography, pipeline); NOT wrapping explorer panel or slice selector (intentional containment to global-only charts). (6) CSS styling for filter-active state: `.filter-active-envelope { background-color: rgba(var(--color-orange-500-rgb), 0.07) }` — 7% opacity tint using orange-500 design token converted to RGB triplet for rgba() compatibility. (7) Added CSS custom property: --color-orange-500-rgb: 234, 108, 0 to :root, matching design token #ea6c00. (8) Envelope toggled dynamically in renderView() — checks isFilterActive(), conditionally adds class to #global-charts-area element. Audit verdict PASS (SA: filterState is single source of truth, DRY check on color token management; QA: filter state transitions tested (empty→active→inactive→multi-tag), envelope visual state verified; SX: no injection vectors in filter application paths, tag array bounds safe).</rationale>
+  <dependencies>
+    - Depends on: broadn-p2-dashboard-v2 sprint architecture (requires slice panel already rendered in wave 1)
+    - Blocks: broadn-p2-t5-tags-fe (wave 1b, tag-click handler will call applyFilter() to activate tag filtering logic; applyFilter stub must not change signature before T5 dispatch)
+  </dependencies>
+  <retention_keys>
+    - Data structure: filterState = { slice: { category: null or string, group: null or string }, tags: [] }; replaces scattered sliceState singleton
+    - Dual-mode operation: slice filters (category/group) and tag filters (array) coexist independently; all three can be active simultaneously
+    - isFilterActive() logic: returns (filterState.slice.category !== null || filterState.slice.group !== null || filterState.tags.length > 0)
+    - applyFilter(fs) contract: receives filterState object, stub comment documents T5 will implement filter application (data masking, chart updates); do NOT change signature
+    - Global-charts-area scope: wraps 3 sections only (overview temporal, geography map, pipeline stage bar); does NOT wrap explorer, slice panel, or sampler cards
+    - CSS envelope styling: background-color: rgba(var(--color-orange-500-rgb), 0.07) — 7% opacity orange tint, non-disruptive background fill
+    - Color token RGB conversion: #ea6c00 → RGB(234, 108, 0) stored as --color-orange-500-rgb custom property; used in rgba() for dynamic opacity
+    - Envelope toggle: renderView() calls isFilterActive() then conditionally adds .filter-active-envelope class to #global-charts-area element
+    - Migration scope: 13 sliceState sites updated across 6 functions; no breaking changes to data contracts or API
+    - Backward compatibility: existing chart rendering paths functional; absence of applyFilter implementation does not break current UI (filter is visual-only stub for T5)
+    - Files changed: index.html (filterState declaration, isFilterActive/applyFilter definitions, 13 read/write site updates, 1 div wrapper, 1 CSS rule, 1 custom property = ~45 net new lines total)
+    - Scope note: Filter envelope styling and state model only; data masking logic deferred to broadn-p2-t5-tags-fe
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-23T21:15:33Z</timestamp>
+  <task_id>broadn-p2-t4-tags-be</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Replicate tag parsing — BE data pipeline update for broadn-p2-dashboard-v2 sprint (wave 1b). BE#1 delivered refactored tag-grouping logic in `scripts/preprocess_data.py`. Problem: prior implementation used simple list-based tag storage with no semantic categorization; new requirement enables FE to render tags grouped by category (time_of_day, replicate, position, clock_quadrant, field_controls, other) rather than flat badge list. Solution: (1) Replaced `build_replicate_tags()` function with new `parse_replicate_tags(raw_tags_series: pd.Series) -> dict` in scripts/preprocess_data.py (lines 402–451). (2) New function returns dict with 6 always-present keys: time_of_day, replicate, position, clock_quadrant, field_controls, other. Each key maps to a list of matching tag tokens. Empty categories retain empty list (not None), providing predictable FE data contract. (3) Applied human-confirmed grouping rules: EC → field_controls (environmental control tag, not "other"); 7a/7p → time_of_day (shorthand for 7am/7pm); A1/A2/A3 → replicate (replicate identifiers); L/R → position (left/right); numeric prefixes 1-16 → clock_quadrant (clock position references); all else → other. (4) Regex pattern `^[RA]\d+$` captures both R-style and A-style replicate tokens (e.g., R1, A1, R999, A999) — confirmed equivalent by human review session (both encode replicate position, no semantic difference). (5) Updated 3 call sites: build_slice_project(), build_slice_location(), build_slice_lab_group() to unpack returned dict instead of consuming raw list; call signature compatible, no API breakage. (6) Script execution verified: exit code 0, regenerated data/data.json consistent with prior runs (field_samples=4571, sequenced=1475), no KPI regression. First audit cycle verified SA gate (regex correctness, rule application, dict contract); second cycle confirmed QA gate (data regeneration matches prior totals, script runtime stable); third cycle confirmed SX gate (no injection vectors in tag grouping, pandas series operations safe). Audit verdict PASS (all 3 gates).</rationale>
+  <dependencies>
+    - Depends on: broadn-p2-t3-filter (wave 1a, FE must have filterState.tags data structure ready to receive categorized tags from BE)
+    - Blocks: broadn-p2-t5-tags-fe (wave 1b, FE filtering logic will iterate over categorized tags to apply filters; dict structure must be stable before FE implementation)
+  </dependencies>
+  <retention_keys>
+    - Function signature: parse_replicate_tags(raw_tags_series: pd.Series) -> dict
+    - Return contract: always 6 keys present in returned dict: {time_of_day: list, replicate: list, position: list, clock_quadrant: list, field_controls: list, other: list}
+    - Grouping rules: EC→field_controls, 7a/7p→time_of_day, A1/A2/A3/RA\d+→replicate, L/R→position, 1-16→clock_quadrant, else→other
+    - Replicate regex: ^[RA]\d+$ matches both R-style (e.g., R1) and A-style (e.g., A1) tokens; human confirmed equivalence, no filtering between types
+    - Call site updates: build_slice_project(), build_slice_location(), build_slice_lab_group() all unpack returned dict instead of consuming raw list
+    - Data contract: empty categories return empty list (e.g., {time_of_day: [], replicate: [...], ...}), never None — provides type-safe iteration for FE
+    - Script verification: exit 0, data/data.json regenerated, KPI totals stable (field_samples=4571, sequenced=1475, no regression)
+    - Files changed: scripts/preprocess_data.py (parse_replicate_tags definition ~50 lines, 3 call site updates ~5 lines total = ~55 net new lines)
+    - Audit history: SA gate verified regex and rule application correctness; QA gate verified data regeneration totals; SX gate verified no injection vectors; all 3 gates PASS
+    - Scope note: Tag grouping logic only; filtering application logic deferred to broadn-p2-t5-tags-fe (FE will implement chart masking and data filtering)
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-23T22:45:00Z</timestamp>
+  <task_id>broadn-p2-t5-tags-fe</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Tag badge UI — FE implementation for broadn-p2-dashboard-v2 sprint (wave 3, final FE task). FE#5 delivered tag grouping UI that renders replicate tags grouped by category (time_of_day, replicate, position, clock_quadrant, field_controls, other) as clickable badge sets across all 4 slice containers (project, location, lab_group, global). Problem: Prior sprint (broadn-p1-dashboard-enhancements) rendered flat replicate badge arrays using `renderReplicateBadges()` function; new requirement splits tags into semantic groups with category headers and applies filter selection state. Solution: (1) Replaced flat `renderReplicateBadges(containerId, dataArray)` with new `renderTagGroups(containerId, dataDict)` function (lines 1045–1125) that accepts dict structure from BE (6 keys: time_of_day, replicate, position, clock_quadrant, field_controls, other). (2) New function iterates TAG_GROUP_ORDER constant (fixed array defining group render sequence) to ensure stable UI layout regardless of dict key iteration order. (3) For each non-empty group, renders h4 header with group label, then renders badges in a flex-wrap row for that group. Each badge is HTML `<button>` element with static class strings (no dynamic Tailwind construction). (4) TAG_BADGE_CLASSES constant defined (lines 1026–1043) with two static class strings: `.active` = "inline-flex items-center px-2.5 py-1 rounded text-sm font-medium bg-orange-700 text-white" (full background fill, WCAG AA contrast verified 4.8:1 on white); `.inactive` = "inline-flex items-center px-2.5 py-1 rounded text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50" (outlined style, reusing prior design). (5) Badge click handler toggles: if tag in filterState.tags, remove it; else add it. Each toggle calls applyFilter(filterState) to trigger filtering logic. (6) Enter/Space keyboard handlers added to all badges (line 1115–1124) matching toggle behavior, with aria-pressed attribute tracking active state. (7) All 4 call sites updated: renderProjectView (line 1505), renderLocationView (line 1672), renderLabGroupView (line 1799), initDashboard global aggregation (line 2304). Global aggregation rewritten (lines 2289–2303) to iterate dict keys and deduplicate tags across all projects — builds single combined dict with same 6 keys, collecting all unique tag tokens per category. (8) clearSliceFilter() updated to reset filterState.tags = [] and re-render all 4 badge containers to reflect deselection. Remediation cycle 1: Audit flagged WCAG AA contrast on orange-600 (3.55:1 insufficient); changed to orange-700 (4.8:1 pass). Audit also flagged double-escape in textContent context (escapeHtml() called on token, then token wrapped in textContent=; textContent auto-escapes, causing &amp; in display). Fix: removed escapeHtml() call, used raw token in textContent (auto-escape is safe for text nodes). Audit verdict PASS after remediation (SA: no DRY violation, static class strings verified, no dynamic Tailwind; QA: WCAG contrast confirmed, keyboard navigation verified for all 4 containers, toggle behavior tested; SX: no injection vectors, textContent auto-escape verified, no new CDN dependencies).</rationale>
+  <dependencies>
+    - Depends on: broadn-p2-t4-tags-be (wave 2, BE must emit dict-shaped replicate_tags before FE can render groups)
+    - Depends on: broadn-p2-t3-filter (wave 1d, FE must have filterState.tags array and applyFilter stub ready before badge click handlers populate it)
+    - Unblocks: Sprint completion (broadn-p2-dashboard-v2 final task in FE pipeline)
+  </dependencies>
+  <retention_keys>
+    - Function signature: renderTagGroups(containerId, dataDict) at line 1045; takes dict with 6 keys, renders grouped badges with category headers
+    - TAG_BADGE_CLASSES constant at lines 1026–1043: .active = "inline-flex items-center px-2.5 py-1 rounded text-sm font-medium bg-orange-700 text-white" (full bg, WCAG AA 4.8:1 contrast post-remediation), .inactive = "inline-flex items-center px-2.5 py-1 rounded text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50" (outlined, reuse)
+    - TAG_GROUP_ORDER constant at module level: array of group keys in fixed render sequence (time_of_day, replicate, position, clock_quadrant, field_controls, other) — ensures stable layout
+    - Iteration logic: renderTagGroups iterates TAG_GROUP_ORDER (not dict.keys()); skips empty groups; renders header + badges for non-empty groups
+    - Badge HTML: `<button class="{class}" role="button" tabindex="0" aria-pressed="false">{tokenText}</button>` — aria-pressed tracks active state dynamically
+    - Click handler: toggles tag in filterState.tags (add if absent, remove if present), then calls applyFilter(filterState)
+    - Keyboard handler: Enter and Space keys invoke toggle behavior; preventDefault() called to avoid page scroll on Space
+    - Text safety: badge.textContent = token (no escapeHtml call) — textContent auto-escapes HTML entities, double-escape fix per remediation 1
+    - Global aggregation: initDashboard lines 2289–2303 rewritten to iterate globalTagsDict keys, deduplicate tags, build combined dict with same 6 keys
+    - globalTagsDict declared at module level so clearSliceFilter() can reference it for re-render
+    - clearSliceFilter() updated: resets filterState.tags = []; re-renders all 4 badge containers using globalTagsDict and slice-specific tag dicts
+    - Call sites (4 total): renderProjectView line 1505 (entry.replicate_tags), renderLocationView line 1672 (entry.replicate_tags), renderLabGroupView line 1799 (entry.replicate_tags), initDashboard global line 2304 (aggregated globalTagsDict)
+    - Data contract: Consumes replicate_tags dict with 6 keys (each key maps to list of token strings); tolerates missing keys (renders as empty) per defensive design
+    - Remediation 1 — WCAG contrast: orange-600 → orange-700; SX gate flagged auto-escape double-escape, fixed by removing escapeHtml() call on textContent assignment
+    - Files changed: index.html (+75 net lines) — TAG_BADGE_CLASSES constant (18 lines), renderTagGroups function (81 lines), global aggregation rewrite (15 lines), 4 call site updates (4 lines), clearSliceFilter update (2 lines); remediation removed 6 lines escapeHtml logic, net = +75
+    - Scope note: Badge rendering and toggle state only; chart data filtering logic implemented in applyFilter stub (deferred to future sprint)
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-23T23:30:00Z</timestamp>
+  <task_id>broadn-p3-t1-pipeline</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Tag filter data pipeline — new column support for broadn-p3-tag-filter sprint. BE#1 delivered forward-compatible preprocessing pipeline in `scripts/preprocess_data.py` to support 4 new Excel columns (Sample AM/PM, Sample Replicate, Sample Quadrant, Sample Position, Sample Field Control) that will be added to source xlsx by human operator tomorrow. Problem: Pipeline currently consumes only 6 columns from xlsx (Sample ID, Replicate, Quadrant, Position, Field Control, Tags); human is adding 4 new columns to xlsx to enable finer-grained sample categorization. Prior approach would require reactive script update after xlsx change, creating deployment lag. Solution: (1) Added 4 new column name constants at module top: COL_SAMPLE_AMPM, COL_SAMPLE_QUADRANT, COL_SAMPLE_POSITION, COL_SAMPLE_FC (lines 16–19). These are optional — script continues to function if columns absent from xlsx. (2) Defined `parse_tag_column(series)` helper (lines 140–148) to extract tokens from tag columns using space-split and lowercase normalization; available for future tokenization of new columns if needed. (3) Defined `build_tag_sample_counts(group, df_col_map) -> dict` function (lines 150–176) that counts per-token appearances across the 4 new columns when present. Function iterates col_map (dict of column names → Series or None), tokenizes each column, aggregates token counts, returns dict mapping token → count. (4) Updated `build_dashboard_data()` to construct col_map dict (lines 255–259) mapping each new column name to its pandas Series (or None if column absent from df). (5) All 3 slice builder calls (build_slice_project, build_slice_location, build_slice_lab_group) now receive col_map as second argument; each builder computes `tag_sample_counts = build_tag_sample_counts(group, col_map)` and adds it to returned dict (lines 339–340, 375–376, 410–411). (6) When xlsx lacks new columns, new_cols_present resolves False, col_map maps all entries to None, build_tag_sample_counts returns {} for every group, FE receives graceful empty dict (no crash, no stale data). Detection gates on 4 exclusively-new columns (not Sample Replicate which exists in both old and new schema) to avoid false-positive presence detection. (7) Old `parse_replicate_tags()` logic untouched — replicate_tags dict still emitted with 6 keys (time_of_day, replicate, position, clock_quadrant, field_controls, other); no API contract change. (8) Script execution verified: exit code 0, data/data.json regenerated with `tag_sample_counts: {}` in all slice entries (field_samples=4571, sequenced=1475, no KPI regression). Audit verdict PASS (SA: new constants follow naming convention, build_tag_sample_counts avoids dict/list duplication with parse_tag_column helper, graceful None handling; QA: data regeneration matches prior totals, script runtime stable; SX: pandas Series operations safe, no external API calls, no injection vectors in token counting).</rationale>
+  <dependencies>
+    - Depends on: broadn-p2-t5-tags-fe (wave 3, FE currently renders replicate_tags dict; new tag_sample_counts will be consumed by FE in future sprint for enhanced filtering)
+    - Unblocks: FE enhancement sprint (once xlsx is updated with 4 new columns, script auto-populates tag_sample_counts without pipeline re-run)
+  </dependencies>
+  <retention_keys>
+    - New column constants (module level): COL_SAMPLE_AMPM = "Sample AM/PM", COL_SAMPLE_QUADRANT = "Sample Quadrant", COL_SAMPLE_POSITION = "Sample Position", COL_SAMPLE_FC = "Sample Field Control"
+    - parse_tag_column(series) helper at lines 140–148: space-split, lowercase normalize, return list of tokens; used by build_tag_sample_counts
+    - build_tag_sample_counts(group, df_col_map) -> dict at lines 150–176: iterates col_map (dict of col_name → Series or None), tokenizes non-None Series, aggregates per-token counts, returns {token: count} or {} if all columns absent
+    - build_dashboard_data() lines 255–259: constructs col_map = {COL_SAMPLE_AMPM: df[...] or None, COL_SAMPLE_QUADRANT: df[...] or None, COL_SAMPLE_POSITION: df[...] or None, COL_SAMPLE_FC: df[...] or None}; graceful .get() with default None
+    - new_cols_present detection: gates on 4 exclusively-new columns (COL_SAMPLE_AMPM, COL_SAMPLE_QUADRANT, COL_SAMPLE_POSITION, COL_SAMPLE_FC); does NOT gate on "Sample Replicate" which exists in both old and new xlsx schema
+    - Slice builder updates (3 call sites): build_slice_project (lines 339–340), build_slice_location (lines 375–376), build_slice_lab_group (lines 410–411) all call `tag_sample_counts = build_tag_sample_counts(group, col_map)` and add to dict
+    - Data contract: tag_sample_counts key always present in returned dict; value is {token: count} dict or {} if new columns absent — FE receives predictable structure, no None fallback needed
+    - Backward compatibility: replicate_tags dict (6 keys: time_of_day, replicate, position, clock_quadrant, field_controls, other) untouched; old FE filtering continues to function
+    - Script verification: exit 0, data/data.json regenerated, KPI totals stable (field_samples=4571, sequenced=1475, no regression)
+    - Files changed: scripts/preprocess_data.py (4 new constants ~4 lines, parse_tag_column ~9 lines, build_tag_sample_counts ~27 lines, col_map construction ~5 lines, 3 slice builder call sites ~3 lines = ~48 net new lines); data/data.json regenerated (tag_sample_counts: {} in all slices)
+    - Scope note: Pipeline infrastructure only; FE visualization of tag_sample_counts deferred to future sprint (currently stub in FE, no rendering logic)
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-03-23T23:45:00Z</timestamp>
+  <task_id>broadn-p3-t2-filter-fe</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Tag filter FE implementation — applyFilter function wired end-to-end for sample-level filtering using tag_sample_counts data structure. Problem: applyFilter was a stub that toggled badge visuals but did not filter the group list or update display counts. User-initiated badge clicks triggered toggle but had no downstream effect on visible data. Solution: (1) Implemented getFilteredCount(entry, activeTags) helper to compute effective sample count per entry when tags are filtered. Uses union approximation: sums individual token counts from entry.tag_sample_counts dict for all active tags, since exact deduplication would require raw sample data unavailable in static dashboard. When tag_sample_counts is {} (current state, xlsx not yet updated), function returns entry's base field_samples count as safe no-op fallback. (2) Fully implemented applyFilter(fs) to replace stub: (a) Reads current badge state from activeTagDict (global map of container_id → set of selected token strings). (b) Filters entry list in fs using getFilteredCount; discards entries with filtered count = 0. (c) Re-renders group list with filtered entries and updated sample counts. (d) Displays "No samples match" message when all entries filtered to 0. (e) Updates slice header count ("X samples total") to reflect filtered group total. (f) Renders amber notice in slice header when selected group itself has 0 filtered matches. (g) Does NOT call renderView() to avoid re-rendering charts; only updates group list DOM. (3) Data contract: Expects entry.tag_sample_counts dict (possibly empty {}); gracefully handles empty dict by returning base field_samples count. Preserves badge visual state across filter cycles. (4) Audit verdict PASS (SA: pure helper + mutation-isolated function, no state corruption; QA: tested with empty tag_sample_counts (current xlsx state) — all entries remain visible with base counts, badge toggling has no visible effect until xlsx updated; SX: DOM updates use textContent and append, no injection vectors).</rationale>
+  <dependencies>
+    - Depends on: broadn-p3-t1-pipeline (BE delivered tag_sample_counts structure in data.json; FE now consumes it)
+    - Unblocks: Human xlsx update and script re-run (FE filtering will activate automatically without code changes)
+  </dependencies>
+  <retention_keys>
+    - getFilteredCount(entry, activeTags) helper: returns union-approximated sample count (sum of per-token counts from tag_sample_counts), or base field_samples if tag_sample_counts is empty
+    - applyFilter(fs) fully implemented: (a) reads activeTagDict state, (b) filters entry.field_samples via getFilteredCount, (c) re-renders group list DOM with filtered entries, (d) updates slice header count and renders "No samples match" message if all filtered to 0, (e) amber notice in header when selected group has 0 matches, (f) does NOT call renderView()
+    - Data contract: entry.tag_sample_counts is dict mapping token → count (or {} if columns absent); entry.field_samples is base count (used as fallback when tag_sample_counts empty)
+    - Union approximation: individual token counts may overlap (one sample could have multiple active tags); exact deduplication requires raw sample-level data not available in static dashboard; approximation acceptable for user-facing count hints
+    - Current xlsx state: tag_sample_counts is {} in all entries (xlsx not yet updated by human); getFilteredCount gracefully returns base field_samples, applyFilter is effectively no-op until xlsx updated
+    - Badge state preserved: activeTagDict global tracks selected tokens per container; filter cycle reads activeTagDict, applies filtering, maintains badge visual state
+    - Chart rendering avoided: applyFilter mutates group list DOM only, does NOT call renderView(), avoiding unnecessary chart re-render overhead on every badge toggle
+    - Files changed: index.html (+157 net lines)
+    - Scope note: Sample-level filtering only (via tag_sample_counts); chart data filtering deferred (charts still display full dataset regardless of badge selection)
+  </retention_keys>
+</archive_entry>
