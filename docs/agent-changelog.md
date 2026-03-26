@@ -24,3 +24,15 @@
 | `.claude/agents/pm.md` | 1.1.0 | 1.1.1 | Added visual type qualifier rule requiring PM to describe CSS state changes as fill/border/text, not CSS class names alone |
 | `.claude/agents/auditor.md` | 1.0.3 | 1.0.4 | Added Manual Test Trace Enforcement gate: AUDIT_FAIL if packet omits MANUAL TEST TRACE scenarios required by success criteria |
 | `.claude/agents/orchestrator.md` | 1.1.0 | 1.1.1 | Added auditor subagent usage-policy block escalation procedure prohibiting ORC self-audit |
+
+## agent-improvement-2026-03-26-1
+**Date:** 2026-03-26
+**Post-mortems acted on:** broadn-p3-tag-filter.md
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/orchestrator.md` | 1.1.1 | 1.1.2 | Added "dispatch or direct?" gate requiring explicit human confirmation before ORC implements directly during iterative Q&A |
+| `.claude/agents/orchestrator.md` | 1.1.1 | 1.1.2 | Added ORC#0-direct observability rule requiring SPAWN/COMPLETE events for all direct main-session work |
+| `.claude/agents/auditor.md` | 1.0.4 | 1.0.5 | Added data contract key-rename gate: grep FE consumers for old key names before PASS on BE tasks that rename data.json keys |
+| `.claude/agents/backend.md` | 1.1.1 | 1.1.2 | Added hardcoded validation constant discipline requiring `# VERIFIED: YYYY-MM-DD` comment on every KPI assertion |
+| `.claude/agents/archivist.md` | 1.0.0 | 1.0.1 | Added sprint-close checkpoint update mandate: AR must update SESSION-CHECKPOINT.md when invoked with event_type SPRINT_STATE |
