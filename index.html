@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
+    /* TEMPORAL/BAR CHART COLORS — see CHART_COLORS object in JS section below */
     /* Design tokens — CSS custom properties */
     :root {
       --color-stone-50: #f5f5f4;
@@ -90,6 +91,17 @@
       max-width: 220px;
       line-height: 1.5;
     }
+
+    /* =====================================================================
+       CHART CARD STYLING — edit these values to tune card appearance
+       ===================================================================== */
+    /* CHART CARD BORDER — currently removed from all chart card wrapper divs.
+       To restore borders, add Tailwind class `border border-stone-200` to each
+       .bg-white chart card wrapper div. All removal locations are marked with
+       HTML comments in the template (search for "CHART CARD BORDER"). */
+    /* CHART CARD BACKGROUND — bg-white (Tailwind white). To change the card
+       background color, replace the `bg-white` class on each card wrapper div.
+       All card wrapper locations are marked with "CHART CARD BG" HTML comments. */
   </style>
 </head>
 <body class="bg-stone-50 text-stone-900 antialiased flex flex-col min-h-screen">
@@ -185,6 +197,16 @@
           <nav aria-label="Slice filter categories">
             <ul role="list" id="slice-category-list">
 
+              <!-- All BROADN Samples (default / global view) -->
+              <li role="listitem">
+                <button type="button"
+                  id="slice-btn-all"
+                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold bg-orange-50 text-orange-700 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset transition-colors"
+                  aria-pressed="true">
+                  All BROADN Samples
+                </button>
+              </li>
+
               <!-- Project category -->
               <li role="listitem">
                 <button type="button"
@@ -264,8 +286,10 @@
         </button>
 
         <!-- SLICE VIEW CONTAINER (hidden by default; shown when a group is selected) -->
+        <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore the slice-view-container border -->
+        <!-- CHART CARD BG — bg-stone-50; edit here to change the slice panel container background color -->
         <div id="slice-view-container"
-          class="hidden bg-stone-50 border border-stone-200 p-6 mb-0 scroll-mt-20"
+          class="hidden bg-stone-50 p-6 mb-0 scroll-mt-20"
           tabindex="-1">
 
           <!-- Slice view header -->
@@ -278,32 +302,37 @@
           <div id="slice-project-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-project-grid">
               <!-- Chart cards injected by 004b -->
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type for this project.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceProjectTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected project" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample counts at each pipeline stage for this project.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceProjectPipelineChart" aria-label="Horizontal bar chart showing pipeline stage counts for selected project" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6 lg:col-span-2">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6 lg:col-span-2">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume for this project.</p>
                 <div class="chart-wrap">
-                  <canvas id="sliceProjectTemporalChart" aria-label="Line chart showing monthly sampling activity for selected project" role="img"></canvas>
+                  <canvas id="sliceProjectTemporalChart" aria-label="Bar chart showing sample count over time for selected project" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceProjectReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceProjectSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected project" role="img"></canvas></div>
               </div>
@@ -313,40 +342,46 @@
           <!-- Location slice view -->
           <div id="slice-location-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-location-grid">
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sub-Location Breakdown</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample count by sub-site within this location.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLocationSubsitesChart" aria-label="Horizontal bar chart showing sample counts per sub-location" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type at this location.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLocationTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected location" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6 lg:col-span-2">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6 lg:col-span-2">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume at this location.</p>
                 <div class="chart-wrap">
-                  <canvas id="sliceLocationTemporalChart" aria-label="Line chart showing monthly sampling activity for selected location" role="img"></canvas>
+                  <canvas id="sliceLocationTemporalChart" aria-label="Bar chart showing sample count over time for selected location" role="img"></canvas>
                 </div>
               </div>
               <!-- Optional time-of-day chart injected by 004b if data present -->
-              <div id="slice-location-timeofday-card" class="hidden bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div id="slice-location-timeofday-card" class="hidden bg-white p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Time-of-Day Distribution</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample collection frequency by time period.</p>
                 <div class="chart-wrap">
-                  <canvas id="sliceLocationTimeDistChart" aria-label="Polar area chart showing sample counts by time of day for selected location" role="img"></canvas>
+                  <canvas id="sliceLocationTimeDistChart" aria-label="Bar chart showing sample counts by time of day for selected location" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceLocationReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceLocationSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected location" role="img"></canvas></div>
               </div>
@@ -356,32 +391,37 @@
           <!-- Lab Group slice view -->
           <div id="slice-labgroup-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-labgroup-grid">
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type for this lab group.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLabGroupTypesChart" aria-label="Doughnut chart showing sample type breakdown for selected lab group" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample counts at each pipeline stage for this lab group.</p>
                 <div class="chart-wrap">
                   <canvas id="sliceLabGroupPipelineChart" aria-label="Horizontal bar chart showing pipeline stage counts for selected lab group" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6 lg:col-span-2">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6 lg:col-span-2">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume for this lab group.</p>
                 <div class="chart-wrap">
-                  <canvas id="sliceLabGroupTemporalChart" aria-label="Line chart showing monthly sampling activity for selected lab group" role="img"></canvas>
+                  <canvas id="sliceLabGroupTemporalChart" aria-label="Bar chart showing sample count over time for selected lab group" role="img"></canvas>
                 </div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceLabGroupReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
-              <div class="bg-white border border-stone-200 p-6">
+              <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+              <div class="bg-white p-6">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceLabGroupSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected lab group" role="img"></canvas></div>
               </div>
@@ -402,28 +442,32 @@
 
           <!-- KPI CARDS -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <div class="bg-white border border-stone-200 p-6 flex items-center gap-4">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore KPI card border | CHART CARD BG — bg-white; edit here to change KPI card background color -->
+            <div class="bg-white p-6 flex items-center gap-4">
               <div class="p-3 bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#128200;</div>
               <div>
                 <p class="text-sm font-medium text-stone-500">Field Samples</p>
                 <p class="text-2xl font-bold text-stone-900" id="kpi-field-samples">—</p>
               </div>
             </div>
-            <div class="bg-white border border-stone-200 p-6 flex items-center gap-4">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore KPI card border | CHART CARD BG — bg-white; edit here to change KPI card background color -->
+            <div class="bg-white p-6 flex items-center gap-4">
               <div class="p-3 bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#127759;</div>
               <div>
                 <p class="text-sm font-medium text-stone-500">Unique Sites</p>
                 <p class="text-2xl font-bold text-stone-900" id="kpi-unique-sites">—</p>
               </div>
             </div>
-            <div class="bg-white border border-stone-200 p-6 flex items-center gap-4">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore KPI card border | CHART CARD BG — bg-white; edit here to change KPI card background color -->
+            <div class="bg-white p-6 flex items-center gap-4">
               <div class="p-3 bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#128197;</div>
               <div>
                 <p class="text-sm font-medium text-stone-500">Active Since</p>
                 <p class="text-2xl font-bold text-stone-900" id="kpi-active-since">—</p>
               </div>
             </div>
-            <div class="bg-white border border-stone-200 p-6 flex items-center gap-4">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore KPI card border | CHART CARD BG — bg-white; edit here to change KPI card background color -->
+            <div class="bg-white p-6 flex items-center gap-4">
               <div class="p-3 bg-green-100 text-green-800 text-2xl flex-shrink-0" aria-hidden="true">&#129514;</div>
               <div>
                 <p class="text-sm font-medium text-stone-500">Sequenced</p>
@@ -433,12 +477,13 @@
           </div>
 
           <!-- TEMPORAL LINE CHART -->
-          <div class="bg-white border border-stone-200 p-6">
+          <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+          <div class="bg-white p-6">
             <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity Over Time</h3>
             <p class="text-sm text-stone-500 mb-6">Monthly field sample collection volume across all sites, 2020–2025.</p>
             <div class="chart-wrap">
               <canvas id="temporalChart"
-                aria-label="Line chart showing monthly sample counts from 2020 to 2025"
+                aria-label="Bar chart showing sample count over time"
                 role="img"></canvas>
             </div>
           </div>
@@ -461,13 +506,18 @@
             </div>
 
             <!-- SAMPLES BY SITE BAR (1/3 width on desktop) -->
-            <div class="bg-white border border-stone-200 p-6">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+            <div class="bg-white p-6">
               <h3 class="text-lg font-bold text-stone-800 mb-1">Samples by Site</h3>
               <p class="text-sm text-stone-500 mb-4">Top sites by total field sample count, sorted descending.</p>
-              <div class="chart-wrap">
-                <canvas id="bySiteChart"
-                  aria-label="Horizontal bar chart showing sample counts per collection site, sorted by count descending"
-                  role="img"></canvas>
+              <!-- BY-SITE CHART SCROLL MAX-HEIGHT — edit 600px here to change visible area -->
+              <!-- BY-SITE CHART HEIGHT — dynamically set by renderBySiteChart(); edit MIN_BAR_HEIGHT in JS to change per-entry height -->
+              <div style="max-height: 600px; overflow-y: auto;" id="bySiteScrollContainer">
+                <div id="bySiteChartWrap" style="position: relative; width: 100%;">
+                  <canvas id="bySiteChart"
+                    aria-label="Horizontal bar chart showing sample counts per collection site, sorted by count descending"
+                    role="img"></canvas>
+                </div>
               </div>
             </div>
           </div>
@@ -482,7 +532,8 @@
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- SAMPLE TYPE DONUT -->
-            <div class="bg-white border border-stone-200 p-6">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+            <div class="bg-white p-6">
               <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Type Distribution</h3>
               <p class="text-sm text-stone-500 mb-4">Proportion of field samples by material type.</p>
               <div class="chart-wrap">
@@ -493,7 +544,8 @@
             </div>
 
             <!-- PIPELINE BAR -->
-            <div class="bg-white border border-stone-200 p-6">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+            <div class="bg-white p-6">
               <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
               <p class="text-sm text-stone-500 mb-4">Cumulative counts at each stage: Collected → DNA Extracted → Sequenced.</p>
               <div class="chart-wrap">
@@ -502,11 +554,13 @@
                   role="img"></canvas>
               </div>
             </div>
-            <div class="bg-white border border-stone-200 p-6">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+            <div class="bg-white p-6">
               <h3 class="text-lg font-bold slice-chart-title-active mb-3">Sampler Replicate Tags (All)</h3>
               <div id="globalReplicateBadges" class="flex flex-wrap gap-2"></div>
             </div>
-            <div class="bg-white border border-stone-200 p-6">
+            <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
+            <div class="bg-white p-6">
               <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type Distribution (All)</h3>
               <div class="chart-wrap"><canvas id="globalSamplerChart" aria-label="Doughnut chart showing sampler type distribution across all samples" role="img"></canvas></div>
             </div>
@@ -629,6 +683,10 @@
       slicePipeline:     ['#166534', '#0f766e', '#6d28d9'],
       sliceTemporalLine: '#0f766e',
       sliceTemporalArea: 'rgba(15,118,110,0.1)',
+      /* TEMPORAL BAR COLOR — edit CHART_COLORS.temporalBar to change global temporal bar fill */
+      temporalBar:       '#166534',
+      /* SLICE TEMPORAL BAR COLOR — edit CHART_COLORS.sliceTemporalBar to change slice temporal bar fill */
+      sliceTemporalBar:  '#0f766e',
       sliceLocationBar:  '#0369a1',
       sliceTimeOfDay:    ['#166534', '#0f766e', '#b45309', '#6d28d9'],
       orangeAccent:      '#ea6c00',
@@ -647,6 +705,7 @@
     // All button labels, state comparisons, and renderView() dispatch branches
     // MUST reference this constant — no inline string duplicates elsewhere.
     const SLICE_CATEGORIES = {
+      ALL:       null,          // sentinel: "All BROADN Samples" — filterState.slice.category === null
       PROJECT:   'Project',
       LOCATION:  'Location / Hub',
       LAB_GROUP: 'Lab Group'
@@ -870,13 +929,11 @@
         if (ctxTm) {
           var gapped = insertGapMarkers(chartData.temporal);
           chartInstances[temporalId] = new Chart(ctxTm.getContext('2d'), {
-            type: 'line',
+            type: 'bar',
             data: {
               labels: gapped.labels,
               datasets: [{ label: 'Samples Collected', data: gapped.counts,
-                borderColor: CHART_COLORS.sliceTemporalLine, backgroundColor: CHART_COLORS.sliceTemporalArea,
-                borderWidth: 2, tension: 0.4, fill: true,
-                pointBackgroundColor: CHART_COLORS.sliceTemporalLine, pointRadius: 3, pointHoverRadius: 6 }]
+                backgroundColor: CHART_COLORS.sliceTemporalBar, borderWidth: 0 }]
             },
             options: buildTemporalChartOptions()
           });
@@ -1223,20 +1280,15 @@
       const counts = gapped.counts;
 
       chartInstances.temporal = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: labels,
           datasets: [{
             label: 'Samples Collected',
             data: counts,
-            borderColor: CHART_COLORS.line,
-            backgroundColor: CHART_COLORS.lineArea,
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: CHART_COLORS.pointBg,
-            pointRadius: 3,
-            pointHoverRadius: 6
+            /* TEMPORAL BAR COLOR — edit CHART_COLORS.temporalBar to change */
+            backgroundColor: CHART_COLORS.temporalBar,
+            borderWidth: 0
           }]
         },
         options: {
@@ -1407,6 +1459,11 @@
       // Full name for tooltip
       var names  = sorted.map(function(d) { return d.site; });
 
+      /* BY-SITE CHART HEIGHT — pixels per bar entry; edit this constant to tune */
+      var MIN_BAR_HEIGHT = 28; // px per entry
+      var computedHeight = Math.max(300, sorted.length * MIN_BAR_HEIGHT);
+      document.getElementById('bySiteChartWrap').style.height = computedHeight + 'px';
+
       chartInstances.bySite = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -1454,7 +1511,8 @@
             },
             y: {
               grid: { display: false },
-              ticks: { font: { size: 10 } }
+              /* BY-SITE Y-AXIS TICKS — autoSkip: false ensures all labels show */
+              ticks: { font: { size: 10 }, autoSkip: false }
             }
           }
         }
@@ -2034,20 +2092,14 @@
       var ctx3 = document.getElementById('sliceProjectTemporalChart').getContext('2d');
       var projectGapped = insertGapMarkers(entry.temporal);
       chartInstances['sliceProjectTemporalChart'] = new Chart(ctx3, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: projectGapped.labels,
           datasets: [{
             label: 'Samples Collected',
             data: projectGapped.counts,
-            borderColor: CHART_COLORS.sliceTemporalLine,
-            backgroundColor: CHART_COLORS.sliceTemporalArea,
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: CHART_COLORS.sliceTemporalLine,
-            pointRadius: 3,
-            pointHoverRadius: 6
+            backgroundColor: CHART_COLORS.sliceTemporalBar,
+            borderWidth: 0
           }]
         },
         options: buildTemporalChartOptions()
@@ -2163,20 +2215,14 @@
       var ctx3 = document.getElementById('sliceLocationTemporalChart').getContext('2d');
       var locationGapped = insertGapMarkers(entry.temporal);
       chartInstances['sliceLocationTemporalChart'] = new Chart(ctx3, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: locationGapped.labels,
           datasets: [{
             label: 'Samples Collected',
             data: locationGapped.counts,
-            borderColor: CHART_COLORS.sliceTemporalLine,
-            backgroundColor: CHART_COLORS.sliceTemporalArea,
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: CHART_COLORS.sliceTemporalLine,
-            pointRadius: 3,
-            pointHoverRadius: 6
+            backgroundColor: CHART_COLORS.sliceTemporalBar,
+            borderWidth: 0
           }]
         },
         options: buildTemporalChartOptions()
@@ -2188,31 +2234,40 @@
         timeDistCard.classList.remove('hidden');
         var ctx4 = document.getElementById('sliceLocationTimeDistChart').getContext('2d');
         chartInstances['sliceLocationTimeDistChart'] = new Chart(ctx4, {
-          type: 'polarArea',
+          type: 'bar',
           data: {
             labels: entry.time_distribution.map(function(d) { return d.time_period; }),
             datasets: [{
               data: entry.time_distribution.map(function(d) { return d.count; }),
+              /* TIME-OF-DAY BAR COLORS — edit CHART_COLORS.sliceTimeOfDay to change bar fill colors */
               backgroundColor: CHART_COLORS.sliceTimeOfDay,
-              borderColor: CHART_COLORS.donutBorder,
-              borderWidth: 1
+              borderWidth: 0
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                position: 'right',
-                labels: { usePointStyle: true, boxWidth: 10, font: { size: 11 } }
-              },
+              legend: { display: false },
               tooltip: {
                 backgroundColor: CHART_COLORS.tooltip,
                 callbacks: {
                   label: function(ctx) {
-                    return ' ' + ctx.label + ': ' + ctx.parsed.r.toLocaleString() + ' samples';
+                    return ' ' + ctx.label + ': ' + ctx.parsed.y.toLocaleString() + ' samples';
                   }
                 }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { size: 11 } },
+                title: { display: true, text: 'Time Period', color: CHART_COLORS.axisLabel, font: { size: 11 } }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: CHART_COLORS.gridLine },
+                title: { display: true, text: 'Samples', color: CHART_COLORS.axisLabel, font: { size: 11 } }
               }
             }
           }
@@ -2330,20 +2385,14 @@
       var ctx3 = document.getElementById('sliceLabGroupTemporalChart').getContext('2d');
       var labGroupGapped = insertGapMarkers(entry.temporal);
       chartInstances['sliceLabGroupTemporalChart'] = new Chart(ctx3, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: labGroupGapped.labels,
           datasets: [{
             label: 'Samples Collected',
             data: labGroupGapped.counts,
-            borderColor: CHART_COLORS.sliceTemporalLine,
-            backgroundColor: CHART_COLORS.sliceTemporalArea,
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: CHART_COLORS.sliceTemporalLine,
-            pointRadius: 3,
-            pointHoverRadius: 6
+            backgroundColor: CHART_COLORS.sliceTemporalBar,
+            borderWidth: 0
           }]
         },
         options: buildTemporalChartOptions()
@@ -2395,7 +2444,7 @@
       destroyAllSliceCharts();
 
       if (cat === null) {
-        // Default view: hide slice container, existing charts already rendered
+        // Default view: hide slice container, show global charts area
         sliceContainer.classList.add('hidden');
         sliceContainer.classList.remove('block', 'bg-orange-50', 'transition-colors', 'duration-300');
 
@@ -2413,7 +2462,17 @@
           document.getElementById(id).classList.add('hidden');
         });
 
+        // Show global charts area when no slice category is selected
+        if (globalChartsArea) {
+          globalChartsArea.classList.remove('hidden');
+        }
+
         return;
+      }
+
+      // cat !== null: hide global charts area in BOTH cat!==null branches
+      if (globalChartsArea) {
+        globalChartsArea.classList.add('hidden');
       }
 
       if (cat !== null && group === null) {
@@ -2497,6 +2556,19 @@
     // =============================================================================
 
     function updateCategoryButtonStates() {
+      // --- slice-btn-all: active when category === null (full orange fill, no accent bar) ---
+      var btnAll = document.getElementById('slice-btn-all');
+      if (btnAll) {
+        if (filterState.slice.category === null) {
+          btnAll.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-semibold bg-orange-50 text-orange-700 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset transition-colors';
+          btnAll.setAttribute('aria-pressed', 'true');
+        } else {
+          btnAll.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors';
+          btnAll.setAttribute('aria-pressed', 'false');
+        }
+      }
+
+      // --- The 3 category buttons: active with green style + left accent bar ---
       var buttonMap = {};
       buttonMap[SLICE_CATEGORIES.PROJECT]   = 'slice-btn-project';
       buttonMap[SLICE_CATEGORIES.LOCATION]  = 'slice-btn-location';
@@ -2582,9 +2654,10 @@
 
     function getCategoryButtons() {
       return [
-        document.getElementById('slice-btn-project'),
-        document.getElementById('slice-btn-location'),
-        document.getElementById('slice-btn-labgroup')
+        document.getElementById('slice-btn-all'),       // index 0: All BROADN Samples
+        document.getElementById('slice-btn-project'),   // index 1
+        document.getElementById('slice-btn-location'),  // index 2
+        document.getElementById('slice-btn-labgroup')   // index 3
       ];
     }
 
@@ -2602,16 +2675,17 @@
       } else if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         buttons[btnIndex].click();
-        // After click, if group list is now visible, focus first item
-        var listIds = ['project-group-list', 'location-group-list', 'labgroup-group-list'];
-        var list = document.getElementById(listIds[btnIndex]);
+        // After click, if group list is now visible, focus first item.
+        // listIds[0] is null (slice-btn-all has no group list) — null guard prevents getElementById(null).
+        var listIds = [null, 'project-group-list', 'location-group-list', 'labgroup-group-list'];
+        var list = listIds[btnIndex] ? document.getElementById(listIds[btnIndex]) : null;
         if (list && !list.classList.contains('hidden')) {
           var firstItem = list.querySelector('[role="option"]');
           if (firstItem) { firstItem.focus(); }
         }
       } else if (event.key === 'Escape') {
         event.preventDefault();
-        // Global: clear filter, collapse all, focus first button
+        // Global: clear filter, collapse all, focus first button (slice-btn-all)
         clearSliceFilter();
         buttons[0].focus();
       }
@@ -2798,31 +2872,42 @@
         closeMobileDrawer();
       });
 
-      // Category button: Project
+      // Category button: All BROADN Samples (index 0 — default global view)
+      var btnAll = document.getElementById('slice-btn-all');
+      btnAll.addEventListener('click', function() {
+        filterState.slice.category = null;
+        filterState.slice.group    = null;
+        renderView();
+      });
+      btnAll.addEventListener('keydown', function(e) {
+        handleCategoryButtonKeydown(e, 0);
+      });
+
+      // Category button: Project (index 1)
       var btnProject = document.getElementById('slice-btn-project');
       btnProject.addEventListener('click', function() {
         handleCategoryClick(SLICE_CATEGORIES.PROJECT);
       });
       btnProject.addEventListener('keydown', function(e) {
-        handleCategoryButtonKeydown(e, 0);
+        handleCategoryButtonKeydown(e, 1);
       });
 
-      // Category button: Location / Hub
+      // Category button: Location / Hub (index 2)
       var btnLocation = document.getElementById('slice-btn-location');
       btnLocation.addEventListener('click', function() {
         handleCategoryClick(SLICE_CATEGORIES.LOCATION);
       });
       btnLocation.addEventListener('keydown', function(e) {
-        handleCategoryButtonKeydown(e, 1);
+        handleCategoryButtonKeydown(e, 2);
       });
 
-      // Category button: Lab Group
+      // Category button: Lab Group (index 3)
       var btnLabgroup = document.getElementById('slice-btn-labgroup');
       btnLabgroup.addEventListener('click', function() {
         handleCategoryClick(SLICE_CATEGORIES.LAB_GROUP);
       });
       btnLabgroup.addEventListener('keydown', function(e) {
-        handleCategoryButtonKeydown(e, 2);
+        handleCategoryButtonKeydown(e, 3);
       });
 
       // Group list item click and keydown — delegated on each list
