@@ -2132,9 +2132,10 @@
               labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } }
             },
             tooltip: {
+              enabled: true,
               backgroundColor: CHART_COLORS.tooltip,
               callbacks: {
-                label: tooltipLabelPct
+                label: function(ctx) { var ct = entry.type_pipeline_crossTab && entry.type_pipeline_crossTab[ctx.label]; return ct ? ['Collected: '+(ct.collected||0).toLocaleString(),'Extracted: '+(ct.dna_extracted||0).toLocaleString(),'Sequenced: '+(ct.sequenced||0).toLocaleString()] : tooltipLabelPct(ctx); }
               }
             }
           }
@@ -2162,9 +2163,10 @@
           plugins: {
             legend: { display: false },
             tooltip: {
+              enabled: true,
               backgroundColor: CHART_COLORS.tooltip,
               callbacks: {
-                label: tooltipLabelSamples
+                label: function(ctx) { var pKey={'Collected':'collected','DNA Extracted':'dna_extracted','Sequenced':'sequenced'}[ctx.label]; var tl=entry.pipeline_type_crossTab&&pKey&&entry.pipeline_type_crossTab[pKey]; return tl?tl.map(function(t){return t.type+': '+t.count.toLocaleString();}):tooltipLabelSamples(ctx); }
               }
             }
           },
@@ -2198,11 +2200,13 @@
             borderWidth: 0
           }]
         },
-        options: buildTemporalChartOptions()
+        options: (function() { var o = buildTemporalChartOptions(); o.plugins = o.plugins || {}; o.plugins.tooltip = o.plugins.tooltip || {}; o.plugins.tooltip.callbacks = { title: function(items) { return items.length ? items[0].label : ''; }, label: function(ctx) { if (ctx.parsed.y === null || ctx.parsed.y === undefined) { return ''; } var te = (entry.temporal||[]).find(function(t){return t.month===ctx.label;}); return te && te.types && te.types.length ? te.types.map(function(t){return t.type+': '+t.count.toLocaleString();}) : (te ? te.count.toLocaleString()+' samples' : ctx.parsed.y.toLocaleString()+' samples'); } }; return o; }())
       });
 
       renderTagGroups('sliceProjectReplicateBadges', entry.tag_groups);
       renderSamplerTypeChart('sliceProjectSamplerChart', entry.sampler_type_dist);
+      var _sc = chartInstances['sliceProjectSamplerChart'];
+      if (_sc) { var _gl = entry.project_id; _sc.options.plugins.tooltip.callbacks.label = function(ctx) { return ctx.parsed.y.toLocaleString() + ' samples' + (_gl ? ' in ' + _gl : ''); }; _sc.update('none'); }
     }
 
     // =============================================================================
@@ -2297,9 +2301,10 @@
               labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } }
             },
             tooltip: {
+              enabled: true,
               backgroundColor: CHART_COLORS.tooltip,
               callbacks: {
-                label: tooltipLabelPct
+                label: function(ctx) { var ct = entry.type_pipeline_crossTab && entry.type_pipeline_crossTab[ctx.label]; return ct ? ['Collected: '+(ct.collected||0).toLocaleString(),'Extracted: '+(ct.dna_extracted||0).toLocaleString(),'Sequenced: '+(ct.sequenced||0).toLocaleString()] : tooltipLabelPct(ctx); }
               }
             }
           }
@@ -2321,7 +2326,7 @@
             borderWidth: 0
           }]
         },
-        options: buildTemporalChartOptions()
+        options: (function() { var o = buildTemporalChartOptions(); o.plugins = o.plugins || {}; o.plugins.tooltip = o.plugins.tooltip || {}; o.plugins.tooltip.callbacks = { title: function(items) { return items.length ? items[0].label : ''; }, label: function(ctx) { if (ctx.parsed.y === null || ctx.parsed.y === undefined) { return ''; } var te = (entry.temporal||[]).find(function(t){return t.month===ctx.label;}); return te && te.types && te.types.length ? te.types.map(function(t){return t.type+': '+t.count.toLocaleString();}) : (te ? te.count.toLocaleString()+' samples' : ctx.parsed.y.toLocaleString()+' samples'); } }; return o; }())
       });
 
       // Chart 4 (Optional): Time of Day Distribution (Polar Area)
@@ -2374,6 +2379,8 @@
 
       renderTagGroups('sliceLocationReplicateBadges', entry.tag_groups);
       renderSamplerTypeChart('sliceLocationSamplerChart', entry.sampler_type_dist);
+      var _sc = chartInstances['sliceLocationSamplerChart'];
+      if (_sc) { var _gl = entry.site_name; _sc.options.plugins.tooltip.callbacks.label = function(ctx) { return ctx.parsed.y.toLocaleString() + ' samples' + (_gl ? ' in ' + _gl : ''); }; _sc.update('none'); }
     }
 
     // =============================================================================
@@ -2425,9 +2432,10 @@
               labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } }
             },
             tooltip: {
+              enabled: true,
               backgroundColor: CHART_COLORS.tooltip,
               callbacks: {
-                label: tooltipLabelPct
+                label: function(ctx) { var ct = entry.type_pipeline_crossTab && entry.type_pipeline_crossTab[ctx.label]; return ct ? ['Collected: '+(ct.collected||0).toLocaleString(),'Extracted: '+(ct.dna_extracted||0).toLocaleString(),'Sequenced: '+(ct.sequenced||0).toLocaleString()] : tooltipLabelPct(ctx); }
               }
             }
           }
@@ -2455,9 +2463,10 @@
           plugins: {
             legend: { display: false },
             tooltip: {
+              enabled: true,
               backgroundColor: CHART_COLORS.tooltip,
               callbacks: {
-                label: tooltipLabelSamples
+                label: function(ctx) { var pKey={'Collected':'collected','DNA Extracted':'dna_extracted','Sequenced':'sequenced'}[ctx.label]; var tl=entry.pipeline_type_crossTab&&pKey&&entry.pipeline_type_crossTab[pKey]; return tl?tl.map(function(t){return t.type+': '+t.count.toLocaleString();}):tooltipLabelSamples(ctx); }
               }
             }
           },
@@ -2491,11 +2500,13 @@
             borderWidth: 0
           }]
         },
-        options: buildTemporalChartOptions()
+        options: (function() { var o = buildTemporalChartOptions(); o.plugins = o.plugins || {}; o.plugins.tooltip = o.plugins.tooltip || {}; o.plugins.tooltip.callbacks = { title: function(items) { return items.length ? items[0].label : ''; }, label: function(ctx) { if (ctx.parsed.y === null || ctx.parsed.y === undefined) { return ''; } var te = (entry.temporal||[]).find(function(t){return t.month===ctx.label;}); return te && te.types && te.types.length ? te.types.map(function(t){return t.type+': '+t.count.toLocaleString();}) : (te ? te.count.toLocaleString()+' samples' : ctx.parsed.y.toLocaleString()+' samples'); } }; return o; }())
       });
 
       renderTagGroups('sliceLabGroupReplicateBadges', entry.tag_groups);
       renderSamplerTypeChart('sliceLabGroupSamplerChart', entry.sampler_type_dist);
+      var _sc = chartInstances['sliceLabGroupSamplerChart'];
+      if (_sc) { var _gl = entry.group_name; _sc.options.plugins.tooltip.callbacks.label = function(ctx) { return ctx.parsed.y.toLocaleString() + ' samples' + (_gl ? ' in ' + _gl : ''); }; _sc.update('none'); }
     }
 
     // =============================================================================
