@@ -36,3 +36,13 @@
 | `.claude/agents/auditor.md` | 1.0.4 | 1.0.5 | Added data contract key-rename gate: grep FE consumers for old key names before PASS on BE tasks that rename data.json keys |
 | `.claude/agents/backend.md` | 1.1.1 | 1.1.2 | Added hardcoded validation constant discipline requiring `# VERIFIED: YYYY-MM-DD` comment on every KPI assertion |
 | `.claude/agents/archivist.md` | 1.0.0 | 1.0.1 | Added sprint-close checkpoint update mandate: AR must update SESSION-CHECKPOINT.md when invoked with event_type SPRINT_STATE |
+
+## agent-improvement-2026-03-27-1
+**Date:** 2026-03-27
+**Post-mortems acted on:** broadn-p4.md
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/auditor.md` | 1.0.5 | 1.0.6 | Added sequential single-file sprint scope rule: auditor must restrict must_not_contain checks to the current task's named artifacts when prior tasks have already modified the same file |
+| `.claude/agents/orchestrator.md` | 1.1.2 | 1.1.3 | Added foreground-only dispatch rule for archivist: background archivists may be denied Write; ORC must write directly if denied |
+| `.claude/agents/pm.md` | 1.1.1 | 1.1.2 | Added state machine call-graph rule requiring PM to enumerate every function that reads/writes a modified indexed structure before writing the task packet |
