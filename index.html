@@ -1381,7 +1381,19 @@
               backgroundColor: CHART_COLORS.tooltip,
               padding: 10,
               titleFont: { size: 12 },
-              bodyFont: { size: 12 }
+              bodyFont: { size: 12 },
+              callbacks: {
+                title: function(items) { return items[0].label; },
+                label: function(ctx) {
+                  if (ctx.parsed.y === null || ctx.parsed.y === undefined) { return ''; }
+                  var monthLabel = ctx.label;
+                  var entry = (appData && appData.temporal || []).find(function(t) { return t.month === monthLabel; });
+                  if (!entry || !entry.types || entry.types.length === 0) {
+                    return ' ' + ctx.parsed.y.toLocaleString() + ' samples';
+                  }
+                  return entry.types.map(function(t) { return ' ' + t.type + ': ' + t.count.toLocaleString(); });
+                }
+              }
             }
           },
           scales: {
@@ -1435,24 +1447,18 @@
                 if (context.tooltip.opacity === 0) { hideCustomTooltip(); return; }
                 var rect = context.chart.canvas.getBoundingClientRect();
                 var label = context.tooltip.dataPoints[0].label;
-                if (!appData || !appData.slice_views || !appData.slice_views.project) {
-                  showCustomTooltip(rect.left + context.tooltip.caretX, rect.top + context.tooltip.caretY,
-                    buildTooltipHtml(label, []));
+                var x = rect.left + context.tooltip.caretX;
+                var y = rect.top + context.tooltip.caretY;
+                var crossTab = appData && appData.type_pipeline_crossTab && appData.type_pipeline_crossTab[label];
+                if (!crossTab) {
+                  showCustomTooltip(x, y, buildTooltipHtml(label, []));
                   return;
                 }
-                var projects = appData.slice_views.project;
-                var breakdown = [];
-                for (var i = 0; i < projects.length; i++) {
-                  var types = projects[i].sample_types;
-                  for (var j = 0; j < types.length; j++) {
-                    if (types[j].type === label && types[j].count > 0) {
-                      breakdown.push({ name: projects[i].project_id, count: types[j].count });
-                      break;
-                    }
-                  }
-                }
-                showCustomTooltip(rect.left + context.tooltip.caretX, rect.top + context.tooltip.caretY,
-                  buildTooltipHtml(label, breakdown));
+                var html = '<strong>' + escapeHtml(label) + '</strong><br>' +
+                  'Collected: ' + (crossTab.collected || 0).toLocaleString() + '<br>' +
+                  'Extracted: ' + (crossTab.dna_extracted || 0).toLocaleString() + '<br>' +
+                  'Sequenced: ' + (crossTab.sequenced || 0).toLocaleString();
+                showCustomTooltip(x, y, html);
               }
             }
           }
@@ -1491,21 +1497,17 @@
                 if (context.tooltip.opacity === 0) { hideCustomTooltip(); return; }
                 var rect = context.chart.canvas.getBoundingClientRect();
                 var label = context.tooltip.dataPoints[0].label;
+                var x = rect.left + context.tooltip.caretX;
+                var y = rect.top + context.tooltip.caretY;
                 var keyMap = { 'Collected': 'collected', 'DNA Extracted': 'dna_extracted', 'Sequenced': 'sequenced' };
                 var pKey = keyMap[label];
-                if (!appData || !appData.slice_views || !appData.slice_views.project) {
-                  showCustomTooltip(rect.left + context.tooltip.caretX, rect.top + context.tooltip.caretY,
-                    buildTooltipHtml(label, []));
+                var typeList = appData && appData.pipeline_type_crossTab && pKey && appData.pipeline_type_crossTab[pKey];
+                if (!typeList) {
+                  showCustomTooltip(x, y, buildTooltipHtml(label, []));
                   return;
                 }
-                var projects = appData.slice_views.project;
-                var breakdown = [];
-                for (var i = 0; i < projects.length; i++) {
-                  var c = pKey ? (projects[i].pipeline[pKey] || 0) : 0;
-                  if (c > 0) { breakdown.push({ name: projects[i].project_id, count: c }); }
-                }
-                showCustomTooltip(rect.left + context.tooltip.caretX, rect.top + context.tooltip.caretY,
-                  buildTooltipHtml(label, breakdown));
+                var breakdown = typeList.map(function(t) { return { name: t.type, count: t.count }; });
+                showCustomTooltip(x, y, buildTooltipHtml(label, breakdown));
               }
             }
           },
@@ -1575,7 +1577,18 @@
                 title: function(items) {
                   return names[items[0].dataIndex] || items[0].label;
                 },
-                label: tooltipLabelSamples
+                label: function(ctx) {
+                  var lines = [' ' + ctx.parsed.x.toLocaleString() + ' samples'];
+                  var code = sorted[ctx.dataIndex] && sorted[ctx.dataIndex].code;
+                  if (code) {
+                    var siteEntry = (appData && appData.sites || []).find(function(s) { return s.code === code; });
+                    var types = siteEntry && siteEntry.primary_types ? siteEntry.primary_types.slice(0, 3).join(', ') : null;
+                    if (types) { lines.push('Types: ' + types); }
+                    var dr = appData && appData.site_date_ranges && appData.site_date_ranges[code];
+                    if (dr) { lines.push('Collection: ' + dr.first + ' \u2013 ' + dr.last); }
+                  }
+                  return lines;
+                }
               }
             }
           },
@@ -1642,10 +1655,12 @@
           ? site.primary_types.join(', ')
           : 'N/A';
 
+        var dateRange = appData && appData.site_date_ranges && appData.site_date_ranges[site.code];
+        var dateRangeLine = dateRange ? '<br>Collection: ' + dateRange.first + ' \u2013 ' + dateRange.last : '';
         marker.bindTooltip(
           '<strong class="block">' + site.name + '</strong>' +
           'Samples: <strong>' + site.count.toLocaleString() + '</strong><br>' +
-          'Types: ' + typesLabel,
+          'Types: ' + typesLabel + dateRangeLine,
           { sticky: true, direction: 'top', offset: [0, -8] }
         );
 
