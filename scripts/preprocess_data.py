@@ -88,6 +88,9 @@ SEQ_COLS = [
 
 FIELD_SAMPLE_CATEGORY = "Field Sample"
 
+# Cap for per-type breakdown lists (pipeline_type_crossTab, temporal.types, etc.)
+TOP_N_TYPES = 5
+
 
 def load_xlsx(path: Path) -> pd.DataFrame:
     """Load the workbook with openpyxl engine."""
@@ -220,12 +223,66 @@ def print_data_quality_warnings(df: pd.DataFrame, field_samples: pd.DataFrame) -
 
 
 def build_temporal(field_samples: pd.DataFrame) -> list:
-    """One entry per year-month for field samples with a valid collection date."""
+    """One entry per year-month; each entry gains a 'types' key (top TOP_N_TYPES by count)."""
     dated = field_samples.dropna(subset=[COL_COLLECTED_DATE]).copy()
     dated["_ym"] = dated[COL_COLLECTED_DATE].dt.to_period("M").astype(str)
     counts = dated.groupby("_ym").size().reset_index(name="count")
     counts = counts.sort_values("_ym")
-    return [{"month": row["_ym"], "count": int(row["count"])} for _, row in counts.iterrows()]
+    result = []
+    for _, row in counts.iterrows():
+        ym = row["_ym"]
+        month_rows = dated[dated["_ym"] == ym]
+        type_counts = month_rows[COL_SAMPLE_SOURCE_TYPE].value_counts()
+        types = [{"type": str(t), "count": int(c)} for t, c in type_counts.items()][:TOP_N_TYPES]
+        result.append({"month": ym, "count": int(row["count"]), "types": types})
+    return result
+
+
+def build_type_pipeline_crossTab(field_samples: pd.DataFrame, df: pd.DataFrame) -> dict:
+    """Pipeline counts broken down by sample type.
+
+    Returns { "<type>": { "collected": int, "dna_extracted": int, "sequenced": int } }
+    """
+    result = {}
+    for t in field_samples[COL_SAMPLE_SOURCE_TYPE].unique():
+        subset = field_samples[field_samples[COL_SAMPLE_SOURCE_TYPE] == t]
+        type_ids = set(subset[COL_BROADN_ID].tolist())
+        collected, dna_extracted, sequenced = compute_pipeline_counts(df, type_ids)
+        result[str(t)] = {"collected": collected, "dna_extracted": dna_extracted, "sequenced": sequenced}
+    return result
+
+
+def build_pipeline_type_crossTab(field_samples: pd.DataFrame, df: pd.DataFrame) -> dict:
+    """Per pipeline stage, list of sample types sorted desc by count, capped at TOP_N_TYPES.
+
+    Returns { "collected": [...], "dna_extracted": [...], "sequenced": [...] }
+    """
+    cross = build_type_pipeline_crossTab(field_samples, df)
+    stages = ("collected", "dna_extracted", "sequenced")
+    result = {}
+    for stage in stages:
+        stage_list = [{"type": t, "count": v[stage]} for t, v in cross.items()]
+        stage_list.sort(key=lambda x: x["count"], reverse=True)
+        result[stage] = stage_list[:TOP_N_TYPES]
+    return result
+
+
+def build_site_date_ranges(field_samples: pd.DataFrame) -> dict:
+    """Min/max collection date per 2-char site code.
+
+    Returns { "<code>": { "first": "YYYY-MM-DD", "last": "YYYY-MM-DD" } }
+    Sites with no dated samples are omitted.
+    """
+    fs = field_samples.copy()
+    fs["_code"] = fs[COL_BROADN_ID].str[1:3]
+    dated = fs.dropna(subset=[COL_COLLECTED_DATE])
+    result = {}
+    for code, group in dated.groupby("_code"):
+        result[str(code)] = {
+            "first": group[COL_COLLECTED_DATE].min().strftime("%Y-%m-%d"),
+            "last": group[COL_COLLECTED_DATE].max().strftime("%Y-%m-%d"),
+        }
+    return result
 
 
 def build_sample_types(field_samples: pd.DataFrame) -> list:
@@ -853,7 +910,7 @@ def main() -> None:
         "sequenced": sequenced,
     }
 
-    # Temporal
+    # Temporal (now includes per-month type breakdown)
     temporal = build_temporal(field_samples)
     print(f"  temporal: {len(temporal)} year-month entries")
 
@@ -872,6 +929,16 @@ def main() -> None:
     # Recent samples
     recent_samples = build_recent_samples(field_samples, n=100)
     print(f"  recent_samples: {len(recent_samples)} entries (capped at 100)")
+
+    # Type/pipeline cross-tabs
+    type_pipeline_crossTab = build_type_pipeline_crossTab(field_samples, df)
+    print(f"  type_pipeline_crossTab: {len(type_pipeline_crossTab)} types")
+    pipeline_type_crossTab = build_pipeline_type_crossTab(field_samples, df)
+    print(f"  pipeline_type_crossTab: {len(pipeline_type_crossTab)} stages")
+
+    # Site date ranges
+    site_date_ranges = build_site_date_ranges(field_samples)
+    print(f"  site_date_ranges: {len(site_date_ranges)} sites")
 
     # Slice views
     print("\n[7b] Building slice_views sections...")
@@ -934,6 +1001,9 @@ def main() -> None:
         "by_site": by_site,
         "recent_samples": recent_samples,
         "slice_views": slice_views,
+        "type_pipeline_crossTab": type_pipeline_crossTab,
+        "pipeline_type_crossTab": pipeline_type_crossTab,
+        "site_date_ranges": site_date_ranges,
     }
 
     # ── Write output ────────────────────────────────────────────────────────────
@@ -950,13 +1020,14 @@ def main() -> None:
     required_keys = {
         "meta", "kpis", "temporal", "sample_types", "pipeline",
         "sites", "by_site", "recent_samples", "slice_views",
+        "type_pipeline_crossTab", "pipeline_type_crossTab", "site_date_ranges",
     }
     missing_keys = required_keys - set(top_level_keys)
     print(f"  Top-level keys present: {top_level_keys}")
     if missing_keys:
         print(f"  MISSING keys: {missing_keys}")
     else:
-        print(f"  All 9 required keys present: PASS")
+        print(f"  All 12 required keys present: PASS")
     print(f"  meta.generated: {meta['generated']}")
     print(f"  kpis.field_samples: {kpis['field_samples']}")
     print(f"  kpis.sequenced: {kpis['sequenced']}")
@@ -979,7 +1050,7 @@ def main() -> None:
     print(f"pipeline.sequenced: {output['pipeline']['sequenced']} — {seq_pass}")
 
     all_keys_pass = "PASS" if not missing_keys else "FAIL"
-    print(f"All 9 required keys present: {all_keys_pass}")
+    print(f"All 12 required keys present: {all_keys_pass}")
 
     # New tag columns detection status
     print(f"new_cols_present: {new_cols_present}")
