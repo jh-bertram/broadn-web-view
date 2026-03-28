@@ -298,6 +298,17 @@
             <p id="slice-view-subtitle" class="text-sm text-stone-500"></p>
           </div>
 
+          <!-- Project context banner — shown in Project slice view when a project is selected -->
+          <div id="project-banner" class="hidden bg-white border border-stone-200 rounded-lg p-4 mb-4 flex items-start gap-4">
+            <div class="w-20 h-20 bg-stone-200 rounded flex items-center justify-center shrink-0">
+              <span class="text-stone-400 text-xs">Photo</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h2 class="project-banner-name font-semibold text-green-800 text-xl"></h2>
+              <p class="project-banner-desc text-stone-600 text-sm mt-1"></p>
+            </div>
+          </div>
+
           <!-- Tag filter banner — shown when filterState.tags is non-empty -->
           <div id="tag-filter-banner" class="hidden border border-orange-300 bg-orange-50 rounded-lg px-4 py-2 mb-4 flex flex-wrap items-center gap-2" role="status" aria-live="polite">
             <span class="text-sm font-semibold text-orange-700 shrink-0">Filtered by:</span>
@@ -743,6 +754,22 @@
     // Structure: { colLabel: { token: count } } — mirrors slice entry tag_groups format.
     var globalTagsDict = {};
 
+    // Project descriptions for the project-context banner (Feature 6)
+    const PROJECT_DESCRIPTIONS = {
+      "IMPROVE Fungi":         "Analyzes archived samples from seven national park monitoring sites to study fungal and pollen aerobiome patterns across the United States.",
+      "Fragmented Landscape":  "Examines whether vegetation affects airborne microbe variety and identifies which organisms are suited to airborne dispersal.",
+      "2023 Two Towers":       "Compares airborne microbial communities between grassland and forest environments at different heights and times across seasons.",
+      "Ice-Nucleating Particles": "Studies ice-nucleating particles (INPs) released during rainfall events from local plant sources and their role in cloud ice formation.",
+      "Flux":                  "Measures bioaerosol movement over grasslands using flux gradient techniques to determine whether particles originate locally or from distant sources.",
+      "2022 Fall CPER":        "Field sampling campaign at the Central Plains Experimental Range — fall 2022 collection.",
+      "2023 Spring CPER Chemistry": "Spring 2023 CPER campaign with chemistry analysis component.",
+      "2022 Fall CPER FC":     "Fall 2022 CPER fractional collection variant.",
+      "Spring SASS/Polycarbonate Top/Bottom": "Performance evaluation of bioaerosol samplers comparing SASS and polycarbonate filter configurations in field conditions.",
+      "Spring Sass/VIVAS":     "Comparative evaluation of SASS and VIVAS bioaerosol sampler performance.",
+      "Optimization Tests":    "Sampler optimization and pipeline development tests.",
+      "Spring SKC":            "Spring field collection using SKC sampler configuration.",
+    };
+
     // Returns true when any filter dimension is active
     function isFilterActive() {
       return filterState.slice.category !== null || filterState.tags.length > 0;
@@ -769,6 +796,23 @@
           pill.textContent = tag;
           pillsContainer.appendChild(pill);
         });
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    // Shows or hides the project-context banner based on filterState.slice.
+    // Only visible when category === PROJECT and a group is selected.
+    function updateProjectBanner() {
+      var banner = document.getElementById('project-banner');
+      if (!banner) return;
+      var cat = filterState.slice.category;
+      var group = filterState.slice.group;
+      if (cat === SLICE_CATEGORIES.PROJECT && group) {
+        banner.querySelector('.project-banner-name').textContent = group;
+        var desc = PROJECT_DESCRIPTIONS[group] || 'Description not yet available — contact the project team.';
+        banner.querySelector('.project-banner-desc').textContent = desc;
         banner.classList.remove('hidden');
       } else {
         banner.classList.add('hidden');
@@ -2583,8 +2627,9 @@
       // Update aria-selected on group items
       updateGroupItemSelection();
 
-      // Update tag filter banner for the visible slice container
+      // Update tag filter banner and project-context banner for the visible slice container
       updateTagBanner();
+      updateProjectBanner();
 
       // Scroll slice container into view
       sliceContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
