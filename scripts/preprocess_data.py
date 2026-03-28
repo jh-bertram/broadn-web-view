@@ -678,13 +678,6 @@ def build_slice_project(
         # pipeline filtered to this project's field IDs
         collected, dna_extracted, sequenced = compute_pipeline_counts(df, proj_field_ids)
 
-        # temporal: group by year-month from Sample Collected Date
-        dated = group.dropna(subset=[COL_COLLECTED_DATE]).copy()
-        dated["_ym"] = dated[COL_COLLECTED_DATE].dt.to_period("M").astype(str)
-        ym_counts = dated.groupby("_ym").size().reset_index(name="count")
-        ym_counts = ym_counts.sort_values("_ym")
-        temporal = [{"month": row["_ym"], "count": int(row["count"])} for _, row in ym_counts.iterrows()]
-
         results.append({
             "project_id": str(project_id),
             "sample_count": sample_count,
@@ -694,7 +687,9 @@ def build_slice_project(
                 "dna_extracted": dna_extracted,
                 "sequenced": sequenced,
             },
-            "temporal": temporal,
+            "temporal": build_temporal(group),
+            "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
+            "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
             "sampler_type_dist": build_sampler_type_dist(group),
             "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
             "tag_groups": build_tag_groups(group, df_col_map),
@@ -742,13 +737,6 @@ def build_slice_location(
         type_counts = group[COL_SAMPLE_SOURCE_TYPE].value_counts()
         sample_types = [{"type": str(t), "count": int(c)} for t, c in type_counts.items()]
 
-        # temporal
-        dated = group.dropna(subset=[COL_COLLECTED_DATE]).copy()
-        dated["_ym"] = dated[COL_COLLECTED_DATE].dt.to_period("M").astype(str)
-        ym_counts = dated.groupby("_ym").size().reset_index(name="count")
-        ym_counts = ym_counts.sort_values("_ym")
-        temporal = [{"month": row["_ym"], "count": int(row["count"])} for _, row in ym_counts.iterrows()]
-
         # time_distribution — only if at least 1 non-null time value exists
         time_dist = build_time_distribution(group)
 
@@ -758,7 +746,9 @@ def build_slice_location(
             "sample_count": sample_count,
             "sub_sites": sub_sites,
             "sample_types": sample_types,
-            "temporal": temporal,
+            "temporal": build_temporal(group),
+            "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
+            "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
             "sampler_type_dist": build_sampler_type_dist(group),
             "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
             "tag_groups": build_tag_groups(group, df_col_map),
@@ -801,13 +791,6 @@ def build_slice_lab_group(
         # pipeline filtered to this lead's field IDs
         collected, dna_extracted, sequenced = compute_pipeline_counts(df, lead_field_ids)
 
-        # temporal
-        dated = group.dropna(subset=[COL_COLLECTED_DATE]).copy()
-        dated["_ym"] = dated[COL_COLLECTED_DATE].dt.to_period("M").astype(str)
-        ym_counts = dated.groupby("_ym").size().reset_index(name="count")
-        ym_counts = ym_counts.sort_values("_ym")
-        temporal = [{"month": row["_ym"], "count": int(row["count"])} for _, row in ym_counts.iterrows()]
-
         results.append({
             "group_name": str(lead_name),
             "sample_count": sample_count,
@@ -817,7 +800,9 @@ def build_slice_lab_group(
                 "dna_extracted": dna_extracted,
                 "sequenced": sequenced,
             },
-            "temporal": temporal,
+            "temporal": build_temporal(group),
+            "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
+            "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
             "sampler_type_dist": build_sampler_type_dist(group),
             "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
             "tag_groups": build_tag_groups(group, df_col_map),
