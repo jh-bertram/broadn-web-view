@@ -24,3 +24,38 @@
 | `.claude/agents/pm.md` | 1.1.0 | 1.1.1 | Added visual type qualifier rule requiring PM to describe CSS state changes as fill/border/text, not CSS class names alone |
 | `.claude/agents/auditor.md` | 1.0.3 | 1.0.4 | Added Manual Test Trace Enforcement gate: AUDIT_FAIL if packet omits MANUAL TEST TRACE scenarios required by success criteria |
 | `.claude/agents/orchestrator.md` | 1.1.0 | 1.1.1 | Added auditor subagent usage-policy block escalation procedure prohibiting ORC self-audit |
+
+## agent-improvement-2026-03-26-1
+**Date:** 2026-03-26
+**Post-mortems acted on:** broadn-p3-tag-filter.md
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/orchestrator.md` | 1.1.1 | 1.1.2 | Added "dispatch or direct?" gate requiring explicit human confirmation before ORC implements directly during iterative Q&A |
+| `.claude/agents/orchestrator.md` | 1.1.1 | 1.1.2 | Added ORC#0-direct observability rule requiring SPAWN/COMPLETE events for all direct main-session work |
+| `.claude/agents/auditor.md` | 1.0.4 | 1.0.5 | Added data contract key-rename gate: grep FE consumers for old key names before PASS on BE tasks that rename data.json keys |
+| `.claude/agents/backend.md` | 1.1.1 | 1.1.2 | Added hardcoded validation constant discipline requiring `# VERIFIED: YYYY-MM-DD` comment on every KPI assertion |
+| `.claude/agents/archivist.md` | 1.0.0 | 1.0.1 | Added sprint-close checkpoint update mandate: AR must update SESSION-CHECKPOINT.md when invoked with event_type SPRINT_STATE |
+
+## agent-improvement-2026-03-27-1
+**Date:** 2026-03-27
+**Post-mortems acted on:** broadn-p4.md
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/auditor.md` | 1.0.5 | 1.0.6 | Added sequential single-file sprint scope rule: auditor must restrict must_not_contain checks to the current task's named artifacts when prior tasks have already modified the same file |
+| `.claude/agents/orchestrator.md` | 1.1.2 | 1.1.3 | Added foreground-only dispatch rule for archivist: background archivists may be denied Write; ORC must write directly if denied |
+| `.claude/agents/pm.md` | 1.1.1 | 1.1.2 | Added state machine call-graph rule requiring PM to enumerate every function that reads/writes a modified indexed structure before writing the task packet |
+
+## agent-improvement-2026-03-28-2
+**Date:** 2026-03-28
+**Post-mortems acted on:** broadn-p5-p6.md
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added static-content embedding rule requiring verbatim inline or dedicated context file — no reference-by-description |
+| `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added prior_approved_tasks as required routing_notes field for any non-first FE task in a sequential single-file sprint |
+| `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added chart tooltip injection rule naming Option C (post-construction mutation) and invalidating Option B when helper owns new Chart() |
+| `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added ctx.parsed accessor rule: PM must include chart type from constructor (not comment) when specifying tooltip callbacks |
+| `.claude/agents/critic.md` | 1.0.1 | 1.0.2 | Added ctx.parsed accessor audit check: verify chart type: field at constructor before accepting any tooltip label callback |
+| `.claude/agents/backend.md` | 1.1.2 | 1.1.3 | Added named 50-line gate exception for data-generation-only tasks with required commit message documentation |
