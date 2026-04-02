@@ -46,3 +46,16 @@
 | `.claude/agents/auditor.md` | 1.0.5 | 1.0.6 | Added sequential single-file sprint scope rule: auditor must restrict must_not_contain checks to the current task's named artifacts when prior tasks have already modified the same file |
 | `.claude/agents/orchestrator.md` | 1.1.2 | 1.1.3 | Added foreground-only dispatch rule for archivist: background archivists may be denied Write; ORC must write directly if denied |
 | `.claude/agents/pm.md` | 1.1.1 | 1.1.2 | Added state machine call-graph rule requiring PM to enumerate every function that reads/writes a modified indexed structure before writing the task packet |
+
+## agent-improvement-2026-03-28-2
+**Date:** 2026-03-28
+**Post-mortems acted on:** broadn-p5-p6.md
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added static-content embedding rule requiring verbatim inline or dedicated context file — no reference-by-description |
+| `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added prior_approved_tasks as required routing_notes field for any non-first FE task in a sequential single-file sprint |
+| `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added chart tooltip injection rule naming Option C (post-construction mutation) and invalidating Option B when helper owns new Chart() |
+| `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added ctx.parsed accessor rule: PM must include chart type from constructor (not comment) when specifying tooltip callbacks |
+| `.claude/agents/critic.md` | 1.0.1 | 1.0.2 | Added ctx.parsed accessor audit check: verify chart type: field at constructor before accepting any tooltip label callback |
+| `.claude/agents/backend.md` | 1.1.2 | 1.1.3 | Added named 50-line gate exception for data-generation-only tasks with required commit message documentation |

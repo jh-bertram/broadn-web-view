@@ -593,3 +593,143 @@ To recover: git -C /home/jhber/projects/broadn-web-view reset --hard a2650643e67
 |---|---|---|---|
 | broadn-p3-t1-pipeline | BE#1 | 1 | — |
 | broadn-p3-t2-filter-fe | FE#1 | 2 | t1-pipeline |
+
+---
+
+# Task Registry — broadn-p4-2026-03-26
+
+## Rollback Point
+commit: 2ceab09
+recorded: 2026-03-26T00:05:00Z
+task_id: broadn-p4-2026-03-26
+
+To recover: git -C /home/jhber/projects/broadn-web-view reset --hard 2ceab09
+
+## Sprint Summary
+FE-only sprint. 4 features, single file (index.html), all tasks strictly sequential due to file-conflict deps.
+
+Wave ordering:
+  Wave 1: broadn-p4-t1-sidebar-toggle
+  Wave 2: broadn-p4-t2-border-cleanup (deps: t1)
+  Wave 3: broadn-p4-t3-bar-charts (deps: t2)
+  Wave 4: broadn-p4-t4-bysite-show-all (deps: t3)
+
+## Expectation Manifest
+
+| task_id | agent | wave | expected_tag | blocks |
+|---|---|---|---|---|
+| broadn-p4-t1-sidebar-toggle | FE#1 | 1 | ui_packet | t2-border-cleanup |
+| broadn-p4-t2-border-cleanup | FE#2 | 2 | ui_packet | t3-bar-charts |
+| broadn-p4-t3-bar-charts | FE#3 | 3 | ui_packet | t4-bysite-show-all |
+| broadn-p4-t4-bysite-show-all | FE#4 | 4 | ui_packet | NONE |
+
+```xml
+<expectation_manifest>
+  <sprint_id>broadn-p4-2026-03-26</sprint_id>
+  <generated>2026-03-26T00:05:00Z</generated>
+  <assignments>
+
+    <assignment>
+      <task_id>broadn-p4-t1-sidebar-toggle</task_id>
+      <agent>FE#1</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p4-t1-sidebar-toggle-FE-*.md</expected_file>
+      <wave>1</wave>
+      <blocks>broadn-p4-t2-border-cleanup</blocks>
+      <receipt_check>
+        <item>slice-btn-all button present as FIRST list item in #slice-category-list</item>
+        <item>On page load: slice-btn-all has active visual state (full bg fill, not border-only) — class names stated in packet</item>
+        <item>updateCategoryButtonStates() updated to include slice-btn-all</item>
+        <item>#global-charts-area hide/show logic present — tied to filterState.slice.category !== null</item>
+        <item>Clicking any slice category button hides #global-charts-area — confirmed in manual test trace</item>
+        <item>Clicking slice-btn-all shows #global-charts-area and resets slice state — confirmed</item>
+        <item>clearSliceFilter() produces same result as clicking slice-btn-all — confirmed</item>
+        <item>Exactly one button active at all times — no zero-active, no two-active state possible</item>
+        <item>Visual type qualifier confirmed: full background fill (NOT border-l accent)</item>
+        <item>Manual test trace covers all 5 required items (page load, click Project, click All, select group, Clear filter)</item>
+        <item>No chart type changes in this task</item>
+        <item>No border class changes in this task</item>
+        <item>index.html is the only file modified</item>
+      </receipt_check>
+    </assignment>
+
+    <assignment>
+      <task_id>broadn-p4-t2-border-cleanup</task_id>
+      <agent>FE#2</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p4-t2-border-cleanup-FE-*.md</expected_file>
+      <wave>2</wave>
+      <blocks>broadn-p4-t3-bar-charts</blocks>
+      <receipt_check>
+        <item>grep for "border border-stone-200" on chart card wrappers in #global-charts-area returns zero results</item>
+        <item>grep for "border border-stone-200" on chart card wrappers in #slice-view-container returns zero results</item>
+        <item>HTML comment format matches spec: "<!-- CHART CARD BORDER — removed; add ..." at each removal site</item>
+        <item>CSS comment section present in style block explaining chart card border and background tuning</item>
+        <item>Sidebar structural border (aside border-r) untouched — confirmed</item>
+        <item>No chart type changes in this task</item>
+        <item>index.html is the only file modified</item>
+      </receipt_check>
+    </assignment>
+
+    <assignment>
+      <task_id>broadn-p4-t3-bar-charts</task_id>
+      <agent>FE#3</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p4-t3-bar-charts-FE-*.md</expected_file>
+      <wave>3</wave>
+      <blocks>broadn-p4-t4-bysite-show-all</blocks>
+      <receipt_check>
+        <item>grep for "type: 'line'" on temporal chart constructors returns zero results</item>
+        <item>grep for "type: 'polarArea'" returns zero results anywhere in index.html</item>
+        <item>All 4 temporal chart constructors have type: 'bar' — confirmed in packet</item>
+        <item>Time-of-day chart has type: 'bar' — confirmed in packet</item>
+        <item>Time-of-day tooltip callback uses ctx.parsed.y (not ctx.parsed.r) — confirmed in packet</item>
+        <item>Line-specific dataset props (tension, fill, pointBackgroundColor, pointRadius, pointHoverRadius) removed from all converted charts</item>
+        <item>All 5 converted chart datasets have backgroundColor property</item>
+        <item>All 5 affected canvas aria-labels updated to say "Bar chart"</item>
+        <item>autoSkip: false and month format ("Mar '20") unchanged — confirmed</item>
+        <item>At least one CSS comment marks temporal bar color tuning location</item>
+        <item>donut, pipeline, by-site, map, sampler charts untouched — confirmed</item>
+        <item>index.html is the only file modified</item>
+      </receipt_check>
+    </assignment>
+
+    <assignment>
+      <task_id>broadn-p4-t4-bysite-show-all</task_id>
+      <agent>FE#4</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/agents/tasks/outputs/broadn-p4-t4-bysite-show-all-FE-*.md</expected_file>
+      <wave>4</wave>
+      <blocks>NONE</blocks>
+      <receipt_check>
+        <item>bySiteChart canvas is NOT inside a div.chart-wrap wrapper — confirmed in packet</item>
+        <item>renderBySiteChart() contains MIN_BAR_HEIGHT constant with comment</item>
+        <item>renderBySiteChart() applies dynamic style.height to bySiteChartWrap element</item>
+        <item>y.ticks.autoSkip: false present in renderBySiteChart() options</item>
+        <item>Scroll container with max-height and overflow-y: auto wraps chart — confirmed in packet</item>
+        <item>HTML comment at scroll container max-height value for human tuning</item>
+        <item>HTML comment at MIN_BAR_HEIGHT constant for human tuning</item>
+        <item>New wrapper div has position: relative in style — confirmed (required for Chart.js)</item>
+        <item>No other charts affected — confirmed</item>
+        <item>Geography section layout unchanged except bySiteChart wrapper replacement</item>
+        <item>index.html is the only file modified</item>
+      </receipt_check>
+    </assignment>
+
+  </assignments>
+</expectation_manifest>
+```
+
+## Rollback Point
+commit: af1c5406e2018f5e7399218fbf0556403974a856
+recorded: 2026-03-27T23:55:00Z
+task_id: broadn-p5-2026-03-27
+
+To recover: git -C /home/jhber/projects/broadn-web-view reset --hard af1c5406e2018f5e7399218fbf0556403974a856
+
+## Rollback Point — p6
+commit: ce6fbead4013bc3e3e03a7b05df243138a462cd4
+recorded: 2026-03-28T05:20:00Z
+task_id: broadn-p6-2026-03-28
+
+To recover: git -C /home/jhber/projects/broadn-web-view reset --hard ce6fbead4013bc3e3e03a7b05df243138a462cd4

@@ -1,7 +1,7 @@
 # SESSION-CHECKPOINT
-**Written:** 2026-03-27
+**Written:** 2026-03-28
 **Project:** broadn-web-view (`/home/jhber/projects/broadn-web-view/`)
-**Session closed after:** p4 fully delivered and browser-verified
+**Session closed after:** p5+p6 post-mortem COMPLETE — identified 5 protocol gaps (PM lookup-table embedding, prior_approved_tasks routing, chart type comment verification, Option B architecture invalidity, 50-line gate data-augmentation exception)
 
 ---
 
@@ -18,10 +18,23 @@ This is a static single-page dashboard (`index.html`) — no build system, no de
 
 ## Current State
 
-All p1, p2, p3, and p4 sprints complete. **p5 scope not yet confirmed — awaiting human priority decision.**
+All p1–p6 sprints COMPLETE with post-mortem analysis finalized. **p5 and p6 sprints shipped all planned features with 100% first-pass audit rate and zero runtime bugs. Post-mortem identified 5 recurrent protocol gaps that should be fixed in agent specs before next sprint.**
 
-**HEAD:** `b3af1e3`
+**HEAD:** `ff3411e` (p6 Wave 2b final)
 **Branch:** `sprint/broadn-p1-2026-03-22`
+
+### Post-Mortem Key Findings (p5 + p6)
+
+**Five protocol gaps to address:**
+1. **PM must embed lookup tables verbatim** — p5-t2 required Critic BLOCK + revision to include 12-entry PROJECT_DESCRIPTIONS table (not description-only reference)
+2. **PM must include prior_approved_tasks routing note** — prevents auditor false FAIL on legitimate prior-wave additions (same issue in p4, not proactively applied)
+3. **Critic must verify chart constructor, not comment** — stale comment "doughnut" at line 1021 vs. actual `type: 'bar'` at line 1253 would have produced silent `[object Object]` tooltip
+4. **Option B closure injection is architecturally invalid** — when `new Chart()` is inside helper function, only Option A (modify helper) or Option C (post-construct mutation) are viable
+5. **50-line gate needs data-augmentation exception** — p6-001a correctly reported 71 net new lines and stopped; JSON validity + spot-check should be named exception path
+
+**Plan-stage iteration impact:** p5 had 1 Critic BLOCK round, p6 had 3 Critic BLOCK rounds. Both sets of blocks surfaced real issues, but the majority were caused by above gaps that were previously documented but not applied proactively.
+
+**Delivery quality:** All 6 implementing tasks (p5-t1, p5-t2, p6-001a, p6-001b, p6-002a, p6-002b) passed first-pass audit, zero regressions in browser testing.
 
 ---
 
@@ -44,6 +57,12 @@ All p1, p2, p3, and p4 sprints complete. **p5 scope not yet confirmed — awaiti
 | p4 | Chart card border removal (27 divs, global + slice) | HTML comments at each site; CSS tuning block in `<style>` |
 | p4 | Temporal + time-of-day charts converted line/polar→bar | `renderTemporalChart()`, `buildTemporalChartOptions()`, time-of-day in `renderLocationView()` |
 | p4 | By-site chart dynamic height + scroll container | `#bySiteChartWrap`, `#bySiteScrollContainer`, `MIN_BAR_HEIGHT` in `renderBySiteChart()` |
+| p5 | Active Tag Filter Banner (dismissible "Filtered by:" banner in slice panel) | `updateTagBanner()`, `#tag-filter-banner`, called in `applyFilter()` + `renderView()` cat+group |
+| p5 | Project Context Banner (name + description + thumbnail placeholder) | `updateProjectBanner()`, `#project-banner`, PROJECT_DESCRIPTIONS lookup (12 entries), fallback for 8 unmapped projects |
+| p6 Wave 1a | Global cross-tab structures for tooltips (type×pipeline, pipeline×type, site date ranges, temporal×types) | `data.type_pipeline_crossTab`, `data.pipeline_type_crossTab`, `data.site_date_ranges`, `data.temporal[*].types` |
+| p6 Wave 1b | Slice cross-tab augmentations (all 1000+ slice entries carry type_pipeline_crossTab, pipeline_type_crossTab, temporal[*].types) | `slice_views.project|location|lab_group[*]`, consolidated build_temporal() calls (-24/+9 lines) |
+| p6 Wave 2a | Rich global tooltip callbacks (G1–G5: donut, pipeline, by-site, temporal, map) | 5 chart tooltip functions wired to type_pipeline_crossTab, pipeline_type_crossTab, site_date_ranges, temporal[*].types; fallback count-only if key missing |
+| p6 Wave 2b | Slice tooltip callbacks (S1–S4: type breakdown per stage, stage breakdown per type, temporal breakdown per month, sampler breakdown per project) | Callback injection at render call sites for Project/Location/Lab Group views; 11 net new lines; buildTemporalChartOptions and renderSamplerTypeChart unmodified |
 
 ---
 
@@ -87,13 +106,66 @@ All 4 tasks delivered: t1-sidebar-toggle, t2-border-cleanup, t3-bar-charts, t4-b
 
 ---
 
-## p5 Sprint — PENDING SCOPE CONFIRMATION
+## p5 Sprint — COMPLETE (delivered 2026-03-27)
 
-The following features are candidates for p5. Human must confirm which to include and in what order before dispatch begins. Use `dispatch-task` for any multi-domain work.
+**Completed tasks:**
+| Task ID | Status | Commit | Feature |
+|---------|--------|--------|---------|
+| broadn-p5-t1-tag-banner | COMPLETE | 1798b18 | Active Tag Filter Banner (dismissible "Filtered by:" pills in slice panel) |
+| broadn-p5-t2-project-banner | COMPLETE | ce6fbea | Project Context Banner (name + description + placeholder thumbnail) |
+
+**Deferred scope:**
+- t3-hover-tooltips (BE + FE; awaiting human scope confirmation) — moved to next sprint planning
+
+Sprint delivered 2 of 3 planned features. Both t1 and t2 passed full audit cycle (SA/QA/SX) and human browser verification.
 
 ---
 
-## Remaining Feature Plan (p5+)
+## p6 Sprint — ALL 4 WAVES COMPLETE (TOOLTIP ARCHITECTURE SHIPPED)
+
+**Wave 1a (broadn-p6-001a) — COMPLETE**
+
+Global cross-tab data structures added to `data/data.json` for tooltip rendering:
+- `type_pipeline_crossTab`: type → pipeline stage counts (supports global sample-type donut tooltip)
+- `pipeline_type_crossTab`: pipeline stage → top-5 sample types (supports global pipeline bar tooltip)
+- `site_date_ranges`: site code → collection date range (supports site map/sidebar tooltip)
+- `temporal[*].types`: monthly type breakdown (supports temporal bar tooltip)
+- Commit: `8fc6321`, Files: `scripts/preprocess_data.py`, `data/data.json`
+- Audit: PASS (SA/QA/SX)
+
+**Wave 1b (broadn-p6-001b) — COMPLETE**
+
+Slice-level cross-tab augmentations wired into all 3 slice builders:
+- All 1,000+ entries in `slice_views.project|location|lab_group` now carry type_pipeline_crossTab, pipeline_type_crossTab, temporal[*].types
+- Consolidated inline temporal builders into shared build_temporal() function calls (-24/+9 lines)
+- Commit: `a2be32d`, Files: `scripts/preprocess_data.py`, `data/data.json`
+- Audit: PASS (SA/QA/SX)
+
+**Wave 2a (broadn-p6-002a) — COMPLETE**
+
+Global chart tooltip callbacks wired for all 5 global charts:
+- G1 donut (sample-type breakdown): drills to pipeline stage counts from type_pipeline_crossTab
+- G2 pipeline bar (pipeline-stage breakdown): drills to top-5 sample types from pipeline_type_crossTab
+- G3 by-site bar (site breakdown): cross-looks site code to primary_types and collection date ranges
+- G4 temporal bar (per-month breakdown): displays type breakdown from temporal[*].types with count-only fallback
+- G5 map markers: displays collection date range from site_date_ranges via bindTooltip()
+- Commit: `663079e`, Files: `index.html` (15 net new lines)
+- Audit: PASS (SA/QA/SX)
+
+**Wave 2b (broadn-p6-002b) — COMPLETE**
+
+Slice chart tooltip callbacks wired for all 3 slice views:
+- S1 (donut breakdown per type): reads type_pipeline_crossTab from slice entry
+- S2 (pipeline breakdown per stage, Project + LabGroup only): reads pipeline_type_crossTab from slice entry
+- S3 (temporal breakdown per month): reads temporal[*].types; month-label match via formatMonth; null sentinel guards
+- S4 (sampler-type breakdown post-mutation): post-construction callback injection; globalSamplerChart excluded
+- Commit: `ff3411e`, Files: `index.html` (11 net new lines)
+- Audit: PASS (SA/QA/SX)
+- Browser-verified by human: all tooltips functional, cross-tab data present and accurate
+
+---
+
+## Remaining Feature Plan (p6+)
 
 Do not implement until human confirms scope and priority. Use `dispatch-task` for multi-domain work.
 
@@ -184,5 +256,6 @@ Do not implement until human confirms scope and priority. Use `dispatch-task` fo
 ## Rollback Points
 
 **p1-p3 sprint start:** `cfb589b87dc57b98bc4a52a6a16caf4d267928f7`
-**p4 start / current HEAD:** `b3af1e3`
-To inspect all p4 changes: `git diff 272e431 b3af1e3 -- index.html`
+**p4 start:** `b3af1e3`
+**p6 Wave 2a HEAD:** `663079e`
+To inspect all p6 Wave 2a changes: `git diff a2be32d 663079e -- index.html`

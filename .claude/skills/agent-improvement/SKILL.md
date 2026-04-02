@@ -290,3 +290,56 @@ A gap that appears in two or more post-mortems without a corresponding changelog
 **Minimal.** One gap → one change → one changelog entry. Do not refactor surrounding text, rename sections, or add polish beyond what the gap requires. The goal is signal-dense surgical edits, not rewrites.
 
 **Versioned and archived before edited.** The archive is the rollback mechanism. An improvement that introduces a regression can be reversed by restoring the archived version — but only if the archive step ran before the edit.
+
+---
+
+## Step 8: Cross-Project Propagation
+
+After completing Steps 1–7 for the current project, check whether any sibling projects run the same agent team and need the same improvements applied.
+
+### When to check sibling projects
+
+Always run this step after any improvement session. Do not skip it even when improvements appear project-specific at first — the classification below determines what actually propagates.
+
+### How to identify sibling projects
+
+A sibling project is any project directory (relative to `~/projects/`) that contains a `.claude/agents/` directory with the same roster of agent files. Check:
+
+```bash
+ls ~/projects/*/. claude/agents/*.md 2>/dev/null | grep -o 'projects/[^/]*' | sort -u
+```
+
+A project with the same set of agent filenames (orchestrator.md, pm.md, critic.md, backend.md, frontend.md, etc.) is a sibling. Projects with a structurally different roster (e.g., a single-agent tool, a research-only team) are not siblings and do not receive propagation.
+
+### How to propagate validated improvements
+
+For each improvement from Steps 1–7:
+
+1. **Classify the improvement** (see below) — project-specific or universal.
+2. For universal improvements: read the changelog entry you just wrote. Apply the same edit to the corresponding file in each sibling project using the Edit tool. Match the version bump (PATCH/MINOR/MAJOR) used in the originating project.
+3. Append a propagation note to each sibling's `docs/agent-changelog.md`:
+   ```
+   ## {session_id}-propagated-from-{source_project}
+   **Date:** {YYYY-MM-DD}
+   **Source:** Propagated from {source_project} improvement session {session_id}
+   | File | Previous version | New version | Change |
+   |------|-----------------|-------------|--------|
+   | {file} | {old} | {new} | {same one-liner from source changelog} |
+   ```
+4. Do NOT re-archive in the sibling — the source project's archive is the canonical record.
+
+### How to classify improvements
+
+**Propagate to all siblings:**
+- Protocol rules (event logging, output-to-file, checkpoint stages, audit gate ordering)
+- Routing rules (EDA → statistician, archivist foreground-only, AUDIT_BLOCKED protocol)
+- Cross-cutting quality rules (DRY helper extraction, sequential single-file sprint scope)
+- New agents or agent structural additions (e.g., archivist sprint-close update, ORC#0-direct events)
+
+**Do NOT propagate — project-specific:**
+- Rules that reference domain-specific technology only present in one project (e.g., Chart.js tooltip positioning rules, `ctx.parsed` accessor, `getBoundingClientRect()` offset — these are specific to data dashboard projects using Chart.js, not applicable to a UI studio like gander-studio-alpha)
+- Rules that reference specific data file names or field names from one project's data contract (e.g., `data.json`, `project_id`, `tag_groups`)
+- Rules that reference a specific framework or library version not confirmed in the sibling (e.g., a Prisma-specific migration rule in a project that uses a different ORM)
+- Post-mortem root causes that explicitly name a sprint from the source project and have no equivalent failure pattern in the sibling's history
+
+When in doubt: check the sibling project's post-mortems for the same failure pattern. If the pattern has appeared there independently, propagate. If it has not, flag it in the improvement report under "Gaps Not Propagated" with a note that sibling projects should monitor for this pattern.
