@@ -682,7 +682,7 @@
 
             <!-- TABLE -->
             <div class="overflow-x-auto">
-              <table id="explorer-table" class="w-full text-sm text-left text-stone-600" aria-label="Recent field samples">
+              <table id="explorer-table" class="w-full text-sm text-left text-stone-600" aria-label="Field samples">
                 <thead class="bg-stone-100 text-stone-600 text-xs font-semibold uppercase tracking-wide">
                   <tr>
                     <th scope="col" class="px-6 py-3">Sample ID</th>
@@ -695,6 +695,7 @@
                 <tbody id="explorer-tbody"></tbody>
               </table>
             </div>
+            <div id="table-pagination" class="flex items-center justify-center gap-4 mt-4 pb-4 text-sm text-stone-600"></div>
           </div>
         </section>
 
@@ -739,6 +740,9 @@
       'Derivative':   'bg-purple-100 text-purple-800',
       'Other':        'bg-stone-100 text-stone-600'
     };
+
+    const PAGE_SIZE = 100;
+    var tableCurrentPage = 1;
 
     // Rule A: Chart.js and Leaflet hex values — permitted ONLY inside dataset/marker
     // configuration objects (Chart.js datasets arrays, Leaflet circleMarker options).
@@ -1831,47 +1835,136 @@
       return CATEGORY_CLASSES[cat] || 'bg-stone-100 text-stone-600';
     }
 
-    function renderTable(samples) {
-      var cat   = document.getElementById('filter-category').value;
-      var site  = document.getElementById('filter-site').value;
-      var year  = document.getElementById('filter-year').value;
+    function renderTable(samples, page) {
+      page = page || 1;
 
-      var filtered = samples.filter(function(s) {
+      // --- Step A: dashboard filter ---
+      var dashFiltered = samples.filter(function(s) {
+        var sliceCat   = filterState.slice.category;
+        var sliceGroup = filterState.slice.group;
+        var passSlice  = true;
+        if (sliceCat === 'project' && sliceGroup) {
+          passSlice = s.project === sliceGroup;
+        } else if (sliceCat === 'location' && sliceGroup) {
+          passSlice = s.site === sliceGroup;
+        } else if (sliceCat === 'lab_group' && sliceGroup) {
+          passSlice = s.lab_group === sliceGroup;
+        }
+        if (!passSlice) return false;
+
+        if (filterState.tags && filterState.tags.length > 0) {
+          var allMatch = filterState.tags.every(function(token) {
+            if (s.am_pm === token) return true;
+            if (s.replicate === token) return true;
+            if (s.field_control === token) return true;
+            if (s.position === token) return true;
+            if (s.quadrant) {
+              var parts = s.quadrant.split(',').map(function(t) { return t.trim(); });
+              if (parts.indexOf(token) !== -1) return true;
+            }
+            return false;
+          });
+          if (!allMatch) return false;
+        }
+        return true;
+      });
+
+      // --- Step B: local filter ---
+      var cat  = document.getElementById('filter-category').value;
+      var site = document.getElementById('filter-site').value;
+      var year = document.getElementById('filter-year').value;
+
+      var filtered = dashFiltered.filter(function(s) {
         var matchCat  = !cat  || s.category === cat;
         var matchSite = !site || s.site === site;
         var matchYear = !year || (s.date && s.date.startsWith(year));
         return matchCat && matchSite && matchYear;
       });
 
+      // --- Step C: pagination ---
+      var total      = filtered.length;
+      var totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+      if (page < 1) page = 1;
+      if (page > totalPages) page = totalPages;
+      tableCurrentPage = page;
+
+      var start    = (page - 1) * PAGE_SIZE;
+      var pageRows = filtered.slice(start, start + PAGE_SIZE);
+
+      // --- Update row count ---
+      var countEl = document.getElementById('table-row-count');
+      if (total === 0) {
+        countEl.textContent = 'No samples match the selected filters';
+      } else if (total <= PAGE_SIZE) {
+        countEl.textContent = 'Showing ' + total + ' of ' + total + ' samples';
+      } else {
+        countEl.textContent =
+          'Showing ' + (start + 1) + '\u2013' + Math.min(start + PAGE_SIZE, total) +
+          ' of ' + total + ' samples';
+      }
+
+      // --- Render rows ---
       var tbody = document.getElementById('explorer-tbody');
       tbody.innerHTML = '';
 
-      document.getElementById('table-row-count').textContent =
-        'Showing ' + filtered.length + ' of ' + samples.length + ' samples';
-
-      if (filtered.length === 0) {
+      if (pageRows.length === 0) {
         var tr = document.createElement('tr');
         tr.innerHTML = '<td colspan="5" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
         tbody.appendChild(tr);
-        return;
+      } else {
+        pageRows.forEach(function(row) {
+          var tr = document.createElement('tr');
+          tr.className = 'bg-white hover:bg-stone-50 transition-colors';
+          var typeCls = getTypeBadgeClasses(row.type);
+          var catCls  = getCategoryBadgeClasses(row.category);
+          tr.innerHTML =
+            '<th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">' + escapeHtml(row.id) + '</th>' +
+            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.date) + '</td>' +
+            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.site) + '</td>' +
+            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + typeCls + '">' + escapeHtml(row.type) + '</span></td>' +
+            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>';
+          tbody.appendChild(tr);
+        });
       }
 
-      filtered.forEach(function(row) {
-        var tr = document.createElement('tr');
-        tr.className = 'bg-white hover:bg-stone-50 transition-colors';
+      // --- Render pagination controls ---
+      var paginationEl = document.getElementById('table-pagination');
+      if (paginationEl) {
+        if (totalPages <= 1) {
+          paginationEl.innerHTML = '';
+          paginationEl.style.display = 'none';
+        } else {
+          paginationEl.style.display = '';
+          var prevDisabled = page <= 1;
+          var nextDisabled = page >= totalPages;
+          paginationEl.innerHTML =
+            '<button id="table-prev-btn" type="button" aria-label="Previous page"' +
+            (prevDisabled ? ' disabled' : '') +
+            ' class="px-3 py-1 rounded border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed">Prev</button>' +
+            '<span>Page ' + page + ' of ' + totalPages + '</span>' +
+            '<button id="table-next-btn" type="button" aria-label="Next page"' +
+            (nextDisabled ? ' disabled' : '') +
+            ' class="px-3 py-1 rounded border border-stone-300 bg-white text-stone-700 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed">Next</button>';
 
-        var typeCls = getTypeBadgeClasses(row.type);
-        var catCls  = getCategoryBadgeClasses(row.category);
+          if (!prevDisabled) {
+            document.getElementById('table-prev-btn').addEventListener('click', function() {
+              renderTable(appData.all_samples, tableCurrentPage - 1);
+            });
+          }
+          if (!nextDisabled) {
+            document.getElementById('table-next-btn').addEventListener('click', function() {
+              renderTable(appData.all_samples, tableCurrentPage + 1);
+            });
+          }
+        }
+      }
+    }
 
-        tr.innerHTML =
-          '<th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">' + escapeHtml(row.id) + '</th>' +
-          '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.date) + '</td>' +
-          '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.site) + '</td>' +
-          '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + typeCls + '">' + escapeHtml(row.type) + '</span></td>' +
-          '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>';
-
-        tbody.appendChild(tr);
-      });
+    function refreshTableIfReady() {
+      if (appData && appData.all_samples) {
+        tableCurrentPage = 1;
+        renderTable(appData.all_samples, 1);
+      }
     }
 
     function escapeHtml(str) {
@@ -2632,7 +2725,7 @@
         var chipDefault = document.getElementById('slice-active-chip');
         if (chipDefault) { chipDefault.classList.add('hidden'); }
 
-        return;
+        refreshTableIfReady(); return;
       }
 
       // cat !== null: hide global charts area in BOTH cat!==null branches
@@ -2663,7 +2756,7 @@
           }
         });
 
-        return;
+        refreshTableIfReady(); return;
       }
 
       // Both category and group are set: show slice view container
@@ -2723,6 +2816,8 @@
       // Scroll slice container into view
       sliceContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
       sliceContainer.focus({ preventScroll: true });
+
+      refreshTableIfReady();
     }
 
     // =============================================================================
@@ -3149,8 +3244,9 @@
       destroyChart('globalSamplerChart');
       renderSamplerTypeChart('globalSamplerChart', globalSamplerDist);
 
-      buildFilterOptions(data.recent_samples);
-      renderTable(data.recent_samples);
+      buildFilterOptions(data.all_samples);
+      tableCurrentPage = 1;
+      renderTable(data.all_samples, 1);
 
       renderFooterDate(data.meta && data.meta.generated ? data.meta.generated : '');
 
@@ -3161,13 +3257,16 @@
 
       // Wire up filter dropdowns
       document.getElementById('filter-category').addEventListener('change', function() {
-        renderTable(appData.recent_samples);
+        tableCurrentPage = 1;
+        renderTable(appData.all_samples, 1);
       });
       document.getElementById('filter-site').addEventListener('change', function() {
-        renderTable(appData.recent_samples);
+        tableCurrentPage = 1;
+        renderTable(appData.all_samples, 1);
       });
       document.getElementById('filter-year').addEventListener('change', function() {
-        renderTable(appData.recent_samples);
+        tableCurrentPage = 1;
+        renderTable(appData.all_samples, 1);
       });
 
       // Initial render pass — shows default 7-chart view
