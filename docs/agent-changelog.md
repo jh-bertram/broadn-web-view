@@ -67,3 +67,13 @@
 | File | Previous version | New version | Change |
 |------|-----------------|-------------|--------|
 | `.claude/agents/auditor.md` | 1.0.6 | 1.0.7 | Added stale chart-type comment SA gate: grep `ctx.parsed` usage against actual constructor `type:` field before PASS on FE tooltip tasks |
+
+## agent-improvement-2026-04-02-2
+**Date:** 2026-04-02
+**Post-mortems acted on:** broadn-studio-clarity.md
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/auditor.md` | 1.0.7 | 1.1.0 | Added `python3 -m http.server` fallback for Playwright smoke checks on vanilla HTML repos without `package.json` |
+| `.claude/agents/frontend.md` | 1.2.0 | 1.2.1 | Added inline style / Tailwind conflict grep check requiring dynamic-only application of any inline style overlapping a Tailwind utility class |
+| `.claude/agents/orchestrator.md` | 1.1.3 | 1.1.4 | Added task stub mandate for direct-routing sprints: ORC acting as PM must write `.claude/tasks/{task_id}.md` before spawning agents |

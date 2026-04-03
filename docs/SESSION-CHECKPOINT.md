@@ -1,7 +1,7 @@
 # SESSION-CHECKPOINT
-**Written:** 2026-03-28
+**Written:** 2026-04-02
 **Project:** broadn-web-view (`/home/jhber/projects/broadn-web-view/`)
-**Session closed after:** p5+p6 post-mortem COMPLETE — identified 5 protocol gaps (PM lookup-table embedding, prior_approved_tasks routing, chart type comment verification, Option B architecture invalidity, 50-line gate data-augmentation exception)
+**Session closed after:** Studio Clarity UI refresh sprint COMPLETE — 6 deliverables shipped (Inter font, sidebar collapse, KPI icons, filter chip, nav shadow, table styling) + DESIGN.md v1.0.0 established
 
 ---
 
@@ -18,9 +18,9 @@ This is a static single-page dashboard (`index.html`) — no build system, no de
 
 ## Current State
 
-All p1–p6 sprints COMPLETE with post-mortem analysis finalized. **p5 and p6 sprints shipped all planned features with 100% first-pass audit rate and zero runtime bugs. Post-mortem identified 5 recurrent protocol gaps that should be fixed in agent specs before next sprint.**
+All p1–p6 sprints COMPLETE with post-mortem finalized. **Studio Clarity UI refresh sprint COMPLETE — 6 visual/interactive deliverables shipped with DESIGN.md v1.0.0 as single source of truth for all future UI work. First-pass audit: FAIL (QA) → remediation → re-audit: PASS (all gates).**
 
-**HEAD:** `ff3411e` (p6 Wave 2b final)
+**HEAD:** TBD (Studio Clarity changes not yet committed; awaiting user commit)
 **Branch:** `sprint/broadn-p1-2026-03-22`
 
 ### Post-Mortem Key Findings (p5 + p6)
@@ -63,6 +63,13 @@ All p1–p6 sprints COMPLETE with post-mortem analysis finalized. **p5 and p6 sp
 | p6 Wave 1b | Slice cross-tab augmentations (all 1000+ slice entries carry type_pipeline_crossTab, pipeline_type_crossTab, temporal[*].types) | `slice_views.project|location|lab_group[*]`, consolidated build_temporal() calls (-24/+9 lines) |
 | p6 Wave 2a | Rich global tooltip callbacks (G1–G5: donut, pipeline, by-site, temporal, map) | 5 chart tooltip functions wired to type_pipeline_crossTab, pipeline_type_crossTab, site_date_ranges, temporal[*].types; fallback count-only if key missing |
 | p6 Wave 2b | Slice tooltip callbacks (S1–S4: type breakdown per stage, stage breakdown per type, temporal breakdown per month, sampler breakdown per project) | Callback injection at render call sites for Project/Location/Lab Group views; 11 net new lines; buildTemporalChartOptions and renderSamplerTypeChart unmodified |
+| Studio Clarity | Inter font CDN loaded | `<head>` Google Fonts link; style `font-family: "Inter"` |
+| Studio Clarity | Sidebar collapse toggle button | `#sidebar-toggle` button (44px), `aria-expanded`, dynamic overflow JS |
+| Studio Clarity | KPI emoji → SVG icons | lucide-react CDN; bar-chart-2, map-pin, calendar, dna with brand-color halos |
+| Studio Clarity | Filter state chip (replaces envelope) | `#filter-chip` element, `rounded-full bg-orange-100 text-orange-700`, in section header |
+| Studio Clarity | Nav scroll-linked shadow | IIFE scroll listener, adds/removes `shadow-sm` on sticky nav |
+| Studio Clarity | Table alternating rows + styling | nth-child CSS in `<style>`, thead `bg-stone-100`, wrapper `rounded-lg border` |
+| Studio Clarity | DESIGN.md v1.0.0 created | `/home/jhber/projects/broadn-web-view/DESIGN.md` — token source of truth for all future UI work |
 
 ---
 
