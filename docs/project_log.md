@@ -3,6 +3,46 @@
 ## Archive Entries
 
 <archive_entry>
+  <timestamp>2026-04-02T22:15:00Z</timestamp>
+  <task_id>agent-improvement-2026-04-02-2</task_id>
+  <event_type>AGENT_IMPROVEMENT</event_type>
+  <rationale>Session: acted on 3 protocol gaps identified in post-mortem broadn-studio-clarity.md Section 6. All gaps have corresponding agent spec changes. Gaps addressed: (1) Auditor cannot run Playwright on vanilla HTML repos (no package.json) — added python3 -m http.server fallback so auditor can spin up a local HTTP server and run Playwright smoke checks against vanilla HTML files without a dev environment. This enables verification of scroll behavior, JS-driven state, and dynamic CSS mutations that static analysis cannot catch. (2) FE has no pre-flight check for inline style / Tailwind class property overlap — added grep check (lines with style="[^"]*\(overflow|display|position|flex|padding|margin|color|background|border)") to detect where inline styles shadow Tailwind utilities. Rule: if style is permanent (not animation-only), remove it and express the property in Tailwind or CSS; if temporary (animation-only), apply dynamically via JS in transition handler, never as a fixed attribute. This prevents the Tailwind CDN specificity gotcha where style="..." always wins over class="..." regardless of cascade rules. (3) No task stub written when ORC acts as PM for direct-routing sprints — added explicit mandate: when human confirms direct routing, ORC must write a minimal .claude/tasks/{task_id}.md stub before spawning any agent. Minimum content: task ID, human request summary, agents spawned, routing type. This ensures the sprint is recoverable from the event log even without a formal <task_decomposition> block. All 3 gaps have concrete mechanical edits; none remain open. Root causes reflect real delivery problems: (1) auditor false negatives on interactive behavior, (2) silent Tailwind override bugs in FE work, (3) unrecoverable direct-routed sprints in the event log. Sibling project propagation recommended for Gap 2 (Tailwind conflict universal) and Gap 3 (task stub pattern universal); Gap 1 is vanilla-HTML-specific.</rationale>
+  <dependencies>
+    - Relates to post-mortem: broadn-studio-clarity.md (Section 6 protocol gaps from direct-routed UI task)
+    - Files modified: .claude/agents/auditor.md (version 1.0.7 → 1.1.0), .claude/agents/frontend.md (version 1.2.0 → 1.2.1), .claude/agents/orchestrator.md (version 1.1.3 → 1.1.4)
+  </dependencies>
+  <retention_keys>
+    - Session artifact: docs/agent-improvements/agent-improvement-2026-04-02-2.md (3 gaps documented with root causes, files changed, version deltas)
+    - Agent changelog: docs/agent-changelog.md (lines 71-79, all three agent version bumps recorded with change summaries)
+    - Files modified: 3 total
+      1. .claude/agents/auditor.md Section 2.4: python3 -m http.server <port> fallback for Playwright when package.json absent but index.html present
+      2. .claude/agents/frontend.md pre-flight section: grep for style="..." overlapping overflow|display|position|flex|padding|margin|color|background|border Tailwind utilities; dynamic-only application required
+      3. .claude/agents/orchestrator.md Step 0 subsection: task stub mandate for direct-routing ORC-as-PM sprints; write .claude/tasks/{task_id}.md before spawning agents
+    - Cross-propagation candidates: Gap 2 (inline/Tailwind conflict) and Gap 3 (task stub pattern) are universal and should be evaluated for propagation to gander and gander-studio-alpha in a dedicated session
+    - No research tasks spawned; all fixes mechanical and directly derivable from post-mortem recommendations
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-04-02T12:00:00Z</timestamp>
+  <task_id>agent-improvement-2026-04-02-1</task_id>
+  <event_type>AGENT_IMPROVEMENT</event_type>
+  <rationale>Session: acted on 1 protocol gap identified in broadn-p5-p6.md Section 4, Recommendation 2, not captured in prior session (2026-03-28-2) Section 6 gaps. Gap addressed: (1) Auditor has no SA gate for stale chart-type comments in tooltip callbacks — prior session added ctx.parsed accessor check to critic.md but not auditor.md, leaving a path where Critic's check could be bypassed and a stale HTML comment (e.g., "doughnut" on a bar constructor) would silently reach production and render [object Object] in every tooltip. Added auditor.md SA gate: for any FE task modifying Chart.js tooltip callbacks with ctx.parsed access, grep the constructor for the actual type: field (bar/line → accessor is ctx.parsed.y; doughnut → accessor is bare ctx.parsed); SA FAIL if accessor does not match. This is a Chart.js-specific improvement and does not propagate to sibling projects (gander, gander-studio-alpha).</rationale>
+  <dependencies>
+    - Relates to post-mortem: broadn-p5-p6.md (Section 4, Recommendation 2)
+    - Prior improvement session: agent-improvement-2026-03-28-2 (added ctx.parsed check to critic.md; this session completes the audit gate coverage in auditor.md)
+    - Files modified: .claude/agents/auditor.md (version 1.0.6 → 1.0.7)
+  </dependencies>
+  <retention_keys>
+    - Session artifact: docs/agent-improvements/agent-improvement-2026-04-02-1.md (gap documented with root cause, file changed, version delta)
+    - Agent changelog: docs/agent-changelog.md (lines 63-69, auditor.md version bump recorded)
+    - File modified: .claude/agents/auditor.md lines 84-85 (stale chart-type comment SA gate)
+    - Observation: Cross-propagation of universal improvements from sessions 2026-03-17 through 2026-03-28 to sibling projects (gander, gander-studio-alpha) was never executed; recommend dedicated cross-propagation review session (separate from post-mortem improvement cycles)
+    - Next review trigger: p7 at the earliest (p9 or later); unresolved gap to watch: prior_approved_tasks mandate in pm.md has appeared in 3 consecutive post-mortems (p4, p5, p6) — verify hold in p7
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
   <timestamp>2026-03-28T12:45:00Z</timestamp>
   <task_id>agent-improvement-2026-03-28-2</task_id>
   <event_type>AGENT_IMPROVEMENT</event_type>
@@ -954,6 +994,62 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - Human browser verification: all features functional, no regressions, all 9 chart tooltips working with correct cross-tab drill-down, banners display correctly
     - Next session should immediately apply all three protocol gap fixes to PM and Critic agent specs (do not defer to next post-mortem)</retention_keys>
 </archive_entry>
-    - P6 status: Wave 1a COMPLETE; Wave 1b (slice chart cross-tabs) pending; FE tooltip implementation will follow in next wave
+
+<archive_entry>
+  <timestamp>2026-04-02T18:00:00Z</timestamp>
+  <task_id>broadn-studio-clarity-ui</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Style C "Studio Clarity" refresh sprint: comprehensive UI refresh of /home/jhber/projects/broadn-web-view/index.html to improve visual hierarchy, typography, and interactive affordances. Five core deliverables implemented: (1) Inter font loaded via Google Fonts CDN, replacing Helvetica/Arial — improves readability and aligns with design system modernization. (2) Sidebar collapse toggle button (44px, full WCAG target), wired to `<aside>` width transition (200ms CSS) with dynamic overflow management to preserve scroll content accessibility. Toggle state tracked via `aria-expanded` attribute. (3) KPI emoji icon replacement: four icons (bar-chart-2 for samples, map-pin for sites, calendar for active-since, dna for lab context) replaced emoji placeholders using lucide-react CDN, styled with brand-color halos from DESIGN.md KPI palette. (4) Active filter chip: replaced full-area `.filter-active-envelope` background tint with labeled `rounded-full` chip positioned in section header (`bg-orange-100 text-orange-700`) — more informative (shows which filter active) and less visually intrusive than area tint. (5) Navigation scroll-linked shadow: IIFE adds `shadow-sm` to sticky nav on any scroll event, removed on scroll-to-top, improving visual depth hierarchy when content scrolls beneath nav. (6) Table styling: alternating row backgrounds via nth-child CSS in inline `<style>` block (correct approach for Tailwind CDN context, not utility classes), `thead` with `bg-stone-100` uppercase tracking, full wrapper with `rounded-lg border`. DESIGN.md v1.0.0 created at repo root, establishing token source of truth for future sprints: CSU Green (`#166534`) locked as brand anchor per constitution; all color, typography, spacing, and component rules formalized; "No emoji in production UI" codified as constitution rule. Rationale for key decisions: (A) nth-child CSS preferred over Tailwind in inline style because CDN context lacks JIT compilation for per-row classes; computed styles are stable and maintainable. (B) Orange chip replaces envelope tint because state visibility matters — user must immediately know "this filter is active and here's which one" rather than inferring from background color shift. (C) Calendar icon chosen for KPI3 because the metric is "Active Since" (temporal) not temperature, correcting earlier emoji choice. First audit: FAIL at QA gate — `overflow: hidden` static on `<aside>` blocked sidebar scroll when collapsed. Remediation: removed static overflow, added dynamic JS toggle between `overflow-hidden` (collapsed) and `overflow-auto` (expanded). Re-audit: PASS (all three gates SA/QA/SX). Zero regressions on all p1–p6 features. Human browser verification confirmed all six deliverables functional, no visual conflicts with prior work.</rationale>
+  <dependencies>
+    - Depends on: p1–p6 sprints (Studio Clarity refresh applies CSS and structure changes only to index.html; does not modify data contract or API boundaries)
+    - Unblocks: future sprints may use DESIGN.md token references instead of inferring from code
+    - Related: broadn-p5-p6-postmortem (identified protocol gaps; not blocking this sprint but context for next planning cycle)
+  </dependencies>
+  <retention_keys>
+    - DESIGN.md created at `/home/jhber/projects/broadn-web-view/DESIGN.md` (v1.0.0, 2026-04-02) — single source of truth for visual tokens:
+      - CSU Green `#166534` (green-800) is brand anchor
+      - Inter font family from Google Fonts CDN (wght@400;500;600;700;800)
+      - KPI palette: green (samples), blue (sites), amber (temperature/environment), purple (biology/lab)
+      - Orange filter tokens: `#fff7ed` (orange-50 background), `#c2410c` (orange-700 text)
+      - All typography, spacing, and component rules formalized
+    - Six deliverables shipped:
+      1. Inter font CDN link: `<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">`
+      2. Sidebar collapse toggle: 44px button with `aria-expanded`, JS handler toggles `overflow-auto` / `overflow-hidden` on `<aside>`, 200ms CSS transition on width
+      3. KPI icons (lucide-react CDN): bar-chart-2 (samples, green), map-pin (sites, blue), calendar (active-since, amber), dna (lab, purple) — SVG with halo backgrounds
+      4. Active filter chip: `rounded-full bg-orange-100 text-orange-700 border border-orange-300` in section header, replaced area tint
+      5. Nav scroll shadow: IIFE listens to window scroll, adds/removes `shadow-sm` on sticky nav element
+      6. Table styling: alternating rows via nth-child CSS (`tr:nth-child(even) { bg-color: stone-50 }`), thead `bg-stone-100 uppercase`, wrapper `rounded-lg border`
+    - First audit failure (QA): static `overflow: hidden` on `<aside>` blocked vertical scrolling in collapsed state
+    - Remediation applied: removed static overflow, added dynamic toggle in JS toggle handler — when collapsed, set `overflow-hidden`; when expanded, set `overflow-auto`
+    - Re-audit result: PASS (SA/QA/SX gates all passed)
+    - No data schema or API changes
+    - No breaking changes to p1–p6 features
+    - File modified: `/home/jhber/projects/broadn-web-view/index.html`, `/home/jhber/projects/broadn-web-view/DESIGN.md` (new)
+    - Manual verification: human confirmed all six features visually correct, interactive states responsive, no regressions in prior p1–p6 tooltips or banners
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-04-02T18:30:00Z</timestamp>
+  <task_id>broadn-studio-clarity-postmortem</task_id>
+  <event_type>POST_MORTEM</event_type>
+  <rationale>Studio Clarity UI refresh sprint (2026-04-02) post-mortem analysis completed. The sprint delivered all six Style C changes (Inter font, sidebar collapse toggle with WCAG accessibility, KPI SVG icon set, active filter chip, nav scroll shadow, table styling refinement) with one feedback loop at audit. Root cause: FE added `overflow: hidden` as a static inline style to support the sidebar collapse animation. Inline styles have higher CSS specificity than Tailwind utility classes, so this silently overrode the `overflow-y-auto` class meant to preserve scroll in the expanded state. The sidebar appeared correct at full width but lost vertical scrollability when expanded. Auditor caught this on first QA pass and provided exact remediation: remove the static overflow declaration, and instead set overflow dynamically in the JS toggle handler — `overflow-hidden` during collapse phase (with 200ms transition), then clear/restore to `overflow-auto` after transition completes on expand. This is a well-known Tailwind-CDN footgun: inline styles always win over utility classes due to CSS cascade rules, so any inline style added for animation purposes must be treated as temporary state via JavaScript, not a permanent HTML attribute. Two critical protocol gaps identified and documented: (1) Auditor lacks capability to run live-browser tests on vanilla HTML repositories because there is no `package.json` or dev server. Auditor explicitly noted inability to run Playwright, so scroll behavior, JS-driven animation states, and dynamic CSS cannot be verified visually — only by static code review. Recommended fix: add a vanilla-server fallback to auditor protocol: when `index.html` exists but `package.json` is absent, attempt `python3 -m http.server &lt;port&gt; &amp;` and run Playwright against `http://localhost:&lt;port&gt;`. This enables live verification of scroll, animation, and JS-driven state. (2) FE agent has no pre-flight check for inline style / Tailwind class property overlap. The canonical failure pattern is `style="overflow:..."` on an element that also carries a Tailwind class covering the same CSS property (e.g., `overflow-y-auto`). Recommended fix: add to FE pre-submission checklist — before submitting, grep for `style=".*overflow` or similar patterns on elements with corresponding Tailwind utility classes; any match is a blocking review flag. Agent performance: UI Designer 100% first-pass (proactively flagged `inert` accessibility requirement before FE started), FE 0% first-pass (1 QA fail due to inline/Tailwind specificity miss), Auditor caught blocker on first pass with precise remediation instructions. All deliverables shipped clean with zero runtime bugs and human verification. DESIGN.md v1.0.0 created as foundational artifact for future sprints — all color tokens, typography scale, spacing units, and component rules formalized. KPI palette (green/blue/amber/purple) locked and documented to prevent future reassignment.</rationale>
+  <dependencies>
+    - Relates to: broadn-studio-clarity-ui (the task this post-mortem analyzes)
+    - Depends on: docs/post-mortems/broadn-studio-clarity.md (full detailed analysis including agent activity log, QA gap analysis, protocol gap documentation, and agent performance summary)
+    - Impacts: auditor agent spec (recommend adding vanilla-server fallback for vanilla HTML repos), FE agent spec (recommend adding pre-flight grep for inline+Tailwind style conflicts), future UI sprints (must reference DESIGN.md v1.0.0 as token source of truth)
+  </dependencies>
+  <retention_keys>
+    - Full post-mortem document: docs/post-mortems/broadn-studio-clarity.md (agent activity log, timeline, QA gap analysis, protocol gaps, and deliverable state)
+    - Root cause of feedback loop: FE set `overflow: hidden` as static inline style to support sidebar collapse animation. Inline styles have higher specificity than Tailwind utility classes, so `style="overflow:hidden"` silently overrode `overflow-y-auto` class, breaking scroll in expanded state.
+    - Remediation applied: remove static overflow declaration, add dynamic JS toggle — set `overflow-hidden` during collapse (with 200ms transition), clear to `overflow-auto` after transition completes on expand.
+    - Two critical protocol gaps identified:
+      1. Auditor cannot run Playwright on vanilla HTML repos (no package.json). Fix: add python3 http.server fallback to auditor spec when index.html exists but package.json absent. Enables live scroll/animation/JS verification.
+      2. FE has no pre-flight check for inline style / Tailwind class property overlap (the canonical failure: style="overflow:..." + overflow-y-auto class). Fix: add to FE checklist — grep for style attribute patterns that duplicate Tailwind class properties; any match is a blocking review.
+    - Agent performance: UI Designer 100% first-pass (proactive accessibility guidance), FE 0% first-pass (1 QA fail), Auditor caught blocker on first pass with precise remediation.
+    - Deliverables shipped: Inter font CDN, sidebar collapse toggle (44px WCAG target, aria-expanded/aria-controls/inert), KPI icons (bar-chart-2/map-pin/calendar/dna via lucide-react CDN), active filter chip (orange-100 bg, replaces area tint), nav scroll shadow (IIFE listener), table styling (nth-child CSS for alternating rows, stone-100 thead).
+    - DESIGN.md v1.0.0 created as authoritative token source — CSU Green #166534 locked as brand anchor, KPI palette fixed (green=samples, blue=sites, amber=environment/time, purple=biology), all typography/spacing/component rules formalized.
+    - File paths modified: /home/jhber/projects/broadn-web-view/index.html, /home/jhber/projects/broadn-web-view/DESIGN.md (new).
+    - Audit result: 1 QA fail (remediated), then PASS on re-audit (all three gates SA/QA/SX). Zero runtime bugs. Human verification confirmed all features functional, no regressions.
   </retention_keys>
 </archive_entry>
