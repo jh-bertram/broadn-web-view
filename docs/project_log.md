@@ -3,6 +3,25 @@
 ## Archive Entries
 
 <archive_entry>
+  <timestamp>2026-04-02T12:00:00Z</timestamp>
+  <task_id>agent-improvement-2026-04-02-1</task_id>
+  <event_type>AGENT_IMPROVEMENT</event_type>
+  <rationale>Session: acted on 1 protocol gap identified in broadn-p5-p6.md Section 4, Recommendation 2, not captured in prior session (2026-03-28-2) Section 6 gaps. Gap addressed: (1) Auditor has no SA gate for stale chart-type comments in tooltip callbacks — prior session added ctx.parsed accessor check to critic.md but not auditor.md, leaving a path where Critic's check could be bypassed and a stale HTML comment (e.g., "doughnut" on a bar constructor) would silently reach production and render [object Object] in every tooltip. Added auditor.md SA gate: for any FE task modifying Chart.js tooltip callbacks with ctx.parsed access, grep the constructor for the actual type: field (bar/line → accessor is ctx.parsed.y; doughnut → accessor is bare ctx.parsed); SA FAIL if accessor does not match. This is a Chart.js-specific improvement and does not propagate to sibling projects (gander, gander-studio-alpha).</rationale>
+  <dependencies>
+    - Relates to post-mortem: broadn-p5-p6.md (Section 4, Recommendation 2)
+    - Prior improvement session: agent-improvement-2026-03-28-2 (added ctx.parsed check to critic.md; this session completes the audit gate coverage in auditor.md)
+    - Files modified: .claude/agents/auditor.md (version 1.0.6 → 1.0.7)
+  </dependencies>
+  <retention_keys>
+    - Session artifact: docs/agent-improvements/agent-improvement-2026-04-02-1.md (gap documented with root cause, file changed, version delta)
+    - Agent changelog: docs/agent-changelog.md (lines 63-69, auditor.md version bump recorded)
+    - File modified: .claude/agents/auditor.md lines 84-85 (stale chart-type comment SA gate)
+    - Observation: Cross-propagation of universal improvements from sessions 2026-03-17 through 2026-03-28 to sibling projects (gander, gander-studio-alpha) was never executed; recommend dedicated cross-propagation review session (separate from post-mortem improvement cycles)
+    - Next review trigger: p7 at the earliest (p9 or later); unresolved gap to watch: prior_approved_tasks mandate in pm.md has appeared in 3 consecutive post-mortems (p4, p5, p6) — verify hold in p7
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
   <timestamp>2026-03-28T12:45:00Z</timestamp>
   <task_id>agent-improvement-2026-03-28-2</task_id>
   <event_type>AGENT_IMPROVEMENT</event_type>

@@ -59,3 +59,11 @@
 | `.claude/agents/pm.md` | 1.1.2 | 1.1.6 | Added ctx.parsed accessor rule: PM must include chart type from constructor (not comment) when specifying tooltip callbacks |
 | `.claude/agents/critic.md` | 1.0.1 | 1.0.2 | Added ctx.parsed accessor audit check: verify chart type: field at constructor before accepting any tooltip label callback |
 | `.claude/agents/backend.md` | 1.1.2 | 1.1.3 | Added named 50-line gate exception for data-generation-only tasks with required commit message documentation |
+
+## agent-improvement-2026-04-02-1
+**Date:** 2026-04-02
+**Post-mortems acted on:** broadn-p5-p6.md (Section 4 Recommendation 2, not captured in Section 6 gaps)
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/auditor.md` | 1.0.6 | 1.0.7 | Added stale chart-type comment SA gate: grep `ctx.parsed` usage against actual constructor `type:` field before PASS on FE tooltip tasks |
