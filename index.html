@@ -1246,6 +1246,7 @@
 
       // --- e) Update the tag filter banner ---
       updateTagBanner();
+      refreshTableIfReady();
     }
 
     // Cross-link state — bidirectional map-marker ↔ bySite bar chart highlight
@@ -1843,11 +1844,11 @@
         var sliceCat   = filterState.slice.category;
         var sliceGroup = filterState.slice.group;
         var passSlice  = true;
-        if (sliceCat === 'project' && sliceGroup) {
+        if (sliceCat === SLICE_CATEGORIES.PROJECT && sliceGroup) {
           passSlice = s.project === sliceGroup;
-        } else if (sliceCat === 'location' && sliceGroup) {
+        } else if (sliceCat === SLICE_CATEGORIES.LOCATION && sliceGroup) {
           passSlice = s.site === sliceGroup;
-        } else if (sliceCat === 'lab_group' && sliceGroup) {
+        } else if (sliceCat === SLICE_CATEGORIES.LAB_GROUP && sliceGroup) {
           passSlice = s.lab_group === sliceGroup;
         }
         if (!passSlice) return false;
