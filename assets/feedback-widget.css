@@ -1,0 +1,472 @@
+/* =====================================================================
+   BROADN Feedback Widget Styles
+   Class prefix: .fb-  (all widget classes — avoids collision with Tailwind)
+   Token references: var(--color-*) from index.html :root where available;
+   DESIGN.md hex values used for tokens not in :root (stone-600 #57534e,
+   stone-900 #1c1917, green-700 #15803d, green-900 #14532d, red-700 #b91c1c,
+   green-100 #dcfce7, white #ffffff).
+   ===================================================================== */
+
+/* ----- Spinner keyframe ----- */
+@keyframes fb-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ----- Trigger icon button ----- */
+/* 44×44px clickable area (8px padding around 28px visual circle) */
+.fb-icon {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+  color: var(--color-stone-400);         /* stone-400 #a8a29e — --color-text-muted */
+  opacity: 0.7;
+  transition: background-color 100ms ease, color 100ms ease, opacity 100ms ease;
+  z-index: 1;                            /* within host stacking context */
+  line-height: 0;
+}
+
+/* Chart cards have no border → use inset placement (top/right: 8px, not -4px).
+   Applied via .fb-icon--inset modifier set by JS for borderless hosts. */
+.fb-icon--inset {
+  top: 8px;
+  right: 8px;
+}
+
+.fb-icon:hover {
+  background-color: var(--color-stone-50);   /* stone-100 #f5f5f4 — --color-surface-alt */
+  color: var(--color-green-800);             /* green-800 #166534 — --color-primary */
+  opacity: 1;
+}
+
+.fb-icon:focus-visible {
+  background-color: var(--color-stone-50);
+  color: var(--color-green-800);
+  opacity: 1;
+  outline: 2px solid #15803d;               /* green-700 — --color-primary-mid */
+  outline-offset: 2px;
+}
+
+.fb-icon:active {
+  background-color: var(--color-stone-200);  /* stone-200 #e7e5e4 — --color-surface-hover */
+  color: var(--color-green-800);
+}
+
+/* Open state — shows which element's feedback popover is open */
+.fb-icon--open {
+  background-color: #dcfce7;               /* green-100 — --color-primary-light */
+  color: var(--color-green-800);
+  opacity: 1;
+}
+
+
+/* ----- Floating general-feedback button ----- */
+#fb-floating-btn {
+  position: fixed;
+  bottom: 24px;                            /* space-6 */
+  right: 24px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  min-height: 44px;
+  border: none;
+  border-radius: 9999px;
+  background-color: var(--color-green-800);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -2px rgba(0,0,0,0.10);
+  transition: background-color 100ms ease;
+  line-height: 1;
+}
+
+#fb-floating-btn:hover {
+  background-color: #15803d;              /* green-700 — --color-primary-mid */
+}
+
+#fb-floating-btn:focus-visible {
+  outline: 2px solid #15803d;
+  outline-offset: 2px;
+}
+
+#fb-floating-btn:active {
+  background-color: #14532d;             /* green-900 — --color-primary-dark */
+}
+
+/* Mobile: icon-only circle */
+@media (max-width: 767px) {
+  #fb-floating-btn {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+  #fb-floating-btn .fb-btn-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+
+/* ----- Backdrop (mobile only) ----- */
+#fb-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.4);
+  z-index: 69;                            /* one below popover */
+}
+
+#fb-backdrop.fb-visible {
+  display: block;
+}
+
+
+/* ----- Popover ----- */
+#fb-popover {
+  position: absolute;
+  z-index: 70;
+  width: 320px;
+  background: #ffffff;
+  border: 1px solid var(--color-stone-200);  /* stone-200 #e7e5e4 — --color-border */
+  border-radius: 8px;                         /* rounded-lg */
+  padding: 16px;                              /* p-4 */
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -2px rgba(0,0,0,0.10);
+  /* Animation start state */
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
+  pointer-events: none;
+}
+
+#fb-popover.fb-popover--open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#fb-popover.fb-popover--closing {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 100ms ease-in, transform 100ms ease-in;
+  pointer-events: none;
+}
+
+/* Mobile: fixed bottom-anchored sheet */
+@media (max-width: 767px) {
+  #fb-popover {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
+    width: auto;
+    border-radius: 12px;                  /* rounded-xl — bottom-sheet feel */
+    transform: translateY(100%);
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+  }
+  #fb-popover.fb-popover--open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  #fb-popover.fb-popover--closing {
+    transform: translateY(100%);
+    opacity: 0;
+    transition: opacity 150ms ease-in, transform 150ms ease-in;
+  }
+}
+
+/* ----- Popover header ----- */
+.fb-popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;                    /* mb-3 */
+}
+
+.fb-popover-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1c1917;                         /* stone-900 — --color-text */
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ----- Close button ----- */
+.fb-close-btn {
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+  color: #57534e;                         /* stone-600 — --color-text-secondary (token-compliant idle) */
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: background-color 100ms ease, color 100ms ease;
+  line-height: 0;
+}
+
+.fb-close-btn:hover {
+  color: #57534e;
+  background-color: var(--color-stone-50);   /* stone-100 */
+}
+
+.fb-close-btn:focus-visible {
+  outline: 2px solid #15803d;
+  outline-offset: 2px;
+}
+
+.fb-close-btn:active {
+  background-color: var(--color-stone-200);
+  color: #1c1917;                         /* stone-900 */
+}
+
+/* ----- sr-only utility (for label, floating button text on mobile) ----- */
+.fb-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ----- Textarea ----- */
+.fb-textarea {
+  width: 100%;
+  min-height: 0;
+  max-height: 200px;
+  resize: vertical;
+  overflow: auto;
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: inherit;
+  color: #1c1917;                         /* stone-900 */
+  background: #ffffff;
+  border: 1px solid var(--color-stone-300);   /* stone-300 — --color-border-strong */
+  border-radius: 6px;                     /* rounded-md */
+  padding: 8px;                           /* p-2 */
+  box-sizing: border-box;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+  outline: none;
+}
+
+.fb-textarea:focus {
+  border-color: #15803d;                  /* green-700 — --color-primary-mid */
+  box-shadow: 0 0 0 2px #15803d;
+}
+
+.fb-textarea--error {
+  border-color: #b91c1c;                  /* red-700 — --color-error */
+  box-shadow: 0 0 0 2px rgba(185,28,28,0.3);
+}
+
+/* ----- Inline validation error ----- */
+.fb-field-error {
+  display: none;
+  font-size: 12px;
+  color: #b91c1c;                         /* red-700 — --color-error */
+  margin-top: 4px;                        /* mt-1 */
+}
+
+.fb-field-error--visible {
+  display: block;
+}
+
+/* ----- Identity disclosure toggle ----- */
+.fb-identity-toggle {
+  display: inline-block;
+  margin-top: 12px;                       /* mt-3 */
+  font-size: 12px;
+  color: #57534e;                         /* stone-600 — --color-text-secondary */
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  text-align: left;
+}
+
+.fb-identity-toggle:hover {
+  color: #1c1917;                         /* stone-900 */
+}
+
+.fb-identity-toggle:focus-visible {
+  outline: 2px solid #15803d;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ----- Identity fields panel ----- */
+#fb-identity-fields {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+#fb-identity-fields.fb-visible {
+  display: flex;
+}
+
+/* ----- Name / email inputs ----- */
+.fb-input {
+  width: 100%;
+  height: 36px;                           /* h-9 */
+  font-size: 14px;
+  font-family: inherit;
+  color: #1c1917;
+  background: #ffffff;
+  border: 1px solid var(--color-stone-300);
+  border-radius: 6px;
+  padding: 6px 8px;                       /* py-1.5 px-2 */
+  box-sizing: border-box;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+  outline: none;
+}
+
+.fb-input:focus {
+  border-color: #15803d;
+  box-shadow: 0 0 0 2px #15803d;
+}
+
+/* ----- Submit button ----- */
+.fb-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 16px;                       /* mt-4 */
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;                     /* rounded-md */
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  background-color: var(--color-green-800);   /* green-800 — --color-primary */
+  color: #ffffff;
+  transition: background-color 100ms ease;
+}
+
+.fb-submit:hover:not(:disabled) {
+  background-color: #15803d;             /* green-700 — --color-primary-mid */
+}
+
+.fb-submit:focus-visible {
+  outline: 2px solid #15803d;
+  outline-offset: 2px;
+}
+
+.fb-submit:active:not(:disabled) {
+  background-color: #14532d;            /* green-900 — --color-primary-dark */
+}
+
+.fb-submit:disabled,
+.fb-submit[aria-disabled="true"] {
+  background-color: var(--color-stone-300);   /* stone-300 — --color-border-strong */
+  color: #57534e;                         /* stone-600 — --color-text-secondary */
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.fb-submit--submitting {
+  opacity: 0.8;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ----- Spinner (inside submit button) ----- */
+.fb-spinner {
+  animation: fb-spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* ----- Submit error message ----- */
+.fb-submit-error {
+  display: none;
+  font-size: 12px;
+  color: #b91c1c;                         /* red-700 — --color-error */
+  margin-top: 8px;                        /* mt-2 */
+}
+
+.fb-submit-error--visible {
+  display: block;
+}
+
+/* ----- Success state ----- */
+.fb-success {
+  padding: 16px 0;                        /* py-4 */
+  text-align: center;
+}
+
+.fb-success-text {
+  font-size: 14px;
+  color: #57534e;                         /* stone-600 — --color-text-secondary */
+  margin-top: 8px;
+}
+
+/* ----- Not-configured state ----- */
+.fb-not-configured {
+  padding: 24px 0;                        /* py-6 */
+  text-align: center;
+}
+
+.fb-not-configured-text {
+  font-size: 14px;
+  color: #57534e;                         /* stone-600 — --color-text-secondary */
+  margin-top: 8px;
+}
+
+/* ----- prefers-reduced-motion: skip all transforms, keep opacity only ----- */
+@media (prefers-reduced-motion: reduce) {
+  #fb-popover {
+    transform: none !important;           /* !important — must override both open/closing state transforms */
+    transition: opacity 150ms ease-out;
+  }
+  #fb-popover.fb-popover--closing {
+    transition: opacity 100ms ease-in;
+  }
+  #fb-floating-btn {
+    transition: none;
+  }
+  .fb-icon {
+    transition: none;
+  }
+  .fb-spinner {
+    animation-play-state: paused;
+  }
+}
