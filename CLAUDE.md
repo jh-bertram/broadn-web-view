@@ -76,9 +76,14 @@ When agents build target projects, they follow `.claude/rules/standards.md`:
 - A11Y: keyboard nav, `alt` text, WCAG AA contrast, semantic HTML
 - `npm audit` before any merge to main
 
+## Git Workflow
+
+**Claude commits; the human pushes.** All `git push` invocations are reserved for the human and enforced via the `Bash(git push*)` deny rule in `.claude/settings.json`. When a commit is ready, surface the sha and prompt the human to push (e.g., `! git push`). Do not retry pushes that were denied — the denial is the policy. Same rule covers `git reset --hard`, `git clean -f`, `git push --force`, `gh pr merge`. Full rationale lives in `.claude/rules/standards.md` § Git Workflow.
+
 ## Hooks (`.claude/hooks/`)
 
 Three lifecycle hooks are active:
 - `pre-spawn-output-check.sh` — Runs before agent spawns
 - `post-write-open-report.sh` — Runs after Write tool use
 - `agent-stop-checkpoint.sh` — Runs when an agent stops (Stage 3 checkpoint)
+- `precommit-no-absolute-symlinks.sh` — `PreToolUse` matcher `Bash(git commit*)`; blocks commits that introduce tracked symlinks with absolute targets (per `session-2026-04-27-pages-build-fix` §5 G1)

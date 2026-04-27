@@ -3,6 +3,76 @@
 ## Archive Entries
 
 <archive_entry>
+  <timestamp>2026-04-27T23:00:00Z</timestamp>
+  <task_id>hone-2026-04-27-3</task_id>
+  <event_type>HONE_SESSION</event_type>
+  <rationale>Hone session reviewed Section 8 findings from session-2026-04-27-pages-build-fix.md and broadn-p8-feedback-widget.md. All four in-scope rows had prior dispositions: (a) §8c audit-pipeline CI-status check already absorbed earlier today by agent-improvement-2026-04-27-1 (audit-pipeline 1.2.2→1.3.0 added Step 2.7); (b) §8c commit-packet adjacent-file warning already absorbed by agent-improvement-2026-04-27-2 (commit-packet Step 4 added; cross-confirmed by hone-2026-04-27-2 logging it as no-op); (c) §8e audit-pipeline drift overlaps §8c (same disposition); (d) §9 post-mortem Mode B template complaint verified spurious — re-reading the template confirmed it already prompts for the "single paragraph naming most impactful main-session action" the §9 author wanted. One §8d new-skill candidate (request-push — push-intent detection to skip deny round-trips, ~30 lines) escalated to human; hone never creates skills, only governance. No skill edits, no archives needed, no research spawned. Mirrors the hone-2026-04-27-2 no-op precedent.</rationale>
+  <dependencies>
+    - Hone report: docs/agent-improvements/hone-2026-04-27-3.md
+    - Source post-mortems: docs/post-mortems/session-2026-04-27-pages-build-fix.md, docs/post-mortems/broadn-p8-feedback-widget.md
+    - Related agent-improvement (which absorbed today's §8c): docs/agent-improvements/agent-improvement-2026-04-27-1.md
+    - Prior precedent: gander/docs/agent-improvements/hone-2026-04-27-2.md (no-op pattern)
+    - Changelog row: broadn-web-view/docs/agent-changelog.md (last block)
+  </dependencies>
+  <retention_keys>
+    - §8d new-skill candidate request-push is unresolved — human decision needed before skill-creator can be invoked
+    - Catalog hygiene flag: broadn-web-view and gander changelogs have diverged; reconciliation is a candidate for a future agent-improvement session
+    - Skills to watch: audit-pipeline 1.3.0 Step 2.7, commit-packet 1.1.0 Step 4, post-mortem 1.3.0 Mode B §6 — all unverified in the wild post-edit; next sprint should confirm correct firing
+    - §9 self-complaint pattern noted: future Mode B post-mortem authors may repeat the §6 "wasted real estate" critique; if so, treat as real evidence and revisit (this session ruled it spurious based on template re-read)
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-04-27T22:30:00Z</timestamp>
+  <task_id>agent-improvement-2026-04-27-1</task_id>
+  <event_type>AGENT_IMPROVEMENT</event_type>
+  <rationale>Acted on 5 protocol gaps from the session-2026-04-27-pages-build-fix post-mortem (today's session-scoped Mode B). 6 files changed: 3 canonical user-level edits propagating to all Gander projects (orchestrator.md 1.7.3→1.7.4 added "Answering Deployment-Status Questions" section requiring gh run list for "is X live" questions; audit-pipeline SKILL.md 1.2.2→1.3.0 added Step 2.7 CI-status check requiring green CI run for the audited commit before audit-pipeline advances to PASS; standards.md 1.0.0→1.0.1 added Git Workflow section documenting the Claude-commits/human-pushes policy with rationale tied to the settings.json deny rule); 3 project-local edits (broadn-web-view CLAUDE.md added Git Workflow cross-reference and registered new precommit hook; new .claude/hooks/precommit-no-absolute-symlinks.sh PreToolUse Bash hook that exits 2 on any tracked symlink with absolute target; .claude/settings.json registered the new hook). Verified that all 3 protocol gaps from the broadn-p8-feedback-widget post-mortem were already addressed in current canonical specs with verbatim post-mortem citations (orchestrator.md ¶410-415 heredoc destructive-op rule; commit-packet Step 4 pre-stage scope check; auditor.md line 91 focus-trap visibility-filter gate; frontend.md Focus-Trap Pre-Flight; pm.md line 169 tabular-output hardening rule) — those edits had shipped between version bumps without changelog entries; this session added the changelog row. No RA spawned; no jidoka invoked. Two unresolved items deferred to next session: (a) promote precommit hook to user-level so gander and gander-studio-alpha also benefit; (b) act on §8d request-push new-skill candidate via the hone skill.</rationale>
+  <dependencies>
+    - Improvement report: docs/agent-improvements/agent-improvement-2026-04-27-1.md
+    - Source post-mortem: docs/post-mortems/session-2026-04-27-pages-build-fix.md
+    - Verified-already-addressed source: docs/post-mortems/broadn-p8-feedback-widget.md
+    - Changelog row: docs/agent-changelog.md (last block)
+    - Archived prior versions:
+      - docs/agent-versions/orchestrator/v1.7.3-2026-04-27.md
+      - docs/agent-versions/skills/audit-pipeline/v1.2.2-2026-04-27.md
+      - docs/agent-versions/rules/standards-v1.0.0-2026-04-27.md
+  </dependencies>
+  <retention_keys>
+    - Canonical edits propagate via inheritance symlinks to broadn-web-view, gander, and gander-studio-alpha — review next time gander or gander-studio-alpha are active to confirm no surprise interactions
+    - Project-local hook precommit-no-absolute-symlinks.sh should be smoke-tested by attempting to commit a deliberate absolute symlink before the next real commit relies on its protection
+    - Hook promotion to user-level (~/.claude/hooks/ + matching ~/.claude/settings.json PreToolUse entry) flagged for next agent-improvement session
+    - §8 hone-routed items: request-push new-skill candidate (push-intent detection), audit-pipeline content-quality candidate already addressed in this session
+    - Versioning gap noted: orchestrator.md, auditor.md, frontend.md, pm.md, and commit-packet had multiple unrecorded version bumps between the changelog's last entry (2026-04-03) and now — consider periodically reconciling the changelog with current version: fields
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-04-27T21:00:00Z</timestamp>
+  <task_id>session-2026-04-27-pages-build-fix-postmortem</task_id>
+  <event_type>POST_MORTEM</event_type>
+  <rationale>Post-mortem logged for a 45-minute main-session maintenance event on 2026-04-27 that shipped feedback-widget deployment wiring (commits cb5832d, c00f173) and incident-responded to a 24-day-old GitHub Pages build defect caused by a tracked git symlink. No agents spawned — Mode B per selection gate (zero entries in docs/events/agent-events-2026-04-27*.jsonl). Root cause: .claude/skills was committed as a git symlink (mode 120000) on 2026-04-23 (commit b1ab566) with target /home/jhber/projects/gander/.claude/skills — an absolute local-only path. On the GitHub Pages runner, the symlink dangled, causing artifact upload to fail. Between 2026-04-03 (last successful Pages build) and 2026-04-27 (today's failure discovery), zero pushes to main occurred; live dashboard remained on Apr 3 build entire time. Fixed by commit 9ab7e12 (git rm --cached + .gitignore entry). The p8 sprint post-mortem's claim "shipped to GitHub Pages preview" is technically incorrect for Apr 23–27 window — production Pages was on the Apr 3 build the whole time. Five protocol gaps identified: (g1) no pre-commit hook blocks tracked absolute symlinks; (g2) audit-pipeline lacks CI-status verification step, which masked 4-day silent failure; (g3) push-deny policy in .claude/settings.json enforced but undocumented in CLAUDE.md / standards.md, creating recurring per-session friction (deny → explain → human push); (g4) audit gates do not validate production CI status (p8 audit claimed "shipped" when Pages was broken); (g5) orchestrator does not proactively run gh run list for "is X deployed" questions. Most impactful gap: (g3) — undocumented policy causes 1-turn friction per push. Skill analysis: post-mortem skill Mode B selection gate correct; 1 content-quality candidate (audit-pipeline missing CI-status check); 1 new skill candidate (request-push to eliminate push-deny round-trips). Next actions: run agent-improvement to enact §5 protocol gaps; run hone skill to act on §8 findings; update broadn-p8 post-mortem to clarify Pages deploy window correctness.</rationale>
+  <dependencies>
+    - Post-mortem doc: docs/post-mortems/session-2026-04-27-pages-build-fix.md
+    - Root-cause commit: b1ab566 chore(skills): symlink to user-level skills, inherit from gander (2026-04-23)
+    - Fix commit: 9ab7e12 fix(pages): untrack .claude/skills symlink to fix GitHub Pages build
+    - Related deployment commits: cb5832d feat(feedback): wire Apps Script deployment URL and Sheet ID, c00f173 docs(post-mortem): add broadn-p8 post-mortem and gitignore Zone.Identifier
+    - Prior post-mortem (precedent for Mode B): docs/post-mortems/session-2026-04-23-inheritance-cleanup.md
+    - Related sprint post-mortem (claim invalidated): docs/post-mortems/broadn-p8-feedback-widget.md
+    - Failed CI run: GitHub Actions run id 25016763371 (commit 1f0c3e9)
+  </dependencies>
+  <retention_keys>
+    - Protocol gap #1 fix target: new pre-commit hook .claude/hooks/precommit-no-absolute-symlinks.sh; routed to HR / system-health-monitor
+    - Protocol gap #2 fix target: audit-pipeline SKILL.md QA step — add CI-status check; routed to HR
+    - Protocol gap #3 fix target: ~/.claude/rules/standards.md (add ## Git workflow section) and project CLAUDE.md files (one-line cross-reference); routed to HR
+    - Protocol gap #4 fix target: audit-pipeline SKILL.md (overlaps with #2)
+    - Protocol gap #5 fix target: orchestrator behavior — proactively run gh run list --limit 1 for "is X live / deployed" questions; routed to HR
+    - Skill catalog action: §8c content-quality candidate audit-pipeline; §8d new skill candidate request-push; §8e drift candidate audit-pipeline — all routed to hone skill
+    - Sprint correction: docs/post-mortems/broadn-p8-feedback-widget.md claim "shipped to GitHub Pages preview" is technically incorrect for Apr 23 → Apr 27 window — production Pages was on Apr 3 build entire time; update post-mortem to clarify window and distinguish "commit merged to main" from "live in production Pages"
+    - Next actions: run agent-improvement to act on §5 protocol gaps; run hone to act on §8 findings
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
   <timestamp>2026-04-27T00:00:00Z</timestamp>
   <task_id>broadn-p8-feedback-widget-postmortem</task_id>
   <event_type>POST_MORTEM</event_type>

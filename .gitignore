@@ -1,5 +1,6 @@
 # Claude Code runtime artifacts
 .claude/agents/tasks/
+.claude/skills
 docs/events/
 docs/agent-logs/
 docs/archive/

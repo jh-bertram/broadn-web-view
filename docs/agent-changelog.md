@@ -87,3 +87,24 @@
 | `.claude/agents/critic.md` | 1.0.2 | 1.0.3 | Added string-literal constant verification check: grep the constant definition before accepting any `===` comparison in a plan |
 | `.claude/agents/auditor.md` | 1.1.0 | 1.1.1 | Added event-driven wiring reachability check: trace full call chain from user action to new code, not only forward from new code |
 | `.claude/agents/pm.md` | 1.1.6 | 1.1.7 | Added call-chain verification mandate: read function body before asserting A calls B; flag unverified chains in risk_flags |
+
+## agent-improvement-2026-04-27-1
+**Date:** 2026-04-27
+**Post-mortems acted on:** session-2026-04-27-pages-build-fix.md (broadn-p8-feedback-widget.md gaps already addressed in prior canonical edits — verified verbatim post-mortem citations present at orchestrator.md ¶410-415, commit-packet Step 4, auditor.md line 91, frontend.md Focus-Trap Pre-Flight, pm.md line 169)
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/orchestrator.md` | 1.7.3 | 1.7.4 | Added Answering Deployment-Status Questions section requiring `gh run list` on "is X live/deployed/up to date" questions before answering |
+| `.claude/skills/audit-pipeline/SKILL.md` | 1.2.2 | 1.3.0 | Added Step 2.7 CI-status check requiring green CI run for the audited commit before audit-pipeline advances to PASS |
+| `.claude/rules/standards.md` | 1.0.0 | 1.0.1 | Added Git Workflow section documenting Claude-commits/human-pushes policy with rationale tied to settings.json deny rule |
+| `projects/broadn-web-view/CLAUDE.md` | n/a | n/a | Added Git Workflow section cross-referencing standards.md and registered new precommit hook in Hooks section |
+| `projects/broadn-web-view/.claude/hooks/precommit-no-absolute-symlinks.sh` | n/a | NEW | Pre-commit guard rejecting tracked symlinks with absolute targets; registered as PreToolUse Bash matcher in settings.json |
+| `projects/broadn-web-view/.claude/settings.json` | n/a | n/a | Registered precommit-no-absolute-symlinks.sh as a PreToolUse Bash hook |
+
+## hone-2026-04-27-3
+**Date:** 2026-04-27
+**Post-mortems acted on:** session-2026-04-27-pages-build-fix.md (§8c/§8e/§9 reviewed); broadn-p8-feedback-widget.md (§8c re-verified)
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| (no skill edits) | — | — | No-op session — §8c audit-pipeline absorbed by same-day agent-improvement-2026-04-27-1 (Step 2.7 CI-status gate); §8c commit-packet already absorbed by agent-improvement-2026-04-27-2; §9 post-mortem Mode B complaint verified spurious; §8d request-push escalated to human (skill-creator candidate) |
