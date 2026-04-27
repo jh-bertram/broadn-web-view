@@ -3,6 +3,34 @@
 ## Archive Entries
 
 <archive_entry>
+  <timestamp>2026-04-23T00:00:00Z</timestamp>
+  <task_id>broadn-p8-feedback-widget</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>In-page feedback widget delivered for BROADN GitHub Pages preview. Researchers can click icons adjacent to 17 landmark elements (11 chart/map regions + 6 chart cards + 1 general feedback button), compose feedback in a modal, and submit to a Google Sheet via Google Apps Script backend (free, user-owned data, no third-party SaaS). Key architectural decisions: (1) Google Apps Script chosen over Formspree (50/mo cap), GitHub Issues API (requires public PAT), and serverless (changes hosting model); free, unlimited, data sovereign. (2) CORS pattern uses text/plain Content-Type to bypass OPTIONS preflight (Apps Script does not support CORS); verified across 2024–2025 community sources. (3) Server-generates timestamps (prevents clock skew and manipulation; establishes trust boundary). (4) Formula-injection hardening via sanitizeForSheet helper (single-quote prefix blocks live formulas; canonical Sheets/Excel mitigation). (5) Landmark scope: human confirmed Option B (17 elements: 11 landmark + 6 chart cards + 1 floating button) over PM's initial 11-element proposal; researchers need per-chart feedback granularity. (6) Icon anchored to #slice-sidebar-wrapper (not the scrolling aside) to keep feedback affordance pinned. (7) Widget strictly additive (no changes to existing dashboard JS/CSS/logic; only new files and 17 data-feedback attributes + 11 IDs in index.html). Two protocol gaps flagged for post-mortem: (1) ORC spec calls out -f flags as destructive but does not name truncating heredocs (cat > file) — recommend rule: "read files >50 lines before overwriting"; (2) Auditor focus-trap checklist lacks offsetParent !== null filter requirement (first-pass FE implementation leaked focus to hidden elements, caught via Playwright, remediated with 4-line fix). Both gaps have clear mechanical fixes and apply to future sprints.</rationale>
+  <dependencies>
+    - PM decomposition: .claude/agents/tasks/outputs/broadn-p8-feedback-widget-PM-1761177900.md
+    - PM amendment: .claude/agents/tasks/outputs/broadn-p8-feedback-widget-PM-1761183600.md
+    - Critic approval: .claude/agents/tasks/outputs/broadn-p8-feedback-widget-CR-1761180900.md
+    - RA scry-preflight evidence: .claude/agents/tasks/outputs/broadn-p8-feedback-widget-RA-1761177600.md
+    - UI design spec: .claude/agents/tasks/outputs/broadn-p8-t1-ui-UI-1761184500.md
+    - BE Code.gs: .claude/agents/tasks/outputs/broadn-p8-t2-be-BE-1761184500.md
+    - FE widget: .claude/agents/tasks/outputs/broadn-p8-t3-fe-FE-1761188400.md
+    - Five audit passes: broadn-p8-*-AUD-*.md
+  </dependencies>
+  <retention_keys>
+    - Final commits: c336c7d (feat: add feedback widget) + eae7d49 (fix: restore task-registry after Gap 1 incident)
+    - Rollback point: 12895d42fb7ef746bf0760aeaed04c9af0c472ed
+    - New files: apps-script/Code.gs (175 lines), apps-script/SETUP.md (232 lines), assets/feedback-widget.js (634 lines), assets/feedback-widget.css (471 lines), assets/feedback-config.js (4 lines)
+    - Modified: index.html (+21 / -17 lines: CSS link, 2 script tags, 17 data-feedback attrs, 11 new IDs)
+    - Configuration: feedback-config.js placeholder URL; user must fill in deployed Apps Script endpoint
+    - Trust boundary: server-generated timestamps (no client time); all user strings sanitized for formula injection (single-quote prefix on = / + / - / @)
+    - Landmark scope: 17 elements marked with data-feedback (chart/map regions, chart cards, general feedback button)
+    - Widget lifecycle: strictly additive; disable by removing two script tags from index.html
+    - Protocol gaps for post-mortem: (1) destructive-overwrite rule missing heredoc truncation hazard, (2) focus-trap audit checklist missing offsetParent !== null requirement
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
   <timestamp>2026-04-02T22:50:00Z</timestamp>
   <task_id>broadn-p7-t2-table-filter</task_id>
   <event_type>TASK_COMPLETE</event_type>
