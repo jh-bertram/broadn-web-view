@@ -2,6 +2,7 @@
 .claude/agents/tasks/
 docs/events/
 docs/agent-logs/
+docs/archive/
 
 # OS
 .DS_Store
