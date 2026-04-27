@@ -3,6 +3,30 @@
 ## Archive Entries
 
 <archive_entry>
+  <timestamp>2026-04-27T00:00:00Z</timestamp>
+  <task_id>broadn-p8-feedback-widget-postmortem</task_id>
+  <event_type>POST_MORTEM</event_type>
+  <rationale>Post-mortem analysis of broadn-p8 feedback widget sprint (RA preflight 2026-04-23 → ARC 2026-04-23, ~3h45m wall-clock). Widget shipped cleanly to commit c336c7d (feat) with one audit-fail remediation cycle (FE focus-trap defect under partial state, 4-line fix), no runtime bugs post-delivery, and 100% gate closure. Three protocol gaps identified with concrete mechanical fixes: (1) Gap p8-g1: ORC heredoc-as-destructive-op rule absent — task-registry clobber via cat > file overwrite caused post-delivery content loss (repaired by eae7d49); fix: add Read-before-overwrite guard to orchestrator.md and commit-packet SKILL.md for files >50 lines. (2) Gap p8-g2: Auditor focus-trap checklist missing offsetParent !== null requirement — FE first-pass leaked focus to display:none descendant inputs in identity panel; fix: add to auditor.md §QA and frontend.md pre-flight with cross-propagation to gander/gander-studio-alpha. (3) Gap p8-g3: PM success_criteria lacked formula-injection and revocation-procedure line items for tabular-output/public-endpoint tasks — BE shipped 3 advisories in first pass that should have been in t2-be scope; fix: update pm.md decomposition checklist with tabular-output + public-endpoint requirements. Skill-use analysis: 7 skills VALUABLE, 1 PARTIAL_VALUE (commit-packet missing adjacent-file destructive-write warning), 1 NOT_TRIGGERED (jidoka correctly skipped). Most impactful: RA#1 scry brief grounded GAS CORS evidence; PM choice of GAS over Formspree/Issues API rested entirely on RA citations. FE/BE first-pass rates: 67% (2 of 3 PASS; single fail was runtime a11y defect, not static-analysis misses). Delivering engineer should run agent-improvement skill next to act on §6 protocol gaps and §8c commit-packet content-quality item.</rationale>
+  <dependencies>
+    - Post-mortem doc: docs/post-mortems/broadn-p8-feedback-widget.md (§6 protocol gaps, §8 skill analysis)
+    - PM brief + amendment: .claude/agents/tasks/outputs/broadn-p8-feedback-widget-PM-*.md (11-hook initial, 17-hook post-Critic amendment)
+    - Critic critique: .claude/agents/tasks/outputs/broadn-p8-feedback-widget-CR-*.md (4 warnings, all load-bearing)
+    - Audit fail report: .claude/agents/tasks/outputs/broadn-p8-t3-fe-AUD-1761190200.md (focus-trap escape defect, Playwright Tier 3)
+    - FE remediation output: .claude/agents/tasks/outputs/broadn-p8-t3-fe-remediation-FE-*.md (offsetParent filter fix)
+    - BE remediation output: .claude/agents/tasks/outputs/broadn-p8-t2-be-remediation-BE-*.md (formula-injection sanitizer, const migration, security doc)
+    - Task-registry incident repair: commit eae7d49 (fix task-registry clobbered by p8 heredoc overwrite)
+  </dependencies>
+  <retention_keys>
+    - Protocol gap p8-g1 fix targets: orchestrator.md (Step 0 destructive-op rule), commit-packet/SKILL.md (adjacent-file destructive-write warning pre-commit hook)
+    - Protocol gap p8-g2 fix targets: auditor.md (§QA focus-trap subsection), frontend.md (pre-flight a11y checklist), cross-propagation projects: gander, gander-studio-alpha (both have role=dialog patterns)
+    - Protocol gap p8-g3 fix targets: pm.md (decomposition checklist, add lines for tabular-output formula-injection and public-endpoint revocation-procedure success criteria)
+    - Skill-use anomaly: commit-packet SKILL.md content-quality item — add step "Before commit, run git status --porcelain and confirm all M/A entries are in packet's files_modified/files_created lists; if not, halt — unscoped adjacent-file destructive-write detected"
+    - Next action: run agent-improvement skill to apply §6 gaps and §8c recommendation
+    - Sprint delivered: 5 new files (1,512 lines), index.html +21/-17, zero runtime bugs post-delivery, human browser-verified all 17 landmark icons + popover + GAS integration
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
   <timestamp>2026-04-23T00:00:00Z</timestamp>
   <task_id>broadn-p8-feedback-widget</task_id>
   <event_type>TASK_COMPLETE</event_type>

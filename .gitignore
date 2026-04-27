@@ -7,6 +7,7 @@ docs/archive/
 # OS
 .DS_Store
 Thumbs.db
+*:Zone.Identifier
 
 # Editor
 .vscode/
