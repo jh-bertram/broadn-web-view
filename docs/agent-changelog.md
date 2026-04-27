@@ -77,3 +77,13 @@
 | `.claude/agents/auditor.md` | 1.0.7 | 1.1.0 | Added `python3 -m http.server` fallback for Playwright smoke checks on vanilla HTML repos without `package.json` |
 | `.claude/agents/frontend.md` | 1.2.0 | 1.2.1 | Added inline style / Tailwind conflict grep check requiring dynamic-only application of any inline style overlapping a Tailwind utility class |
 | `.claude/agents/orchestrator.md` | 1.1.3 | 1.1.4 | Added task stub mandate for direct-routing sprints: ORC acting as PM must write `.claude/tasks/{task_id}.md` before spawning agents |
+
+## agent-improvement-2026-04-03-1
+**Date:** 2026-04-03
+**Post-mortems acted on:** broadn-p7-sample-table.md
+
+| File | Previous version | New version | Change |
+|------|-----------------|-------------|--------|
+| `.claude/agents/critic.md` | 1.0.2 | 1.0.3 | Added string-literal constant verification check: grep the constant definition before accepting any `===` comparison in a plan |
+| `.claude/agents/auditor.md` | 1.1.0 | 1.1.1 | Added event-driven wiring reachability check: trace full call chain from user action to new code, not only forward from new code |
+| `.claude/agents/pm.md` | 1.1.6 | 1.1.7 | Added call-chain verification mandate: read function body before asserting A calls B; flag unverified chains in risk_flags |

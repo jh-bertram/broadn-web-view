@@ -382,6 +382,46 @@ def build_recent_samples(field_samples: pd.DataFrame, n: int = 100) -> list:
     return results
 
 
+def build_all_samples(field_samples: pd.DataFrame, df_col_map: dict) -> list:
+    """Return all field samples with extended tag fields for the Data Explorer."""
+    import math
+
+    def nullable(val) -> str | None:
+        if val is None:
+            return None
+        try:
+            if math.isnan(float(val)):
+                return None
+        except (TypeError, ValueError):
+            pass
+        s = str(val).strip()
+        return s if s else None
+
+    results = []
+    for _, row in field_samples.iterrows():
+        def col_val(col_const: str):
+            ser = df_col_map.get(col_const)
+            if ser is None:
+                return None
+            return nullable(row.get(col_const))
+
+        results.append({
+            "id":            str(row[COL_BROADN_ID]),
+            "date":          row[COL_COLLECTED_DATE].strftime("%Y-%m-%d") if pd.notna(row[COL_COLLECTED_DATE]) else None,
+            "site":          nullable(row.get(COL_COLLECTION_LOCATION)),
+            "type":          nullable(row.get(COL_SAMPLE_SOURCE_TYPE)),
+            "category":      FIELD_SAMPLE_CATEGORY,
+            "project":       nullable(row.get(COL_PROJECT_ID)),
+            "lab_group":     nullable(row.get(COL_PROJECT_LEAD)),
+            "am_pm":         col_val(COL_SAMPLE_AMPM),
+            "replicate":     col_val(COL_SAMPLE_REPLICATE_R),
+            "quadrant":      col_val(COL_SAMPLE_QUADRANT),
+            "position":      col_val(COL_SAMPLE_POSITION),
+            "field_control": col_val(COL_SAMPLE_FC),
+        })
+    return results
+
+
 # ── Location name mapping ───────────────────────────────────────────────────────
 LOCATION_NAMES: dict[str, str] = {
     "ARDEC": "ARDEC",
@@ -948,6 +988,9 @@ def main() -> None:
     if not new_cols_present:
         df_col_map[COL_SAMPLE_REPLICATE_R] = None
 
+    all_samples = build_all_samples(field_samples, df_col_map)
+    print(f"  all_samples: {len(all_samples)} entries")
+
     slice_project = build_slice_project(df, field_samples, df_col_map)
     print(f"  slice_views.project: {len(slice_project)} entries")
 
@@ -985,6 +1028,7 @@ def main() -> None:
         "sites": sites_array,
         "by_site": by_site,
         "recent_samples": recent_samples,
+        "all_samples": all_samples,
         "slice_views": slice_views,
         "type_pipeline_crossTab": type_pipeline_crossTab,
         "pipeline_type_crossTab": pipeline_type_crossTab,

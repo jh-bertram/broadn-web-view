@@ -1,4 +1,17 @@
 {
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/user-prompt-sprint-state.sh"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Read", "Write", "Edit", "Glob", "Grep",
@@ -16,40 +29,5 @@
   },
   "enabledPlugins": {
     "slack@claude-plugins-official": true
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Agent",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash /home/jhber/projects/broadn-web-view/.claude/hooks/pre-spawn-output-check.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash /home/jhber/projects/broadn-web-view/.claude/hooks/post-write-open-report.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash /home/jhber/projects/broadn-web-view/.claude/hooks/agent-stop-checkpoint.sh"
-          }
-        ]
-      }
-    ]
   }
 }
