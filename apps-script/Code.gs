@@ -31,7 +31,7 @@
 
 // ─── Configuration (human sets these values during setup — see SETUP.md) ─────
 
-const SHEET_ID   = 'PASTE_SHEET_ID_HERE';  // Replace with the ID from your Google Sheet URL
+const SHEET_ID   = '1JSho6yZ30hV4tMXEk4DDc1XWGE53minLcahXO8JrtUw';  // Replace with the ID from your Google Sheet URL
 const SHEET_NAME = 'Feedback';             // Must match the tab name in your Google Sheet
 
 // ─── Column definition (fixed — must match client payload field names) ────────
