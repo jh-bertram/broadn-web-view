@@ -354,7 +354,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-project-grid">
               <!-- Chart cards injected by 004b -->
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-project-types" class="bg-white p-6" data-feedback="Project: Sample Types">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type for this project.</p>
                 <div class="chart-wrap">
@@ -362,7 +362,7 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-project-pipeline" class="bg-white p-6" data-feedback="Project: Processing Pipeline">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample counts at each pipeline stage for this project.</p>
                 <div class="chart-wrap">
@@ -370,7 +370,7 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6 lg:col-span-2">
+              <div id="chart-card-slice-project-temporal" class="bg-white p-6 lg:col-span-2" data-feedback="Project: Sampling Activity">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume for this project.</p>
                 <div class="chart-wrap">
@@ -378,12 +378,12 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-project-replicates" class="bg-white p-6" data-feedback="Project: Replicate Tags">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceProjectReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-project-sampler" class="bg-white p-6" data-feedback="Project: Sampler Type">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceProjectSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected project" role="img"></canvas></div>
               </div>
@@ -394,7 +394,7 @@
           <div id="slice-location-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-location-grid">
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-location-subsites" class="bg-white p-6" data-feedback="Location: Sub-Location Breakdown">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sub-Location Breakdown</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample count by sub-site within this location.</p>
                 <div class="chart-wrap">
@@ -402,7 +402,7 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-location-types" class="bg-white p-6" data-feedback="Location: Sample Types">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type at this location.</p>
                 <div class="chart-wrap">
@@ -410,7 +410,7 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6 lg:col-span-2">
+              <div id="chart-card-slice-location-temporal" class="bg-white p-6 lg:col-span-2" data-feedback="Location: Sampling Activity">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume at this location.</p>
                 <div class="chart-wrap">
@@ -419,7 +419,7 @@
               </div>
               <!-- Optional time-of-day chart injected by 004b if data present -->
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div id="slice-location-timeofday-card" class="hidden bg-white p-6">
+              <div id="slice-location-timeofday-card" class="hidden bg-white p-6" data-feedback="Location: Time-of-Day Distribution">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Time-of-Day Distribution</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample collection frequency by time period.</p>
                 <div class="chart-wrap">
@@ -427,12 +427,12 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-location-replicates" class="bg-white p-6" data-feedback="Location: Replicate Tags">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceLocationReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-location-sampler" class="bg-white p-6" data-feedback="Location: Sampler Type">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceLocationSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected location" role="img"></canvas></div>
               </div>
@@ -443,7 +443,7 @@
           <div id="slice-labgroup-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-labgroup-grid">
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-labgroup-types" class="bg-white p-6" data-feedback="Lab Group: Sample Types">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sample Types</h3>
                 <p class="text-sm text-stone-500 mb-4">Proportion of samples by material type for this lab group.</p>
                 <div class="chart-wrap">
@@ -451,7 +451,7 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-labgroup-pipeline" class="bg-white p-6" data-feedback="Lab Group: Processing Pipeline">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Processing Pipeline</h3>
                 <p class="text-sm text-stone-500 mb-4">Sample counts at each pipeline stage for this lab group.</p>
                 <div class="chart-wrap">
@@ -459,7 +459,7 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6 lg:col-span-2">
+              <div id="chart-card-slice-labgroup-temporal" class="bg-white p-6 lg:col-span-2" data-feedback="Lab Group: Sampling Activity">
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Sampling Activity</h3>
                 <p class="text-sm text-stone-500 mb-4">Monthly sample collection volume for this lab group.</p>
                 <div class="chart-wrap">
@@ -467,12 +467,12 @@
                 </div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-labgroup-replicates" class="bg-white p-6" data-feedback="Lab Group: Replicate Tags">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-3">Replicate Tags</h3>
                 <div id="sliceLabGroupReplicateBadges" class="flex flex-wrap gap-2"></div>
               </div>
               <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
-              <div class="bg-white p-6">
+              <div id="chart-card-slice-labgroup-sampler" class="bg-white p-6" data-feedback="Lab Group: Sampler Type">
                 <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type</h3>
                 <div class="chart-wrap"><canvas id="sliceLabGroupSamplerChart" aria-label="Doughnut chart showing sampler type breakdown for selected lab group" role="img"></canvas></div>
               </div>
@@ -3291,13 +3291,18 @@
       collapseBtn.addEventListener('click', function () {
         isCollapsed = !isCollapsed;
         if (isCollapsed) {
+          // Collapse both wrapper AND the aside itself — the aside keeps its
+          // Tailwind w-64 (16rem) otherwise and visually overflows the 0-width
+          // wrapper, overlaying the dashboard body.
           sidebar.style.overflow = 'hidden';
+          sidebar.style.width = '0';
           sidebarWrapper.style.width = '0px';
           collapseIcon.style.transform = 'rotate(180deg)';
           collapseBtn.setAttribute('aria-label', 'Expand filter sidebar');
           collapseBtn.setAttribute('aria-expanded', 'false');
           sidebar.setAttribute('inert', '');
         } else {
+          sidebar.style.width = '';
           sidebarWrapper.style.width = '16rem';
           collapseIcon.style.transform = 'rotate(0deg)';
           collapseBtn.setAttribute('aria-label', 'Collapse filter sidebar');
