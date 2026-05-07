@@ -1,31 +1,17 @@
 {
   "meta": {
-    "generated": "2026-04-03T18:24:03Z",
-    "total_rows": 8079,
-    "field_samples": 4571,
-    "derivatives": 3508
+    "generated": "2026-05-07T18:18:04Z",
+    "total_rows": 8075,
+    "field_samples": 4569,
+    "derivatives": 3506
   },
   "kpis": {
-    "field_samples": 4571,
+    "field_samples": 4569,
     "unique_sites": 29,
-    "active_since": "2020",
-    "sequenced": 2098
+    "active_since": "2021",
+    "sequenced": 2960
   },
   "temporal": [
-    {
-      "month": "2020-03",
-      "count": 26,
-      "types": [
-        {
-          "type": "Air",
-          "count": 19
-        },
-        {
-          "type": "Soil",
-          "count": 7
-        }
-      ]
-    },
     {
       "month": "2021-01",
       "count": 85,
@@ -158,11 +144,15 @@
     },
     {
       "month": "2022-03",
-      "count": 16,
+      "count": 42,
       "types": [
         {
           "type": "Air",
-          "count": 15
+          "count": 34
+        },
+        {
+          "type": "Soil",
+          "count": 7
         },
         {
           "type": "Liquid",
@@ -312,11 +302,11 @@
     },
     {
       "month": "2023-06",
-      "count": 773,
+      "count": 764,
       "types": [
         {
           "type": "Air",
-          "count": 506
+          "count": 497
         },
         {
           "type": "Plant",
@@ -486,20 +476,24 @@
     },
     {
       "month": "2025-06",
-      "count": 2,
+      "count": 4,
       "types": [
         {
           "type": "Liquid",
-          "count": 2
+          "count": 4
         }
       ]
     },
     {
       "month": "2025-07",
-      "count": 3,
+      "count": 8,
       "types": [
         {
           "type": "Air",
+          "count": 5
+        },
+        {
+          "type": "Liquid",
           "count": 3
         }
       ]
@@ -508,7 +502,7 @@
   "sample_types": [
     {
       "type": "Air",
-      "count": 2926
+      "count": 2919
     },
     {
       "type": "Plant",
@@ -520,7 +514,7 @@
     },
     {
       "type": "Liquid",
-      "count": 24
+      "count": 29
     },
     {
       "type": "Unknown",
@@ -528,9 +522,9 @@
     }
   ],
   "pipeline": {
-    "collected": 4571,
-    "dna_extracted": 3243,
-    "sequenced": 2098
+    "collected": 4569,
+    "dna_extracted": 3250,
+    "sequenced": 2960
   },
   "sites": [
     {
@@ -589,16 +583,6 @@
       ]
     },
     {
-      "code": "CB",
-      "name": "CPER — Tower Bottom (B)",
-      "lat": 40.8155,
-      "lon": -104.7456,
-      "count": 169,
-      "primary_types": [
-        "Air"
-      ]
-    },
-    {
       "code": "IO",
       "name": "IMPROVE — OLYM (Olympic National Park)",
       "lat": 47.818,
@@ -614,6 +598,16 @@
       "lat": 40.8155,
       "lon": -104.7456,
       "count": 162,
+      "primary_types": [
+        "Air"
+      ]
+    },
+    {
+      "code": "CB",
+      "name": "CPER — Tower Bottom (B)",
+      "lat": 40.8155,
+      "lon": -104.7456,
+      "count": 160,
       "primary_types": [
         "Air"
       ]
@@ -740,6 +734,17 @@
       ]
     },
     {
+      "code": "OD",
+      "name": "Other — Doane University",
+      "lat": 40.621,
+      "lon": -96.949,
+      "count": 12,
+      "primary_types": [
+        "Liquid",
+        "Air"
+      ]
+    },
+    {
       "code": "AU",
       "name": "ARDEC — Upwind",
       "lat": 40.656,
@@ -801,17 +806,6 @@
       ]
     },
     {
-      "code": "OD",
-      "name": "Other — Doane University",
-      "lat": 40.621,
-      "lon": -96.949,
-      "count": 5,
-      "primary_types": [
-        "Air",
-        "Liquid"
-      ]
-    },
-    {
       "code": "XX",
       "name": "Unknown site (XX)",
       "lat": null,
@@ -859,11 +853,6 @@
       "count": 175
     },
     {
-      "site": "CPER — Tower Bottom (B)",
-      "code": "CB",
-      "count": 169
-    },
-    {
       "site": "IMPROVE — OLYM (Olympic National Park)",
       "code": "IO",
       "count": 164
@@ -872,6 +861,11 @@
       "site": "CPER — Tower Top (A)",
       "code": "CA",
       "count": 162
+    },
+    {
+      "site": "CPER — Tower Bottom (B)",
+      "code": "CB",
+      "count": 160
     },
     {
       "site": "IMPROVE — ACAD (Acadia National Park)",
@@ -934,6 +928,11 @@
       "count": 12
     },
     {
+      "site": "Other — Doane University",
+      "code": "OD",
+      "count": 12
+    },
+    {
       "site": "ARDEC — Upwind",
       "code": "AU",
       "count": 10
@@ -964,11 +963,6 @@
       "count": 6
     },
     {
-      "site": "Other — Doane University",
-      "code": "OD",
-      "count": 5
-    },
-    {
       "site": "Unknown — Unknown",
       "code": "XX",
       "count": 2
@@ -982,7 +976,42 @@
   "recent_samples": [
     {
       "id": "BOD0005A",
+      "date": "2025-07-14",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0012L",
+      "date": "2025-07-14",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0009A",
+      "date": "2025-07-14",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0008A",
       "date": "2025-07-10",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0011L",
+      "date": "2025-07-08",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0003A",
+      "date": "2025-07-02",
       "site": "Other",
       "type": "Air",
       "category": "Field Sample"
@@ -995,14 +1024,28 @@
       "category": "Field Sample"
     },
     {
-      "id": "BOD0003A",
+      "id": "BOD0010L",
       "date": "2025-07-02",
       "site": "Other",
-      "type": "Air",
+      "type": "Liquid",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0007L",
+      "date": "2025-06-30",
+      "site": "Other",
+      "type": "Liquid",
       "category": "Field Sample"
     },
     {
       "id": "BOD0004L",
+      "date": "2025-06-25",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0006L",
       "date": "2025-06-10",
       "site": "Other",
       "type": "Liquid",
@@ -1016,14 +1059,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0341A",
-      "date": "2025-02-22",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0340A",
+      "id": "BSN0338A",
       "date": "2025-02-22",
       "site": "SGRC",
       "type": "Air",
@@ -1037,7 +1073,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0338A",
+      "id": "BSN0341A",
       "date": "2025-02-22",
       "site": "SGRC",
       "type": "Air",
@@ -1072,8 +1108,8 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0331A",
-      "date": "2025-02-21",
+      "id": "BSN0340A",
+      "date": "2025-02-22",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1100,6 +1136,13 @@
       "category": "Field Sample"
     },
     {
+      "id": "BSN0331A",
+      "date": "2025-02-21",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
       "id": "BSN0333A",
       "date": "2025-02-21",
       "site": "SGRC",
@@ -1114,7 +1157,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0322A",
+      "id": "BSN0324A",
       "date": "2025-02-20",
       "site": "SGRC",
       "type": "Air",
@@ -1142,7 +1185,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0324A",
+      "id": "BSN0322A",
       "date": "2025-02-20",
       "site": "SGRC",
       "type": "Air",
@@ -1177,6 +1220,34 @@
       "category": "Field Sample"
     },
     {
+      "id": "BSN0318A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0316A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0319A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0313A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
       "id": "BSN0314A",
       "date": "2025-02-19",
       "site": "SGRC",
@@ -1198,29 +1269,8 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0318A",
-      "date": "2025-02-19",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0319A",
-      "date": "2025-02-19",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0313A",
-      "date": "2025-02-19",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0316A",
-      "date": "2025-02-19",
+      "id": "BSN0311A",
+      "date": "2025-02-17",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1233,35 +1283,14 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0311A",
-      "date": "2025-02-17",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0306A",
-      "date": "2025-02-14",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0304A",
-      "date": "2025-02-14",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0305A",
-      "date": "2025-02-14",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
       "id": "BSN0309A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0308A",
       "date": "2025-02-14",
       "site": "SGRC",
       "type": "Air",
@@ -1275,7 +1304,21 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0308A",
+      "id": "BSN0306A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0305A",
+      "date": "2025-02-14",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0304A",
       "date": "2025-02-14",
       "site": "SGRC",
       "type": "Air",
@@ -1324,21 +1367,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0294A",
-      "date": "2025-02-12",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0292A",
-      "date": "2025-02-12",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0293A",
+      "id": "BSN0296A",
       "date": "2025-02-12",
       "site": "SGRC",
       "type": "Air",
@@ -1352,7 +1381,21 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0296A",
+      "id": "BSN0294A",
+      "date": "2025-02-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0293A",
+      "date": "2025-02-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0292A",
       "date": "2025-02-12",
       "site": "SGRC",
       "type": "Air",
@@ -1373,14 +1416,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0286A",
-      "date": "2025-02-10",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0287A",
+      "id": "BSN0291A",
       "date": "2025-02-10",
       "site": "SGRC",
       "type": "Air",
@@ -1401,14 +1437,21 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0291A",
+      "id": "BSN0287A",
       "date": "2025-02-10",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0285A",
+      "id": "BSN0286A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0284A",
       "date": "2025-02-07",
       "site": "SGRC",
       "type": "Air",
@@ -1443,8 +1486,15 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0284A",
+      "id": "BSN0285A",
       "date": "2025-02-07",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0275A",
+      "date": "2025-02-06",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1485,14 +1535,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0275A",
-      "date": "2025-02-06",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0622A",
+      "id": "BSN0620A",
       "date": "2024-11-12",
       "site": "SGRC",
       "type": "Air",
@@ -1513,7 +1556,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0620A",
+      "id": "BSN0622A",
       "date": "2024-11-12",
       "site": "SGRC",
       "type": "Air",
@@ -1527,7 +1570,28 @@
       "category": "Field Sample"
     },
     {
+      "id": "BSN0610A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0608A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
       "id": "BSN0618A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0609A",
       "date": "2024-11-11",
       "site": "SGRC",
       "type": "Air",
@@ -1569,27 +1633,6 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0611A",
-      "date": "2024-11-11",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0610A",
-      "date": "2024-11-11",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0609A",
-      "date": "2024-11-11",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
       "id": "BSN0612A",
       "date": "2024-11-11",
       "site": "SGRC",
@@ -1597,21 +1640,14 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0608A",
+      "id": "BSN0611A",
       "date": "2024-11-11",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0607A",
-      "date": "2024-11-10",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0606A",
+      "id": "BSN0604A",
       "date": "2024-11-10",
       "site": "SGRC",
       "type": "Air",
@@ -1625,57 +1661,15 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0604A",
+      "id": "BSN0606A",
       "date": "2024-11-10",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0603A",
-      "date": "2024-11-07",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0602A",
-      "date": "2024-11-07",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0601A",
-      "date": "2024-11-07",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0600A",
-      "date": "2024-11-07",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0599A",
-      "date": "2024-11-06",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0594A",
-      "date": "2024-11-06",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0595A",
-      "date": "2024-11-06",
+      "id": "BSN0607A",
+      "date": "2024-11-10",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1684,7 +1678,7 @@
   "all_samples": [
     {
       "id": "BAD0001A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1698,7 +1692,7 @@
     },
     {
       "id": "BAD0002A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1712,7 +1706,7 @@
     },
     {
       "id": "BAD0003A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1726,7 +1720,7 @@
     },
     {
       "id": "BAD0004A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1740,7 +1734,7 @@
     },
     {
       "id": "BAD0006A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1754,7 +1748,7 @@
     },
     {
       "id": "BAD0007A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1768,7 +1762,7 @@
     },
     {
       "id": "BAD0008A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1782,7 +1776,7 @@
     },
     {
       "id": "BAD0009A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1796,7 +1790,7 @@
     },
     {
       "id": "BAD0010A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1810,7 +1804,7 @@
     },
     {
       "id": "BAU0001A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1824,7 +1818,7 @@
     },
     {
       "id": "BAU0002A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1838,7 +1832,7 @@
     },
     {
       "id": "BAU0003A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1852,7 +1846,7 @@
     },
     {
       "id": "BAU0004A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1866,7 +1860,7 @@
     },
     {
       "id": "BAU0005A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1880,7 +1874,7 @@
     },
     {
       "id": "BAU0006A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1894,7 +1888,7 @@
     },
     {
       "id": "BAU0007A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1908,7 +1902,7 @@
     },
     {
       "id": "BAU0008A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1922,7 +1916,7 @@
     },
     {
       "id": "BAU0009A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1936,7 +1930,7 @@
     },
     {
       "id": "BAU0010A",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Air",
       "category": "Field Sample",
@@ -1950,7 +1944,7 @@
     },
     {
       "id": "BAX0011S",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Soil",
       "category": "Field Sample",
@@ -1964,7 +1958,7 @@
     },
     {
       "id": "BAX0012S",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Soil",
       "category": "Field Sample",
@@ -1978,7 +1972,7 @@
     },
     {
       "id": "BAX0013S",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Soil",
       "category": "Field Sample",
@@ -1992,7 +1986,7 @@
     },
     {
       "id": "BAX0014S",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Soil",
       "category": "Field Sample",
@@ -2006,7 +2000,7 @@
     },
     {
       "id": "BAX0015S",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Soil",
       "category": "Field Sample",
@@ -2020,7 +2014,7 @@
     },
     {
       "id": "BAX0016S",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Soil",
       "category": "Field Sample",
@@ -2034,7 +2028,7 @@
     },
     {
       "id": "BAX0017S",
-      "date": "2020-03-23",
+      "date": "2022-03-23",
       "site": "ARDEC",
       "type": "Soil",
       "category": "Field Sample",
@@ -4110,10 +4104,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -4124,10 +4118,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -4138,10 +4132,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -4152,10 +4146,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -4166,10 +4160,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -4180,10 +4174,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -4194,10 +4188,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -4208,10 +4202,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -4222,7 +4216,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4236,7 +4230,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4250,7 +4244,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4264,7 +4258,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4278,7 +4272,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4292,7 +4286,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4306,7 +4300,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4320,7 +4314,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4334,7 +4328,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4348,7 +4342,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4362,7 +4356,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4376,7 +4370,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4390,7 +4384,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4404,7 +4398,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4418,7 +4412,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4432,7 +4426,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4446,7 +4440,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4460,7 +4454,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4474,7 +4468,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -4488,7 +4482,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6364,13 +6358,13 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
-      "field_control": null
+      "field_control": "Field Control"
     },
     {
       "id": "BCB0199A",
@@ -6378,10 +6372,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -6392,10 +6386,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -6406,10 +6400,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -6420,10 +6414,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -6434,13 +6428,13 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
-      "field_control": null
+      "field_control": "Field Control"
     },
     {
       "id": "BCB0204A",
@@ -6448,13 +6442,13 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
-      "field_control": null
+      "field_control": "Field Control"
     },
     {
       "id": "BCB0205A",
@@ -6462,10 +6456,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -6476,10 +6470,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -6490,10 +6484,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -6504,10 +6498,10 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -6518,13 +6512,13 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
-      "am_pm": null,
-      "replicate": null,
+      "am_pm": "AM",
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
-      "field_control": null
+      "field_control": "Field Control"
     },
     {
       "id": "BCB0210A",
@@ -6532,7 +6526,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6546,7 +6540,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6560,7 +6554,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6574,7 +6568,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6588,7 +6582,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6602,7 +6596,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6616,7 +6610,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6630,7 +6624,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6644,7 +6638,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6658,7 +6652,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6672,7 +6666,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6686,7 +6680,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6700,7 +6694,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6714,7 +6708,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6728,7 +6722,7 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": null,
       "replicate": null,
@@ -6742,138 +6736,12 @@
       "site": "CPER",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Summer",
+      "project": "Spring SASS/Polycarbonate Top/Bottom",
       "lab_group": "Borlee",
       "am_pm": "PM",
       "replicate": null,
       "quadrant": null,
       "position": "B (bottom)",
-      "field_control": null
-    },
-    {
-      "id": "BCB0226A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null
-    },
-    {
-      "id": "BCB0227A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null
-    },
-    {
-      "id": "BCB0228A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null
-    },
-    {
-      "id": "BCB0229A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": "PM",
-      "replicate": null,
-      "quadrant": null,
-      "position": "B (bottom)",
-      "field_control": null
-    },
-    {
-      "id": "BCB0230A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": "PM",
-      "replicate": null,
-      "quadrant": null,
-      "position": "B (bottom)",
-      "field_control": null
-    },
-    {
-      "id": "BCB0231A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": "PM",
-      "replicate": null,
-      "quadrant": null,
-      "position": "B (bottom)",
-      "field_control": null
-    },
-    {
-      "id": "BCB0232A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null
-    },
-    {
-      "id": "BCB0233A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": "PM",
-      "replicate": null,
-      "quadrant": null,
-      "position": "B (bottom)",
-      "field_control": null
-    },
-    {
-      "id": "BCB0234A",
-      "date": "2023-06-02",
-      "site": "CPER",
-      "type": "Air",
-      "category": "Field Sample",
-      "project": "2023 Summer",
-      "lab_group": "Borlee",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
       "field_control": null
     },
     {
@@ -27280,13 +27148,13 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
-      "field_control": null
+      "field_control": "Field Control"
     },
     {
       "id": "BNB0002A",
@@ -27294,13 +27162,13 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
-      "field_control": null
+      "field_control": "Field Control"
     },
     {
       "id": "BNB0003A",
@@ -27308,10 +27176,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27322,10 +27190,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27336,10 +27204,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27350,10 +27218,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27364,10 +27232,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27378,10 +27246,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27392,10 +27260,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27406,10 +27274,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27420,10 +27288,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27434,10 +27302,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27448,10 +27316,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27462,10 +27330,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27476,10 +27344,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27490,10 +27358,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27504,10 +27372,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27518,10 +27386,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27532,10 +27400,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27546,10 +27414,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Bottom",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27560,10 +27428,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27574,10 +27442,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27588,10 +27456,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27602,10 +27470,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27616,10 +27484,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27630,10 +27498,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27644,10 +27512,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27658,10 +27526,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27672,10 +27540,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27686,10 +27554,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27700,10 +27568,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27714,10 +27582,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Middle",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27728,10 +27596,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27742,10 +27610,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27756,10 +27624,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27770,10 +27638,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27784,10 +27652,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27798,10 +27666,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27812,10 +27680,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27826,10 +27694,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27840,10 +27708,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27854,10 +27722,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27868,10 +27736,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27882,10 +27750,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27896,10 +27764,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27910,10 +27778,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27924,10 +27792,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "PM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -27938,10 +27806,10 @@
       "site": "NWT",
       "type": "Air",
       "category": "Field Sample",
-      "project": "2023 Two Towers",
+      "project": "Two Towers",
       "lab_group": "Stewart",
       "am_pm": "AM",
-      "replicate": null,
+      "replicate": "Top",
       "quadrant": null,
       "position": null,
       "field_control": null
@@ -36712,7 +36580,7 @@
     },
     {
       "id": "BOD0004L",
-      "date": "2025-06-10",
+      "date": "2025-06-25",
       "site": "Other",
       "type": "Liquid",
       "category": "Field Sample",
@@ -36726,9 +36594,107 @@
     },
     {
       "id": "BOD0005A",
+      "date": "2025-07-14",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample",
+      "project": "Algae Bloom",
+      "lab_group": "Hancock",
+      "am_pm": null,
+      "replicate": null,
+      "quadrant": null,
+      "position": null,
+      "field_control": null
+    },
+    {
+      "id": "BOD0006L",
+      "date": "2025-06-10",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample",
+      "project": "Algae Bloom",
+      "lab_group": "Hancock",
+      "am_pm": null,
+      "replicate": null,
+      "quadrant": null,
+      "position": null,
+      "field_control": null
+    },
+    {
+      "id": "BOD0007L",
+      "date": "2025-06-30",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample",
+      "project": "Algae Bloom",
+      "lab_group": "Hancock",
+      "am_pm": null,
+      "replicate": null,
+      "quadrant": null,
+      "position": null,
+      "field_control": null
+    },
+    {
+      "id": "BOD0008A",
       "date": "2025-07-10",
       "site": "Other",
       "type": "Air",
+      "category": "Field Sample",
+      "project": "Algae Bloom",
+      "lab_group": "Hancock",
+      "am_pm": null,
+      "replicate": null,
+      "quadrant": null,
+      "position": null,
+      "field_control": null
+    },
+    {
+      "id": "BOD0009A",
+      "date": "2025-07-14",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample",
+      "project": "Algae Bloom",
+      "lab_group": "Hancock",
+      "am_pm": null,
+      "replicate": null,
+      "quadrant": null,
+      "position": null,
+      "field_control": null
+    },
+    {
+      "id": "BOD0010L",
+      "date": "2025-07-02",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample",
+      "project": "Algae Bloom",
+      "lab_group": "Hancock",
+      "am_pm": null,
+      "replicate": null,
+      "quadrant": null,
+      "position": null,
+      "field_control": null
+    },
+    {
+      "id": "BOD0011L",
+      "date": "2025-07-08",
+      "site": "Other",
+      "type": "Liquid",
+      "category": "Field Sample",
+      "project": "Algae Bloom",
+      "lab_group": "Hancock",
+      "am_pm": null,
+      "replicate": null,
+      "quadrant": null,
+      "position": null,
+      "field_control": null
+    },
+    {
+      "id": "BOD0012L",
+      "date": "2025-07-14",
+      "site": "Other",
+      "type": "Liquid",
       "category": "Field Sample",
       "project": "Algae Bloom",
       "lab_group": "Hancock",
@@ -65559,9 +65525,9 @@
       "project": "Spring Plants & Soil",
       "lab_group": "Kreidenweis",
       "am_pm": null,
-      "replicate": null,
+      "replicate": "RH",
       "quadrant": null,
-      "position": null,
+      "position": "A (top)",
       "field_control": null
     },
     {
@@ -65629,9 +65595,9 @@
       "project": "Spring Plants & Soil",
       "lab_group": "Kreidenweis",
       "am_pm": null,
-      "replicate": null,
+      "replicate": "RH",
       "quadrant": null,
-      "position": null,
+      "position": "B (bottom)",
       "field_control": null
     },
     {
@@ -65691,7 +65657,7 @@
         "pipeline": {
           "collected": 1056,
           "dna_extracted": 862,
-          "sequenced": 0
+          "sequenced": 862
         },
         "temporal": [
           {
@@ -65859,7 +65825,7 @@
           "Air": {
             "collected": 1056,
             "dna_extracted": 862,
-            "sequenced": 0
+            "sequenced": 862
           }
         },
         "pipeline_type_crossTab": {
@@ -65878,7 +65844,7 @@
           "sequenced": [
             {
               "type": "Air",
-              "count": 0
+              "count": 862
             }
           ]
         },
@@ -66479,11 +66445,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -66516,11 +66482,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -67007,15 +66973,15 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "RusThistle",
-                  "count": 15
-                },
-                {
                   "sampler": "Tall Grass",
                   "count": 15
                 },
                 {
                   "sampler": "Sagegrass",
+                  "count": 15
+                },
+                {
+                  "sampler": "RusThistle",
                   "count": 15
                 }
               ]
@@ -67048,7 +67014,7 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 },
                 {
@@ -67056,7 +67022,7 @@
                   "count": 15
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 }
               ]
@@ -67089,15 +67055,15 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
-                  "count": 15
-                },
-                {
                   "sampler": "RusThistle",
                   "count": 15
                 },
                 {
                   "sampler": "Tall Grass",
+                  "count": 15
+                },
+                {
+                  "sampler": "Sagegrass",
                   "count": 15
                 }
               ]
@@ -67379,11 +67345,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 51
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 51
                 }
               ]
@@ -67492,11 +67458,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 }
               ]
@@ -67876,6 +67842,294 @@
         }
       },
       {
+        "project_id": "Spring SASS/Polycarbonate Top/Bottom",
+        "sample_count": 304,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 304
+          }
+        ],
+        "pipeline": {
+          "collected": 304,
+          "dna_extracted": 140,
+          "sequenced": 139
+        },
+        "temporal": [
+          {
+            "month": "2022-06",
+            "count": 17,
+            "types": [
+              {
+                "type": "Air",
+                "count": 17
+              }
+            ]
+          },
+          {
+            "month": "2023-05",
+            "count": 79,
+            "types": [
+              {
+                "type": "Air",
+                "count": 79
+              }
+            ]
+          },
+          {
+            "month": "2023-06",
+            "count": 198,
+            "types": [
+              {
+                "type": "Air",
+                "count": 198
+              }
+            ]
+          },
+          {
+            "month": "2023-08",
+            "count": 10,
+            "types": [
+              {
+                "type": "Air",
+                "count": 10
+              }
+            ]
+          }
+        ],
+        "type_pipeline_crossTab": {
+          "Air": {
+            "collected": 304,
+            "dna_extracted": 140,
+            "sequenced": 139
+          }
+        },
+        "pipeline_type_crossTab": {
+          "collected": [
+            {
+              "type": "Air",
+              "count": 304
+            }
+          ],
+          "dna_extracted": [
+            {
+              "type": "Air",
+              "count": 140
+            }
+          ],
+          "sequenced": [
+            {
+              "type": "Air",
+              "count": 139
+            }
+          ]
+        },
+        "sampler_type_dist": [
+          {
+            "sampler": "Polycarbonate",
+            "count": 157
+          },
+          {
+            "sampler": "SASS",
+            "count": 145
+          }
+        ],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_groups": {
+          "AM/PM": {
+            "AM": 129,
+            "PM": 113
+          },
+          "Position": {
+            "B (bottom)": 124,
+            "A (top)": 120
+          },
+          "Field Control": {
+            "Field Control": 6
+          }
+        },
+        "tag_charts": {
+          "AM/PM": {
+            "AM": {
+              "temporal": [
+                {
+                  "month": "2023-05",
+                  "count": 39
+                },
+                {
+                  "month": "2023-06",
+                  "count": 90
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 129
+                }
+              ],
+              "pipeline": {
+                "collected": 129,
+                "dna_extracted": 64,
+                "sequenced": 64
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "Polycarbonate",
+                  "count": 65
+                },
+                {
+                  "sampler": "SASS",
+                  "count": 64
+                }
+              ]
+            },
+            "PM": {
+              "temporal": [
+                {
+                  "month": "2023-05",
+                  "count": 40
+                },
+                {
+                  "month": "2023-06",
+                  "count": 73
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 113
+                }
+              ],
+              "pipeline": {
+                "collected": 113,
+                "dna_extracted": 53,
+                "sequenced": 52
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "Polycarbonate",
+                  "count": 57
+                },
+                {
+                  "sampler": "SASS",
+                  "count": 56
+                }
+              ]
+            }
+          },
+          "Position": {
+            "A (top)": {
+              "temporal": [
+                {
+                  "month": "2022-06",
+                  "count": 1
+                },
+                {
+                  "month": "2023-05",
+                  "count": 39
+                },
+                {
+                  "month": "2023-06",
+                  "count": 80
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 120
+                }
+              ],
+              "pipeline": {
+                "collected": 120,
+                "dna_extracted": 57,
+                "sequenced": 57
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "Polycarbonate",
+                  "count": 60
+                },
+                {
+                  "sampler": "SASS",
+                  "count": 59
+                }
+              ]
+            },
+            "B (bottom)": {
+              "temporal": [
+                {
+                  "month": "2022-06",
+                  "count": 1
+                },
+                {
+                  "month": "2023-05",
+                  "count": 40
+                },
+                {
+                  "month": "2023-06",
+                  "count": 83
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 124
+                }
+              ],
+              "pipeline": {
+                "collected": 124,
+                "dna_extracted": 60,
+                "sequenced": 59
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "Polycarbonate",
+                  "count": 62
+                },
+                {
+                  "sampler": "SASS",
+                  "count": 61
+                }
+              ]
+            }
+          },
+          "Field Control": {
+            "Field Control": {
+              "temporal": [
+                {
+                  "month": "2022-06",
+                  "count": 6
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 6
+                }
+              ],
+              "pipeline": {
+                "collected": 6,
+                "dna_extracted": 6,
+                "sequenced": 6
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 6
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
         "project_id": "BACS",
         "sample_count": 274,
         "sample_types": [
@@ -68167,294 +68421,6 @@
                 {
                   "sampler": "SASS",
                   "count": 4
-                }
-              ]
-            }
-          }
-        }
-      },
-      {
-        "project_id": "Spring SASS/Polycarbonate Top/Bottom",
-        "sample_count": 268,
-        "sample_types": [
-          {
-            "type": "Air",
-            "count": 268
-          }
-        ],
-        "pipeline": {
-          "collected": 268,
-          "dna_extracted": 140,
-          "sequenced": 139
-        },
-        "temporal": [
-          {
-            "month": "2022-06",
-            "count": 17,
-            "types": [
-              {
-                "type": "Air",
-                "count": 17
-              }
-            ]
-          },
-          {
-            "month": "2023-05",
-            "count": 79,
-            "types": [
-              {
-                "type": "Air",
-                "count": 79
-              }
-            ]
-          },
-          {
-            "month": "2023-06",
-            "count": 162,
-            "types": [
-              {
-                "type": "Air",
-                "count": 162
-              }
-            ]
-          },
-          {
-            "month": "2023-08",
-            "count": 10,
-            "types": [
-              {
-                "type": "Air",
-                "count": 10
-              }
-            ]
-          }
-        ],
-        "type_pipeline_crossTab": {
-          "Air": {
-            "collected": 268,
-            "dna_extracted": 140,
-            "sequenced": 139
-          }
-        },
-        "pipeline_type_crossTab": {
-          "collected": [
-            {
-              "type": "Air",
-              "count": 268
-            }
-          ],
-          "dna_extracted": [
-            {
-              "type": "Air",
-              "count": 140
-            }
-          ],
-          "sequenced": [
-            {
-              "type": "Air",
-              "count": 139
-            }
-          ]
-        },
-        "sampler_type_dist": [
-          {
-            "sampler": "SASS",
-            "count": 145
-          },
-          {
-            "sampler": "Polycarbonate",
-            "count": 121
-          }
-        ],
-        "replicate_tags": {
-          "time_of_day": [],
-          "replicate": [],
-          "position": [],
-          "clock_quadrant": [],
-          "field_controls": [],
-          "other": []
-        },
-        "tag_groups": {
-          "AM/PM": {
-            "AM": 129,
-            "PM": 112
-          },
-          "Position": {
-            "B (bottom)": 123,
-            "A (top)": 120
-          },
-          "Field Control": {
-            "Field Control": 6
-          }
-        },
-        "tag_charts": {
-          "AM/PM": {
-            "AM": {
-              "temporal": [
-                {
-                  "month": "2023-05",
-                  "count": 39
-                },
-                {
-                  "month": "2023-06",
-                  "count": 90
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 129
-                }
-              ],
-              "pipeline": {
-                "collected": 129,
-                "dna_extracted": 64,
-                "sequenced": 64
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "Polycarbonate",
-                  "count": 65
-                },
-                {
-                  "sampler": "SASS",
-                  "count": 64
-                }
-              ]
-            },
-            "PM": {
-              "temporal": [
-                {
-                  "month": "2023-05",
-                  "count": 40
-                },
-                {
-                  "month": "2023-06",
-                  "count": 72
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 112
-                }
-              ],
-              "pipeline": {
-                "collected": 112,
-                "dna_extracted": 53,
-                "sequenced": 52
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 56
-                },
-                {
-                  "sampler": "Polycarbonate",
-                  "count": 56
-                }
-              ]
-            }
-          },
-          "Position": {
-            "A (top)": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 1
-                },
-                {
-                  "month": "2023-05",
-                  "count": 39
-                },
-                {
-                  "month": "2023-06",
-                  "count": 80
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 120
-                }
-              ],
-              "pipeline": {
-                "collected": 120,
-                "dna_extracted": 57,
-                "sequenced": 57
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "Polycarbonate",
-                  "count": 60
-                },
-                {
-                  "sampler": "SASS",
-                  "count": 59
-                }
-              ]
-            },
-            "B (bottom)": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 1
-                },
-                {
-                  "month": "2023-05",
-                  "count": 40
-                },
-                {
-                  "month": "2023-06",
-                  "count": 82
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 123
-                }
-              ],
-              "pipeline": {
-                "collected": 123,
-                "dna_extracted": 60,
-                "sequenced": 59
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 61
-                },
-                {
-                  "sampler": "Polycarbonate",
-                  "count": 61
-                }
-              ]
-            }
-          },
-          "Field Control": {
-            "Field Control": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 6
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 6
-                }
-              ],
-              "pipeline": {
-                "collected": 6,
-                "dna_extracted": 6,
-                "sequenced": 6
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 6
                 }
               ]
             }
@@ -69252,15 +69218,21 @@
           "position": [],
           "clock_quadrant": [],
           "field_controls": [],
-          "other": []
+          "other": [
+            "RH"
+          ]
         },
         "tag_groups": {
           "AM/PM": {
             "AM": 1
           },
+          "Replicate": {
+            "RH": 2
+          },
           "Position": {
-            "A (top)": 2,
-            "C (nearby)": 1
+            "A (top)": 3,
+            "C (nearby)": 1,
+            "B (bottom)": 1
           },
           "Field Control": {
             "Field Control": 3,
@@ -69296,6 +69268,33 @@
               ]
             }
           },
+          "Replicate": {
+            "RH": {
+              "temporal": [
+                {
+                  "month": "2022-06",
+                  "count": 2
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 2
+                }
+              ],
+              "pipeline": {
+                "collected": 2,
+                "dna_extracted": 2,
+                "sequenced": 2
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 2
+                }
+              ]
+            }
+          },
           "Position": {
             "C (nearby)": {
               "temporal": [
@@ -69321,7 +69320,7 @@
               "temporal": [
                 {
                   "month": "2022-06",
-                  "count": 1
+                  "count": 2
                 },
                 {
                   "month": "2022-09",
@@ -69330,18 +69329,43 @@
               ],
               "sample_types": [
                 {
+                  "type": "Air",
+                  "count": 2
+                },
+                {
                   "type": "Plant",
                   "count": 1
-                },
+                }
+              ],
+              "pipeline": {
+                "collected": 3,
+                "dna_extracted": 3,
+                "sequenced": 3
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 2
+                }
+              ]
+            },
+            "B (bottom)": {
+              "temporal": [
+                {
+                  "month": "2022-06",
+                  "count": 1
+                }
+              ],
+              "sample_types": [
                 {
                   "type": "Air",
                   "count": 1
                 }
               ],
               "pipeline": {
-                "collected": 2,
-                "dna_extracted": 2,
-                "sequenced": 2
+                "collected": 1,
+                "dna_extracted": 1,
+                "sequenced": 1
               },
               "sampler_type_dist": [
                 {
@@ -69736,188 +69760,6 @@
         }
       },
       {
-        "project_id": "2023 Two Towers",
-        "sample_count": 68,
-        "sample_types": [
-          {
-            "type": "Air",
-            "count": 68
-          }
-        ],
-        "pipeline": {
-          "collected": 68,
-          "dna_extracted": 68,
-          "sequenced": 68
-        },
-        "temporal": [
-          {
-            "month": "2023-06",
-            "count": 8,
-            "types": [
-              {
-                "type": "Air",
-                "count": 8
-              }
-            ]
-          },
-          {
-            "month": "2023-07",
-            "count": 23,
-            "types": [
-              {
-                "type": "Air",
-                "count": 23
-              }
-            ]
-          },
-          {
-            "month": "2023-09",
-            "count": 23,
-            "types": [
-              {
-                "type": "Air",
-                "count": 23
-              }
-            ]
-          },
-          {
-            "month": "2023-10",
-            "count": 14,
-            "types": [
-              {
-                "type": "Air",
-                "count": 14
-              }
-            ]
-          }
-        ],
-        "type_pipeline_crossTab": {
-          "Air": {
-            "collected": 68,
-            "dna_extracted": 68,
-            "sequenced": 68
-          }
-        },
-        "pipeline_type_crossTab": {
-          "collected": [
-            {
-              "type": "Air",
-              "count": 68
-            }
-          ],
-          "dna_extracted": [
-            {
-              "type": "Air",
-              "count": 68
-            }
-          ],
-          "sequenced": [
-            {
-              "type": "Air",
-              "count": 68
-            }
-          ]
-        },
-        "sampler_type_dist": [
-          {
-            "sampler": "SASS",
-            "count": 62
-          }
-        ],
-        "replicate_tags": {
-          "time_of_day": [],
-          "replicate": [],
-          "position": [],
-          "clock_quadrant": [],
-          "field_controls": [],
-          "other": []
-        },
-        "tag_groups": {
-          "AM/PM": {
-            "AM": 35,
-            "PM": 32
-          }
-        },
-        "tag_charts": {
-          "AM/PM": {
-            "AM": {
-              "temporal": [
-                {
-                  "month": "2023-06",
-                  "count": 4
-                },
-                {
-                  "month": "2023-07",
-                  "count": 13
-                },
-                {
-                  "month": "2023-09",
-                  "count": 10
-                },
-                {
-                  "month": "2023-10",
-                  "count": 8
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 35
-                }
-              ],
-              "pipeline": {
-                "collected": 35,
-                "dna_extracted": 35,
-                "sequenced": 35
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 30
-                }
-              ]
-            },
-            "PM": {
-              "temporal": [
-                {
-                  "month": "2023-06",
-                  "count": 4
-                },
-                {
-                  "month": "2023-07",
-                  "count": 10
-                },
-                {
-                  "month": "2023-09",
-                  "count": 12
-                },
-                {
-                  "month": "2023-10",
-                  "count": 6
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 32
-                }
-              ],
-              "pipeline": {
-                "collected": 32,
-                "dna_extracted": 32,
-                "sequenced": 32
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 32
-                }
-              ]
-            }
-          }
-        }
-      },
-      {
         "project_id": "2024 Summer",
         "sample_count": 68,
         "sample_types": [
@@ -70055,62 +69897,92 @@
         "tag_charts": {}
       },
       {
-        "project_id": "2023 Summer",
-        "sample_count": 45,
+        "project_id": "Two Towers",
+        "sample_count": 68,
         "sample_types": [
           {
             "type": "Air",
-            "count": 45
+            "count": 68
           }
         ],
         "pipeline": {
-          "collected": 45,
-          "dna_extracted": 0,
-          "sequenced": 0
+          "collected": 68,
+          "dna_extracted": 68,
+          "sequenced": 68
         },
         "temporal": [
           {
             "month": "2023-06",
-            "count": 45,
+            "count": 8,
             "types": [
               {
                 "type": "Air",
-                "count": 45
+                "count": 8
+              }
+            ]
+          },
+          {
+            "month": "2023-07",
+            "count": 23,
+            "types": [
+              {
+                "type": "Air",
+                "count": 23
+              }
+            ]
+          },
+          {
+            "month": "2023-09",
+            "count": 23,
+            "types": [
+              {
+                "type": "Air",
+                "count": 23
+              }
+            ]
+          },
+          {
+            "month": "2023-10",
+            "count": 14,
+            "types": [
+              {
+                "type": "Air",
+                "count": 14
               }
             ]
           }
         ],
         "type_pipeline_crossTab": {
           "Air": {
-            "collected": 45,
-            "dna_extracted": 0,
-            "sequenced": 0
+            "collected": 68,
+            "dna_extracted": 68,
+            "sequenced": 68
           }
         },
         "pipeline_type_crossTab": {
           "collected": [
             {
               "type": "Air",
-              "count": 45
+              "count": 68
             }
           ],
           "dna_extracted": [
             {
               "type": "Air",
-              "count": 0
+              "count": 68
             }
           ],
           "sequenced": [
             {
               "type": "Air",
-              "count": 0
+              "count": 68
             }
           ]
         },
         "sampler_type_dist": [
           {
-            "sampler": "Polycarbonate",
-            "count": 45
+            "sampler": "SASS",
+            "count": 68
           }
         ],
         "replicate_tags": {
@@ -70119,67 +69991,243 @@
           "position": [],
           "clock_quadrant": [],
           "field_controls": [],
-          "other": []
+          "other": [
+            "Bottom",
+            "Middle",
+            "Top"
+          ]
         },
         "tag_groups": {
           "AM/PM": {
-            "PM": 5
+            "AM": 36,
+            "PM": 32
           },
-          "Position": {
-            "B (bottom)": 5
+          "Replicate": {
+            "Bottom": 32,
+            "Top": 24,
+            "Middle": 12
+          },
+          "Field Control": {
+            "Field Control": 6
           }
         },
         "tag_charts": {
           "AM/PM": {
+            "AM": {
+              "temporal": [
+                {
+                  "month": "2023-06",
+                  "count": 4
+                },
+                {
+                  "month": "2023-07",
+                  "count": 13
+                },
+                {
+                  "month": "2023-09",
+                  "count": 11
+                },
+                {
+                  "month": "2023-10",
+                  "count": 8
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 36
+                }
+              ],
+              "pipeline": {
+                "collected": 36,
+                "dna_extracted": 36,
+                "sequenced": 36
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 36
+                }
+              ]
+            },
             "PM": {
               "temporal": [
                 {
                   "month": "2023-06",
-                  "count": 5
+                  "count": 4
+                },
+                {
+                  "month": "2023-07",
+                  "count": 10
+                },
+                {
+                  "month": "2023-09",
+                  "count": 12
+                },
+                {
+                  "month": "2023-10",
+                  "count": 6
                 }
               ],
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 5
+                  "count": 32
                 }
               ],
               "pipeline": {
-                "collected": 5,
-                "dna_extracted": 0,
-                "sequenced": 0
+                "collected": 32,
+                "dna_extracted": 32,
+                "sequenced": 32
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Polycarbonate",
-                  "count": 5
+                  "sampler": "SASS",
+                  "count": 32
                 }
               ]
             }
           },
-          "Position": {
-            "B (bottom)": {
+          "Replicate": {
+            "Top": {
               "temporal": [
                 {
                   "month": "2023-06",
-                  "count": 5
+                  "count": 4
+                },
+                {
+                  "month": "2023-07",
+                  "count": 8
+                },
+                {
+                  "month": "2023-09",
+                  "count": 8
+                },
+                {
+                  "month": "2023-10",
+                  "count": 4
                 }
               ],
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 5
+                  "count": 24
                 }
               ],
               "pipeline": {
-                "collected": 5,
-                "dna_extracted": 0,
-                "sequenced": 0
+                "collected": 24,
+                "dna_extracted": 24,
+                "sequenced": 24
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Polycarbonate",
-                  "count": 5
+                  "sampler": "SASS",
+                  "count": 24
+                }
+              ]
+            },
+            "Bottom": {
+              "temporal": [
+                {
+                  "month": "2023-06",
+                  "count": 4
+                },
+                {
+                  "month": "2023-07",
+                  "count": 11
+                },
+                {
+                  "month": "2023-09",
+                  "count": 11
+                },
+                {
+                  "month": "2023-10",
+                  "count": 6
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 32
+                }
+              ],
+              "pipeline": {
+                "collected": 32,
+                "dna_extracted": 32,
+                "sequenced": 32
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 32
+                }
+              ]
+            },
+            "Middle": {
+              "temporal": [
+                {
+                  "month": "2023-07",
+                  "count": 4
+                },
+                {
+                  "month": "2023-09",
+                  "count": 4
+                },
+                {
+                  "month": "2023-10",
+                  "count": 4
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 12
+                }
+              ],
+              "pipeline": {
+                "collected": 12,
+                "dna_extracted": 12,
+                "sequenced": 12
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 12
+                }
+              ]
+            }
+          },
+          "Field Control": {
+            "Field Control": {
+              "temporal": [
+                {
+                  "month": "2023-07",
+                  "count": 2
+                },
+                {
+                  "month": "2023-09",
+                  "count": 2
+                },
+                {
+                  "month": "2023-10",
+                  "count": 2
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 6
+                }
+              ],
+              "pipeline": {
+                "collected": 6,
+                "dna_extracted": 6,
+                "sequenced": 6
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 6
                 }
               ]
             }
@@ -70665,6 +70713,171 @@
             }
           }
         }
+      },
+      {
+        "project_id": "ARDEC Pilot Study",
+        "sample_count": 26,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 19
+          },
+          {
+            "type": "Soil",
+            "count": 7
+          }
+        ],
+        "pipeline": {
+          "collected": 26,
+          "dna_extracted": 19,
+          "sequenced": 18
+        },
+        "temporal": [
+          {
+            "month": "2022-03",
+            "count": 26,
+            "types": [
+              {
+                "type": "Air",
+                "count": 19
+              },
+              {
+                "type": "Soil",
+                "count": 7
+              }
+            ]
+          }
+        ],
+        "type_pipeline_crossTab": {
+          "Air": {
+            "collected": 19,
+            "dna_extracted": 12,
+            "sequenced": 12
+          },
+          "Soil": {
+            "collected": 7,
+            "dna_extracted": 7,
+            "sequenced": 6
+          }
+        },
+        "pipeline_type_crossTab": {
+          "collected": [
+            {
+              "type": "Air",
+              "count": 19
+            },
+            {
+              "type": "Soil",
+              "count": 7
+            }
+          ],
+          "dna_extracted": [
+            {
+              "type": "Air",
+              "count": 12
+            },
+            {
+              "type": "Soil",
+              "count": 7
+            }
+          ],
+          "sequenced": [
+            {
+              "type": "Air",
+              "count": 12
+            },
+            {
+              "type": "Soil",
+              "count": 6
+            }
+          ]
+        },
+        "sampler_type_dist": [
+          {
+            "sampler": "SKC BioSampler",
+            "count": 7
+          },
+          {
+            "sampler": "SASS",
+            "count": 4
+          }
+        ],
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": []
+        },
+        "tag_groups": {
+          "AM/PM": {
+            "PM": 10,
+            "AM": 9
+          }
+        },
+        "tag_charts": {
+          "AM/PM": {
+            "AM": {
+              "temporal": [
+                {
+                  "month": "2022-03",
+                  "count": 9
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 9
+                }
+              ],
+              "pipeline": {
+                "collected": 9,
+                "dna_extracted": 6,
+                "sequenced": 6
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SKC BioSampler",
+                  "count": 3
+                },
+                {
+                  "sampler": "SASS",
+                  "count": 2
+                }
+              ]
+            },
+            "PM": {
+              "temporal": [
+                {
+                  "month": "2022-03",
+                  "count": 10
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 10
+                }
+              ],
+              "pipeline": {
+                "collected": 10,
+                "dna_extracted": 6,
+                "sequenced": 6
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SKC BioSampler",
+                  "count": 4
+                },
+                {
+                  "sampler": "SASS",
+                  "count": 2
+                }
+              ]
+            }
+          }
+        }
       }
     ],
     "location": [
@@ -71111,7 +71324,7 @@
             "R1": 102,
             "R2": 102,
             "R3": 102,
-            "RH": 9,
+            "RH": 11,
             "A1": 9,
             "A2": 7,
             "A3": 3,
@@ -71136,8 +71349,8 @@
             "Bottom": 142,
             "Top": 142,
             "C (nearby)": 72,
-            "B (bottom)": 49,
-            "A (top)": 36
+            "B (bottom)": 50,
+            "A (top)": 37
           },
           "Field Control": {
             "Field Control": 40,
@@ -71350,6 +71563,10 @@
             "RH": {
               "temporal": [
                 {
+                  "month": "2022-06",
+                  "count": 2
+                },
+                {
                   "month": "2022-09",
                   "count": 9
                 }
@@ -71357,18 +71574,18 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 9
+                  "count": 11
                 }
               ],
               "pipeline": {
-                "collected": 9,
-                "dna_extracted": 9,
-                "sequenced": 9
+                "collected": 11,
+                "dna_extracted": 11,
+                "sequenced": 11
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 9
+                  "count": 11
                 }
               ]
             },
@@ -71596,11 +71813,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 }
               ]
@@ -71704,11 +71921,11 @@
                   "count": 16
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 }
               ]
@@ -71831,11 +72048,11 @@
                   "count": 16
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 }
               ]
@@ -72194,7 +72411,7 @@
               "temporal": [
                 {
                   "month": "2022-06",
-                  "count": 1
+                  "count": 2
                 },
                 {
                   "month": "2022-09",
@@ -72212,7 +72429,7 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 35
+                  "count": 36
                 },
                 {
                   "type": "Plant",
@@ -72220,14 +72437,14 @@
                 }
               ],
               "pipeline": {
-                "collected": 36,
-                "dna_extracted": 36,
-                "sequenced": 36
+                "collected": 37,
+                "dna_extracted": 37,
+                "sequenced": 37
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 35
+                  "count": 36
                 }
               ]
             },
@@ -72332,6 +72549,10 @@
             "B (bottom)": {
               "temporal": [
                 {
+                  "month": "2022-06",
+                  "count": 1
+                },
+                {
                   "month": "2022-09",
                   "count": 25
                 },
@@ -72343,18 +72564,18 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 49
+                  "count": 50
                 }
               ],
               "pipeline": {
-                "collected": 49,
-                "dna_extracted": 49,
-                "sequenced": 49
+                "collected": 50,
+                "dna_extracted": 50,
+                "sequenced": 50
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 49
+                  "count": 50
                 }
               ]
             }
@@ -72871,7 +73092,7 @@
           "Air": {
             "collected": 1056,
             "dna_extracted": 862,
-            "sequenced": 0
+            "sequenced": 862
           }
         },
         "pipeline_type_crossTab": {
@@ -72890,7 +73111,7 @@
           "sequenced": [
             {
               "type": "Air",
-              "count": 0
+              "count": 862
             }
           ]
         },
@@ -72914,7 +73135,7 @@
       {
         "site_code": "CPER",
         "site_name": "CPER (Central Plains Experimental Range)",
-        "sample_count": 658,
+        "sample_count": 649,
         "sub_sites": [
           {
             "sub_code": "Environment",
@@ -72928,17 +73149,6 @@
             ]
           },
           {
-            "sub_code": "Bottom (B)",
-            "sub_name": "Bottom (B)",
-            "count": 169,
-            "sample_types": [
-              {
-                "type": "Air",
-                "count": 169
-              }
-            ]
-          },
-          {
             "sub_code": "Top (A)",
             "sub_name": "Top (A)",
             "count": 162,
@@ -72948,12 +73158,23 @@
                 "count": 162
               }
             ]
+          },
+          {
+            "sub_code": "Bottom (B)",
+            "sub_name": "Bottom (B)",
+            "count": 160,
+            "sample_types": [
+              {
+                "type": "Air",
+                "count": 160
+              }
+            ]
           }
         ],
         "sample_types": [
           {
             "type": "Air",
-            "count": 658
+            "count": 649
           }
         ],
         "temporal": [
@@ -72979,11 +73200,11 @@
           },
           {
             "month": "2023-06",
-            "count": 287,
+            "count": 278,
             "types": [
               {
                 "type": "Air",
-                "count": 287
+                "count": 278
               }
             ]
           },
@@ -73020,7 +73241,7 @@
         ],
         "type_pipeline_crossTab": {
           "Air": {
-            "collected": 658,
+            "collected": 649,
             "dna_extracted": 357,
             "sequenced": 356
           }
@@ -73029,7 +73250,7 @@
           "collected": [
             {
               "type": "Air",
-              "count": 658
+              "count": 649
             }
           ],
           "dna_extracted": [
@@ -73048,15 +73269,15 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 194
-          },
-          {
-            "sampler": "Polycarbonate",
-            "count": 166
+            "count": 197
           },
           {
             "sampler": "Impactor",
             "count": 161
+          },
+          {
+            "sampler": "Polycarbonate",
+            "count": 157
           }
         ],
         "replicate_tags": {
@@ -73065,20 +73286,27 @@
           "position": [],
           "clock_quadrant": [],
           "field_controls": [],
-          "other": []
+          "other": [
+            "Bottom",
+            "Top"
+          ]
         },
         "tag_groups": {
           "AM/PM": {
-            "AM": 139,
-            "PM": 126
+            "AM": 140,
+            "PM": 122
+          },
+          "Replicate": {
+            "Bottom": 12,
+            "Top": 8
           },
           "Position": {
-            "B (bottom)": 132,
+            "B (bottom)": 128,
             "A (top)": 124
           },
           "Field Control": {
             "Field Blank": 15,
-            "Field Control": 10,
+            "Field Control": 14,
             "Lab Blank": 4,
             "Kit Blank": 4
           }
@@ -73101,24 +73329,24 @@
                 },
                 {
                   "month": "2023-09",
-                  "count": 4
+                  "count": 5
                 }
               ],
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 139
+                  "count": 140
                 }
               ],
               "pipeline": {
-                "collected": 139,
-                "dna_extracted": 74,
-                "sequenced": 74
+                "collected": 140,
+                "dna_extracted": 75,
+                "sequenced": 75
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 72
+                  "count": 75
                 },
                 {
                   "sampler": "Polycarbonate",
@@ -73134,7 +73362,7 @@
                 },
                 {
                   "month": "2023-06",
-                  "count": 77
+                  "count": 73
                 },
                 {
                   "month": "2023-07",
@@ -73148,11 +73376,11 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 126
+                  "count": 122
                 }
               ],
               "pipeline": {
-                "collected": 126,
+                "collected": 122,
                 "dna_extracted": 62,
                 "sequenced": 61
               },
@@ -73163,7 +73391,67 @@
                 },
                 {
                   "sampler": "Polycarbonate",
-                  "count": 61
+                  "count": 57
+                }
+              ]
+            }
+          },
+          "Replicate": {
+            "Top": {
+              "temporal": [
+                {
+                  "month": "2023-07",
+                  "count": 4
+                },
+                {
+                  "month": "2023-09",
+                  "count": 4
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 8
+                }
+              ],
+              "pipeline": {
+                "collected": 8,
+                "dna_extracted": 8,
+                "sequenced": 8
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 8
+                }
+              ]
+            },
+            "Bottom": {
+              "temporal": [
+                {
+                  "month": "2023-07",
+                  "count": 6
+                },
+                {
+                  "month": "2023-09",
+                  "count": 6
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 12
+                }
+              ],
+              "pipeline": {
+                "collected": 12,
+                "dna_extracted": 12,
+                "sequenced": 12
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 12
                 }
               ]
             }
@@ -73218,24 +73506,24 @@
                 },
                 {
                   "month": "2023-06",
-                  "count": 87
+                  "count": 83
                 }
               ],
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 132
+                  "count": 128
                 }
               ],
               "pipeline": {
-                "collected": 132,
+                "collected": 128,
                 "dna_extracted": 60,
                 "sequenced": 59
               },
               "sampler_type_dist": [
                 {
                   "sampler": "Polycarbonate",
-                  "count": 66
+                  "count": 62
                 },
                 {
                   "sampler": "SASS",
@@ -73250,23 +73538,31 @@
                 {
                   "month": "2022-06",
                   "count": 6
+                },
+                {
+                  "month": "2023-07",
+                  "count": 2
+                },
+                {
+                  "month": "2023-09",
+                  "count": 2
                 }
               ],
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 10
+                  "count": 14
                 }
               ],
               "pipeline": {
-                "collected": 10,
-                "dna_extracted": 10,
-                "sequenced": 10
+                "collected": 14,
+                "dna_extracted": 14,
+                "sequenced": 14
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 10
+                  "count": 14
                 }
               ]
             },
@@ -73338,7 +73634,7 @@
           },
           {
             "time_period": "Afternoon (12:00–17:59)",
-            "count": 21
+            "count": 12
           },
           {
             "time_period": "Evening (18:00–23:59)",
@@ -73349,11 +73645,11 @@
       {
         "site_code": "Other",
         "site_name": "Other",
-        "sample_count": 628,
+        "sample_count": 635,
         "sub_sites": [
           {
-            "sub_code": "Carolinas",
-            "sub_name": "Carolinas",
+            "sub_code": "South Carolina",
+            "sub_name": "South Carolina",
             "count": 623,
             "sample_types": [
               {
@@ -73373,15 +73669,15 @@
           {
             "sub_code": "Doane University",
             "sub_name": "Doane University",
-            "count": 5,
+            "count": 12,
             "sample_types": [
               {
-                "type": "Air",
-                "count": 3
+                "type": "Liquid",
+                "count": 7
               },
               {
-                "type": "Liquid",
-                "count": 2
+                "type": "Air",
+                "count": 5
               }
             ]
           }
@@ -73393,7 +73689,7 @@
           },
           {
             "type": "Air",
-            "count": 197
+            "count": 199
           },
           {
             "type": "Plant",
@@ -73401,7 +73697,7 @@
           },
           {
             "type": "Liquid",
-            "count": 2
+            "count": 7
           }
         ],
         "temporal": [
@@ -73427,20 +73723,24 @@
           },
           {
             "month": "2025-06",
-            "count": 2,
+            "count": 4,
             "types": [
               {
                 "type": "Liquid",
-                "count": 2
+                "count": 4
               }
             ]
           },
           {
             "month": "2025-07",
-            "count": 3,
+            "count": 8,
             "types": [
               {
                 "type": "Air",
+                "count": 5
+              },
+              {
+                "type": "Liquid",
                 "count": 3
               }
             ]
@@ -73448,8 +73748,8 @@
         ],
         "type_pipeline_crossTab": {
           "Air": {
-            "collected": 197,
-            "dna_extracted": 197,
+            "collected": 199,
+            "dna_extracted": 199,
             "sequenced": 194
           },
           "Plant": {
@@ -73463,8 +73763,8 @@
             "sequenced": 312
           },
           "Liquid": {
-            "collected": 2,
-            "dna_extracted": 2,
+            "collected": 7,
+            "dna_extracted": 7,
             "sequenced": 0
           }
         },
@@ -73476,7 +73776,7 @@
             },
             {
               "type": "Air",
-              "count": 197
+              "count": 199
             },
             {
               "type": "Plant",
@@ -73484,7 +73784,7 @@
             },
             {
               "type": "Liquid",
-              "count": 2
+              "count": 7
             }
           ],
           "dna_extracted": [
@@ -73494,7 +73794,7 @@
             },
             {
               "type": "Air",
-              "count": 197
+              "count": 199
             },
             {
               "type": "Plant",
@@ -73502,7 +73802,7 @@
             },
             {
               "type": "Liquid",
-              "count": 2
+              "count": 7
             }
           ],
           "sequenced": [
@@ -73531,7 +73831,11 @@
           },
           {
             "sampler": "SASS",
-            "count": 3
+            "count": 5
+          },
+          {
+            "sampler": "Nalgene",
+            "count": 1
           }
         ],
         "replicate_tags": {
@@ -73934,7 +74238,7 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 45
+            "count": 48
           }
         ],
         "replicate_tags": {
@@ -73943,12 +74247,24 @@
           "position": [],
           "clock_quadrant": [],
           "field_controls": [],
-          "other": []
+          "other": [
+            "Bottom",
+            "Middle",
+            "Top"
+          ]
         },
         "tag_groups": {
           "AM/PM": {
             "AM": 25,
             "PM": 23
+          },
+          "Replicate": {
+            "Bottom": 20,
+            "Top": 16,
+            "Middle": 12
+          },
+          "Field Control": {
+            "Field Control": 2
           }
         },
         "tag_charts": {
@@ -73986,7 +74302,7 @@
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 22
+                  "count": 25
                 }
               ]
             },
@@ -74024,6 +74340,142 @@
                 {
                   "sampler": "SASS",
                   "count": 23
+                }
+              ]
+            }
+          },
+          "Replicate": {
+            "Bottom": {
+              "temporal": [
+                {
+                  "month": "2023-06",
+                  "count": 4
+                },
+                {
+                  "month": "2023-07",
+                  "count": 5
+                },
+                {
+                  "month": "2023-09",
+                  "count": 5
+                },
+                {
+                  "month": "2023-10",
+                  "count": 6
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 20
+                }
+              ],
+              "pipeline": {
+                "collected": 20,
+                "dna_extracted": 20,
+                "sequenced": 20
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 20
+                }
+              ]
+            },
+            "Middle": {
+              "temporal": [
+                {
+                  "month": "2023-07",
+                  "count": 4
+                },
+                {
+                  "month": "2023-09",
+                  "count": 4
+                },
+                {
+                  "month": "2023-10",
+                  "count": 4
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 12
+                }
+              ],
+              "pipeline": {
+                "collected": 12,
+                "dna_extracted": 12,
+                "sequenced": 12
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 12
+                }
+              ]
+            },
+            "Top": {
+              "temporal": [
+                {
+                  "month": "2023-06",
+                  "count": 4
+                },
+                {
+                  "month": "2023-07",
+                  "count": 4
+                },
+                {
+                  "month": "2023-09",
+                  "count": 4
+                },
+                {
+                  "month": "2023-10",
+                  "count": 4
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 16
+                }
+              ],
+              "pipeline": {
+                "collected": 16,
+                "dna_extracted": 16,
+                "sequenced": 16
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 16
+                }
+              ]
+            }
+          },
+          "Field Control": {
+            "Field Control": {
+              "temporal": [
+                {
+                  "month": "2023-10",
+                  "count": 2
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 2
+                }
+              ],
+              "pipeline": {
+                "collected": 2,
+                "dna_extracted": 2,
+                "sequenced": 2
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 2
                 }
               ]
             }
@@ -74107,8 +74559,8 @@
         ],
         "temporal": [
           {
-            "month": "2020-03",
-            "count": 26,
+            "month": "2022-03",
+            "count": 27,
             "types": [
               {
                 "type": "Air",
@@ -74117,13 +74569,7 @@
               {
                 "type": "Soil",
                 "count": 7
-              }
-            ]
-          },
-          {
-            "month": "2022-03",
-            "count": 1,
-            "types": [
+              },
               {
                 "type": "Liquid",
                 "count": 1
@@ -74221,7 +74667,7 @@
             "AM": {
               "temporal": [
                 {
-                  "month": "2020-03",
+                  "month": "2022-03",
                   "count": 9
                 }
               ],
@@ -74250,7 +74696,7 @@
             "PM": {
               "temporal": [
                 {
-                  "month": "2020-03",
+                  "month": "2022-03",
                   "count": 10
                 }
               ],
@@ -74706,7 +75152,7 @@
         "pipeline": {
           "collected": 1679,
           "dna_extracted": 1485,
-          "sequenced": 623
+          "sequenced": 1485
         },
         "temporal": [
           {
@@ -74894,7 +75340,7 @@
           "Air": {
             "collected": 1250,
             "dna_extracted": 1056,
-            "sequenced": 194
+            "sequenced": 1056
           },
           "Plant": {
             "collected": 117,
@@ -74938,12 +75384,12 @@
           ],
           "sequenced": [
             {
-              "type": "Soil",
-              "count": 312
+              "type": "Air",
+              "count": 1056
             },
             {
-              "type": "Air",
-              "count": 194
+              "type": "Soil",
+              "count": 312
             },
             {
               "type": "Plant",
@@ -75000,16 +75446,6 @@
         },
         "temporal": [
           {
-            "month": "2020-03",
-            "count": 8,
-            "types": [
-              {
-                "type": "Air",
-                "count": 8
-              }
-            ]
-          },
-          {
             "month": "2022-01",
             "count": 28,
             "types": [
@@ -75021,11 +75457,11 @@
           },
           {
             "month": "2022-03",
-            "count": 15,
+            "count": 23,
             "types": [
               {
                 "type": "Air",
-                "count": 15
+                "count": 23
               }
             ]
           },
@@ -75275,14 +75711,14 @@
             "Extra": 119,
             "A": 12,
             "B": 12,
-            "RH": 9,
+            "RH": 11,
             "A1": 9,
             "A2": 7,
             "A3": 3
           },
           "Position": {
-            "B (bottom)": 176,
-            "A (top)": 160,
+            "B (bottom)": 177,
+            "A (top)": 161,
             "C (nearby)": 72
           },
           "Field Control": {
@@ -75297,7 +75733,7 @@
             "AM": {
               "temporal": [
                 {
-                  "month": "2020-03",
+                  "month": "2022-03",
                   "count": 4
                 },
                 {
@@ -75346,7 +75782,7 @@
             "PM": {
               "temporal": [
                 {
-                  "month": "2020-03",
+                  "month": "2022-03",
                   "count": 4
                 },
                 {
@@ -75455,6 +75891,10 @@
             "RH": {
               "temporal": [
                 {
+                  "month": "2022-06",
+                  "count": 2
+                },
+                {
                   "month": "2022-09",
                   "count": 9
                 }
@@ -75462,18 +75902,18 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 9
+                  "count": 11
                 }
               ],
               "pipeline": {
-                "collected": 9,
-                "dna_extracted": 9,
-                "sequenced": 9
+                "collected": 11,
+                "dna_extracted": 11,
+                "sequenced": 11
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 9
+                  "count": 11
                 }
               ]
             },
@@ -75592,7 +76032,7 @@
               "temporal": [
                 {
                   "month": "2022-06",
-                  "count": 6
+                  "count": 7
                 },
                 {
                   "month": "2022-09",
@@ -75614,7 +76054,7 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 159
+                  "count": 160
                 },
                 {
                   "type": "Plant",
@@ -75622,14 +76062,14 @@
                 }
               ],
               "pipeline": {
-                "collected": 160,
-                "dna_extracted": 93,
-                "sequenced": 93
+                "collected": 161,
+                "dna_extracted": 94,
+                "sequenced": 94
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 94
+                  "count": 95
                 },
                 {
                   "sampler": "Polycarbonate",
@@ -75641,7 +76081,7 @@
               "temporal": [
                 {
                   "month": "2022-06",
-                  "count": 5
+                  "count": 6
                 },
                 {
                   "month": "2022-09",
@@ -75663,18 +76103,18 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 176
+                  "count": 177
                 }
               ],
               "pipeline": {
-                "collected": 176,
-                "dna_extracted": 109,
-                "sequenced": 108
+                "collected": 177,
+                "dna_extracted": 110,
+                "sequenced": 109
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 110
+                  "count": 111
                 },
                 {
                   "sampler": "Polycarbonate",
@@ -75907,8 +76347,8 @@
         },
         "temporal": [
           {
-            "month": "2020-03",
-            "count": 11,
+            "month": "2022-03",
+            "count": 12,
             "types": [
               {
                 "type": "Air",
@@ -75917,13 +76357,7 @@
               {
                 "type": "Soil",
                 "count": 4
-              }
-            ]
-          },
-          {
-            "month": "2022-03",
-            "count": 1,
-            "types": [
+              },
               {
                 "type": "Liquid",
                 "count": 1
@@ -76144,7 +76578,7 @@
             "AM": {
               "temporal": [
                 {
-                  "month": "2020-03",
+                  "month": "2022-03",
                   "count": 3
                 },
                 {
@@ -76213,7 +76647,7 @@
             "PM": {
               "temporal": [
                 {
-                  "month": "2020-03",
+                  "month": "2022-03",
                   "count": 4
                 },
                 {
@@ -76424,11 +76858,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 }
               ]
@@ -76532,11 +76966,11 @@
                   "count": 16
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 }
               ]
@@ -76659,11 +77093,11 @@
                   "count": 16
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 }
               ]
@@ -77351,30 +77785,30 @@
       },
       {
         "group_name": "Borlee",
-        "sample_count": 121,
+        "sample_count": 112,
         "sample_types": [
-          {
-            "type": "Air",
-            "count": 63
-          },
           {
             "type": "Plant",
             "count": 58
+          },
+          {
+            "type": "Air",
+            "count": 54
           }
         ],
         "pipeline": {
-          "collected": 121,
+          "collected": 112,
           "dna_extracted": 0,
           "sequenced": 0
         },
         "temporal": [
           {
             "month": "2023-06",
-            "count": 45,
+            "count": 36,
             "types": [
               {
                 "type": "Air",
-                "count": 45
+                "count": 36
               }
             ]
           },
@@ -77409,7 +77843,7 @@
         ],
         "type_pipeline_crossTab": {
           "Air": {
-            "collected": 63,
+            "collected": 54,
             "dna_extracted": 0,
             "sequenced": 0
           },
@@ -77422,12 +77856,12 @@
         "pipeline_type_crossTab": {
           "collected": [
             {
-              "type": "Air",
-              "count": 63
-            },
-            {
               "type": "Plant",
               "count": 58
+            },
+            {
+              "type": "Air",
+              "count": 54
             }
           ],
           "dna_extracted": [
@@ -77454,7 +77888,7 @@
         "sampler_type_dist": [
           {
             "sampler": "Polycarbonate",
-            "count": 45
+            "count": 36
           },
           {
             "sampler": "Cactus flower",
@@ -77503,10 +77937,10 @@
         },
         "tag_groups": {
           "AM/PM": {
-            "PM": 5
+            "PM": 1
           },
           "Position": {
-            "B (bottom)": 5
+            "B (bottom)": 1
           }
         },
         "tag_charts": {
@@ -77515,24 +77949,24 @@
               "temporal": [
                 {
                   "month": "2023-06",
-                  "count": 5
+                  "count": 1
                 }
               ],
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 5
+                  "count": 1
                 }
               ],
               "pipeline": {
-                "collected": 5,
+                "collected": 1,
                 "dna_extracted": 0,
                 "sequenced": 0
               },
               "sampler_type_dist": [
                 {
                   "sampler": "Polycarbonate",
-                  "count": 5
+                  "count": 1
                 }
               ]
             }
@@ -77542,24 +77976,24 @@
               "temporal": [
                 {
                   "month": "2023-06",
-                  "count": 5
+                  "count": 1
                 }
               ],
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 5
+                  "count": 1
                 }
               ],
               "pipeline": {
-                "collected": 5,
+                "collected": 1,
                 "dna_extracted": 0,
                 "sequenced": 0
               },
               "sampler_type_dist": [
                 {
                   "sampler": "Polycarbonate",
-                  "count": 5
+                  "count": 1
                 }
               ]
             }
@@ -77672,7 +78106,7 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 62
+            "count": 68
           },
           {
             "sampler": "BioSpot VIVAS",
@@ -77685,14 +78119,24 @@
           "position": [],
           "clock_quadrant": [],
           "field_controls": [],
-          "other": []
+          "other": [
+            "Bottom",
+            "Middle",
+            "Top"
+          ]
         },
         "tag_groups": {
           "AM/PM": {
-            "AM": 35,
+            "AM": 36,
             "PM": 32
           },
+          "Replicate": {
+            "Bottom": 32,
+            "Top": 24,
+            "Middle": 12
+          },
           "Field Control": {
+            "Field Control": 6,
             "Extraction Control": 1
           }
         },
@@ -77710,7 +78154,7 @@
                 },
                 {
                   "month": "2023-09",
-                  "count": 10
+                  "count": 11
                 },
                 {
                   "month": "2023-10",
@@ -77720,18 +78164,18 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 35
+                  "count": 36
                 }
               ],
               "pipeline": {
-                "collected": 35,
-                "dna_extracted": 35,
-                "sequenced": 35
+                "collected": 36,
+                "dna_extracted": 36,
+                "sequenced": 36
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 30
+                  "count": 36
                 }
               ]
             },
@@ -77773,7 +78217,149 @@
               ]
             }
           },
+          "Replicate": {
+            "Top": {
+              "temporal": [
+                {
+                  "month": "2023-06",
+                  "count": 4
+                },
+                {
+                  "month": "2023-07",
+                  "count": 8
+                },
+                {
+                  "month": "2023-09",
+                  "count": 8
+                },
+                {
+                  "month": "2023-10",
+                  "count": 4
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 24
+                }
+              ],
+              "pipeline": {
+                "collected": 24,
+                "dna_extracted": 24,
+                "sequenced": 24
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 24
+                }
+              ]
+            },
+            "Bottom": {
+              "temporal": [
+                {
+                  "month": "2023-06",
+                  "count": 4
+                },
+                {
+                  "month": "2023-07",
+                  "count": 11
+                },
+                {
+                  "month": "2023-09",
+                  "count": 11
+                },
+                {
+                  "month": "2023-10",
+                  "count": 6
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 32
+                }
+              ],
+              "pipeline": {
+                "collected": 32,
+                "dna_extracted": 32,
+                "sequenced": 32
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 32
+                }
+              ]
+            },
+            "Middle": {
+              "temporal": [
+                {
+                  "month": "2023-07",
+                  "count": 4
+                },
+                {
+                  "month": "2023-09",
+                  "count": 4
+                },
+                {
+                  "month": "2023-10",
+                  "count": 4
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 12
+                }
+              ],
+              "pipeline": {
+                "collected": 12,
+                "dna_extracted": 12,
+                "sequenced": 12
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 12
+                }
+              ]
+            }
+          },
           "Field Control": {
+            "Field Control": {
+              "temporal": [
+                {
+                  "month": "2023-07",
+                  "count": 2
+                },
+                {
+                  "month": "2023-09",
+                  "count": 2
+                },
+                {
+                  "month": "2023-10",
+                  "count": 2
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 6
+                }
+              ],
+              "pipeline": {
+                "collected": 6,
+                "dna_extracted": 6,
+                "sequenced": 6
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 6
+                }
+              ]
+            },
             "Extraction Control": {
               "temporal": [
                 {
@@ -77935,39 +78521,43 @@
       },
       {
         "group_name": "Hancock",
-        "sample_count": 5,
+        "sample_count": 12,
         "sample_types": [
           {
-            "type": "Air",
-            "count": 3
+            "type": "Liquid",
+            "count": 7
           },
           {
-            "type": "Liquid",
-            "count": 2
+            "type": "Air",
+            "count": 5
           }
         ],
         "pipeline": {
-          "collected": 5,
-          "dna_extracted": 5,
+          "collected": 12,
+          "dna_extracted": 12,
           "sequenced": 0
         },
         "temporal": [
           {
             "month": "2025-06",
-            "count": 2,
+            "count": 4,
             "types": [
               {
                 "type": "Liquid",
-                "count": 2
+                "count": 4
               }
             ]
           },
           {
             "month": "2025-07",
-            "count": 3,
+            "count": 8,
             "types": [
               {
                 "type": "Air",
+                "count": 5
+              },
+              {
+                "type": "Liquid",
                 "count": 3
               }
             ]
@@ -77975,35 +78565,35 @@
         ],
         "type_pipeline_crossTab": {
           "Air": {
-            "collected": 3,
-            "dna_extracted": 3,
+            "collected": 5,
+            "dna_extracted": 5,
             "sequenced": 0
           },
           "Liquid": {
-            "collected": 2,
-            "dna_extracted": 2,
+            "collected": 7,
+            "dna_extracted": 7,
             "sequenced": 0
           }
         },
         "pipeline_type_crossTab": {
           "collected": [
             {
-              "type": "Air",
-              "count": 3
+              "type": "Liquid",
+              "count": 7
             },
             {
-              "type": "Liquid",
-              "count": 2
+              "type": "Air",
+              "count": 5
             }
           ],
           "dna_extracted": [
             {
-              "type": "Air",
-              "count": 3
+              "type": "Liquid",
+              "count": 7
             },
             {
-              "type": "Liquid",
-              "count": 2
+              "type": "Air",
+              "count": 5
             }
           ],
           "sequenced": [
@@ -78020,7 +78610,11 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 3
+            "count": 5
+          },
+          {
+            "sampler": "Nalgene",
+            "count": 1
           }
         ],
         "replicate_tags": {
@@ -78038,9 +78632,9 @@
   },
   "type_pipeline_crossTab": {
     "Air": {
-      "collected": 2926,
-      "dna_extracted": 2150,
-      "sequenced": 1008
+      "collected": 2919,
+      "dna_extracted": 2152,
+      "sequenced": 1870
     },
     "Soil": {
       "collected": 750,
@@ -78048,8 +78642,8 @@
       "sequenced": 560
     },
     "Liquid": {
-      "collected": 24,
-      "dna_extracted": 4,
+      "collected": 29,
+      "dna_extracted": 9,
       "sequenced": 2
     },
     "Unknown": {
@@ -78067,7 +78661,7 @@
     "collected": [
       {
         "type": "Air",
-        "count": 2926
+        "count": 2919
       },
       {
         "type": "Plant",
@@ -78079,7 +78673,7 @@
       },
       {
         "type": "Liquid",
-        "count": 24
+        "count": 29
       },
       {
         "type": "Unknown",
@@ -78089,7 +78683,7 @@
     "dna_extracted": [
       {
         "type": "Air",
-        "count": 2150
+        "count": 2152
       },
       {
         "type": "Soil",
@@ -78101,7 +78695,7 @@
       },
       {
         "type": "Liquid",
-        "count": 4
+        "count": 9
       },
       {
         "type": "Unknown",
@@ -78111,7 +78705,7 @@
     "sequenced": [
       {
         "type": "Air",
-        "count": 1008
+        "count": 1870
       },
       {
         "type": "Soil",
@@ -78133,15 +78727,15 @@
   },
   "site_date_ranges": {
     "AD": {
-      "first": "2020-03-23",
-      "last": "2020-03-23"
+      "first": "2022-03-23",
+      "last": "2022-03-23"
     },
     "AU": {
-      "first": "2020-03-23",
-      "last": "2020-03-23"
+      "first": "2022-03-23",
+      "last": "2022-03-23"
     },
     "AX": {
-      "first": "2020-03-23",
+      "first": "2022-03-23",
       "last": "2022-03-23"
     },
     "BM": {
@@ -78230,7 +78824,7 @@
     },
     "OD": {
       "first": "2025-06-04",
-      "last": "2025-07-10"
+      "last": "2025-07-14"
     },
     "PX": {
       "first": "2022-11-04",
