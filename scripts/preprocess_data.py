@@ -64,7 +64,9 @@ COL_COLLECTION_SPECIFIC = "Sample Collection Specific Site"
 COL_COLLECTED_DATE = "Sample Collected Date"
 COL_PRODUCT = "Product"                               # 'DNA', 'Isolate', or NaN on field samples
 COL_PROJECT_ID = "Project ID"
+COL_PROJECT_GROUP = "Project Group"  # cross-project grouping (e.g. 'CPER') — added 2026-05-07
 COL_PROJECT_LEAD = "Project Lead"
+COL_FILTER_REMAINING = "Filter Remaining"  # freezer inventory (e.g. '3/4', '0/4')
 COL_COLLECTED_TIME = "Sample Collected Time"
 COL_SAMPLER_TYPE = "Sampler Type"       # device/method used (e.g. 'SASS', 'SKC BioSampler') — 73.9% fill on field samples (verified 2026-03-22)
 COL_SAMPLE_REPLICATE = "Sample Replicate"  # batch/replicate tag (e.g. 'AM', 'PM') — 45.9% fill on field samples (verified 2026-03-22)
@@ -412,6 +414,7 @@ def build_all_samples(field_samples: pd.DataFrame, df_col_map: dict) -> list:
             "type":          nullable(row.get(COL_SAMPLE_SOURCE_TYPE)),
             "category":      FIELD_SAMPLE_CATEGORY,
             "project":       nullable(row.get(COL_PROJECT_ID)),
+            "project_group": nullable(row.get(COL_PROJECT_GROUP)),
             "lab_group":     nullable(row.get(COL_PROJECT_LEAD)),
             "am_pm":         col_val(COL_SAMPLE_AMPM),
             "replicate":     col_val(COL_SAMPLE_REPLICATE_R),
@@ -741,6 +744,325 @@ def build_slice_project(
     return results[:20]
 
 
+# ── Position normalization (project_group only) ────────────────────────────────
+# Sample Position has dual encoding: 'A (top)' / 'Top' both mean top.
+POSITION_NORMALIZE = {
+    "a (top)": "Top",
+    "top": "Top",
+    "b (bottom)": "Bottom",
+    "bottom": "Bottom",
+    "c (nearby)": "Nearby",
+    "nearby": "Nearby",
+}
+
+
+def normalize_position(val) -> str | None:
+    if val is None or (isinstance(val, float) and pd.isna(val)):
+        return None
+    s = str(val).strip().lower()
+    return POSITION_NORMALIZE.get(s, str(val).strip() or None)
+
+
+def build_collection_matrix(group: pd.DataFrame) -> dict:
+    """Build a medium × sampler count matrix for the project group page.
+
+    Medium rows: Air-Top, Air-Bottom, Air-Nearby, Air (unspecified position),
+    Plant, Soil, Liquid. Position is normalized via POSITION_NORMALIZE; rows
+    with an Air type but unrecognized position fall into 'Air (unspecified)'.
+
+    Columns: every distinct sampler value present in the group, sorted by
+    descending total. NaN sampler is bucketed as 'Unrecorded'.
+
+    Returns:
+      {
+        "media":   ["Air-Top", "Air-Bottom", ...],     # row order
+        "samplers": ["SASS", "Polycarbonate", ...],    # col order
+        "counts":  { "Air-Top": {"SASS": 12, ...}, ... },
+        "row_totals": { "Air-Top": 48, ... },
+        "col_totals": { "SASS": 352, ... },
+        "total":   1841,
+      }
+    """
+    g = group.copy()
+    g["_pos"] = g[COL_SAMPLE_POSITION].apply(normalize_position)
+    g["_sampler"] = g[COL_SAMPLER_TYPE].fillna("Unrecorded").astype(str).str.strip()
+    g["_sampler"] = g["_sampler"].replace("", "Unrecorded")
+
+    def medium_key(row) -> str:
+        t = str(row[COL_SAMPLE_SOURCE_TYPE]).strip()
+        if t == "Air":
+            return f"Air-{row['_pos']}" if row["_pos"] in ("Top", "Bottom", "Nearby") else "Air (unspecified)"
+        return t
+
+    g["_medium"] = g.apply(medium_key, axis=1)
+
+    # Preferred medium row order
+    PREFERRED = ["Air-Top", "Air-Bottom", "Air-Nearby", "Air (unspecified)",
+                 "Plant", "Soil", "Liquid"]
+    media_present = [m for m in PREFERRED if m in g["_medium"].values]
+    # any unexpected media (e.g. 'Unknown') get appended in count order
+    others = [m for m in g["_medium"].value_counts().index if m not in media_present]
+    media_order = media_present + others
+
+    sampler_totals = g["_sampler"].value_counts()
+    sampler_order = sampler_totals.index.tolist()
+
+    counts: dict[str, dict[str, int]] = {}
+    row_totals: dict[str, int] = {}
+    for medium in media_order:
+        sub = g[g["_medium"] == medium]
+        cell_counts = sub["_sampler"].value_counts()
+        counts[medium] = {s: int(cell_counts.get(s, 0)) for s in sampler_order if cell_counts.get(s, 0) > 0}
+        row_totals[medium] = int(len(sub))
+
+    return {
+        "media": media_order,
+        "samplers": sampler_order,
+        "counts": counts,
+        "row_totals": row_totals,
+        "col_totals": {s: int(sampler_totals[s]) for s in sampler_order},
+        "total": int(len(g)),
+    }
+
+
+def build_freezer_inventory(group: pd.DataFrame) -> dict:
+    """Summarize 'Filter Remaining' as a re-analysis availability rollup.
+
+    Filter Remaining values are fractions like '4/4', '3/4', '1/2', '0', etc.
+    A row counts as 'has_filter' if its value parses to a numerator > 0.
+    Values like '0', '0/4' are 'depleted'. NaN is 'unrecorded'.
+
+    Returns:
+      {
+        "with_filter":  int,
+        "depleted":     int,
+        "unrecorded":   int,
+        "by_value":     { "4/4": 28, "3/4": 12, ... },   # raw value distribution
+        "total":        int,
+      }
+    """
+    series = group[COL_FILTER_REMAINING] if COL_FILTER_REMAINING in group.columns else pd.Series(dtype=object)
+    total = len(group)
+    with_filter = 0
+    depleted = 0
+    unrecorded = 0
+    by_value: dict[str, int] = {}
+
+    for val in series.tolist() if len(group) else []:
+        if val is None or (isinstance(val, float) and pd.isna(val)):
+            unrecorded += 1
+            continue
+        s = str(val).strip()
+        if not s:
+            unrecorded += 1
+            continue
+        by_value[s] = by_value.get(s, 0) + 1
+        # Parse numerator
+        num_str = s.split("/")[0].strip() if "/" in s else s
+        try:
+            numerator = float(num_str)
+        except ValueError:
+            unrecorded += 1
+            continue
+        if numerator > 0:
+            with_filter += 1
+        else:
+            depleted += 1
+
+    by_value_sorted = dict(sorted(by_value.items(), key=lambda x: -x[1]))
+    return {
+        "with_filter": with_filter,
+        "depleted": depleted,
+        "unrecorded": unrecorded,
+        "by_value": by_value_sorted,
+        "total": total,
+    }
+
+
+def build_position_breakdown(group: pd.DataFrame) -> dict:
+    """Count of normalized Sample Position values."""
+    counts: dict[str, int] = {}
+    if COL_SAMPLE_POSITION not in group.columns:
+        return counts
+    for val in group[COL_SAMPLE_POSITION].dropna().tolist():
+        norm = normalize_position(val)
+        if norm:
+            counts[norm] = counts.get(norm, 0) + 1
+    return dict(sorted(counts.items(), key=lambda x: -x[1]))
+
+
+def build_site_breakdown(group: pd.DataFrame) -> dict:
+    """Count by Sample Collection Location, sorted desc."""
+    if COL_COLLECTION_LOCATION not in group.columns:
+        return {}
+    counts = group[COL_COLLECTION_LOCATION].dropna().value_counts()
+    return {str(k): int(v) for k, v in counts.items()}
+
+
+def build_sub_projects(group: pd.DataFrame) -> list:
+    """List of sub-projects within a project group, with date range and primary type.
+
+    Used by the timeline strip to render concurrent date envelopes.
+    """
+    results = []
+    for pid, sub in group.groupby(COL_PROJECT_ID):
+        dated = sub.dropna(subset=[COL_COLLECTED_DATE])
+        if len(dated):
+            first = dated[COL_COLLECTED_DATE].min().strftime("%Y-%m-%d")
+            last = dated[COL_COLLECTED_DATE].max().strftime("%Y-%m-%d")
+        else:
+            first = last = None
+        type_counts = sub[COL_SAMPLE_SOURCE_TYPE].value_counts()
+        primary_type = str(type_counts.index[0]) if len(type_counts) else None
+        results.append({
+            "project_id": str(pid),
+            "sample_count": int(len(sub)),
+            "date_range": {"first": first, "last": last},
+            "primary_type": primary_type,
+            "sample_types": [{"type": str(t), "count": int(c)} for t, c in type_counts.items()],
+        })
+    # Sort by first-date ascending so timeline reads left-to-right
+    results.sort(key=lambda x: (x["date_range"]["first"] or "9999"))
+    return results
+
+
+def build_daily_breakdown(group: pd.DataFrame) -> list:
+    """Per-collection-date breakdown for time-series plots.
+
+    Returns: list[{date, total, by_type:{type:count}, by_sampler:{sampler:count},
+    ampm:{AM:count,PM:count,unspec:count}}], sorted ascending by date.
+    Only dates with at least one sample appear.
+    """
+    dated = group.dropna(subset=[COL_COLLECTED_DATE]).copy()
+    if len(dated) == 0:
+        return []
+    dated["_d"] = dated[COL_COLLECTED_DATE].dt.strftime("%Y-%m-%d")
+    results = []
+    for d, sub in dated.groupby("_d"):
+        by_type: dict[str, int] = {}
+        for t, c in sub[COL_SAMPLE_SOURCE_TYPE].value_counts().items():
+            by_type[str(t)] = int(c)
+        by_sampler: dict[str, int] = {}
+        if COL_SAMPLER_TYPE in sub.columns:
+            for s, c in sub[COL_SAMPLER_TYPE].dropna().value_counts().items():
+                by_sampler[str(s)] = int(c)
+        ampm = {"AM": 0, "PM": 0, "unspec": 0}
+        if COL_SAMPLE_AMPM in sub.columns:
+            for v, c in sub[COL_SAMPLE_AMPM].value_counts(dropna=False).items():
+                if pd.isna(v):
+                    ampm["unspec"] += int(c)
+                else:
+                    key = str(v).strip().upper()
+                    if key in ("AM", "PM"):
+                        ampm[key] += int(c)
+                    else:
+                        ampm["unspec"] += int(c)
+        results.append({
+            "date": d,
+            "total": int(len(sub)),
+            "by_type": by_type,
+            "by_sampler": by_sampler,
+            "ampm": ampm,
+        })
+    results.sort(key=lambda x: x["date"])
+    return results
+
+
+def build_monthly_sampler(group: pd.DataFrame) -> list:
+    """Per-month sampler usage breakdown — monthly stacked-bar source.
+
+    Returns: list[{month:'YYYY-MM', total, by_sampler:{sampler:count}}]
+    """
+    if COL_SAMPLER_TYPE not in group.columns:
+        return []
+    dated = group.dropna(subset=[COL_COLLECTED_DATE]).copy()
+    if len(dated) == 0:
+        return []
+    dated["_ym"] = dated[COL_COLLECTED_DATE].dt.to_period("M").astype(str)
+    dated["_sampler"] = dated[COL_SAMPLER_TYPE].fillna("Unrecorded").astype(str).str.strip()
+    dated["_sampler"] = dated["_sampler"].replace("", "Unrecorded")
+    results = []
+    for ym, sub in dated.groupby("_ym"):
+        by_sampler: dict[str, int] = {}
+        for s, c in sub["_sampler"].value_counts().items():
+            by_sampler[str(s)] = int(c)
+        results.append({
+            "month": str(ym),
+            "total": int(len(sub)),
+            "by_sampler": by_sampler,
+        })
+    results.sort(key=lambda x: x["month"])
+    return results
+
+
+def build_slice_project_group(
+    df: pd.DataFrame,
+    field_samples: pd.DataFrame,
+    df_col_map: dict,
+) -> list:
+    """Build slice_views.project_group — aggregate by 'Project Group' column.
+
+    Cross-project grouping for related campaigns (e.g. multiple sub-projects
+    that ran concurrently and share an experimental program). Each entry
+    carries the standard project metrics PLUS a sub_projects list, a
+    medium × sampler collection_matrix, freezer_inventory, position and
+    site breakdowns — tailored to the project-group landing page.
+    """
+    if COL_PROJECT_GROUP not in field_samples.columns:
+        return []
+
+    fs = field_samples.dropna(subset=[COL_PROJECT_GROUP]).copy()
+    if len(fs) == 0:
+        return []
+
+    results = []
+    for group_id, group in fs.groupby(COL_PROJECT_GROUP):
+        group_field_ids = set(group[COL_BROADN_ID].tolist())
+
+        # sample_types desc
+        type_counts = group[COL_SAMPLE_SOURCE_TYPE].value_counts()
+        sample_types = [{"type": str(t), "count": int(c)} for t, c in type_counts.items()]
+
+        # pipeline
+        collected, dna_extracted, sequenced = compute_pipeline_counts(df, group_field_ids)
+
+        # date envelope across the whole group
+        dated = group.dropna(subset=[COL_COLLECTED_DATE])
+        if len(dated):
+            first = dated[COL_COLLECTED_DATE].min().strftime("%Y-%m-%d")
+            last = dated[COL_COLLECTED_DATE].max().strftime("%Y-%m-%d")
+        else:
+            first = last = None
+
+        results.append({
+            "group_id": str(group_id),
+            "sample_count": int(len(group)),
+            "date_range": {"first": first, "last": last},
+            "sub_projects": build_sub_projects(group),
+            "sample_types": sample_types,
+            "pipeline": {
+                "collected": collected,
+                "dna_extracted": dna_extracted,
+                "sequenced": sequenced,
+            },
+            "temporal": build_temporal(group),
+            "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
+            "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
+            "sampler_type_dist": build_sampler_type_dist(group),
+            "collection_matrix": build_collection_matrix(group),
+            "freezer_inventory": build_freezer_inventory(group),
+            "position_breakdown": build_position_breakdown(group),
+            "site_breakdown": build_site_breakdown(group),
+            "daily_breakdown": build_daily_breakdown(group),
+            "monthly_sampler": build_monthly_sampler(group),
+            "tag_groups": build_tag_groups(group, df_col_map),
+            "tag_charts": build_tag_charts(group, df_col_map, df),
+        })
+
+    results.sort(key=lambda x: x["sample_count"], reverse=True)
+    return results
+
+
 def build_slice_location(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
@@ -1000,10 +1322,18 @@ def main() -> None:
     slice_lab_group = build_slice_lab_group(df, field_samples, df_col_map)
     print(f"  slice_views.lab_group: {len(slice_lab_group)} entries")
 
+    slice_project_group = build_slice_project_group(df, field_samples, df_col_map)
+    print(f"  slice_views.project_group: {len(slice_project_group)} entries")
+    for pg in slice_project_group:
+        print(f"    {pg['group_id']}: {pg['sample_count']} samples, "
+              f"{len(pg['sub_projects'])} sub-projects, "
+              f"freezer with_filter={pg['freezer_inventory']['with_filter']}")
+
     slice_views = {
         "project": slice_project,
         "location": slice_location,
         "lab_group": slice_lab_group,
+        "project_group": slice_project_group,
     }
 
     # Meta
