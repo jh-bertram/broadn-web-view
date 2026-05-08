@@ -349,6 +349,120 @@
             <button onclick="clearAllTags()" class="ml-auto text-orange-700 hover:text-orange-900 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded px-1 text-lg leading-none" aria-label="Clear tag filters">×</button>
           </div>
 
+          <!-- Project Group slice view (custom page; pinned-bold groups in sidebar) -->
+          <div id="slice-projectgroup-view" class="hidden">
+            <!-- Hero banner — wide prairie photograph -->
+            <div class="mb-6 overflow-hidden rounded-sm">
+              <img src="assets/hero-image-1.jpg"
+                   alt="Prairie landscape at the Central Plains Experimental Range"
+                   loading="lazy"
+                   class="w-full h-32 sm:h-40 md:h-48 object-cover block" />
+            </div>
+            <div class="bg-white p-6 mb-6" data-feedback="Project Group: Header">
+              <div class="flex flex-wrap items-baseline justify-between gap-3 mb-3">
+                <div>
+                  <h2 id="pg-title" class="text-2xl font-bold text-green-800">CPER</h2>
+                  <p id="pg-subtitle" class="text-sm text-stone-500 mt-1">Cross-project program — concurrent collections at CPER and SGRC, 2022–2023</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs uppercase tracking-wide text-stone-400">Date envelope</p>
+                  <p id="pg-daterange" class="text-sm font-medium text-stone-700">—</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                <div class="border-l-4 border-green-700 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Samples</p><p id="pg-stat-samples" class="text-xl font-bold text-stone-800">—</p></div>
+                <div class="border-l-4 border-stone-400 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Sub-projects</p><p id="pg-stat-subprojects" class="text-xl font-bold text-stone-800">—</p></div>
+                <div class="border-l-4 border-amber-500 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">DNA extracted</p><p id="pg-stat-dna" class="text-xl font-bold text-stone-800">—</p></div>
+                <div class="border-l-4 border-blue-500 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Sequenced</p><p id="pg-stat-seq" class="text-xl font-bold text-stone-800">—</p></div>
+              </div>
+            </div>
+
+            <!-- Concurrent timeline strip -->
+            <div class="bg-white p-6 mb-6" data-feedback="Project Group: Concurrent Timeline">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Concurrent Sub-Projects</h3>
+              <p class="text-sm text-stone-500 mb-4">Each bar is one sub-project's date span. Click to drill into that project.</p>
+              <div id="pg-timeline" class="space-y-2"></div>
+              <div class="flex items-center gap-4 mt-4 text-xs text-stone-500 flex-wrap">
+                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 bg-sky-500"></span>Air</span>
+                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 bg-emerald-600"></span>Plant</span>
+                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 bg-amber-700"></span>Soil</span>
+                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 bg-cyan-400"></span>Liquid</span>
+              </div>
+            </div>
+
+            <!-- Plot 1: Daily Activity Stack (Chart.js) -->
+            <div class="bg-white p-6 mb-6" data-feedback="Project Group: Daily Activity">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Daily Activity — Stacked by Sample Type</h3>
+              <p class="text-sm text-stone-500 mb-4">One bar per collection day; stacked segments show how many Air / Plant / Soil / Liquid samples were taken that day. Reveals campaign waves and which days mixed sample types.</p>
+              <div style="height:320px"><canvas id="pgDailyStackChart" aria-label="Stacked bar chart of daily sample collection by type"></canvas></div>
+            </div>
+
+            <!-- Plot 2: Cadence Heatmap (custom HTML grid) -->
+            <div class="bg-white p-6 mb-6" data-feedback="Project Group: Cadence Heatmap">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Collection Cadence — Calendar Heatmap</h3>
+              <p class="text-sm text-stone-500 mb-4">Each cell is a calendar day; intensity scales with sample count. Empty cells show rest periods between campaigns.</p>
+              <div id="pg-cadence" class="overflow-x-auto"></div>
+            </div>
+
+            <!-- Plot 3: Sampler × Month Stack (Chart.js) -->
+            <div class="bg-white p-6 mb-6" data-feedback="Project Group: Sampler Usage by Month">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Sampler Usage — Monthly Stack</h3>
+              <p class="text-sm text-stone-500 mb-4">Monthly bins show which samplers (SASS, Polycarbonate, plant species samplers, VIVAS, etc.) were active when. Useful to see the design progression across the program.</p>
+              <div style="height:280px"><canvas id="pgSamplerMonthChart" aria-label="Stacked bar chart of monthly sampler usage"></canvas></div>
+            </div>
+
+            <!-- Plot 4: AM/PM Diurnal Strip (custom HTML) -->
+            <div class="bg-white p-6 mb-6" data-feedback="Project Group: AM/PM Diurnal Pattern">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">AM / PM Diurnal Pattern</h3>
+              <p class="text-sm text-stone-500 mb-4">For days with time-of-day metadata: paired AM (warm) and PM (cool) cells, intensity by count. Shows the diurnal sampling design.</p>
+              <div id="pg-diurnal" class="overflow-x-auto"></div>
+            </div>
+
+            <!-- Collection matrix: medium × sampler -->
+            <div class="bg-white p-6 mb-6" data-feedback="Project Group: Collection Matrix">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Collection Matrix — Medium × Sampler</h3>
+              <p class="text-sm text-stone-500 mb-4">Sample count at each medium / sampler intersection. Tower position (Top / Bottom / Nearby) is split out for Air samples.</p>
+              <div class="overflow-x-auto">
+                <table id="pg-matrix" class="min-w-full text-sm border-collapse">
+                  <thead></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <!-- Freezer inventory -->
+              <div class="bg-white p-6" data-feedback="Project Group: Freezer Inventory">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Freezer Inventory</h3>
+                <p class="text-sm text-stone-500 mb-4">Filter samples remaining for re-analysis (from <code class="text-xs bg-stone-100 px-1">Filter Remaining</code> column).</p>
+                <div class="grid grid-cols-3 gap-3 mb-4">
+                  <div class="border-l-4 border-green-700 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Available</p><p id="pg-freezer-available" class="text-2xl font-bold text-green-800">—</p></div>
+                  <div class="border-l-4 border-stone-400 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Depleted</p><p id="pg-freezer-depleted" class="text-2xl font-bold text-stone-700">—</p></div>
+                  <div class="border-l-4 border-stone-300 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Unrecorded</p><p id="pg-freezer-unrecorded" class="text-2xl font-bold text-stone-500">—</p></div>
+                </div>
+                <p class="text-xs uppercase tracking-wide text-stone-400 mb-1">Distribution by remaining-fraction</p>
+                <div id="pg-freezer-byvalue" class="flex flex-wrap gap-2"></div>
+              </div>
+
+              <!-- Position + Site breakdowns -->
+              <div class="bg-white p-6" data-feedback="Project Group: Position &amp; Sites">
+                <h3 class="text-lg font-bold text-stone-800 mb-1">Tower Position &amp; Sites</h3>
+                <p class="text-sm text-stone-500 mb-4">Vertical position of air samplers and contributing field sites.</p>
+                <p class="text-xs uppercase tracking-wide text-stone-400 mb-1">Position</p>
+                <div id="pg-position" class="flex flex-wrap gap-2 mb-4"></div>
+                <p class="text-xs uppercase tracking-wide text-stone-400 mb-1">Field site</p>
+                <div id="pg-sites" class="flex flex-wrap gap-2"></div>
+              </div>
+            </div>
+
+            <!-- Sub-project drilldown list -->
+            <div class="bg-white p-6 mb-6" data-feedback="Project Group: Sub-Projects">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Sub-Projects in this Group</h3>
+              <p class="text-sm text-stone-500 mb-4">Click any row to open the per-project page.</p>
+              <ul id="pg-subprojects" class="divide-y divide-stone-200" role="list"></ul>
+            </div>
+          </div>
+
           <!-- Project slice view -->
           <div id="slice-project-view" class="hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="slice-project-grid">
@@ -826,8 +940,9 @@
       "2023 Two Towers":       "Compares airborne microbial communities between grassland and forest environments at different heights and times across seasons.",
       "Ice-Nucleating Particles": "Studies ice-nucleating particles (INPs) released during rainfall events from local plant sources and their role in cloud ice formation.",
       "Flux":                  "Measures bioaerosol movement over grasslands using flux gradient techniques to determine whether particles originate locally or from distant sources.",
+      "CPER":                  "Cross-project program of concurrent field campaigns at CPER and SGRC, 2022–2023. Click sub-projects below to drill into individual campaigns.",
       "2022 Fall CPER":        "Field sampling campaign at the Central Plains Experimental Range — fall 2022 collection.",
-      "2023 Spring CPER Chemistry": "Spring 2023 CPER campaign with chemistry analysis component.",
+      "Spring Chemistry":      "Spring CPER campaign with chemistry analysis component (consolidated from prior 2023 sub-project).",
       "2022 Fall CPER FC":     "Fall 2022 CPER fractional collection variant.",
       "Spring SASS/Polycarbonate Top/Bottom": "Performance evaluation of bioaerosol samplers comparing SASS and polycarbonate filter configurations in field conditions.",
       "Spring Sass/VIVAS":     "Comparative evaluation of SASS and VIVAS bioaerosol sampler performance.",
@@ -1147,6 +1262,10 @@
           if (fs.tags.length === 0) {
             // Restore full list with original counts
             populateGroupList(listEl, listConfig.entries, listConfig.labelKey, listConfig.idKey, listConfig.countKey);
+            // Re-prepend pinned project_group items if this is the project list
+            if (cat === SLICE_CATEGORIES.PROJECT && appData && appData.slice_views) {
+              prependProjectGroupItems(listEl, appData.slice_views.project_group);
+            }
             updateGroupItemSelection();
           } else {
             // Build filtered items — entries with filtered count > 0
@@ -1172,6 +1291,9 @@
               listEl.appendChild(noMatchP);
             } else {
               populateGroupList(listEl, filteredItems, listConfig.labelKey, listConfig.idKey, listConfig.countKey);
+              if (cat === SLICE_CATEGORIES.PROJECT && appData && appData.slice_views) {
+                prependProjectGroupItems(listEl, appData.slice_views.project_group);
+              }
               updateGroupItemSelection();
             }
           }
@@ -2128,6 +2250,41 @@
      * idKey: property name used as the group identifier in filterState.slice.group
      * countKey: property name for sample_count
      */
+    /**
+     * Prepend project_group entries as pinned bold items at the top of the project list.
+     * Idempotent: removes any existing pinned items before re-adding.
+     */
+    function prependProjectGroupItems(listEl, projectGroups) {
+      if (!listEl) return;
+      // Remove any existing pinned items so this is safe to call repeatedly
+      var existing = listEl.querySelectorAll('[data-group-kind="project_group"]');
+      existing.forEach(function(el) { el.remove(); });
+      if (!projectGroups || projectGroups.length === 0) return;
+      var pinned = projectGroups.slice().sort(function(a, b) {
+        return b.sample_count - a.sample_count;
+      });
+      // Insert in reverse so the largest group ends up at index 0
+      pinned.reverse().forEach(function(pg) {
+        var li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('aria-selected', 'false');
+        li.setAttribute('data-group-id', pg.group_id);
+        li.setAttribute('data-group-kind', 'project_group');
+        li.className = 'flex items-center gap-2 px-3 py-1.5 mb-1 rounded-md text-sm font-bold text-green-800 cursor-pointer bg-green-50 hover:bg-green-100 hover:text-green-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset border-l-2 border-green-700';
+        var labelSpan = document.createElement('span');
+        labelSpan.textContent = pg.group_id;
+        labelSpan.className = 'flex-1 min-w-0 truncate';
+        var countSpan = document.createElement('span');
+        countSpan.setAttribute('aria-hidden', 'true');
+        countSpan.className = 'ml-auto text-xs text-green-700 flex-shrink-0';
+        countSpan.textContent = pg.sample_count.toLocaleString();
+        li.appendChild(labelSpan);
+        li.appendChild(countSpan);
+        listEl.insertBefore(li, listEl.firstChild);
+      });
+    }
+
     function populateGroupList(listEl, items, labelKey, idKey, countKey) {
       listEl.innerHTML = '';
       items.forEach(function(item) {
@@ -2173,7 +2330,9 @@
       'sliceLabGroupReplicateBadges',
       'sliceProjectSamplerChart',
       'sliceLocationSamplerChart',
-      'sliceLabGroupSamplerChart'
+      'sliceLabGroupSamplerChart',
+      'pgDailyStackChart',
+      'pgSamplerMonthChart'
     ];
 
     function destroyAllSliceCharts() {
@@ -2238,6 +2397,583 @@
       if (existing) {
         existing.classList.add('hidden');
       }
+    }
+
+    // =============================================================================
+    // SLICE PANEL — PROJECT GROUP VIEW RENDERER (custom CPER page)
+    // =============================================================================
+
+    var PG_TYPE_COLOR = {
+      'Air':    'bg-sky-500',
+      'Plant':  'bg-emerald-600',
+      'Soil':   'bg-amber-700',
+      'Liquid': 'bg-cyan-400'
+    };
+
+    function renderProjectGroupView(groupId) {
+      if (!appData.slice_views || !appData.slice_views.project_group) return;
+      var entry = appData.slice_views.project_group.find(function(e) { return e.group_id === groupId; });
+      if (!entry) return;
+
+      // Header stats
+      document.getElementById('pg-title').textContent = entry.group_id;
+      var sites = Object.keys(entry.site_breakdown || {});
+      var siteSummary = sites.length ? sites.join(' + ') : '—';
+      document.getElementById('pg-subtitle').textContent =
+        'Cross-project program — concurrent collections at ' + siteSummary + ', ' +
+        (entry.date_range.first || '?').slice(0, 4) + '–' + (entry.date_range.last || '?').slice(0, 4);
+      document.getElementById('pg-daterange').textContent =
+        (entry.date_range.first || '—') + '  →  ' + (entry.date_range.last || '—');
+      document.getElementById('pg-stat-samples').textContent = entry.sample_count.toLocaleString();
+      document.getElementById('pg-stat-subprojects').textContent = entry.sub_projects.length;
+      document.getElementById('pg-stat-dna').textContent = entry.pipeline.dna_extracted.toLocaleString();
+      document.getElementById('pg-stat-seq').textContent = entry.pipeline.sequenced.toLocaleString();
+
+      // Timeline strip
+      renderPgTimeline(entry);
+
+      // Time-series exploration plots
+      renderPgDailyStack(entry.daily_breakdown);
+      renderPgCadence(entry.daily_breakdown);
+      renderPgSamplerMonth(entry.monthly_sampler);
+      renderPgDiurnal(entry.daily_breakdown);
+
+      // Collection matrix
+      renderPgMatrix(entry.collection_matrix);
+
+      // Freezer inventory
+      var fi = entry.freezer_inventory;
+      document.getElementById('pg-freezer-available').textContent = fi.with_filter.toLocaleString();
+      document.getElementById('pg-freezer-depleted').textContent = fi.depleted.toLocaleString();
+      document.getElementById('pg-freezer-unrecorded').textContent = fi.unrecorded.toLocaleString();
+      var freezerByValue = document.getElementById('pg-freezer-byvalue');
+      freezerByValue.innerHTML = '';
+      Object.keys(fi.by_value).forEach(function(v) {
+        var pill = document.createElement('span');
+        pill.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs bg-stone-100 text-stone-700 rounded';
+        pill.textContent = v + ': ' + fi.by_value[v];
+        freezerByValue.appendChild(pill);
+      });
+
+      // Position breakdown
+      var posEl = document.getElementById('pg-position');
+      posEl.innerHTML = '';
+      Object.keys(entry.position_breakdown).forEach(function(k) {
+        var pill = document.createElement('span');
+        pill.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-50 text-green-800 rounded border border-green-200';
+        pill.textContent = k + ': ' + entry.position_breakdown[k];
+        posEl.appendChild(pill);
+      });
+
+      // Site breakdown
+      var sitesEl = document.getElementById('pg-sites');
+      sitesEl.innerHTML = '';
+      Object.keys(entry.site_breakdown).forEach(function(k) {
+        var pill = document.createElement('span');
+        pill.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs bg-stone-100 text-stone-700 rounded';
+        pill.textContent = k + ': ' + entry.site_breakdown[k].toLocaleString();
+        sitesEl.appendChild(pill);
+      });
+
+      // Sub-project drilldown list
+      renderPgSubprojects(entry);
+    }
+
+    // CPER Plot 1: Daily Activity Stack (Chart.js stacked bar)
+    var PG_TYPE_FILL = {
+      'Air':    '#0ea5e9',  // sky-500
+      'Plant':  '#059669',  // emerald-600
+      'Soil':   '#b45309',  // amber-700
+      'Liquid': '#22d3ee'   // cyan-400
+    };
+
+    function renderPgDailyStack(daily) {
+      destroyChart('pgDailyStackChart');
+      var canvas = document.getElementById('pgDailyStackChart');
+      if (!canvas || !daily || daily.length === 0) return;
+      var labels = daily.map(function(d) { return d.date; });
+      var typeOrder = ['Air', 'Plant', 'Soil', 'Liquid'];
+      // Include any types observed beyond the default 4
+      daily.forEach(function(d) {
+        Object.keys(d.by_type).forEach(function(t) { if (typeOrder.indexOf(t) === -1) typeOrder.push(t); });
+      });
+      var datasets = typeOrder.map(function(t) {
+        return {
+          label: t,
+          data: daily.map(function(d) { return d.by_type[t] || 0; }),
+          backgroundColor: PG_TYPE_FILL[t] || '#78716c',
+          borderWidth: 0,
+          stack: 'samples'
+        };
+      });
+      chartInstances['pgDailyStackChart'] = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: { labels: labels, datasets: datasets },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+            tooltip: { backgroundColor: CHART_COLORS.tooltip,
+              callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y; } } }
+          },
+          scales: {
+            x: { stacked: true, grid: { display: false },
+              ticks: { autoSkip: true, maxRotation: 60, minRotation: 60, font: { size: 9 } } },
+            y: { stacked: true, beginAtZero: true,
+              grid: { color: CHART_COLORS.gridLine },
+              title: { display: true, text: 'Samples', font: { size: 11 }, color: CHART_COLORS.axisLabel } }
+          }
+        }
+      });
+    }
+
+    // CPER Plot 2: Cadence calendar heatmap (custom HTML/CSS grid)
+    function renderPgCadence(daily) {
+      var container = document.getElementById('pg-cadence');
+      if (!container) return;
+      container.innerHTML = '';
+      if (!daily || daily.length === 0) {
+        container.innerHTML = '<p class="text-sm text-stone-500">No dated samples.</p>';
+        return;
+      }
+      // Build month → dom → entry lookup
+      var byMonth = {};
+      var maxCount = 0;
+      daily.forEach(function(d) {
+        var ym = d.date.slice(0, 7);
+        var dom = parseInt(d.date.slice(8, 10), 10);
+        if (!byMonth[ym]) byMonth[ym] = {};
+        byMonth[ym][dom] = d;
+        if (d.total > maxCount) maxCount = d.total;
+      });
+      // Build full month list from min..max
+      var months = Object.keys(byMonth).sort();
+      var first = months[0], last = months[months.length - 1];
+      var fullMonths = [];
+      var cursor = new Date(first + '-01T00:00:00');
+      var end = new Date(last + '-01T00:00:00');
+      while (cursor <= end) {
+        fullMonths.push(cursor.getFullYear() + '-' + String(cursor.getMonth() + 1).padStart(2, '0'));
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+
+      var table = document.createElement('table');
+      table.className = 'border-collapse';
+      // Header: day-of-month 1..31
+      var thead = document.createElement('thead');
+      var headRow = document.createElement('tr');
+      var blank = document.createElement('th');
+      blank.className = 'text-xs text-stone-500 px-2 py-1 text-right';
+      blank.textContent = '';
+      headRow.appendChild(blank);
+      for (var d = 1; d <= 31; d++) {
+        var th = document.createElement('th');
+        th.className = 'text-[9px] text-stone-400 font-normal w-5 text-center';
+        th.textContent = d;
+        headRow.appendChild(th);
+      }
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      var tbody = document.createElement('tbody');
+      fullMonths.forEach(function(ym) {
+        var tr = document.createElement('tr');
+        var lbl = document.createElement('td');
+        lbl.className = 'text-xs text-stone-600 pr-2 py-0.5 whitespace-nowrap text-right';
+        lbl.textContent = ym;
+        tr.appendChild(lbl);
+        for (var d2 = 1; d2 <= 31; d2++) {
+          var td = document.createElement('td');
+          td.className = 'w-5 h-5 border border-stone-100';
+          var entry = byMonth[ym] && byMonth[ym][d2];
+          if (entry) {
+            var intensity = Math.min(1, entry.total / maxCount);
+            // Pick dominant type for hue, intensity for opacity
+            var dom = Object.keys(entry.by_type).reduce(function(a, b) {
+              return (entry.by_type[a] || 0) >= (entry.by_type[b] || 0) ? a : b;
+            }, 'Air');
+            var hex = PG_TYPE_FILL[dom] || '#166534';
+            var alpha = (0.18 + intensity * 0.82).toFixed(2);
+            td.style.background = hexToRgba(hex, alpha);
+            td.title = entry.date + ' — ' + entry.total + ' samples (dominant: ' + dom + ')';
+          } else {
+            td.style.background = '#fafaf9';
+          }
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      container.appendChild(table);
+
+      // Legend
+      var legend = document.createElement('div');
+      legend.className = 'flex items-center gap-4 mt-3 text-xs text-stone-500 flex-wrap';
+      legend.innerHTML =
+        '<span>Dominant type:</span>' +
+        '<span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:' + PG_TYPE_FILL['Air'] + '"></span>Air</span>' +
+        '<span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:' + PG_TYPE_FILL['Plant'] + '"></span>Plant</span>' +
+        '<span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:' + PG_TYPE_FILL['Soil'] + '"></span>Soil</span>' +
+        '<span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:' + PG_TYPE_FILL['Liquid'] + '"></span>Liquid</span>' +
+        '<span class="ml-auto">Hover a cell for date and count. Max day = ' + maxCount + ' samples.</span>';
+      container.appendChild(legend);
+    }
+
+    function hexToRgba(hex, alpha) {
+      var h = hex.replace('#', '');
+      var r = parseInt(h.substring(0, 2), 16);
+      var g = parseInt(h.substring(2, 4), 16);
+      var b = parseInt(h.substring(4, 6), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+
+    // CPER Plot 3: Sampler usage by month (Chart.js stacked bar)
+    var PG_SAMPLER_FILL = {
+      'SASS':           '#166534',
+      'Polycarbonate':  '#0f766e',
+      'BioSpot VIVAS':  '#22d3ee',
+      'Salsola':        '#84cc16',
+      'Sagegrass':      '#a3e635',
+      'RusThistle':     '#facc15',
+      'Tall Grass':     '#65a30d',
+      'Hetero':         '#fb923c',
+      'Unrecorded':     '#a8a29e'
+    };
+
+    function renderPgSamplerMonth(monthly) {
+      destroyChart('pgSamplerMonthChart');
+      var canvas = document.getElementById('pgSamplerMonthChart');
+      if (!canvas || !monthly || monthly.length === 0) return;
+      // Stable sampler order: by total across all months
+      var totals = {};
+      monthly.forEach(function(m) {
+        Object.keys(m.by_sampler).forEach(function(s) {
+          totals[s] = (totals[s] || 0) + m.by_sampler[s];
+        });
+      });
+      var samplerOrder = Object.keys(totals).sort(function(a, b) { return totals[b] - totals[a]; });
+      var labels = monthly.map(function(m) { return m.month; });
+      var datasets = samplerOrder.map(function(s) {
+        return {
+          label: s,
+          data: monthly.map(function(m) { return m.by_sampler[s] || 0; }),
+          backgroundColor: PG_SAMPLER_FILL[s] || '#78716c',
+          borderWidth: 0,
+          stack: 'samplers'
+        };
+      });
+      chartInstances['pgSamplerMonthChart'] = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: { labels: labels, datasets: datasets },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } },
+            tooltip: { backgroundColor: CHART_COLORS.tooltip,
+              callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y; } } }
+          },
+          scales: {
+            x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
+            y: { stacked: true, beginAtZero: true,
+              grid: { color: CHART_COLORS.gridLine },
+              title: { display: true, text: 'Samples', font: { size: 11 }, color: CHART_COLORS.axisLabel } }
+          }
+        }
+      });
+    }
+
+    // CPER Plot 4: AM/PM diurnal strip (custom HTML/CSS)
+    function renderPgDiurnal(daily) {
+      var container = document.getElementById('pg-diurnal');
+      if (!container) return;
+      container.innerHTML = '';
+      // Filter to days with at least one AM or PM record
+      var diurnal = (daily || []).filter(function(d) {
+        return (d.ampm.AM || 0) > 0 || (d.ampm.PM || 0) > 0;
+      });
+      if (diurnal.length === 0) {
+        container.innerHTML = '<p class="text-sm text-stone-500">No AM/PM-tagged samples in this group.</p>';
+        return;
+      }
+      // Compute max for intensity scaling
+      var maxCell = 0;
+      diurnal.forEach(function(d) {
+        if (d.ampm.AM > maxCell) maxCell = d.ampm.AM;
+        if (d.ampm.PM > maxCell) maxCell = d.ampm.PM;
+      });
+
+      var wrap = document.createElement('div');
+      wrap.className = 'inline-flex flex-col gap-1';
+
+      // Date axis row (very small)
+      var dateRow = document.createElement('div');
+      dateRow.className = 'flex gap-px';
+      var amLbl = document.createElement('div');
+      amLbl.className = 'w-10 text-[10px] text-stone-500 self-end pr-1 text-right';
+      dateRow.appendChild(amLbl);
+      diurnal.forEach(function(d) {
+        var t = document.createElement('div');
+        t.className = 'w-4 text-[8px] text-stone-400 text-center -rotate-90 origin-bottom-left whitespace-nowrap';
+        // Show only month-day where day is 1 or every ~5 days
+        var dom = parseInt(d.date.slice(8, 10), 10);
+        if (dom === 1 || dom % 7 === 0) {
+          t.textContent = d.date.slice(5);
+        }
+        dateRow.appendChild(t);
+      });
+
+      function makeRow(label, key, hueHex) {
+        var row = document.createElement('div');
+        row.className = 'flex gap-px items-center';
+        var l = document.createElement('div');
+        l.className = 'w-10 text-xs font-semibold text-stone-700 pr-1 text-right';
+        l.textContent = label;
+        row.appendChild(l);
+        diurnal.forEach(function(d) {
+          var v = d.ampm[key] || 0;
+          var cell = document.createElement('div');
+          cell.className = 'w-4 h-6 border border-white';
+          if (v > 0) {
+            var alpha = (0.20 + (v / maxCell) * 0.80).toFixed(2);
+            cell.style.background = hexToRgba(hueHex, alpha);
+            cell.title = d.date + ' ' + label + ': ' + v;
+          } else {
+            cell.style.background = '#fafaf9';
+          }
+          row.appendChild(cell);
+        });
+        return row;
+      }
+
+      var amRow = makeRow('AM', 'AM', '#dc2626'); // red-600
+      var pmRow = makeRow('PM', 'PM', '#1d4ed8'); // blue-700
+
+      wrap.appendChild(amRow);
+      wrap.appendChild(pmRow);
+
+      var labelRow = document.createElement('div');
+      labelRow.className = 'flex gap-px';
+      var spacer = document.createElement('div');
+      spacer.className = 'w-10';
+      labelRow.appendChild(spacer);
+      diurnal.forEach(function(d, i) {
+        var t = document.createElement('div');
+        t.className = 'w-4 text-[8px] text-stone-400 text-center';
+        if (i === 0 || i === diurnal.length - 1 || i % Math.max(1, Math.floor(diurnal.length / 8)) === 0) {
+          t.textContent = d.date.slice(5);
+          t.title = d.date;
+        }
+        labelRow.appendChild(t);
+      });
+      wrap.appendChild(labelRow);
+
+      container.appendChild(wrap);
+
+      // Legend / summary
+      var totals = diurnal.reduce(function(acc, d) {
+        acc.am += (d.ampm.AM || 0);
+        acc.pm += (d.ampm.PM || 0);
+        return acc;
+      }, { am: 0, pm: 0 });
+      var legend = document.createElement('div');
+      legend.className = 'flex items-center gap-4 mt-3 text-xs text-stone-500';
+      legend.innerHTML =
+        '<span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:#dc2626"></span>AM (' + totals.am + ')</span>' +
+        '<span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:#1d4ed8"></span>PM (' + totals.pm + ')</span>' +
+        '<span>Each column = one collection day with AM/PM tags. ' + diurnal.length + ' days, max ' + maxCell + ' samples per slot.</span>';
+      container.appendChild(legend);
+    }
+
+    function renderPgTimeline(entry) {
+      var container = document.getElementById('pg-timeline');
+      container.innerHTML = '';
+      var first = entry.date_range.first;
+      var last  = entry.date_range.last;
+      if (!first || !last) {
+        container.innerHTML = '<p class="text-sm text-stone-500">No dated samples in this group.</p>';
+        return;
+      }
+      var t0 = new Date(first).getTime();
+      var t1 = new Date(last).getTime();
+      var span = Math.max(1, t1 - t0);
+
+      entry.sub_projects.forEach(function(sp) {
+        var row = document.createElement('div');
+        row.className = 'flex items-center gap-3';
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+        row.setAttribute('data-subproject-id', sp.project_id);
+        row.className += ' cursor-pointer hover:bg-stone-50 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-green-700';
+
+        var label = document.createElement('div');
+        label.className = 'w-56 flex-shrink-0 text-xs text-stone-700 truncate';
+        label.textContent = sp.project_id;
+        label.title = sp.project_id;
+
+        var trackWrap = document.createElement('div');
+        trackWrap.className = 'flex-1 relative bg-stone-100 h-5 rounded overflow-hidden';
+
+        if (sp.date_range.first && sp.date_range.last) {
+          var spStart = new Date(sp.date_range.first).getTime();
+          var spEnd   = new Date(sp.date_range.last).getTime();
+          var leftPct  = ((spStart - t0) / span) * 100;
+          var widthPct = Math.max(0.5, ((spEnd - spStart) / span) * 100);
+          var bar = document.createElement('div');
+          var color = PG_TYPE_COLOR[sp.primary_type] || 'bg-stone-500';
+          bar.className = 'absolute top-0 h-full ' + color + ' opacity-90';
+          bar.style.left = leftPct + '%';
+          bar.style.width = widthPct + '%';
+          bar.title = sp.project_id + ': ' + sp.date_range.first + ' → ' + sp.date_range.last;
+          trackWrap.appendChild(bar);
+        }
+
+        var meta = document.createElement('div');
+        meta.className = 'w-32 flex-shrink-0 text-xs text-stone-500 text-right';
+        meta.textContent = sp.sample_count.toLocaleString() + ' • ' + (sp.primary_type || '—');
+
+        row.appendChild(label);
+        row.appendChild(trackWrap);
+        row.appendChild(meta);
+
+        row.addEventListener('click', function() { handleGroupItemClick(sp.project_id); });
+        row.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleGroupItemClick(sp.project_id); }
+        });
+
+        container.appendChild(row);
+      });
+
+      // Date axis
+      var axis = document.createElement('div');
+      axis.className = 'flex justify-between text-[10px] text-stone-400 mt-2 ml-56 mr-32';
+      axis.innerHTML = '<span>' + first + '</span><span>' + last + '</span>';
+      container.appendChild(axis);
+    }
+
+    function renderPgMatrix(cm) {
+      var table = document.getElementById('pg-matrix');
+      var thead = table.querySelector('thead');
+      var tbody = table.querySelector('tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+      if (!cm || !cm.media || !cm.samplers) return;
+
+      // Header
+      var headRow = document.createElement('tr');
+      var blankTh = document.createElement('th');
+      blankTh.className = 'px-2 py-2 text-left text-xs font-semibold text-stone-500 uppercase tracking-wide bg-stone-50';
+      blankTh.textContent = 'Medium ╲ Sampler';
+      headRow.appendChild(blankTh);
+      cm.samplers.forEach(function(s) {
+        var th = document.createElement('th');
+        th.className = 'px-2 py-2 text-center text-xs font-semibold text-stone-600 bg-stone-50 whitespace-nowrap';
+        th.textContent = s;
+        headRow.appendChild(th);
+      });
+      var totalTh = document.createElement('th');
+      totalTh.className = 'px-2 py-2 text-center text-xs font-bold text-stone-700 bg-stone-100';
+      totalTh.textContent = 'Total';
+      headRow.appendChild(totalTh);
+      thead.appendChild(headRow);
+
+      // Find max for color scaling
+      var maxCell = 0;
+      cm.media.forEach(function(m) {
+        cm.samplers.forEach(function(s) {
+          var v = (cm.counts[m] && cm.counts[m][s]) || 0;
+          if (v > maxCell) maxCell = v;
+        });
+      });
+
+      // Rows
+      cm.media.forEach(function(m) {
+        var tr = document.createElement('tr');
+        tr.className = 'border-t border-stone-200';
+        var nameTd = document.createElement('td');
+        nameTd.className = 'px-2 py-2 text-sm font-medium text-stone-700 whitespace-nowrap';
+        nameTd.textContent = m;
+        tr.appendChild(nameTd);
+        cm.samplers.forEach(function(s) {
+          var td = document.createElement('td');
+          var v = (cm.counts[m] && cm.counts[m][s]) || 0;
+          td.className = 'px-2 py-2 text-center text-sm tabular-nums';
+          if (v > 0) {
+            var intensity = Math.min(1, v / maxCell);
+            // Map intensity 0..1 to a green tint via inline style. Stone-50 → green-700.
+            var bgPct = Math.round(intensity * 100);
+            td.style.backgroundColor = 'rgba(21, 128, 61, ' + (0.08 + intensity * 0.55).toFixed(2) + ')';
+            td.style.color = intensity > 0.55 ? '#fff' : '#1c1917';
+            td.style.fontWeight = '600';
+            td.textContent = v;
+          } else {
+            td.className += ' text-stone-300';
+            td.textContent = '·';
+          }
+          tr.appendChild(td);
+        });
+        var rowTotalTd = document.createElement('td');
+        rowTotalTd.className = 'px-2 py-2 text-center text-sm font-bold text-stone-700 bg-stone-50 tabular-nums';
+        rowTotalTd.textContent = (cm.row_totals[m] || 0).toLocaleString();
+        tr.appendChild(rowTotalTd);
+        tbody.appendChild(tr);
+      });
+
+      // Column totals row
+      var totRow = document.createElement('tr');
+      totRow.className = 'border-t border-stone-300 bg-stone-100';
+      var totLabel = document.createElement('td');
+      totLabel.className = 'px-2 py-2 text-sm font-bold text-stone-700';
+      totLabel.textContent = 'Total';
+      totRow.appendChild(totLabel);
+      cm.samplers.forEach(function(s) {
+        var td = document.createElement('td');
+        td.className = 'px-2 py-2 text-center text-sm font-bold text-stone-700 tabular-nums';
+        td.textContent = (cm.col_totals[s] || 0).toLocaleString();
+        totRow.appendChild(td);
+      });
+      var grandTd = document.createElement('td');
+      grandTd.className = 'px-2 py-2 text-center text-sm font-bold text-green-800 bg-stone-200 tabular-nums';
+      grandTd.textContent = cm.total.toLocaleString();
+      totRow.appendChild(grandTd);
+      tbody.appendChild(totRow);
+    }
+
+    function renderPgSubprojects(entry) {
+      var ul = document.getElementById('pg-subprojects');
+      ul.innerHTML = '';
+      // Sort by sample_count desc for the drilldown list
+      entry.sub_projects.slice().sort(function(a, b) { return b.sample_count - a.sample_count; }).forEach(function(sp) {
+        var li = document.createElement('li');
+        li.setAttribute('role', 'button');
+        li.setAttribute('tabindex', '0');
+        li.className = 'flex items-center justify-between gap-3 py-3 cursor-pointer hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-green-700 rounded px-2';
+        var left = document.createElement('div');
+        left.className = 'min-w-0 flex-1';
+        left.innerHTML = '<p class="text-sm font-medium text-stone-800 truncate">' + sp.project_id + '</p>' +
+          '<p class="text-xs text-stone-500 mt-0.5">' + (sp.date_range.first || '?') + ' → ' + (sp.date_range.last || '?') + ' • primary: ' + (sp.primary_type || '—') + '</p>';
+        var right = document.createElement('div');
+        right.className = 'flex items-center gap-3 flex-shrink-0';
+        var typesStr = sp.sample_types.map(function(t) { return t.type + ' ' + t.count; }).join(' · ');
+        var typesEl = document.createElement('span');
+        typesEl.className = 'hidden sm:inline text-xs text-stone-500';
+        typesEl.textContent = typesStr;
+        var countEl = document.createElement('span');
+        countEl.className = 'text-sm font-semibold text-stone-700 tabular-nums';
+        countEl.textContent = sp.sample_count.toLocaleString();
+        var arrow = document.createElement('span');
+        arrow.className = 'text-stone-400';
+        arrow.textContent = '→';
+        right.appendChild(typesEl);
+        right.appendChild(countEl);
+        right.appendChild(arrow);
+        li.appendChild(left);
+        li.appendChild(right);
+        li.addEventListener('click', function() { handleGroupItemClick(sp.project_id); });
+        li.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleGroupItemClick(sp.project_id); }
+        });
+        ul.appendChild(li);
+      });
     }
 
     // =============================================================================
@@ -2679,6 +3415,7 @@
 
       var sliceContainer  = document.getElementById('slice-view-container');
       var projectView     = document.getElementById('slice-project-view');
+      var projectGroupView = document.getElementById('slice-projectgroup-view');
       var locationView    = document.getElementById('slice-location-view');
       var labgroupView    = document.getElementById('slice-labgroup-view');
       var activeLabel     = document.getElementById('slice-active-label');
@@ -2706,6 +3443,7 @@
         sliceContainer.classList.remove('block', 'bg-orange-50', 'transition-colors', 'duration-300');
 
         projectView.classList.add('hidden');
+        if (projectGroupView) projectGroupView.classList.add('hidden');
         locationView.classList.add('hidden');
         labgroupView.classList.add('hidden');
 
@@ -2768,12 +3506,24 @@
 
       // Show correct inner view, hide others
       projectView.classList.add('hidden');
+      if (projectGroupView) projectGroupView.classList.add('hidden');
       locationView.classList.add('hidden');
       labgroupView.classList.add('hidden');
 
       var activeChip = document.getElementById('slice-active-chip');
 
-      if (cat === SLICE_CATEGORIES.PROJECT) {
+      // Project group takes precedence over plain project when group_id matches a project_group entry
+      var pgEntry = (cat === SLICE_CATEGORIES.PROJECT && appData.slice_views && appData.slice_views.project_group)
+        ? appData.slice_views.project_group.find(function(e) { return e.group_id === group; })
+        : null;
+
+      if (pgEntry) {
+        if (projectGroupView) projectGroupView.classList.remove('hidden');
+        viewTitle.textContent = 'Project Group: ' + group;
+        viewSubtitle.textContent = pgEntry.sample_count.toLocaleString() + ' samples across ' + pgEntry.sub_projects.length + ' sub-projects';
+        if (activeChip && group) { activeChip.textContent = 'Filtered: ' + group + ' (group)'; activeChip.classList.remove('hidden'); }
+        renderProjectGroupView(group);
+      } else if (cat === SLICE_CATEGORIES.PROJECT) {
         projectView.classList.remove('hidden');
         viewTitle.textContent = SLICE_CATEGORIES.PROJECT + ': ' + group;
         var projEntry = appData.slice_views && appData.slice_views.project
@@ -3070,10 +3820,11 @@
         return;
       }
 
-      // Project list
+      // Project list — populate flat projects, then prepend pinned project_group items
       if (data.slice_views.project && data.slice_views.project.length > 0) {
         populateGroupList(projectList, data.slice_views.project, 'project_id', 'project_id', 'sample_count');
       }
+      prependProjectGroupItems(projectList, data.slice_views.project_group);
 
       // Location list
       if (data.slice_views.location && data.slice_views.location.length > 0) {
