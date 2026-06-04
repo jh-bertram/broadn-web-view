@@ -5,6 +5,10 @@ docs/events/
 docs/agent-logs/
 docs/archive/
 
+# Python
+__pycache__/
+*.pyc
+
 # OS
 .DS_Store
 Thumbs.db

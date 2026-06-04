@@ -74,7 +74,7 @@ Source: `Bdb-317.xlsx`, Sheet1. `Sample Category` ∈ {`Field Sample` (4,569), `
 - **Uploaded — strict:** distinct parents where `Sequence 16s` / `Sequence ITS` / `MetaGenome Sequence` contains an accession-like token (case-insensitive match on `ncbi|sra|ena|prjna|samn|bioproject`). Excludes DOI-only `External Resources`.
 - **Uploaded — broad:** strict ∪ (`External Resources` non-blank) ∪ (`Publication Status` == "Published").
 - **Duration (per location):** min/max `Sample Collected Date` for `Sample Collection Location` == {CPER, SGRC}, over dated field-sample rows. Report start/end `YYYY-MM` + month span.
-- **Tower breakdown:** `Sample Collection Location` == CPER, grouped by `Sample Collection Specific Site` → {Tower Top (A), Tower Bottom (B), Environment}. Same for NWT.
+- **Tower breakdown:** `Sample Collection Location` == CPER, grouped by `Sample Collection Specific Site` → {Top (A), Bottom (B), Environment}. Same for NWT. (Verified against `Bdb-317.xlsx` during broadn-p9 T1: the exact site strings are `Top (A)` / `Bottom (B)` — no "Tower " prefix.)
 
 A helper that returns the accession-token test should live next to the existing `is_sequenced()` helper for DRY.
 
