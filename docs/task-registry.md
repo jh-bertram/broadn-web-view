@@ -1,3 +1,22 @@
+# Task Registry — broadn-p9-data-management-stats
+
+## Rollback Point
+commit: fb22e5bcc0edd68f01073e488b8a19a248540a07
+recorded: 2026-06-04T19:42:00Z
+task_id: broadn-p9-data-management-stats
+
+To recover: git reset --hard fb22e5bcc0edd68f01073e488b8a19a248540a07
+
+## Expectation Manifest
+
+| task_id | agent | expected_tag | wave | blocks |
+|---|---|---|---|---|
+| broadn-p9-t1-data-layer | BE#1 | completion_packet | 1 | broadn-p9-t3-frontend |
+| broadn-p9-t2-design-spec | UI#1 | design_spec | 1 | broadn-p9-t3-frontend |
+| broadn-p9-t3-frontend | FE#1 | ui_packet | 2 | (none — REQVAL follows) |
+
+---
+
 # Task Registry — broadn-p8-feedback-widget
 
 ## Rollback Point
