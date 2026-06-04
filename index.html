@@ -122,6 +122,7 @@
           <a href="#overview"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="overview"   role="listitem">Overview</a>
           <a href="#geography"  class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="geography"  role="listitem">Geography</a>
           <a href="#pipeline"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="pipeline"   role="listitem">Pipeline</a>
+          <a href="#data-management" class="nav-link px-3 py-2 min-h-[44px] text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="data-management" role="listitem">Data Management</a>
           <a href="#explorer"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="explorer"   role="listitem">Explorer</a>
         </div>
       </div>
@@ -759,6 +760,126 @@
             </div>
           </div>
         </section>
+
+        <!-- DATA MANAGEMENT -->
+        <section id="data-management" class="scroll-mt-20" data-feedback="Data Management Section">
+          <div class="mb-8">
+            <h2 class="text-3xl font-extrabold text-stone-900 mb-2">Data Management</h2>
+            <p class="text-stone-600 text-lg max-w-3xl">Archival, sequencing, and public deposition status for BROADN field samples, plus sampling duration and site context.</p>
+          </div>
+
+          <!-- KPI CARD ROW — 4 cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+
+            <!-- ARCHIVED & CATALOGED -->
+            <div id="dm-card-archived" class="bg-white p-6 flex items-center gap-4">
+              <div class="p-3 bg-green-100 rounded-full flex-shrink-0 text-green-800" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                  <rect x="1" y="3" width="22" height="5"></rect>
+                  <line x1="10" y1="12" x2="14" y2="12"></line>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-stone-500">Archived &amp; Cataloged</p>
+                <p class="text-2xl font-bold text-stone-900"><span id="dm-archived-value">—</span><span class="text-sm font-normal ml-1 text-stone-500" id="dm-archived-pct"></span></p>
+              </div>
+            </div>
+
+            <!-- AMPLICON SEQUENCED (16S/ITS) -->
+            <div id="dm-card-amplicon" class="bg-white p-6 flex items-center gap-4">
+              <div class="p-3 bg-purple-100 rounded-full flex-shrink-0 text-purple-800" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 15c6.667-6 13.333 0 20-6"></path>
+                  <path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"></path>
+                  <path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"></path>
+                  <path d="m17 6-2.5-2.5"></path>
+                  <path d="m14 8-1-1"></path>
+                  <path d="m7 18 2.5 2.5"></path>
+                  <path d="m10 16 1 1"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-stone-500">Amplicon Sequenced (16S/ITS)</p>
+                <p class="text-2xl font-bold text-stone-900"><span id="dm-amplicon-value">—</span><span class="text-sm font-normal ml-1 text-stone-500" id="dm-amplicon-pct"></span></p>
+              </div>
+            </div>
+
+            <!-- METAGENOMICS -->
+            <div id="dm-card-metagenomics" class="bg-white p-6 flex items-center gap-4">
+              <div class="p-3 bg-purple-100 rounded-full flex-shrink-0 text-purple-800" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5z"></path>
+                  <path d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5z"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-stone-500">Metagenomes</p>
+                <p class="text-2xl font-bold text-stone-900"><span id="dm-metagenomics-value">—</span><span class="text-sm font-normal ml-1 text-stone-500" id="dm-metagenomics-pct"></span></p>
+                <p class="text-xs text-amber-700 mt-1 font-medium" id="dm-metagenomics-callout">0 of — metagenomes deposited</p>
+              </div>
+            </div>
+
+            <!-- DEPOSITED IN PUBLIC DATA REPOSITORIES -->
+            <div id="dm-card-deposited" class="bg-white p-6 flex items-center gap-4">
+              <div class="p-3 bg-green-100 rounded-full flex-shrink-0 text-green-800" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 16 12 12 8 16"></polyline>
+                  <line x1="12" y1="12" x2="12" y2="21"></line>
+                  <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-stone-500">Deposited in public data repositories</p>
+                <p class="text-2xl font-bold text-stone-900" id="dm-deposited-strict-value">—</p>
+                <p class="text-xs text-stone-500" id="dm-deposited-strict-count"></p>
+                <p class="text-xs text-stone-500 mt-1" id="dm-deposited-broad-subtext">—</p>
+              </div>
+            </div>
+
+          </div><!-- /.grid KPI cards -->
+
+          <!-- SAMPLING DURATION PANEL — CPER | SGRC | NWT -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+            <!-- CPER -->
+            <div id="dm-site-cper" class="bg-white p-6">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">CPER &mdash; Shortgrass Steppe</h3>
+              <p class="text-sm text-stone-500 mb-1" id="dm-cper-daterange">&mdash;</p>
+              <p class="text-xs uppercase tracking-wide text-stone-400 mb-1" id="dm-cper-total-label">&mdash;</p>
+              <div class="flex flex-wrap gap-2" id="dm-cper-breakdown">
+                <span class="text-xs font-medium px-3 py-1 rounded-full bg-stone-100 text-stone-600" id="dm-cper-top">&mdash;</span>
+                <span class="text-xs font-medium px-3 py-1 rounded-full bg-stone-100 text-stone-600" id="dm-cper-bottom">&mdash;</span>
+                <span class="text-xs font-medium px-3 py-1 rounded-full bg-stone-100 text-stone-600" id="dm-cper-env">&mdash;</span>
+              </div>
+            </div>
+
+            <!-- SGRC -->
+            <div id="dm-site-sgrc" class="bg-white p-6">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">SGRC &mdash; Southern Great Plains</h3>
+              <p class="text-sm text-stone-500 mb-1" id="dm-sgrc-daterange">&mdash;</p>
+              <p class="text-xs font-medium text-stone-500 mt-1" id="dm-sgrc-months">&mdash;</p>
+            </div>
+
+            <!-- NWT -->
+            <div id="dm-site-nwt" class="bg-white p-6">
+              <h3 class="text-lg font-bold text-stone-800 mb-1">NWT &mdash; Niwot Ridge</h3>
+              <p class="text-sm text-stone-500 mb-1" id="dm-nwt-daterange">&mdash;</p>
+              <p class="text-xs uppercase tracking-wide text-stone-400 mb-1" id="dm-nwt-total-label">&mdash;</p>
+              <div class="flex flex-wrap gap-2" id="dm-nwt-breakdown">
+                <span class="text-xs font-medium px-3 py-1 rounded-full bg-stone-100 text-stone-600" id="dm-nwt-top">&mdash;</span>
+                <span class="text-xs font-medium px-3 py-1 rounded-full bg-stone-100 text-stone-600" id="dm-nwt-middle">&mdash;</span>
+                <span class="text-xs font-medium px-3 py-1 rounded-full bg-stone-100 text-stone-600" id="dm-nwt-bottom">&mdash;</span>
+              </div>
+            </div>
+
+          </div><!-- /.grid duration panel -->
+
+          <!-- HOSTING NOTE -->
+          <p class="text-xs italic text-stone-500 mt-2" id="dm-hosting-note">Hosted via GitHub Pages (free hosting, permanent host TBD)</p>
+
+        </section><!-- /#data-management -->
 
         </div><!-- /#global-charts-area -->
 
@@ -1492,6 +1613,87 @@
       document.getElementById('hero-samples').textContent = kpis.field_samples.toLocaleString() + ' field samples';
       document.getElementById('hero-sites').textContent   = kpis.unique_sites + ' collection sites';
       document.getElementById('hero-since').textContent   = 'Active since ' + kpis.active_since;
+    }
+
+    // =============================================================================
+    // DATA MANAGEMENT SECTION
+    // =============================================================================
+
+    /**
+     * formatDateRange(start, end)
+     * Converts "YYYY-MM" strings to "Mon YYYY–Mon YYYY" display format.
+     * Uses en-dash (U+2013) as separator per design spec.
+     * @param {string} start - "YYYY-MM"
+     * @param {string} end   - "YYYY-MM"
+     * @returns {string}
+     */
+    function formatDateRange(start, end) {
+      var opts = { month: 'short', year: 'numeric' };
+      var s = new Date(start + '-01T00:00:00').toLocaleDateString('en-US', opts);
+      var e = new Date(end   + '-01T00:00:00').toLocaleDateString('en-US', opts);
+      return s + '–' + e;
+    }
+
+    /**
+     * renderDataManagement(dm)
+     * Populates the #data-management section from the data.data_management object.
+     * All values read from dm.* — no hardcoded numbers.
+     * @param {Object} dm - data.data_management
+     */
+    function renderDataManagement(dm) {
+      // --- KPI: Archived & Cataloged ---
+      document.getElementById('dm-archived-value').textContent = dm.archived.count.toLocaleString();
+      document.getElementById('dm-archived-pct').textContent = dm.archived.pct + '%';
+
+      // --- KPI: Amplicon Sequenced (16S/ITS) ---
+      document.getElementById('dm-amplicon-value').textContent = dm.amplicon.count.toLocaleString();
+      document.getElementById('dm-amplicon-pct').textContent = dm.amplicon.pct + '%';
+
+      // --- KPI: Metagenomics ---
+      document.getElementById('dm-metagenomics-value').textContent = dm.metagenomics.count.toLocaleString();
+      document.getElementById('dm-metagenomics-pct').textContent = dm.metagenomics.pct + '%';
+      document.getElementById('dm-metagenomics-callout').textContent =
+        dm.metagenomics.deposited + ' of ' + dm.metagenomics.count + ' metagenomes deposited';
+
+      // --- KPI: Deposited (strict = headline, broad = secondary) ---
+      document.getElementById('dm-deposited-strict-value').textContent = dm.uploaded.strict.pct + '%';
+      document.getElementById('dm-deposited-strict-count').textContent =
+        '(' + dm.uploaded.strict.count.toLocaleString() + ' samples)';
+      document.getElementById('dm-deposited-broad-subtext').textContent =
+        dm.uploaded.broad.pct + '% linked to a publication or public record';
+
+      // --- Duration: CPER ---
+      document.getElementById('dm-cper-daterange').textContent =
+        formatDateRange(dm.duration.CPER.start, dm.duration.CPER.end);
+      document.getElementById('dm-cper-total-label').textContent =
+        'Tower breakdown — ' + dm.neon_towers.CPER.total.toLocaleString() + ' samples';
+      document.getElementById('dm-cper-top').textContent =
+        'Top (A): ' + dm.neon_towers.CPER.tower_top.toLocaleString();
+      document.getElementById('dm-cper-bottom').textContent =
+        'Bottom (B): ' + dm.neon_towers.CPER.tower_bottom.toLocaleString();
+      document.getElementById('dm-cper-env').textContent =
+        'Environment: ' + dm.neon_towers.CPER.environment.toLocaleString();
+
+      // --- Duration: SGRC ---
+      document.getElementById('dm-sgrc-daterange').textContent =
+        formatDateRange(dm.duration.SGRC.start, dm.duration.SGRC.end);
+      document.getElementById('dm-sgrc-months').textContent =
+        '~' + dm.duration.SGRC.months + ' months';
+
+      // --- Duration: NWT ---
+      document.getElementById('dm-nwt-daterange').textContent =
+        formatDateRange(dm.neon_towers.NWT.start, dm.neon_towers.NWT.end);
+      document.getElementById('dm-nwt-total-label').textContent =
+        'Tower breakdown — ' + dm.neon_towers.NWT.total.toLocaleString() + ' samples';
+      document.getElementById('dm-nwt-top').textContent =
+        'Top: ' + dm.neon_towers.NWT.top.toLocaleString();
+      document.getElementById('dm-nwt-middle').textContent =
+        'Middle: ' + dm.neon_towers.NWT.middle.toLocaleString();
+      document.getElementById('dm-nwt-bottom').textContent =
+        'Bottom: ' + dm.neon_towers.NWT.bottom.toLocaleString();
+
+      // --- Hosting note ---
+      document.getElementById('dm-hosting-note').textContent = dm.hosting;
     }
 
     // =============================================================================
@@ -3957,6 +4159,7 @@
 
       // -- Existing charts --
       renderKPIs(data.kpis);
+      if (data.data_management) { renderDataManagement(data.data_management); }
       renderTemporalChart(data.temporal);
       renderDonutChart(data.sample_types);
       renderPipelineChart(data.pipeline);

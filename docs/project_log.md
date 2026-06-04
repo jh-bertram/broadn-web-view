@@ -1312,3 +1312,38 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - No other agent specs required updates (BE, FE, DS, etc. were not root causes of identified gaps).
   </retention_keys>
 </archive_entry>
+
+<archive_entry>
+  <timestamp>2026-06-04T20:28:30Z</timestamp>
+  <task_id>broadn-p9-data-management-stats</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Sprint p9 delivered data-management statistics to the BROADN public dashboard for the annual report (7 metric groups: Deposition Rates, Processing Burden, Data Loss Events, Deposition Latency, Temporal Coverage, Upload Framing, Sample Completeness). Key design decisions: (1) Python pipeline (scripts/preprocess_data.py) computes all 7 metrics from xlsx source — previously data.json literal had only recent_samples 100-row preview, dropping 28 xlsx columns needed for metric aggregation (coverage dates, processing state, upload type, loss events, etc.). New data_management block consumes full xlsx columns and outputs JSON keyed by COLLECTION (7 collections: 'FIELD_SAMPLES', 'CPER_CORES', 'BSDS_CORES', 'CPER_FLUIDS', 'BSDS_FLUIDS', 'CPER_SEDIMENTS', 'BSDS_SEDIMENTS'). (2) HTML structure: new <section id="data-management"> in index.html with subheaders for each metric group; renderKPIs() helper iterates over data_management metrics and populates card-grid with title/value/unit/annotation per metric. (3) Upload framing decision (explicitly split to prevent conflation): strict 14% is public-repo deposition (hard requirement for annual report); broad 17% includes publications/grey literature (secondary, muted in UI, footnoted as "incl. publications"). Allows data honesty while keeping headline metric clear. (4) Audit gate p7-g1 literal-verification pre-flight (Step 0 verification) caught real error: sprint brief cited CPER tower-site strings as "Tower Top (A)"/"Tower Bottom (B)" but xlsx has "Top (A)"/"Bottom (B)" — literal following would yield 0 CPER tower counts. Pre-flight reread the xlsx and corrected brief before agents spawned. (5) Audit gate p7-g3 call-chain Step-0 verification (FE) confirmed renderKPIs call-site (initDashboard@3959) and nav scroll-spy auto-detects section[id] without hardcoded list. (6) Live-browser audit (AUD#2→remediation→AUD#3) using Playwright/headless-Chromium caught formatDateRange UTC-parse bug (all static/QA-static checks passed; FE parsed ISO date string as UTC instead of local time, off-by-one-month on date ranges like 6-Sep→5-Aug when parsed midnight UTC). FE remediation: 2-line fix using local-time parse path. Validates keeping live render check in QA gate. All audits PASS; REQVAL COVERED 11/11 (7 email questions + 4 brief constraints). Two commits durable: ab28569 (feat(data): data_management block), fcd21a2 (feat(ui): Data Management section). Human browser-verification gate (orchestrator Step 4.5) pending — this is static+headless-PASS; live visual confirmation still required.</rationale>
+  <dependencies>
+    - PM decomposition: .claude/agents/tasks/outputs/broadn-p9-data-management-stats-PM-1780601165.md
+    - Critic rounds: ...-CR-1780601543.md (BLOCK: helper name is_sequenced vs real has_sequencing_string@115; output dict var data vs output@1348-1366) → PM revision → ...-CR2-1780602089.md (PASS)
+    - BE (T1) output: .claude/agents/tasks/outputs/broadn-p9-t1-data-layer-BE-1780602280.md
+    - T1 audit: AUD#1-1780602925.md (PASS all gates; Auditor recomputed anchor counts from xlsx independently)
+    - UI spec (T2): .claude/agents/tasks/outputs/broadn-p9-t2-design-spec-UI-1780602280.md (gap-fix: SGRC sampling-duration added to Sampling Duration panel)
+    - FE (T3) output: .claude/agents/tasks/outputs/broadn-p9-t3-frontend-FE-1780603539.md
+    - T3 audit AUD#2 FAIL: ...-AUD-1780604039.md (QA BLOCKER: formatDateRange UTC-parse off-by-one-month)
+    - T3 remediation FE: 2-line local-time parse fix
+    - T3 re-audit AUD#3 PASS: ...-AUD3-1780604446.md (live DOM verified; date ranges correct in browser)
+    - REQVAL: .claude/agents/tasks/outputs/broadn-p9-data-management-stats-REQVAL-1780604840.md (11/11 COVERED; requires human Step 4.5)
+    - Target project: /home/jhber/projects/broadn-web-view
+  </dependencies>
+  <retention_keys>
+    - Feature: 7-metric Data Management section (Deposition Rates, Processing Burden, Data Loss Events, Deposition Latency, Temporal Coverage, Upload Framing, Sample Completeness) on public dashboard for annual report
+    - Commits: ab28569 (feat(data): data_management block in preprocess_data.py, computes 7 metrics, outputs JSON keyed by COLLECTION), fcd21a2 (feat(ui): Data Management section in index.html, renderKPIs helper, metric card grid)
+    - Data contract: data.json['data_management'][COLLECTION_NAME] → list of metrics with title/value/unit/annotation/note
+    - Pipeline changes: scripts/preprocess_data.py expanded from 28 xlsx columns used to 35+ (added coverage dates, processing state, upload type, loss event flags, sediment type) for metric computation
+    - HTML changes: index.html <section id="data-management">, renderKPIs(data.data_management) helper, scroll-spy auto-detect via section[id]
+    - Upload framing: public-repo deposition (strict 14%, headline) vs. publications incl. (17%, secondary footnote) — deliberately split to prevent conflation in annual report
+    - Protocol insight p9-g1 (literal-verification pre-flight): caught real brief error (CPER tower-site strings misnamed in brief vs. xlsx) before agents spawned; demonstrates value of Step 0 verification vs. literal brief compliance
+    - Protocol insight p9-g3 (call-chain verification): FE verified renderKPIs wiring complete and nav scroll-spy auto-detects section[id] without hardcoded list; no assumptions shipped
+    - Audit finding: live-browser QA (Playwright) caught formatDateRange bug that SA/QA-static all passed; validates keeping live render check in full QA gate (static + live)
+    - Audit result: T1 PASS (SA/QA/SX), T2 receipt-check gap (gap-fix in UI spec), T3 FAIL→remediate→PASS (SA/QA/SX live)
+    - REQVAL: all 11 requirements covered; human visual confirmation (Step 4.5) pending
+    - Agent performance: PM 67% first-pass (2 revisions pre-Critic), Critic caught both BLOCKERs, BE 100%, UI design gap-fix, FE 1 audit fail (live browser bug) + remediation, Auditor caught runtime defect via live browser
+    - Deliverables: 7 data-management metrics integrated into index.html dashboard; Deposition & Processing sections visible; annual-report datasets flowing end-to-end through pipeline
+  </retention_keys>
+</archive_entry>

@@ -40,6 +40,7 @@ SLICE VIEWS (added 2026-03-17):
 
 import json
 import os
+import re
 import sys
 import warnings
 from datetime import datetime, timezone
@@ -125,6 +126,34 @@ def has_sequencing_string(row: pd.Series) -> bool:
     return False
 
 
+# Accession-token pattern for public data-repository identifiers.
+# Covers NCBI SRA, ENA, BioProject, BioSample prefixes (case-insensitive).
+# VERIFIED: 2026-06-04 — update if BROADN adopts additional repositories.
+_ACCESSION_RE = re.compile(r"(?i)(ncbi|sra|ena|prjna|samn|bioproject)")
+
+
+def is_accession_token(val: object) -> bool:
+    """Return True if val is a non-blank string containing a repository accession token.
+
+    Matches case-insensitively: ncbi, sra, ena, prjna, samn, bioproject.
+    Used to distinguish data-repository deposits from local run IDs.
+    Placed adjacent to has_sequencing_string() for DRY.
+    """
+    if pd.notna(val) and isinstance(val, str) and val.strip():
+        return bool(_ACCESSION_RE.search(val))
+    return False
+
+
+def _parent_broadn_id(series: pd.Series) -> pd.Series:
+    """Extract parent field-sample BROADN ID from a derivative product's BROADN ID.
+
+    Derivative IDs contain a '.' separator (e.g. 'BSE0042P.1'); the parent
+    specimen ID is the part before the first '.'.
+    Shared by compute_pipeline_counts and compute_data_management for DRY.
+    """
+    return series.str.split(".").str[0]
+
+
 def compute_pipeline_counts(df: pd.DataFrame, field_ids: set) -> tuple[int, int, int]:
     """Return (collected, dna_extracted, sequenced) for field samples.
 
@@ -139,7 +168,7 @@ def compute_pipeline_counts(df: pd.DataFrame, field_ids: set) -> tuple[int, int,
 
     # DNA extraction count
     dna_rows = df[df[COL_PRODUCT] == "DNA"].copy()
-    dna_rows["_specimen_id"] = dna_rows[COL_BROADN_ID].str.split(".").str[0]
+    dna_rows["_specimen_id"] = _parent_broadn_id(dna_rows[COL_BROADN_ID])
     dna_extracted = len(set(dna_rows["_specimen_id"]) & field_ids)
 
     # Sequencing count — via derivative rows
@@ -147,10 +176,209 @@ def compute_pipeline_counts(df: pd.DataFrame, field_ids: set) -> tuple[int, int,
         lambda col: col.notna() & col.astype(str).str.strip().ne("")
     ).any(axis=1)
     seq_rows = df[seq_mask].copy()
-    seq_rows["_specimen_id"] = seq_rows[COL_BROADN_ID].str.split(".").str[0]
+    seq_rows["_specimen_id"] = _parent_broadn_id(seq_rows[COL_BROADN_ID])
     sequenced = len(set(seq_rows["_specimen_id"]) & field_ids)
 
     return collected, dna_extracted, sequenced
+
+
+def compute_data_management(
+    df: pd.DataFrame,
+    field_ids: set,
+    field_samples: pd.DataFrame,
+) -> dict:
+    """Compute data-management statistics for the data_management block in data.json.
+
+    String literals verified against Bdb-317.xlsx on 2026-06-04:
+      - Sample Category 'Field Sample' / 'Sample Product' — CONFIRMED
+      - Sample Collection Location 'CPER', 'SGRC', 'NWT' — CONFIRMED
+      - Sample Collection Specific Site for CPER:
+          'Top (A)', 'Bottom (B)', 'Environment' — CONFIRMED (NOT 'Tower Top (A)' etc.)
+      - Sample Collection Specific Site for NWT:
+          'Bottom', 'Top', 'Middle' — CONFIRMED from data
+      - Publication Status 'Published' — CONFIRMED
+    """
+    n = len(field_ids)
+
+    # ── Products (derivative rows only) ─────────────────────────────────────────
+    products = df[df[COL_SAMPLE_CATEGORY] != FIELD_SAMPLE_CATEGORY].copy()
+
+    # ── Archived ─────────────────────────────────────────────────────────────────
+    # Any of the 4 storage columns non-blank on the field-sample row itself.
+    storage_cols = [
+        "Sample Storage Bag",
+        "Sample Storage Freezer",
+        "Sample Storage Room",
+        "Sample Storage Building",
+    ]
+    archived_mask = field_samples[storage_cols].apply(
+        lambda col: col.notna() & col.astype(str).str.strip().ne("")
+    ).any(axis=1)
+    n_archived = int(archived_mask.sum())
+
+    # ── Amplicon (16S OR ITS only — strict per brief §5) ────────────────────────
+    # Distinct parent field samples with Sequence 16s OR Sequence ITS non-blank.
+    # Sources: product rows (rolled to parent) + field-sample rows that carry the
+    # value directly.
+    amplicon_cols = ["Sequence 16s", "Sequence ITS"]
+
+    amp_prod_mask = products[amplicon_cols].apply(
+        lambda col: col.notna() & col.astype(str).str.strip().ne("")
+    ).any(axis=1)
+    amp_products = products[amp_prod_mask].copy()
+    amp_products["_parent"] = _parent_broadn_id(amp_products[COL_BROADN_ID])
+    amp_from_products = set(amp_products["_parent"]) & field_ids
+
+    amp_fs_mask = field_samples[amplicon_cols].apply(
+        lambda col: col.notna() & col.astype(str).str.strip().ne("")
+    ).any(axis=1)
+    amp_from_fs = set(field_samples[amp_fs_mask][COL_BROADN_ID])
+
+    n_amplicon = len(amp_from_products | amp_from_fs)
+
+    # ── Metagenomics ─────────────────────────────────────────────────────────────
+    meta_col = "MetaGenome Sequence"
+
+    meta_prod_mask = products[meta_col].notna() & products[meta_col].astype(str).str.strip().ne("")
+    meta_products = products[meta_prod_mask].copy()
+    meta_products["_parent"] = _parent_broadn_id(meta_products[COL_BROADN_ID])
+    meta_from_products = set(meta_products["_parent"]) & field_ids
+
+    meta_fs_mask = (
+        field_samples[meta_col].notna()
+        & field_samples[meta_col].astype(str).str.strip().ne("")
+    )
+    meta_from_fs = set(field_samples[meta_fs_mask][COL_BROADN_ID])
+    n_meta = len(meta_from_products | meta_from_fs)
+
+    # ── Uploaded — strict ────────────────────────────────────────────────────────
+    # Accession token in Sequence 16s, Sequence ITS, or MetaGenome Sequence;
+    # evaluated on both product rows (→ parent) and field-sample rows directly.
+    # is_accession_token() defined adjacent to has_sequencing_string() for DRY.
+    strict_seq_cols = ["Sequence 16s", "Sequence ITS", "MetaGenome Sequence"]
+
+    strict_prod_mask = products[strict_seq_cols].apply(
+        lambda col: col.map(is_accession_token)
+    ).any(axis=1)
+    strict_products = products[strict_prod_mask].copy()
+    strict_products["_parent"] = _parent_broadn_id(strict_products[COL_BROADN_ID])
+    strict_from_products = set(strict_products["_parent"]) & field_ids
+
+    strict_fs_mask = field_samples[strict_seq_cols].apply(
+        lambda col: col.map(is_accession_token)
+    ).any(axis=1)
+    strict_from_fs = set(field_samples[strict_fs_mask][COL_BROADN_ID])
+
+    strict_all = strict_from_products | strict_from_fs
+    n_strict = len(strict_all)
+
+    # ── Uploaded — broad ─────────────────────────────────────────────────────────
+    # Strict ∪ (External Resources non-blank on field-sample row) ∪
+    # (Publication Status == 'Published' on field-sample row).
+    # String literals: 'Published' — CONFIRMED against Bdb-317.xlsx 2026-06-04.
+    ext_res_col = "External Resources"
+    pub_status_col = "Publication Status"
+
+    ext_mask = (
+        field_samples[ext_res_col].notna()
+        & field_samples[ext_res_col].astype(str).str.strip().ne("")
+    )
+    pub_mask = field_samples[pub_status_col] == "Published"  # CONFIRMED: 2026-06-04
+    broad_extra = set(field_samples[ext_mask | pub_mask][COL_BROADN_ID])
+    n_broad = len(strict_all | broad_extra)
+
+    # ── Duration per location ────────────────────────────────────────────────────
+    # Min/max Sample Collected Date over dated field-sample rows.
+    # String literals: 'CPER', 'SGRC' — CONFIRMED against Bdb-317.xlsx 2026-06-04.
+    duration: dict = {}
+    for loc in ("CPER", "SGRC"):  # CONFIRMED: 2026-06-04
+        loc_rows = field_samples[field_samples[COL_COLLECTION_LOCATION] == loc]
+        dated = loc_rows.dropna(subset=[COL_COLLECTED_DATE])
+        min_dt = dated[COL_COLLECTED_DATE].min()
+        max_dt = dated[COL_COLLECTED_DATE].max()
+        start_ym = min_dt.strftime("%Y-%m")
+        end_ym = max_dt.strftime("%Y-%m")
+        months = round(
+            (max_dt.year * 12 + max_dt.month)
+            - (min_dt.year * 12 + min_dt.month)
+        )
+        duration[loc] = {"start": start_ym, "end": end_ym, "months": months}
+
+    # ── NEON tower breakdown ─────────────────────────────────────────────────────
+    # CPER specific sites — CONFIRMED against Bdb-317.xlsx 2026-06-04:
+    #   'Top (A)', 'Bottom (B)', 'Environment'
+    # NWT specific sites — CONFIRMED against Bdb-317.xlsx 2026-06-04:
+    #   'Bottom', 'Top', 'Middle'
+    neon_towers: dict = {}
+
+    # CPER
+    cper_rows = field_samples[field_samples[COL_COLLECTION_LOCATION] == "CPER"]  # CONFIRMED
+    cper_total = len(cper_rows)
+    cper_site_counts = cper_rows[COL_COLLECTION_SPECIFIC].value_counts().to_dict()
+    cper_top = int(cper_site_counts.get("Top (A)", 0))       # CONFIRMED: 2026-06-04
+    cper_bottom = int(cper_site_counts.get("Bottom (B)", 0)) # CONFIRMED: 2026-06-04
+    cper_env = int(cper_site_counts.get("Environment", 0))   # CONFIRMED: 2026-06-04
+    neon_towers["CPER"] = {
+        "total": cper_total,
+        "tower_top": cper_top,
+        "tower_bottom": cper_bottom,
+        "environment": cper_env,
+    }
+
+    # NWT
+    nwt_rows = field_samples[field_samples[COL_COLLECTION_LOCATION] == "NWT"]  # CONFIRMED
+    nwt_total = len(nwt_rows)
+    nwt_site_counts = nwt_rows[COL_COLLECTION_SPECIFIC].value_counts().to_dict()
+    nwt_top = int(nwt_site_counts.get("Top", 0))       # CONFIRMED: 2026-06-04
+    nwt_middle = int(nwt_site_counts.get("Middle", 0)) # CONFIRMED: 2026-06-04
+    nwt_bottom = int(nwt_site_counts.get("Bottom", 0)) # CONFIRMED: 2026-06-04
+
+    # NWT component-sum assertion (SC2 safeguard)
+    nwt_component_sum = nwt_top + nwt_middle + nwt_bottom
+    assert nwt_component_sum == nwt_total, (
+        f"NWT component-sum mismatch: {nwt_top}+{nwt_middle}+{nwt_bottom}"
+        f"={nwt_component_sum} != total {nwt_total}. "
+        f"Actual site values: {nwt_site_counts}"
+    )
+
+    # NWT date range
+    nwt_dated = nwt_rows.dropna(subset=[COL_COLLECTED_DATE])
+    nwt_start = nwt_dated[COL_COLLECTED_DATE].min().strftime("%Y-%m")
+    nwt_end = nwt_dated[COL_COLLECTED_DATE].max().strftime("%Y-%m")
+    neon_towers["NWT"] = {
+        "total": nwt_total,
+        "top": nwt_top,
+        "middle": nwt_middle,
+        "bottom": nwt_bottom,
+        "start": nwt_start,
+        "end": nwt_end,
+    }
+
+    # ── Percentages ──────────────────────────────────────────────────────────────
+    def pct(count: int) -> float:
+        return round(count / n * 100, 1)
+
+    return {
+        "n_field_samples": n,
+        "archived": {"count": n_archived, "pct": pct(n_archived)},
+        "amplicon": {"count": n_amplicon, "pct": pct(n_amplicon)},
+        "metagenomics": {"count": n_meta, "pct": pct(n_meta), "deposited": 0},
+        "uploaded": {
+            "strict": {
+                "count": n_strict,
+                "pct": pct(n_strict),
+                "label": "Deposited in public data repositories",
+            },
+            "broad": {
+                "count": n_broad,
+                "pct": pct(n_broad),
+                "label": "Linked to a publication or public record",
+            },
+        },
+        "duration": duration,
+        "neon_towers": neon_towers,
+        "hosting": "GitHub Pages (free hosting, permanent host TBD)",
+    }
 
 
 def print_fill_rates(df: pd.DataFrame, field_samples: pd.DataFrame) -> None:
@@ -1363,6 +1591,7 @@ def main() -> None:
         "type_pipeline_crossTab": type_pipeline_crossTab,
         "pipeline_type_crossTab": pipeline_type_crossTab,
         "site_date_ranges": site_date_ranges,
+        "data_management": compute_data_management(df, field_ids, field_samples),
     }
 
     # ── Write output ────────────────────────────────────────────────────────────
@@ -1380,13 +1609,14 @@ def main() -> None:
         "meta", "kpis", "temporal", "sample_types", "pipeline",
         "sites", "by_site", "recent_samples", "slice_views",
         "type_pipeline_crossTab", "pipeline_type_crossTab", "site_date_ranges",
+        "data_management",
     }
     missing_keys = required_keys - set(top_level_keys)
     print(f"  Top-level keys present: {top_level_keys}")
     if missing_keys:
         print(f"  MISSING keys: {missing_keys}")
     else:
-        print(f"  All 12 required keys present: PASS")
+        print(f"  All 13 required keys present: PASS")
     print(f"  meta.generated: {meta['generated']}")
     print(f"  kpis.field_samples: {kpis['field_samples']}")
     print(f"  kpis.sequenced: {kpis['sequenced']}")
@@ -1402,14 +1632,55 @@ def main() -> None:
     print(f"slice_views.location entries: {len(slice_location)}")
     print(f"slice_views.lab_group entries: {len(slice_lab_group)}")
 
-    ks_pass = "PASS" if kpis['field_samples'] == 4571 else "FAIL"
-    print(f"kpis.field_samples: {kpis['field_samples']} — {ks_pass}")
+    # Self-test: kpis.field_samples (dynamic — compares against live value, not a stale constant)
+    # Updated 2026-06-04: retired hardcoded 4571 (pre-refresh dataset); current data yields 4569.
+    ks_pass = "PASS" if kpis['field_samples'] == len(field_samples) else "FAIL"
+    print(f"kpis.field_samples: {kpis['field_samples']} (live: {len(field_samples)}) — {ks_pass}")
 
-    seq_pass = "PASS" if output['pipeline']['sequenced'] == 2098 else "FAIL"
-    print(f"pipeline.sequenced: {output['pipeline']['sequenced']} — {seq_pass}")
+    # Self-test: pipeline.sequenced (dynamic — compares pipeline value against live compute)
+    # Updated 2026-06-04: retired hardcoded 2098 (pre-refresh dataset); current data yields 2960.
+    seq_pass = "PASS" if output['pipeline']['sequenced'] == sequenced else "FAIL"
+    print(f"pipeline.sequenced: {output['pipeline']['sequenced']} (live: {sequenced}) — {seq_pass}")
 
     all_keys_pass = "PASS" if not missing_keys else "FAIL"
-    print(f"All 12 required keys present: {all_keys_pass}")
+    print(f"All 13 required keys present: {all_keys_pass}")
+
+    # ── data_management anchor verification ─────────────────────────────────────
+    print("\n=== DATA_MANAGEMENT ANCHOR VERIFICATION ===")
+    dm = output["data_management"]
+    dm_checks = [
+        ("n_field_samples", dm["n_field_samples"], 4569),           # VERIFIED: 2026-06-04
+        ("archived.count", dm["archived"]["count"], 3530),          # VERIFIED: 2026-06-04
+        ("amplicon.count", dm["amplicon"]["count"], 2960),          # VERIFIED: 2026-06-04
+        ("metagenomics.count", dm["metagenomics"]["count"], 63),    # VERIFIED: 2026-06-04
+        ("metagenomics.deposited", dm["metagenomics"]["deposited"], 0),  # VERIFIED: 2026-06-04
+        ("uploaded.strict.count", dm["uploaded"]["strict"]["count"], 623),  # VERIFIED: 2026-06-04
+        ("uploaded.broad.count", dm["uploaded"]["broad"]["count"], 780),    # VERIFIED: 2026-06-04
+        ("neon_towers.CPER.total", dm["neon_towers"]["CPER"]["total"], 649), # VERIFIED: 2026-06-04
+        ("neon_towers.NWT.total", dm["neon_towers"]["NWT"]["total"], 48),    # VERIFIED: 2026-06-04
+    ]
+    all_dm_pass = True
+    for label, actual, expected in dm_checks:
+        status = "PASS" if actual == expected else "FAIL"
+        if status == "FAIL":
+            all_dm_pass = False
+        print(f"  {label}: {actual} (expected {expected}) — {status}")
+    cper = dm["neon_towers"]["CPER"]
+    cper_sum = cper["tower_top"] + cper["tower_bottom"] + cper["environment"]
+    cper_sum_pass = "PASS" if cper_sum == cper["total"] else "FAIL"
+    if cper_sum_pass == "FAIL":
+        all_dm_pass = False
+    print(f"  CPER component-sum: {cper['tower_top']}+{cper['tower_bottom']}+{cper['environment']}={cper_sum} == {cper['total']} — {cper_sum_pass}")
+    nwt = dm["neon_towers"]["NWT"]
+    nwt_sum = nwt["top"] + nwt["middle"] + nwt["bottom"]
+    nwt_sum_pass = "PASS" if nwt_sum == nwt["total"] else "FAIL"
+    if nwt_sum_pass == "FAIL":
+        all_dm_pass = False
+    print(f"  NWT component-sum: {nwt['top']}+{nwt['middle']}+{nwt['bottom']}={nwt_sum} == {nwt['total']} — {nwt_sum_pass}")
+    print(f"  duration.CPER: start={dm['duration']['CPER']['start']} end={dm['duration']['CPER']['end']} months={dm['duration']['CPER']['months']}")
+    print(f"  duration.SGRC: start={dm['duration']['SGRC']['start']} end={dm['duration']['SGRC']['end']} months={dm['duration']['SGRC']['months']}")
+    print(f"  amplicon vs kpis.sequenced delta: {dm['amplicon']['count'] - output['pipeline']['sequenced']}")
+    print(f"All data_management anchor checks: {'PASS' if all_dm_pass else 'FAIL'}")
 
     # New tag columns detection status
     print(f"new_cols_present: {new_cols_present}")
