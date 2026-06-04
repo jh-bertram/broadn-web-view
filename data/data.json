@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-05-07T20:02:48Z",
+    "generated": "2026-06-04T19:57:57Z",
     "total_rows": 8075,
     "field_samples": 4569,
     "derivatives": 3506
@@ -86809,5 +86809,62 @@
       "first": "2022-05-24",
       "last": "2025-02-22"
     }
+  },
+  "data_management": {
+    "n_field_samples": 4569,
+    "archived": {
+      "count": 3530,
+      "pct": 77.3
+    },
+    "amplicon": {
+      "count": 2960,
+      "pct": 64.8
+    },
+    "metagenomics": {
+      "count": 63,
+      "pct": 1.4,
+      "deposited": 0
+    },
+    "uploaded": {
+      "strict": {
+        "count": 623,
+        "pct": 13.6,
+        "label": "Deposited in public data repositories"
+      },
+      "broad": {
+        "count": 780,
+        "pct": 17.1,
+        "label": "Linked to a publication or public record"
+      }
+    },
+    "duration": {
+      "CPER": {
+        "start": "2022-06",
+        "end": "2023-09",
+        "months": 15
+      },
+      "SGRC": {
+        "start": "2022-05",
+        "end": "2025-02",
+        "months": 33
+      }
+    },
+    "neon_towers": {
+      "CPER": {
+        "total": 649,
+        "tower_top": 162,
+        "tower_bottom": 160,
+        "environment": 327
+      },
+      "NWT": {
+        "total": 48,
+        "top": 16,
+        "middle": 12,
+        "bottom": 20,
+        "start": "2023-06",
+        "end": "2023-10"
+      }
+    },
+    "hosting": "GitHub Pages (free hosting, permanent host TBD)"
   }
 }
