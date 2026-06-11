@@ -1,16 +1,5 @@
 {
   "hooks": {
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $CLAUDE_PROJECT_DIR/.claude/hooks/user-prompt-sprint-state.sh"
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -25,11 +14,23 @@
   },
   "permissions": {
     "allow": [
-      "Read", "Write", "Edit", "Glob", "Grep",
-      "Bash(git status*)", "Bash(git log*)", "Bash(git diff*)",
-      "Bash(git add*)", "Bash(git commit*)",
-      "Bash(npm*)", "Bash(npx*)", "Bash(node*)",
-      "Bash(ls*)", "Bash(mkdir*)", "Bash(echo*)", "Bash(cat*)"
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(npm*)",
+      "Bash(npx*)",
+      "Bash(node*)",
+      "Bash(ls*)",
+      "Bash(mkdir*)",
+      "Bash(echo*)",
+      "Bash(cat*)"
     ],
     "deny": [
       "Bash(rm*)",

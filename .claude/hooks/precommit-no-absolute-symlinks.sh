@@ -21,6 +21,17 @@
 
 set -eu
 
+# ---------------------------------------------------------------------------
+# SELF-SCOPE: matcher is "Bash" (fires on every Bash call); exit early unless
+# the command actually contains "git commit". This mirrors the proven pattern
+# from guarded-git-push.sh. We read stdin once into RAW_CMD and check the
+# substring before doing any git work.
+# ---------------------------------------------------------------------------
+RAW_CMD=$(cat)
+if [[ "${RAW_CMD}" != *'git commit'* ]]; then
+  exit 0
+fi
+
 violations=""
 
 while IFS= read -r line; do
