@@ -333,13 +333,20 @@
           </div>
 
           <!-- Project context banner — shown in Project slice view when a project is selected -->
-          <div id="project-banner" class="hidden bg-white border border-stone-200 rounded-lg p-4 mb-4 flex items-start gap-4">
-            <div class="w-20 h-20 bg-stone-200 rounded flex items-center justify-center shrink-0">
-              <span class="text-stone-400 text-xs">Photo</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h2 class="project-banner-name font-semibold text-green-800 text-xl"></h2>
-              <p class="project-banner-desc text-stone-600 text-sm mt-1"></p>
+          <div id="project-banner" class="hidden bg-white border border-stone-200 rounded-lg p-5 mb-4">
+            <div class="flex items-start gap-4">
+              <div class="w-20 h-20 bg-green-50 text-green-700 rounded-lg flex items-center justify-center shrink-0" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.7-6-10a6 6 0 0 1 12 0c0 4.3-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h2 class="project-banner-name font-semibold text-green-800 text-xl"></h2>
+                  <span class="project-banner-location hidden rounded-full bg-stone-100 text-stone-600 text-xs font-medium px-2.5 py-0.5"></span>
+                </div>
+                <p class="project-banner-desc text-stone-600 text-sm mt-2 leading-relaxed"></p>
+                <p class="project-banner-people text-sm text-stone-700 mt-3 hidden"></p>
+                <div class="project-banner-links flex flex-wrap gap-2 mt-3 hidden"></div>
+              </div>
             </div>
           </div>
 
@@ -1074,6 +1081,163 @@
       "Spring SKC":            "Spring field collection using SKC sampler configuration.",
     };
 
+    // Rich per-project page content (bucket B). Keyed by project_id (matches
+    // slice_views.project[].project_id). Sourced from the BROADN site
+    // (broadn.colostate.edu/projects) + the project's data accession. Projects
+    // absent here fall back to the short PROJECT_DESCRIPTIONS blurb and render
+    // no people/links row. Add entries incrementally as content is gathered.
+    // Shared lead references (DRY — reused across projects). Bio URLs from the
+    // BROADN team page; leads without a confirmed bio page carry no url and
+    // render as plain text.
+    const LEAD = {
+      fierer:      { name: "Noah Fierer",       affiliation: "CU Boulder", url: "https://broadn.colostate.edu/noah-fierer-bio/" },
+      kreidenweis: { name: "Sonia Kreidenweis", affiliation: "CSU",        url: "https://broadn.colostate.edu/sonia-kreidenweis-bio/" },
+      trivedi:     { name: "Pankaj Trivedi",    affiliation: "CSU",        url: "https://broadn.colostate.edu/pankaj-trivedi-bio/" },
+      stewart:     { name: "Jane Stewart",      affiliation: "CSU",        url: "https://broadn.colostate.edu/jane-e-stewart-bio/" },
+      borlee:      { name: "Brad Borlee",       affiliation: "CSU",        url: "https://broadn.colostate.edu/brad-borlee-bio/" },
+      farmer:      { name: "Delphine Farmer",   affiliation: "CSU" },
+      mignani:     { name: "Claudia Mignani" }
+    };
+    const PROJECTS_PAGE = { label: "Project page — BROADN", url: "https://broadn.colostate.edu/projects/" };
+
+    const PROJECT_CONTENT = {
+      "IMPROVE Fungi": {
+        location: "U.S. national parks (IMPROVE network)",
+        summary: "Part of “Aerobiomes of America” — analyzes archived filter samples from seven IMPROVE air-quality monitoring sites in U.S. national parks to map fungal aerobiome patterns nationwide and explore how local conditions and dust-storm events shape them.",
+        lead: LEAD.fierer,
+        coInvestigators: ["Sarah Gering", "Marina Nieto-Caballero", "Scott Copeland", "Sonia Kreidenweis"],
+        links: [PROJECTS_PAGE]
+      },
+      "Fragmented Landscape": {
+        location: "South Carolina",
+        summary: "Investigates the sources and spatial patterns of the air microbiome across a fragmented southeastern landscape. Early findings indicate vegetation type has little effect on which microbes are airborne — but leaves release more bacteria and fungi than soil, and spore-forming bacteria are the most likely to become airborne.",
+        lead: LEAD.fierer,
+        coInvestigators: ["Claire Winfrey", "Julian Resasco", "Jane Stewart"],
+        links: [
+          { label: "Sequence data — NCBI PRJNA1263026", url: "https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA1263026" },
+          PROJECTS_PAGE
+        ]
+      },
+      "Two Towers": {
+        location: "Grassland & forest, Colorado",
+        summary: "Collected air samples from grassland and forest sites using two sampling towers across spring, summer, and fall 2023 to understand how habitat and season shape airborne microbial communities.",
+        lead: LEAD.stewart,
+        coInvestigators: ["Carolyn Cornell", "Ashley Miller", "Marina Nieto-Caballero", "Zaid Abdo", "Jessica Metcalf"],
+        links: [
+          { label: "Cornell et al. 2026, mBio", url: "https://doi.org/10.1128/mbio.03057-25" },
+          PROJECTS_PAGE
+        ]
+      },
+      "Flux": {
+        location: "Grasslands (CPER), Colorado",
+        summary: "Develops surface-atmosphere flux measurements of total DNA and other bioaerosol markers, using a flux-gradient approach at multiple heights over grasslands to determine whether airborne particles originate locally or from distant sources.",
+        lead: LEAD.farmer,
+        coInvestigators: ["Sonia Kreidenweis", "Jay Ham", "Lily Jones"],
+        links: [PROJECTS_PAGE]
+      },
+      "Ice-Nucleating Particles": {
+        location: "Grassland, Colorado",
+        summary: "Found that the amount of ice-nucleating particles (INPs) in the air increases with the energy and amount of rainfall, suggesting precipitation releases INPs from local plant sources — with implications for cloud-ice formation.",
+        lead: LEAD.mignani,
+        coInvestigators: ["Sonia Kreidenweis", "Thomas Hill", "Marina Nieto-Caballero", "Kevin Barry"],
+        links: [
+          { label: "Mignani et al. 2025, JGR Atmospheres", url: "https://doi.org/10.1029/2024JD042584" },
+          PROJECTS_PAGE
+        ]
+      },
+      "Fall Plant Circle": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Part of the central-grasslands aerobiome study, sampling grassland air during the fall 2022 season. Findings indicate soil bacteria are more closely connected to the air microbiome than fungi are.",
+        lead: LEAD.trivedi,
+        coInvestigators: ["Jan Leach", "Marina Nieto-Caballero", "Avinash Dhar", "Sonia Kreidenweis", "Kris Otto"],
+        links: [PROJECTS_PAGE]
+      },
+      "Spring Plant Circle": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Part of the central-grasslands aerobiome study, sampling grassland air during the spring 2023 season to characterize how microbial communities shift with season and environmental conditions.",
+        lead: LEAD.trivedi,
+        coInvestigators: ["Jan Leach", "Marina Nieto-Caballero", "Avinash Dhar", "Sonia Kreidenweis", "Kris Otto"],
+        links: [PROJECTS_PAGE]
+      },
+      "Fall Plants & Soil": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Paired air, plant, and soil sampling in the central grasslands to trace how much of the grassland aerobiome originates from local soil and vegetation sources.",
+        lead: LEAD.trivedi,
+        coInvestigators: ["Jan Leach", "Marina Nieto-Caballero", "Avinash Dhar"],
+        links: [PROJECTS_PAGE]
+      },
+      "Spring Plants & Soil": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Uses shotgun metagenomics on samples from the spring 2023 CPER campaign to understand how humidity, sunlight, and altitude affect the diversity and functions of grassland air microbes.",
+        lead: LEAD.trivedi,
+        coInvestigators: ["Jan Leach", "Marina Nieto-Caballero", "Avinash Dhar", "Rocio Rodriguez de las Llagas"],
+        links: [PROJECTS_PAGE]
+      },
+      "BACS": {
+        location: "CPER / convective storms, Colorado",
+        summary: "The BioAerosols and Convective Storms (BACS) field campaigns examine variability in cold-pool characteristics and how aerosols — including bioaerosols — respond to convective storm activity.",
+        lead: LEAD.kreidenweis,
+        coInvestigators: ["Paul DeMott"],
+        links: [
+          { label: "Ascher et al. 2026, BAMS", url: "https://doi.org/10.1175/BAMS-D-25-0105.1" },
+          PROJECTS_PAGE
+        ]
+      },
+      "Spring SASS/Polycarbonate Top/Bottom": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Field performance evaluation of bioaerosol samplers, comparing SASS and polycarbonate top/bottom filter configurations to help standardize collection techniques.",
+        lead: LEAD.kreidenweis,
+        coInvestigators: ["Marina Nieto-Caballero", "Kevin Barry"],
+        links: [PROJECTS_PAGE]
+      },
+      "Spring Sass/VIVAS": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Comparative field evaluation of SASS and VIVAS bioaerosol sampler performance under matched conditions.",
+        lead: LEAD.kreidenweis,
+        coInvestigators: ["Marina Nieto-Caballero", "Kevin Barry"],
+        links: [PROJECTS_PAGE]
+      },
+      "Spring Chemistry": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Spring CPER campaign with an added chemistry-analysis component characterizing the chemical context of collected aerobiome samples.",
+        lead: LEAD.kreidenweis
+      },
+      "2022 Fall CPER": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Field sampling campaign at the Central Plains Experimental Range — the fall 2022 grassland aerobiome collection.",
+        lead: LEAD.kreidenweis
+      },
+      "2022 Fall CPER FC": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Fall 2022 CPER field-control collection variant, providing blanks and controls for the main campaign.",
+        lead: LEAD.kreidenweis
+      },
+      "2022 Fall CPER Extra": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Supplementary fall 2022 CPER collection capturing additional samples beyond the core campaign.",
+        lead: LEAD.kreidenweis
+      },
+      "Optimization Tests": {
+        summary: "Sampler optimization and pipeline-development tests used to refine collection and processing methods.",
+        lead: LEAD.kreidenweis
+      },
+      "Spring SKC": {
+        location: "Central Plains Experimental Range (CPER), Colorado",
+        summary: "Spring field collection using the SKC sampler configuration.",
+        lead: LEAD.trivedi
+      },
+      "ARDEC Pilot Study": {
+        location: "ARDEC, Fort Collins, Colorado",
+        summary: "Early pilot collection at the Agricultural Research, Development and Education Center (ARDEC) to characterize the background aerobiome before exposure to agricultural activity.",
+        lead: LEAD.kreidenweis
+      },
+      "2024 Summer": {
+        location: "SGRC, Southern Great Plains",
+        summary: "Summer 2024 aerobiome collection at the SGRC site, extending the program's spatial coverage into the southern Great Plains.",
+        lead: LEAD.borlee
+      }
+    };
+
     // Returns true when any filter dimension is active
     function isFilterActive() {
       return filterState.slice.category !== null || filterState.tags.length > 0;
@@ -1113,10 +1277,83 @@
       if (!banner) return;
       var cat = filterState.slice.category;
       var group = filterState.slice.group;
+      var locEl    = banner.querySelector('.project-banner-location');
+      var peopleEl = banner.querySelector('.project-banner-people');
+      var linksEl  = banner.querySelector('.project-banner-links');
+
       if (cat === SLICE_CATEGORIES.PROJECT && group) {
+        var content = PROJECT_CONTENT[group];
         banner.querySelector('.project-banner-name').textContent = group;
-        var desc = PROJECT_DESCRIPTIONS[group] || 'Description not yet available — contact the project team.';
-        banner.querySelector('.project-banner-desc').textContent = desc;
+
+        // Description: prefer rich summary, then short blurb, then generic fallback
+        banner.querySelector('.project-banner-desc').textContent =
+          (content && content.summary) || PROJECT_DESCRIPTIONS[group] ||
+          'Description not yet available — contact the project team.';
+
+        // Location chip
+        if (content && content.location) {
+          locEl.textContent = content.location;
+          locEl.classList.remove('hidden');
+        } else {
+          locEl.classList.add('hidden');
+        }
+
+        // People line: lead (linked to bio) + co-investigators
+        peopleEl.innerHTML = '';
+        if (content && content.lead) {
+          var leadLabel = document.createElement('span');
+          leadLabel.className = 'font-semibold text-stone-500';
+          leadLabel.textContent = 'Lead: ';
+          peopleEl.appendChild(leadLabel);
+
+          var leadNode;
+          if (content.lead.url) {
+            leadNode = document.createElement('a');
+            leadNode.href = content.lead.url;
+            leadNode.target = '_blank';
+            leadNode.rel = 'noopener noreferrer';
+            leadNode.className = 'text-green-800 font-medium hover:text-green-700 underline underline-offset-2';
+          } else {
+            leadNode = document.createElement('span');
+            leadNode.className = 'text-stone-800 font-medium';
+          }
+          leadNode.textContent = content.lead.name +
+            (content.lead.affiliation ? ' (' + content.lead.affiliation + ')' : '');
+          peopleEl.appendChild(leadNode);
+
+          if (content.coInvestigators && content.coInvestigators.length) {
+            var coNode = document.createElement('span');
+            coNode.className = 'text-stone-500';
+            coNode.textContent = '  ·  with ' + content.coInvestigators.join(', ');
+            peopleEl.appendChild(coNode);
+          }
+          peopleEl.classList.remove('hidden');
+        } else {
+          peopleEl.classList.add('hidden');
+        }
+
+        // Links: publications / data accessions (open in a new tab)
+        linksEl.innerHTML = '';
+        if (content && content.links && content.links.length) {
+          content.links.forEach(function(lk) {
+            var a = document.createElement('a');
+            a.href = lk.url;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.className = 'inline-flex items-center gap-1 rounded-md border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-medium px-3 py-1.5';
+            a.textContent = lk.label;
+            var arrow = document.createElement('span');
+            arrow.setAttribute('aria-hidden', 'true');
+            arrow.className = 'text-stone-400';
+            arrow.textContent = '↗';
+            a.appendChild(arrow);
+            linksEl.appendChild(a);
+          });
+          linksEl.classList.remove('hidden');
+        } else {
+          linksEl.classList.add('hidden');
+        }
+
         banner.classList.remove('hidden');
       } else {
         banner.classList.add('hidden');
