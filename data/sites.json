@@ -99,8 +99,8 @@
     "code": "IM",
     "site_name": "IMPROVE — GRSM (Great Smoky Mountains National Park)",
     "collection_site": "IMPROVE",
-    "lat": 37.461,
-    "lon": -111.593,
+    "lat": 35.6334,
+    "lon": -83.9417,
     "description": "IMPROVE network aerosol monitoring station at Great Smoky Mountains National Park on the Tennessee-North Carolina border, capturing aerobiome in temperate deciduous forest."
   },
   {
@@ -217,11 +217,11 @@
   },
   {
     "code": "OC",
-    "site_name": "Other — Carolinas",
+    "site_name": "Other — South Carolina",
     "collection_site": "Other",
     "lat": 34.6001,
     "lon": -80.5001,
-    "description": "Field sampling sites across North and South Carolina collected as part of the BROADN Fragmented Landscape project, characterizing aerobiome of southeastern US mixed forest and agricultural landscapes."
+    "description": "Field sampling site in South Carolina, collected as part of the BROADN Fragmented Landscape project, characterizing aerobiome of southeastern US mixed forest and agricultural landscapes."
   },
   {
     "code": "OD",

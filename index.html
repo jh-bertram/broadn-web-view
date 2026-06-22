@@ -134,7 +134,7 @@
     <div class="max-w-7xl mx-auto">
       <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Exploring the Atmosphere's Hidden Microbiome</h1>
       <p class="text-green-200 text-lg max-w-3xl mb-6">
-        BROADN (Biology Integration Institute Regional OneHealth Aerobiome Discovery Network) is an NSF-funded initiative at Colorado State University investigating airborne microbial communities across diverse ecosystems. Our OneHealth mission connects atmospheric science, ecology, and public health.
+        BROADN (Biology Integration Institute Regional OneHealth Aerobiome Discovery Network) is an NSF-funded initiative led by Colorado State University &mdash; with partners at CSU Pueblo, CU Boulder, and Doane University &mdash; investigating airborne microbial communities across diverse ecosystems. Our OneHealth mission connects atmospheric science, ecology, and public health.
       </p>
       <div class="flex flex-wrap gap-4" aria-label="Quick statistics">
         <div class="bg-green-800 px-4 py-2 text-sm font-semibold" id="hero-samples">—</div>
@@ -747,6 +747,9 @@
                   aria-label="Horizontal bar chart showing sample counts at three pipeline stages: Collected, DNA Extracted, and Sequenced"
                   role="img"></canvas>
               </div>
+              <p class="text-xs text-stone-500 mt-4 leading-relaxed border-t border-stone-100 pt-3">
+                Each stage is a subset of the one before it. A sample not advancing to a later stage does <strong>not</strong> mean it was set aside &mdash; many are still being processed, and some did not yield usable data at a given step (for example, low-biomass samples that passed DNA extraction but did not produce enough material to sequence). These counts reflect progress to date, not final outcomes.
+              </p>
             </div>
             <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
             <div class="bg-white p-6">
@@ -1927,7 +1930,11 @@
       // Already sorted descending in data.json, but sort defensively
       var sorted = bySite.slice().sort(function(a, b) { return b.count - a.count; });
 
-      var labels = sorted.map(function(d) { return d.code || d.site; });
+      // Show the readable site name (e.g. "SGRC — Environment") instead of the
+      // cryptic 2-char code, so bar labels match the map marker tooltips and
+      // groupings like SGRC are visible. The code is retained separately
+      // (bySiteCodes) for the map cross-link click.
+      var labels = sorted.map(function(d) { return d.site || d.code; });
       var counts = sorted.map(function(d) { return d.count; });
       // Full name for tooltip
       var names  = sorted.map(function(d) { return d.site; });
@@ -1965,7 +1972,10 @@
               backgroundColor: CHART_COLORS.tooltip,
               callbacks: {
                 title: function(items) {
-                  return names[items[0].dataIndex] || items[0].label;
+                  var i = items[0].dataIndex;
+                  var nm = names[i] || items[0].label;
+                  var cd = sorted[i] && sorted[i].code;
+                  return cd ? nm + ' (' + cd + ')' : nm;
                 },
                 label: function(ctx) {
                   var lines = [' ' + ctx.parsed.x.toLocaleString() + ' samples'];
@@ -1995,8 +2005,16 @@
             },
             y: {
               grid: { display: false },
-              /* BY-SITE Y-AXIS TICKS — autoSkip: false ensures all labels show */
-              ticks: { font: { size: 10 }, autoSkip: false }
+              /* BY-SITE Y-AXIS TICKS — autoSkip: false ensures all labels show;
+                 long site names truncate with an ellipsis (full name + code in tooltip) */
+              ticks: {
+                font: { size: 10 },
+                autoSkip: false,
+                callback: function(val) {
+                  var label = this.getLabelForValue(val);
+                  return label && label.length > 24 ? label.slice(0, 23) + '…' : label;
+                }
+              }
             }
           }
         }
@@ -2048,7 +2066,7 @@
         var dateRange = appData && appData.site_date_ranges && appData.site_date_ranges[site.code];
         var dateRangeLine = dateRange ? '<br>Collection: ' + dateRange.first + ' \u2013 ' + dateRange.last : '';
         marker.bindTooltip(
-          '<strong class="block">' + site.name + '</strong>' +
+          '<strong class="block">' + site.name + (site.code ? ' (' + site.code + ')' : '') + '</strong>' +
           'Samples: <strong>' + site.count.toLocaleString() + '</strong><br>' +
           'Types: ' + typesLabel + dateRangeLine,
           { sticky: true, direction: 'top', offset: [0, -8] }
@@ -2171,7 +2189,14 @@
         var sliceGroup = filterState.slice.group;
         var passSlice  = true;
         if (sliceCat === SLICE_CATEGORIES.PROJECT && sliceGroup) {
-          passSlice = s.project === sliceGroup;
+          // sliceGroup may be an individual project_id OR a pinned project_group
+          // group_id (e.g. "CPER"). Samples carry the program on `project_group`,
+          // not `project`, so match the correct field — mirrors renderView's
+          // project_group precedence. Without this, selecting a project group
+          // filtered the Explorer to zero rows.
+          var isProjectGroup = appData && appData.slice_views && appData.slice_views.project_group &&
+            appData.slice_views.project_group.some(function(e) { return e.group_id === sliceGroup; });
+          passSlice = isProjectGroup ? (s.project_group === sliceGroup) : (s.project === sliceGroup);
         } else if (sliceCat === SLICE_CATEGORIES.LOCATION && sliceGroup) {
           passSlice = s.site === sliceGroup;
         } else if (sliceCat === SLICE_CATEGORIES.LAB_GROUP && sliceGroup) {
