@@ -1,0 +1,13 @@
+I think that the page that you have made is awesome! I think that it’s visually beautiful and that the plots are easy to interpret and understand (and I think they would be too even for laypeople). I also appreciate how many different ways of looking at our collective efforts you included; makes me proud to be a part of BROADN! 
+I do have a few suggestions though for the current version and for future ideas.
+While most BROADN researchers are at CSU, we are also affiliated with CSU Pueblo, CU Boulder, and Doane University. I think that it’s important to have these also included in the main description under “Exploring the Atmosphere’s Hidden Microbiome”.
+The map is awesome! But I noticed an error; it shows that Great Smoky Nat’l Park IMPROVE samples were taken from Utah/Arizona. Also, and maybe this is a bit nit-picky (sorry!), but just South Carolina for my samples might be better than the “Carolinas”. They were from a relatively small area in SC right on the Georgia border. 
+The Samples by Site barchart is super useful! However, it’s hard to link these initialisms to the map, e.g., "SN" for my sites is not shown on the map. The site “SGRC” which is in Data Explorer is also not in the “Samples by Site” graphic.
+I think that the processing pipeline is really interesting and valuable to include. However, I think that it could possibly give the wrong impression if there is not some additional info. For example, a lay person looking at this might think that that we just collected samples and just didn’t try to move them all forward, when in reality, some are still being processed and some just failed (e.g. I extracted DNA from a lot of samples that failed sequencing, likely due to there just not being enough biomass at my very low L/min sampling rate). Maybe an additional category or a fig caption explaining this? 
+Maybe you are already aware, but the “Data Explorer” doesn’t update when you go to a specific project 
+I love the ideas of blurbs about the research, as well as maybe a blurb about the head scientists on the project? And a lot of pictures per project would be good I think!
+I do think including the abstract and main figures from the ech project would be useful
+Finally, a few other useful plots for the main page featuring all BROADN data would be 1) a graphic showing how many samples collected at each height (since elevation is a huge variable aerobiome folks care about) and 2) biomass, e.g., qPCR results (# of cells is also very of interest). All projects should have info on the former and most on the latter too, I think.
+Overall, this is awesome! Thanks for sharing and for asking me my thoughts!
+Best,
+Claire
