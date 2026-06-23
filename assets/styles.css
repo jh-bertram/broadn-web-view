@@ -1,0 +1,94 @@
+/* BROADN dashboard styles — extracted from index.html <style> block (complexity-review step 0b). */
+    /* TEMPORAL/BAR CHART COLORS — see CHART_COLORS object in JS section below */
+    /* Design tokens — CSS custom properties */
+    :root {
+      --color-stone-50: #f5f5f4;
+      --color-stone-200: #e7e5e4;
+      --color-stone-300: #d6d3d1;
+      --color-stone-400: #a8a29e;
+      --color-green-800: #166534;
+      /* === ORANGE ACCENT — adjust these two values to change the orange hue site-wide === */
+      --color-orange-500: #ea6c00;
+      --color-orange-500-rgb: 234, 108, 0;
+      --color-orange-700: #b33a00;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--color-stone-50); }
+    ::-webkit-scrollbar-thumb { background: var(--color-stone-300); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-stone-400); }
+
+    /* Nav active link */
+    .nav-link.active {
+      border-bottom: 2px solid var(--color-green-800);
+      color: var(--color-green-800);
+      font-weight: 600;
+    }
+
+    /* Chart containers */
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 350px;
+    }
+    @media (min-width: 768px) {
+      .chart-wrap { height: 400px; }
+    }
+
+    /* Map container */
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+    @media (min-width: 768px) {
+      #map { height: 450px; }
+    }
+
+    /* Pulse skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--color-stone-200) 25%, var(--color-stone-50) 50%, var(--color-stone-200) 75%);
+      background-size: 200% 100%;
+      animation: pulse-bg 1.5s infinite;
+      border-radius: 0.5rem;
+    }
+    @keyframes pulse-bg {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+    body { font-family: "Inter", system-ui, -apple-system, Helvetica, Arial, sans-serif; }
+
+    /* Slice panel active section title */
+    .slice-chart-title-active { color: var(--color-orange-700); }
+
+    #custom-tooltip {
+      position: fixed;
+      z-index: 9999;
+      display: none;
+      background: rgba(28,25,23,0.9);
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 12px;
+      pointer-events: none;
+      max-width: 220px;
+      line-height: 1.5;
+    }
+
+    /* Data Explorer table — alternating rows and hover */
+    #explorer-table tbody tr:nth-child(odd)  { background-color: #ffffff; }
+    #explorer-table tbody tr:nth-child(even) { background-color: #f5f5f4; }
+    #explorer-table tbody tr:hover           { background-color: #e7e5e4; cursor: pointer; }
+
+    /* =====================================================================
+       CHART CARD STYLING — edit these values to tune card appearance
+       ===================================================================== */
+    /* CHART CARD BORDER — currently removed from all chart card wrapper divs.
+       To restore borders, add Tailwind class `border border-stone-200` to each
+       .bg-white chart card wrapper div. All removal locations are marked with
+       HTML comments in the template (search for "CHART CARD BORDER"). */
+    /* CHART CARD BACKGROUND — bg-white (Tailwind white). To change the card
+       background color, replace the `bg-white` class on each card wrapper div.
+       All card wrapper locations are marked with "CHART CARD BG" HTML comments. */
