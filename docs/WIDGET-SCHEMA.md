@@ -121,3 +121,36 @@ renders `type` bound to `data_binding.source` at `size`, honoring `annotations`/
 FINDINGS §4 renderer hazards are now first-class schema fields (label≠key → `slice_label_field`;
 ordered+optional → `widgets[]`; tooltips-close-over-entry → `binds_entry`). Designer mode (Phase 3) then
 edits `LayoutDescriptor` JSON and re-exports — no `index.html` edits, no build step.
+
+## Phase 3 — designer mode + the override layer
+
+`index.html?design` activates an in-page, button-driven widget editor (reorder / resize / hide / add)
+over the currently-open slice (project, location, or lab_group). It is gated by an **exact** `?design`
+token (`URLSearchParams.has('design')`) — a normal visitor (no param) gets a byte-identical published
+page with no toolbar, no listeners, and no localStorage writes.
+
+**Override layer (`data/layout-overrides.json`).** Hand edits are NOT written back into the generated
+`project-layouts.json` (the generator would clobber them). Instead they live in a separate
+`data/layout-overrides.json` that is merged — **whole-descriptor per `(kind, key)`** — on top of the
+generated layouts by BOTH:
+- the runtime resolver `getLayoutFor` (an override wins entirely over the generated descriptor), and
+- `scripts/build_layouts.py` (`load_overrides()` validates + merges before the hazard guard + schema
+  validation, so an override is held to the same checks; overridden keys are excluded from the parity
+  grid since they are unconditional).
+
+Keys: `project` → `project_id`, `lab_group` → `group_name`, `location` → `site_code` (location entries
+have no `project_id`). Validated by `data/layout-overrides-schema.json` (wrapper) which `$ref`s the
+canonical `LayoutDescriptor` — no descriptor-schema duplication.
+
+**`show_if` freeze rule.** In the editor you see every generated widget for the slice, each still
+governed by its real data rule — widgets the data currently hides appear dimmed with a "hidden for this
+slice's data" badge so nothing is invisible while you arrange. On **Save as final**, the visible set is
+frozen on a clone: kept widgets become `show_if: always`, hidden widgets are dropped. So a saved
+(overridden) slice never self-suppresses — what you arranged is exactly what publishes. The working copy
+keeps the original conditional `show_if`, so **Revert** restores the true generated layout.
+
+**Publish path.** "Save as final" downloads `layout-overrides.json`; drop it into `data/` and commit —
+that alone publishes for all visitors (the runtime merges it at load). **Do NOT re-run the generator for
+routine layout edits** (regen is for data changes; it is idempotent w.r.t. a committed overrides file but
+balloons `project-layouts.json` into PR noise). Edits autosave to a per-slice localStorage draft while
+you work.

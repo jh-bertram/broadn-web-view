@@ -86,8 +86,13 @@
 
     // Phase 2 — declarative slice rendering (complexity review)
     let projectLayouts = null;        // parsed data/project-layouts.json; null => legacy renderer fallback
+    let layoutOverrides = null;       // parsed data/layout-overrides.json; null => no hand-authored overrides
     let dynamicSliceChartIds = [];    // chart ids renderSlice created this pass (torn down on next renderView)
     const USE_RENDER_SLICE = true;    // feature flag — flip to false for instant rollback to legacy renderProjectView
+
+    // Phase 3 — designer mode. Gated by an EXACT ?design token; completely inert/absent for normal visitors.
+    var DESIGN_MODE = (typeof window !== 'undefined') && new URLSearchParams(window.location.search).has('design');
+    var editorState = { activeSlice: null, working: {}, removed: {} };
 
     // Filter state — slice + tag dimensions; replaces former sliceState
     const filterState = {
@@ -389,8 +394,9 @@
         // Links: publications / data accessions (open in a new tab). When the active project's
         // layout owns these via a link_chip widget, the banner yields (link_chip draws them in-grid).
         linksEl.innerHTML = '';
-        var linksOwnedByWidget = USE_RENDER_SLICE && projectLayouts && projectLayouts.projects[group] &&
-          projectLayouts.projects[group].widgets.some(function(w) { return w.type === 'link_chip'; });
+        var resolvedLayout = getLayoutFor('project', { project_id: group });   // override-aware resolver
+        var linksOwnedByWidget = USE_RENDER_SLICE && resolvedLayout &&
+          resolvedLayout.widgets.some(function(w) { return w.type === 'link_chip'; });
         if (!linksOwnedByWidget && content && content.links && content.links.length) {
           content.links.forEach(function(lk) { linksEl.appendChild(makeLinkChip(lk)); });
           linksEl.classList.remove('hidden');
@@ -1955,8 +1961,26 @@
 
     // null for non-project kinds (the project-kind default references pipeline that
     // location entries lack) — keeps a future 2b branch from computing on {}.
+    // Identity key per slice kind — matches both getLayoutFor and the generated/override maps.
+    function keyFor(sliceKind, entry) {
+      return sliceKind === 'project' ? entry.project_id
+           : sliceKind === 'lab_group' ? entry.group_name
+           : sliceKind === 'location' ? entry.site_code : null;
+    }
+
+    function overrideFor(sliceKind, entry) {
+      var byKind = layoutOverrides && layoutOverrides.overrides && layoutOverrides.overrides[sliceKind];
+      var k = keyFor(sliceKind, entry);
+      return (byKind && k != null && byKind[k]) || null;
+    }
+
+    // THE single layout resolver — oracle, banner, and render all route through this so the
+    // override merge has no blind spots. A hand-authored override wins as a whole descriptor.
     function getLayoutFor(sliceKind, entry) {
-      if (!projectLayouts || !entry) return null;
+      if (!entry) return null;
+      var ov = overrideFor(sliceKind, entry);
+      if (ov) { return ov; }
+      if (!projectLayouts) return null;
       if (sliceKind === 'project') {
         return projectLayouts.projects[entry.project_id] || projectLayouts.default || null;
       }
@@ -2375,17 +2399,30 @@
       hideSliceNoData(gridEl);
       gridEl.innerHTML = '';
       dynamicSliceChartIds = [];
+      // DESIGN MODE: when editing the active slice, render the editable WORKING COPY, show ALL
+      // widgets (ignoring show_if so suppressed ones can still be arranged), and decorate cards.
+      var editing = DESIGN_MODE && isActiveDesignSlice(descriptor.slice_kind, entry);
+      if (editing) {
+        descriptor = getWorkingCopyOrSeed(descriptor.slice_kind, keyFor(descriptor.slice_kind, entry), descriptor);
+        editorState.activeSlice.working = descriptor;
+        editorState.activeSlice.entry = entry;
+        editorState.activeSlice.gridEl = gridEl;
+      }
       var facts = computeFactsRuntime(entry);
-      descriptor.widgets.forEach(function(widget) {
+      descriptor.widgets.forEach(function(widget, idx) {
         try {
-          if (!evalShowIf(widget.show_if || null, facts)) return;
+          var ok = evalShowIf(widget.show_if || null, facts);
+          if (!editing && !ok) { return; }   // PUBLISHED path: byte-identical to pre-design behavior
+          var before = gridEl.children.length;
           var fn = WIDGET_RENDERERS[widget.type] || renderUnimplemented;
           fn({ descriptor: descriptor, entry: entry, facts: facts, widget: widget,
                mount: gridEl, keyField: descriptor.slice_key_field, labelField: descriptor.slice_label_field });
+          if (editing) { decorateCardsForDesign(gridEl, before, idx, descriptor.widgets.length, ok); }
         } catch (e) {
           if (window.console) { console.warn('renderSlice widget failed:', widget.id, e); }
         }
       });
+      if (editing) { ensureDesignToolbar(); }
     }
 
     // Dev-only parity oracle (no effect on normal load): load index.html?verifyLayouts and
@@ -2393,19 +2430,290 @@
     function verifyLayoutsOracle() {
       if (!projectLayouts || !appData || !appData.slice_views) { return; }
       var grid = {};
-      function addKind(entries, layoutsKey, defaultKey, idField) {
-        var byId = projectLayouts[layoutsKey] || {};
+      function addKind(entries, sliceKind, idField) {
         (entries || []).forEach(function(entry) {
-          var desc = byId[entry[idField]] || projectLayouts[defaultKey];   // kind-aware; no project-default fallback
+          var desc = getLayoutFor(sliceKind, entry);   // single resolution path (override-aware)
           if (!desc) { return; }
           var facts = computeFactsRuntime(entry);
           grid[entry[idField]] = desc.widgets.filter(function(w) { return evalShowIf(w.show_if || null, facts); }).map(function(w) { return w.id; });
         });
       }
-      addKind(appData.slice_views.project, 'projects', 'default', 'project_id');
-      addKind(appData.slice_views.lab_group, 'lab_groups', 'lab_group_default', 'group_name');
-      addKind(appData.slice_views.location, 'locations', 'location_default', 'site_code');
+      addKind(appData.slice_views.project, 'project', 'project_id');
+      addKind(appData.slice_views.lab_group, 'lab_group', 'group_name');
+      addKind(appData.slice_views.location, 'location', 'site_code');
       console.log('VERIFY_LAYOUTS_RUNTIME_GRID ' + JSON.stringify(grid));
+    }
+
+    // =============================================================================
+    // DESIGNER MODE (Phase 3) — entirely gated behind DESIGN_MODE (?design exact token).
+    // Reorder/resize/hide/add widgets on the active slice; export data/layout-overrides.json.
+    // Inert and invisible for normal visitors (no toolbar, no listeners, no storage writes).
+    // =============================================================================
+
+    var DESIGN_DRAFT_PREFIX = 'broadn:layout-draft:v1:';
+    var SIZE_CYCLE = { sm: 'md', md: 'lg', lg: 'sm' };
+    var REPEATABLE_TYPES = { caption: true };
+    var EXPORT_WIDGET_FIELDS = ['id', 'type', 'title', 'size', 'binds_entry', 'show_if', 'data_binding', 'annotations'];
+    var EXPORT_DESC_FIELDS = ['slice_kind', 'slice_key_field', 'slice_label_field', 'banner', 'widgets'];
+
+    function deepClone(o) { return (typeof structuredClone === 'function') ? structuredClone(o) : JSON.parse(JSON.stringify(o)); }
+    function sliceTag(kind, key) { return kind + '::' + key; }
+
+    function setActiveDesignSlice(kind, entry, gridEl) {
+      editorState.activeSlice = { kind: kind, key: keyFor(kind, entry), entry: entry, gridEl: gridEl };
+    }
+    function isActiveDesignSlice(kind, entry) {
+      var a = editorState.activeSlice;
+      return !!(a && a.kind === kind && a.key === keyFor(kind, entry));
+    }
+
+    function draftKey(kind, key) { return DESIGN_DRAFT_PREFIX + kind + ':' + key; }
+    function loadDraft(kind, key) {
+      try { var s = window.localStorage.getItem(draftKey(kind, key)); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+    }
+    function saveDraft(kind, key, descriptor) {
+      try { window.localStorage.setItem(draftKey(kind, key), JSON.stringify(descriptor)); announce('Draft saved'); } catch (e) { /* storage off — non-fatal */ }
+    }
+    function clearDraft(kind, key) { try { window.localStorage.removeItem(draftKey(kind, key)); } catch (e) {} }
+
+    // Generated (override-bypassing) layout — used by Revert.
+    function generatedLayoutFor(kind, entry) {
+      if (!projectLayouts) return null;
+      if (kind === 'project') return projectLayouts.projects[entry.project_id] || projectLayouts.default || null;
+      if (kind === 'lab_group') return (projectLayouts.lab_groups && (projectLayouts.lab_groups[entry.group_name] || projectLayouts.lab_group_default)) || null;
+      if (kind === 'location') return (projectLayouts.locations && (projectLayouts.locations[entry.site_code] || projectLayouts.location_default)) || null;
+      return null;
+    }
+
+    function getWorkingCopyOrSeed(kind, key, resolvedDescriptor) {
+      var sk = sliceTag(kind, key);
+      if (!editorState.working[sk]) {
+        editorState.working[sk] = loadDraft(kind, key) || deepClone(resolvedDescriptor);
+      }
+      return editorState.working[sk];
+    }
+    function activeWorking() {
+      var a = editorState.activeSlice;
+      return a && editorState.working[sliceTag(a.kind, a.key)];
+    }
+    function reRenderActiveSlice() {
+      var a = editorState.activeSlice;
+      if (!a) return;
+      destroyAllSliceCharts();
+      renderSlice(a.working, a.entry, a.gridEl);
+    }
+    function persistAndRerender() {
+      var a = editorState.activeSlice;
+      if (!a) return;
+      saveDraft(a.kind, a.key, a.working);
+      reRenderActiveSlice();
+    }
+
+    // edit operations on the active working descriptor
+    function moveWidget(idx, dir) {
+      var w = activeWorking(); if (!w) return;
+      var j = idx + dir; if (j < 0 || j >= w.widgets.length) return;
+      var t = w.widgets[idx]; w.widgets[idx] = w.widgets[j]; w.widgets[j] = t;
+      announce('Moved ' + (dir < 0 ? 'up' : 'down')); persistAndRerender();
+    }
+    function cycleSize(idx) {
+      var w = activeWorking(); if (!w) return;
+      w.widgets[idx].size = SIZE_CYCLE[w.widgets[idx].size || 'md'] || 'md';
+      announce('Size now ' + w.widgets[idx].size); persistAndRerender();
+    }
+    function removeWidget(idx) {
+      var w = activeWorking(); if (!w) return;
+      var a = editorState.activeSlice; var sk = sliceTag(a.kind, a.key);
+      editorState.removed[sk] = editorState.removed[sk] || [];
+      editorState.removed[sk].push(w.widgets[idx]);
+      w.widgets.splice(idx, 1);
+      announce('Widget hidden'); persistAndRerender();
+    }
+    function nextWidgetId(w, type) {
+      var taken = {}; w.widgets.forEach(function(x) { taken[x.id] = true; });
+      var a = editorState.activeSlice;
+      (editorState.removed[sliceTag(a.kind, a.key)] || []).forEach(function(x) { taken[x.id] = true; });
+      var n = 1, id; do { id = type + '_' + n; n++; } while (taken[id]);
+      return id;
+    }
+    function addWidget(template) {
+      var w = activeWorking(); if (!w) return;
+      var widget = deepClone(template);
+      if (!widget.id || w.widgets.some(function(x) { return x.id === widget.id; })) { widget.id = nextWidgetId(w, widget.type); }
+      w.widgets.push(widget);
+      announce('Added ' + (widget.title || widget.type)); persistAndRerender();
+    }
+    function revertToGenerated() {
+      var a = editorState.activeSlice; if (!a) return;
+      clearDraft(a.kind, a.key);
+      var gen = generatedLayoutFor(a.kind, a.entry);
+      editorState.working[sliceTag(a.kind, a.key)] = gen ? deepClone(gen) : null;
+      editorState.removed[sliceTag(a.kind, a.key)] = [];
+      announce('Reverted to generated layout'); reRenderActiveSlice();
+    }
+
+    // export — freeze kept widgets to always (on a clone; working keeps real show_if for revert)
+    function captureOverride(workingDescriptor) {
+      var clone = deepClone(workingDescriptor);
+      clone.widgets = clone.widgets.map(function(w) {
+        var out = {}; EXPORT_WIDGET_FIELDS.forEach(function(f) { if (w[f] !== undefined) out[f] = w[f]; });
+        out.show_if = { predicate: 'always' };
+        return out;
+      });
+      var desc = {}; EXPORT_DESC_FIELDS.forEach(function(f) { if (clone[f] !== undefined) desc[f] = clone[f]; });
+      return desc;
+    }
+    function buildExportPayload() {
+      var payload = (layoutOverrides && deepClone(layoutOverrides)) || { version: '1.0.0', overrides: {} };
+      payload.version = payload.version || '1.0.0';
+      payload.generated_by = 'designer-mode (manual export)';
+      payload.overrides = payload.overrides || {};
+      Object.keys(editorState.working).forEach(function(sk) {
+        var working = editorState.working[sk]; if (!working) return;
+        var parts = sk.split('::'); var kind = parts[0]; var key = parts.slice(1).join('::');
+        payload.overrides[kind] = payload.overrides[kind] || {};
+        payload.overrides[kind][key] = captureOverride(working);
+      });
+      return payload;
+    }
+    function downloadExport() {
+      var blob = new Blob([JSON.stringify(buildExportPayload(), null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'layout-overrides.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+      announce('Exported layout-overrides.json — drop it into data/ and commit to publish');
+    }
+
+    // add-widget palette per kind (location excludes pipeline-derived widgets, matching the generator)
+    function paletteWidget(type, source, extra) {
+      var w = { id: type, type: type, show_if: { predicate: 'always' }, size: 'md' };
+      if (source) { w.data_binding = { source: source }; }
+      if (extra) { Object.keys(extra).forEach(function(k) { w[k] = extra[k]; }); }
+      return w;
+    }
+    var PALETTE_CATALOG = {
+      project: [
+        paletteWidget('stat_strip', 'sample_count', { title: 'At a glance' }),
+        paletteWidget('doughnut', 'sample_types', { title: 'Sample Types' }),
+        paletteWidget('pipeline_bar', 'pipeline', { title: 'Processing Pipeline' }),
+        paletteWidget('completion_badge', 'pipeline', { title: 'Fully processed', size: 'sm' }),
+        paletteWidget('temporal_bar', 'temporal', { title: 'Collection Over Time' }),
+        paletteWidget('bar', 'sampler_type_dist', { title: 'Sampler Types' }),
+        paletteWidget('grouped_bar', 'type_pipeline_crossTab', { title: 'Pipeline by Substrate' }),
+        paletteWidget('heat_strip', 'tag_charts.Quadrant', { title: 'Quadrant Gradient', size: 'lg' }),
+        paletteWidget('badge_row', 'tag_groups', { title: 'Replicate & Design Tags', size: 'sm' }),
+        paletteWidget('link_chip', 'PROJECT_CONTENT.publications', { title: 'Publications & Data', size: 'sm' }),
+        paletteWidget('caption', null, { title: 'Caption', size: 'sm', annotations: { caption: 'Edit me' } })
+      ],
+      lab_group: [
+        paletteWidget('stat_strip', 'sample_count', { title: 'At a glance' }),
+        paletteWidget('doughnut', 'sample_types', { title: 'Sample Types' }),
+        paletteWidget('pipeline_bar', 'pipeline', { title: 'Processing Pipeline' }),
+        paletteWidget('completion_badge', 'pipeline', { title: 'Fully processed', size: 'sm' }),
+        paletteWidget('temporal_bar', 'temporal', { title: 'Collection Over Time' }),
+        paletteWidget('bar', 'sampler_type_dist', { title: 'Sampler Types' }),
+        paletteWidget('grouped_bar', 'type_pipeline_crossTab', { title: 'Pipeline by Substrate' }),
+        paletteWidget('badge_row', 'tag_groups', { title: 'Replicate & Design Tags', size: 'sm' }),
+        paletteWidget('caption', null, { title: 'Caption', size: 'sm', annotations: { caption: 'Edit me' } })
+      ],
+      location: [
+        paletteWidget('stat_strip', 'sample_count', { title: 'At a glance' }),
+        paletteWidget('sub_sites', 'sub_sites', { title: 'Sub-Locations' }),
+        paletteWidget('doughnut', 'sample_types', { title: 'Sample Types' }),
+        paletteWidget('temporal_bar', 'temporal', { title: 'Collection Over Time' }),
+        paletteWidget('bar', 'sampler_type_dist', { title: 'Sampler Types' }),
+        paletteWidget('badge_row', 'tag_groups', { title: 'Replicate & Design Tags', size: 'sm' }),
+        paletteWidget('time_of_day', 'time_distribution', { title: 'Time of Day' }),
+        paletteWidget('caption', null, { title: 'Caption', size: 'sm', annotations: { caption: 'Edit me' } })
+      ]
+    };
+    function availablePalette() {
+      var a = editorState.activeSlice; if (!a) return [];
+      var w = activeWorking(); var present = {};
+      (w ? w.widgets : []).forEach(function(x) { present[x.type] = true; });
+      var items = (PALETTE_CATALOG[a.kind] || []).filter(function(t) { return REPEATABLE_TYPES[t.type] || !present[t.type]; });
+      (editorState.removed[sliceTag(a.kind, a.key)] || []).forEach(function(rw) {
+        items.push({ __readd: true, type: rw.type, title: 'Re-add: ' + (rw.title || rw.type), __orig: rw });
+      });
+      return items;
+    }
+
+    function announce(msg) { var live = document.getElementById('design-status'); if (live) { live.textContent = msg; } }
+    function designBtn(label, aria, onClick) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'design-btn'; b.textContent = label;
+      b.setAttribute('aria-label', aria); b.addEventListener('click', onClick);
+      return b;
+    }
+    function ensureDesignToolbar() {
+      if (document.getElementById('design-toolbar')) { rebuildPalette(); return; }
+      var container = document.getElementById('slice-view-container'); if (!container) return;
+      var bar = document.createElement('div');
+      bar.id = 'design-toolbar'; bar.setAttribute('role', 'toolbar'); bar.setAttribute('aria-label', 'Designer mode controls');
+      var title = document.createElement('span'); title.className = 'design-toolbar-title'; title.textContent = 'Designer mode'; bar.appendChild(title);
+      var help = document.createElement('span'); help.className = 'design-toolbar-help';
+      help.textContent = 'Arrange widgets; dimmed = hidden for this slice’s data. Save freezes your visible set as the published layout.';
+      bar.appendChild(help);
+      var addWrap = document.createElement('span'); addWrap.className = 'design-add-wrap';
+      var sel = document.createElement('select'); sel.id = 'design-add-select'; sel.setAttribute('aria-label', 'Choose a widget to add'); addWrap.appendChild(sel);
+      addWrap.appendChild(designBtn('+ Add', 'Add the selected widget', function() {
+        var v = document.getElementById('design-add-select').value; if (v === '') return;
+        var items = availablePalette(); var pick = items[parseInt(v, 10)]; if (!pick) return;
+        addWidget(pick.__readd ? pick.__orig : pick);
+        if (pick.__readd) {
+          var a = editorState.activeSlice; var sk = sliceTag(a.kind, a.key);
+          editorState.removed[sk] = (editorState.removed[sk] || []).filter(function(x) { return x !== pick.__orig; });
+        }
+      }));
+      bar.appendChild(addWrap);
+      bar.appendChild(designBtn('Save as final', 'Export layout-overrides.json to commit', downloadExport));
+      bar.appendChild(designBtn('Revert', 'Revert this slice to the generated layout', revertToGenerated));
+      bar.appendChild(designBtn('Exit', 'Exit designer mode', function() { window.location = window.location.pathname; }));
+      var live = document.createElement('span'); live.id = 'design-status'; live.className = 'design-status'; live.setAttribute('aria-live', 'polite'); bar.appendChild(live);
+      container.insertBefore(bar, container.firstChild);
+      rebuildPalette();
+    }
+    function rebuildPalette() {
+      var sel = document.getElementById('design-add-select'); if (!sel) return;
+      sel.innerHTML = '';
+      var items = availablePalette();
+      var ph = document.createElement('option'); ph.value = ''; ph.textContent = items.length ? 'Add widget…' : '(all widgets present)'; sel.appendChild(ph);
+      items.forEach(function(t, i) { var o = document.createElement('option'); o.value = String(i); o.textContent = t.title || t.type; sel.appendChild(o); });
+    }
+    function decorateCardsForDesign(gridEl, before, idx, total, ok) {
+      var card = gridEl.children[before];
+      if (!card) {
+        // renderer emitted no DOM (data-blocked / empty binding) — inject a placeholder so it stays controllable
+        card = document.createElement('div'); card.className = 'bg-white p-6 design-placeholder';
+        var wd0 = activeWorking(); var wd = wd0 && wd0.widgets[idx];
+        card.textContent = '(' + ((wd && (wd.title || wd.type)) || 'widget') + ' — no output for this slice)';
+        gridEl.appendChild(card);
+      }
+      for (var c = before + 1; c < gridEl.children.length; c++) {
+        gridEl.children[c].setAttribute('aria-hidden', 'true');
+        gridEl.children[c].classList.add('design-continuation');
+      }
+      card.classList.add('design-card');
+      if (!ok) {
+        card.classList.add('design-suppressed');
+        var badge = document.createElement('div'); badge.className = 'design-suppressed-badge'; badge.textContent = 'hidden for this slice’s data';
+        card.insertBefore(badge, card.firstChild);
+      }
+      var w = activeWorking(); var widget = w && w.widgets[idx];
+      var label = (widget && (widget.title || widget.type)) || 'widget';
+      var controls = document.createElement('div'); controls.className = 'design-controls'; controls.setAttribute('role', 'group'); controls.setAttribute('aria-label', 'Controls for ' + label);
+      controls.appendChild(designBtn('↑', 'Move ' + label + ' up', function() { moveWidget(idx, -1); }));
+      controls.appendChild(designBtn('↓', 'Move ' + label + ' down', function() { moveWidget(idx, 1); }));
+      controls.appendChild(designBtn('⤢ ' + ((widget && widget.size) || 'md'), 'Cycle size of ' + label + ', currently ' + ((widget && widget.size) || 'md'), function() { cycleSize(idx); }));
+      controls.appendChild(designBtn('✕', 'Hide ' + label, function() { removeWidget(idx); }));
+      card.insertBefore(controls, card.firstChild);
+    }
+    function wireDesignMode() {
+      document.body.classList.add('design-mode-active');
+      if (editorState.activeSlice && editorState.activeSlice.gridEl) { reRenderActiveSlice(); }
+      announce('Designer mode active — open a slice from the sidebar to edit it');
     }
 
     // =============================================================================
@@ -3038,6 +3346,7 @@
       // flag is off or layouts are missing (getLayoutFor returns null).
       var descriptor = getLayoutFor('project', entry);
       if (USE_RENDER_SLICE && descriptor) {
+        if (DESIGN_MODE) { setActiveDesignSlice('project', entry, grid); }
         renderSlice(descriptor, entry, grid);
         return;
       }
@@ -3173,6 +3482,7 @@
       // show/hide — is the flag-off / missing-layout fallback only).
       var descriptor = getLayoutFor('location', entry);
       if (USE_RENDER_SLICE && descriptor) {
+        if (DESIGN_MODE) { setActiveDesignSlice('location', entry, grid); }
         renderSlice(descriptor, entry, grid);
         return;
       }
@@ -3353,6 +3663,7 @@
       // Phase 2b: descriptor-driven path (legacy body below is the flag-off / missing-layout fallback).
       var descriptor = getLayoutFor('lab_group', entry);
       if (USE_RENDER_SLICE && descriptor) {
+        if (DESIGN_MODE) { setActiveDesignSlice('lab_group', entry, grid); }
         renderSlice(descriptor, entry, grid);
         return;
       }
@@ -4134,7 +4445,10 @@
       var layoutsP = fetch('data/project-layouts.json')
         .then(function(resp) { return resp.ok ? resp.json() : null; })
         .catch(function() { return null; });   // layouts never block the dashboard
-      Promise.all([dataP, layoutsP]).then(function(results) {
+      var overridesP = fetch('data/layout-overrides.json')
+        .then(function(resp) { return resp.ok ? resp.json() : null; })
+        .catch(function() { return null; });    // hand-authored overrides; absent => no effect
+      Promise.all([dataP, layoutsP, overridesP]).then(function(results) {
         var parsed;
         try {
           parsed = JSON.parse(results[0]);
@@ -4143,9 +4457,11 @@
           return;
         }
         projectLayouts = results[1] || null;
+        layoutOverrides = results[2] || null;
         // Shape validation inside initDashboard
         initDashboard(parsed);
-        if (window.location.search.indexOf('verifyLayouts') !== -1) { verifyLayoutsOracle(); }
+        if (new URLSearchParams(window.location.search).has('verifyLayouts')) { verifyLayoutsOracle(); }
+        if (DESIGN_MODE) { wireDesignMode(); }
       }).catch(function() {
         showError();
       });

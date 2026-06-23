@@ -19,6 +19,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data", "data.json")
 SCHEMA = os.path.join(ROOT, "data", "layout-schema.json")
 OUT = os.path.join(ROOT, "data", "project-layouts.json")
+OVERRIDES_PATH = os.path.join(ROOT, "data", "layout-overrides.json")
+OVERRIDES_SCHEMA = os.path.join(ROOT, "data", "layout-overrides-schema.json")
+
+# designer-mode override kind -> generated `out` map key
+OVERRIDE_KIND_MAP = {"project": "projects", "lab_group": "lab_groups", "location": "locations"}
 
 KNOWN_TAG_GROUPS = ["AM/PM", "Replicate", "Position", "Quadrant", "Field Control"]
 
@@ -290,6 +295,37 @@ def rule_grid(facts):
     }
 
 
+def load_overrides():
+    """Load + validate data/layout-overrides.json (designer-mode hand edits). Returns the
+    `overrides` dict ({} if absent). Validates the wrapper against OVERRIDES_SCHEMA before merge."""
+    if not os.path.exists(OVERRIDES_PATH):
+        return {}
+    payload = json.load(io.open(OVERRIDES_PATH, encoding="utf-8"))
+    overrides = payload.get("overrides", {})
+    if not isinstance(overrides, dict):
+        print("OVERRIDES INVALID: 'overrides' must be an object"); sys.exit(1)
+    for kind in overrides:
+        if kind not in OVERRIDE_KIND_MAP:
+            print("OVERRIDES INVALID: unknown slice kind %r" % kind); sys.exit(1)
+    # Validate each override descriptor against the canonical LayoutDescriptor $def, resolved
+    # same-document (no network / no deprecated RefResolver). DRY: reuses layout-schema.json $defs.
+    try:
+        from jsonschema import Draft202012Validator
+        base = json.load(io.open(SCHEMA, encoding="utf-8"))
+        desc_validator = Draft202012Validator({"$defs": base["$defs"], "$ref": "#/$defs/LayoutDescriptor"})
+        for kind, kmap in overrides.items():
+            for key, desc in kmap.items():
+                errs = sorted(desc_validator.iter_errors(desc), key=lambda e: list(e.path))
+                if errs:
+                    print("OVERRIDES SCHEMA VALIDATION FAILED for %s/%s:" % (kind, key))
+                    for e in errs[:10]:
+                        print("  -", list(e.path), e.message)
+                    sys.exit(1)
+    except ImportError:
+        print("overrides schema validation: SKIPPED (jsonschema not installed)")
+    return overrides
+
+
 def main():
     data = json.load(io.open(DATA, encoding="utf-8"))
     projects = data["slice_views"]["project"]
@@ -309,6 +345,18 @@ def main():
         "location_default": layout("location", "site_code", "site_name", location_widgets()),
     }
 
+    # Designer-mode overrides (whole-descriptor-per (kind,key), identical merge to runtime getLayoutFor).
+    # Applied BEFORE the hazard guard + schema validation so an override is held to the same checks.
+    overrides = load_overrides()
+    override_keys = set()
+    for kind, mapkey in OVERRIDE_KIND_MAP.items():
+        for key, desc in overrides.get(kind, {}).items():
+            override_keys.add(key)
+            if key not in out[mapkey]:
+                # stderr — keep `visibility` stdout pure JSON for the parity oracle diff
+                print("WARN override key absent from generated output: %s/%s (included anyway)" % (kind, key), file=sys.stderr)
+            out[mapkey][key] = desc
+
     # Hazard guard: no location layout may carry pipeline widgets (location has no pipeline data).
     for key, lay in list(out["locations"].items()) + [("location_default", out["location_default"])]:
         ids = [w["id"] for w in lay["widgets"]]
@@ -323,7 +371,11 @@ def main():
         def emit(layouts_map, facts_list):
             fb = {f["project_id"]: f for f in facts_list}
             for key, lay in layouts_map.items():
-                f = fb[key]
+                if key in override_keys:
+                    continue                 # overrides are all-`always` => parity-trivial; keep grid on the conditional baseline
+                f = fb.get(key)
+                if f is None:
+                    continue                 # override-injected key with no facts entry — nothing to verify
                 grid[key] = [w["id"] for w in lay["widgets"] if eval_show_if(w.get("show_if"), f)]
 
         emit(out["projects"], facts_all)
