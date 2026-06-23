@@ -1474,6 +1474,36 @@
     };
     var STAGE_LABELS = { collected: 'Collected', extracted: 'DNA Extracted', sequenced: 'Sequenced' };
 
+    // Sample-request ("checkout") email targets. Data inbox is primary; OneHealth contact is cc'd.
+    var REQUEST_EMAIL_TO = 'ohi_broadn_data@colostate.edu';
+    var REQUEST_EMAIL_CC = 'onehealth_contact@colostate.edu';
+
+    // Build a prefilled mailto: link for requesting a physical sample. Returns the raw URL;
+    // callers embedding in innerHTML must &amp;-escape it (browsers decode it back for the href).
+    function buildRequestHref(row) {
+      var subject = 'BROADN sample request: ' + (row.id || '');
+      var body = [
+        'I would like to request the following BROADN sample:',
+        '',
+        'Sample ID: ' + (row.id || ''),
+        'Type: ' + (row.type || ''),
+        'Site: ' + (row.site || ''),
+        'Collection date: ' + (row.date || ''),
+        'Project: ' + (row.project || ''),
+        'Pipeline stage: ' + (STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || ''),
+        '',
+        'Requester name: ',
+        'Affiliation: ',
+        'Intended use: ',
+        '',
+        '(Sent from the BROADN Data Explorer)'
+      ].join('\n');
+      return 'mailto:' + REQUEST_EMAIL_TO +
+        '?cc=' + encodeURIComponent(REQUEST_EMAIL_CC) +
+        '&subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+    }
+
     function renderTable(samples, page) {
       page = page || 1;
 
@@ -1558,7 +1588,7 @@
 
       if (pageRows.length === 0) {
         var tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="6" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
+        tr.innerHTML = '<td colspan="7" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
         tbody.appendChild(tr);
       } else {
         pageRows.forEach(function(row) {
@@ -1572,7 +1602,8 @@
             '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.site) + '</td>' +
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + typeCls + '">' + escapeHtml(row.type) + '</span></td>' +
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>' +
-            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + (STAGE_BADGE_CLASSES[row.pipeline_stage] || 'bg-stone-100 text-stone-600') + '">' + escapeHtml(STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || '—') + '</span></td>';
+            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + (STAGE_BADGE_CLASSES[row.pipeline_stage] || 'bg-stone-100 text-stone-600') + '">' + escapeHtml(STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || '—') + '</span></td>' +
+            '<td class="px-6 py-4"><a href="' + buildRequestHref(row).replace(/&/g, '&amp;') + '" class="inline-flex items-center gap-1 rounded-md border border-green-700 text-green-800 hover:bg-green-50 text-xs font-medium px-2 py-1" aria-label="Request sample ' + escapeHtml(row.id) + ' by email">Request ✉</a></td>';
           tbody.appendChild(tr);
         });
       }
