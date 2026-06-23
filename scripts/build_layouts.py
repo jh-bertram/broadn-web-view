@@ -199,8 +199,8 @@ OVERRIDES = {
     "Two Towers": [tagbar("height_bar", "Height (Top / Mid / Bottom)", "Replicate")],
     "2022 Fall CPER": [tagbar("position_bar", "Tower Position (A / B / C)", "Position")],
     "2022 Fall CPER Control": [control_callout()],
-    "Spring SASS/Polycarbonate Top/Bottom": [grouped_bar("sampler_pipeline", "Sampler x Pipeline", "sampler_type_dist")],
-    "Spring Sass/VIVAS": [grouped_bar("sampler_pipeline", "Sampler x Pipeline", "sampler_type_dist")],
+    "Spring SASS/Polycarbonate Top/Bottom": [grouped_bar("sampler_pipeline", "Sampler × Pipeline", "sampler_pipeline")],
+    "Spring Sass/VIVAS": [grouped_bar("sampler_pipeline", "Sampler × Pipeline", "sampler_pipeline")],
     "Optimization Tests": [grouped_bar("replicate_compare", "Replicate A/B Pipeline", "tag_charts.Replicate")],
 }
 PUBLICATION_PROJECTS = {"Fragmented Landscape", "BACS", "Ice-Nucleating Particles", "Two Towers", "2024 Summer"}

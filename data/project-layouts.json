@@ -1308,10 +1308,10 @@
         {
           "id": "sampler_pipeline",
           "type": "grouped_bar",
-          "title": "Sampler x Pipeline",
+          "title": "Sampler \u00d7 Pipeline",
           "size": "md",
           "data_binding": {
-            "source": "sampler_type_dist",
+            "source": "sampler_pipeline",
             "transform": "crosstab"
           }
         },
@@ -1658,10 +1658,10 @@
         {
           "id": "sampler_pipeline",
           "type": "grouped_bar",
-          "title": "Sampler x Pipeline",
+          "title": "Sampler \u00d7 Pipeline",
           "size": "md",
           "data_binding": {
-            "source": "sampler_type_dist",
+            "source": "sampler_pipeline",
             "transform": "crosstab"
           }
         },

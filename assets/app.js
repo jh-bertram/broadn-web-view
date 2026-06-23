@@ -1467,6 +1467,13 @@
       return CATEGORY_CLASSES[cat] || 'bg-stone-100 text-stone-600';
     }
 
+    var STAGE_BADGE_CLASSES = {
+      collected: 'bg-stone-100 text-stone-600',
+      extracted: 'bg-amber-100 text-amber-800',
+      sequenced: 'bg-green-100 text-green-800'
+    };
+    var STAGE_LABELS = { collected: 'Collected', extracted: 'DNA Extracted', sequenced: 'Sequenced' };
+
     function renderTable(samples, page) {
       page = page || 1;
 
@@ -1509,15 +1516,18 @@
       });
 
       // --- Step B: local filter ---
-      var cat  = document.getElementById('filter-category').value;
-      var site = document.getElementById('filter-site').value;
-      var year = document.getElementById('filter-year').value;
+      var cat   = document.getElementById('filter-category').value;
+      var site  = document.getElementById('filter-site').value;
+      var year  = document.getElementById('filter-year').value;
+      var stageSel = document.getElementById('filter-stage');
+      var stage = stageSel ? stageSel.value : '';
 
       var filtered = dashFiltered.filter(function(s) {
-        var matchCat  = !cat  || s.category === cat;
-        var matchSite = !site || s.site === site;
-        var matchYear = !year || (s.date && s.date.startsWith(year));
-        return matchCat && matchSite && matchYear;
+        var matchCat   = !cat   || s.category === cat;
+        var matchSite  = !site  || s.site === site;
+        var matchYear  = !year  || (s.date && s.date.startsWith(year));
+        var matchStage = !stage || s.pipeline_stage === stage;
+        return matchCat && matchSite && matchYear && matchStage;
       });
 
       // --- Step C: pagination ---
@@ -1548,7 +1558,7 @@
 
       if (pageRows.length === 0) {
         var tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="5" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
+        tr.innerHTML = '<td colspan="6" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
         tbody.appendChild(tr);
       } else {
         pageRows.forEach(function(row) {
@@ -1561,7 +1571,8 @@
             '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.date) + '</td>' +
             '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.site) + '</td>' +
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + typeCls + '">' + escapeHtml(row.type) + '</span></td>' +
-            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>';
+            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>' +
+            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + (STAGE_BADGE_CLASSES[row.pipeline_stage] || 'bg-stone-100 text-stone-600') + '">' + escapeHtml(STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || '—') + '</span></td>';
           tbody.appendChild(tr);
         });
       }
@@ -2273,10 +2284,11 @@
           var nm = src.split('.').pop();
           var chart = (ctx.entry.tag_charts && ctx.entry.tag_charts[nm]) || {};
           rows = Object.keys(chart).map(function(k) { var pl = (chart[k] && chart[k].pipeline) || {}; return { label: k, collected: pl.collected || 0, dna_extracted: pl.dna_extracted || 0, sequenced: pl.sequenced || 0 }; });
+        } else if (src === 'sampler_pipeline') {
+          var sp = ctx.entry.sampler_pipeline || {};
+          rows = Object.keys(sp).map(function(k) { var v = sp[k] || {}; return { label: k, collected: v.collected || 0, dna_extracted: v.dna_extracted || 0, sequenced: v.sequenced || 0 }; });
         } else if (src === 'sampler_type_dist') {
-          // DATA-BLOCKED: no per-sampler pipeline crosstab in data.json; needs scripts/preprocess_data.py
-          // to emit sampler×stage. Affects Spring SASS/Polycarbonate Top/Bottom + Spring Sass/VIVAS.
-          return;
+          return;   // legacy no-op: the per-sampler funnel now lives under the 'sampler_pipeline' source
         } else { return; }
         if (!rows.length) { return; }
         var card = makeSliceCard(ctx.widget);
@@ -4392,6 +4404,13 @@
         tableCurrentPage = 1;
         renderTable(appData.all_samples, 1);
       });
+      var stageFilterEl = document.getElementById('filter-stage');
+      if (stageFilterEl) {
+        stageFilterEl.addEventListener('change', function() {
+          tableCurrentPage = 1;
+          renderTable(appData.all_samples, 1);
+        });
+      }
 
       // Initial render pass — shows default 7-chart view
       renderView();

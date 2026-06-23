@@ -154,32 +154,66 @@ def _parent_broadn_id(series: pd.Series) -> pd.Series:
     return series.str.split(".").str[0]
 
 
-def compute_pipeline_counts(df: pd.DataFrame, field_ids: set) -> tuple[int, int, int]:
-    """Return (collected, dna_extracted, sequenced) for field samples.
+def compute_specimen_stage_sets(df: pd.DataFrame) -> tuple[set, set]:
+    """Return (dna_set, seq_set) of parent field-specimen IDs that reached each stage.
 
-    - collected: count of field sample rows
-    - dna_extracted: count of unique field specimen IDs that have a DNA
-      derivative row (Product == 'DNA').  Derivative IDs contain '.' so
-      the specimen ID is the part before '.'.
-    - sequenced: count of unique field specimen IDs that have a
-      derivative row with at least one non-empty sequencing column.
+    - dna_set: specimen IDs with a DNA derivative row (Product == 'DNA').
+    - seq_set: specimen IDs with a derivative row carrying a non-empty sequencing column.
+    Derivative IDs contain '.'; the parent specimen ID is the part before it.
+    Single source for both the aggregate pipeline counts and per-sample stage classification.
     """
-    collected = len(field_ids)
-
-    # DNA extraction count
     dna_rows = df[df[COL_PRODUCT] == "DNA"].copy()
-    dna_rows["_specimen_id"] = _parent_broadn_id(dna_rows[COL_BROADN_ID])
-    dna_extracted = len(set(dna_rows["_specimen_id"]) & field_ids)
+    dna_set = set(_parent_broadn_id(dna_rows[COL_BROADN_ID]))
 
-    # Sequencing count — via derivative rows
     seq_mask = df[SEQ_COLS].apply(
         lambda col: col.notna() & col.astype(str).str.strip().ne("")
     ).any(axis=1)
     seq_rows = df[seq_mask].copy()
-    seq_rows["_specimen_id"] = _parent_broadn_id(seq_rows[COL_BROADN_ID])
-    sequenced = len(set(seq_rows["_specimen_id"]) & field_ids)
+    seq_set = set(_parent_broadn_id(seq_rows[COL_BROADN_ID]))
+    return dna_set, seq_set
 
-    return collected, dna_extracted, sequenced
+
+def stage_of(sample_id: str, dna_set: set, seq_set: set) -> str:
+    """Furthest pipeline stage a field specimen reached: sequenced > extracted > collected."""
+    if sample_id in seq_set:
+        return "sequenced"
+    if sample_id in dna_set:
+        return "extracted"
+    return "collected"
+
+
+def compute_pipeline_counts(df: pd.DataFrame, field_ids: set) -> tuple[int, int, int]:
+    """Return (collected, dna_extracted, sequenced) for field samples.
+
+    - collected: count of field sample rows
+    - dna_extracted: count of unique field specimen IDs that have a DNA derivative row
+    - sequenced: count of unique field specimen IDs with a sequenced derivative row
+    Uses compute_specimen_stage_sets so per-sample stage and these aggregates never drift.
+    """
+    dna_set, seq_set = compute_specimen_stage_sets(df)
+    return len(field_ids), len(dna_set & field_ids), len(seq_set & field_ids)
+
+
+def build_sampler_pipeline(group: pd.DataFrame, dna_set: set, seq_set: set) -> dict:
+    """Per-sampler pipeline funnel for a slice: { sampler: {collected,dna_extracted,sequenced} }.
+
+    Same shape as type_pipeline_crossTab. Empty {} if the sampler column is absent or its
+    fill rate within the group is below the 5% threshold used by build_sampler_type_dist.
+    """
+    if COL_SAMPLER_TYPE not in group.columns:
+        return {}
+    valid = group.dropna(subset=[COL_SAMPLER_TYPE])
+    if len(group) == 0 or (len(valid) / len(group)) < 0.05:
+        return {}
+    out: dict = {}
+    for sampler, srows in valid.groupby(COL_SAMPLER_TYPE):
+        ids = set(srows[COL_BROADN_ID].tolist())
+        out[str(sampler)] = {
+            "collected": len(ids),
+            "dna_extracted": len(ids & dna_set),
+            "sequenced": len(ids & seq_set),
+        }
+    return out
 
 
 def compute_data_management(
@@ -612,8 +646,13 @@ def build_recent_samples(field_samples: pd.DataFrame, n: int = 100) -> list:
     return results
 
 
-def build_all_samples(field_samples: pd.DataFrame, df_col_map: dict) -> list:
-    """Return all field samples with extended tag fields for the Data Explorer."""
+def build_all_samples(field_samples: pd.DataFrame, df_col_map: dict, dna_set: set, seq_set: set) -> list:
+    """Return all field samples with extended tag fields for the Data Explorer.
+
+    Each record carries pipeline_stage (collected|extracted|sequenced) — the furthest stage
+    that specimen reached, derived from derivative rows. This is the stable per-sample status
+    field a future 'sample checkout' system joins on (checkout_status/availability is a separate
+    field that needs a real reservation source and is not derivable here)."""
     import math
 
     def nullable(val) -> str | None:
@@ -649,6 +688,7 @@ def build_all_samples(field_samples: pd.DataFrame, df_col_map: dict) -> list:
             "quadrant":      col_val(COL_SAMPLE_QUADRANT),
             "position":      col_val(COL_SAMPLE_POSITION),
             "field_control": col_val(COL_SAMPLE_FC),
+            "pipeline_stage": stage_of(str(row[COL_BROADN_ID]), dna_set, seq_set),
         })
     return results
 
@@ -926,6 +966,8 @@ def build_slice_project(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
     df_col_map: dict,
+    dna_set: set,
+    seq_set: set,
 ) -> list:
     """Build slice_views.project — group field samples by 'Project ID'.
 
@@ -962,6 +1004,7 @@ def build_slice_project(
             "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
             "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
             "sampler_type_dist": build_sampler_type_dist(group),
+            "sampler_pipeline": build_sampler_pipeline(group, dna_set, seq_set),
             "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
             "tag_groups": build_tag_groups(group, df_col_map),
             "tag_charts": build_tag_charts(group, df_col_map, df),
@@ -1538,10 +1581,13 @@ def main() -> None:
     if not new_cols_present:
         df_col_map[COL_SAMPLE_REPLICATE_R] = None
 
-    all_samples = build_all_samples(field_samples, df_col_map)
+    # Per-specimen stage sets (shared: per-sample pipeline_stage + per-sampler funnel)
+    dna_set, seq_set = compute_specimen_stage_sets(df)
+
+    all_samples = build_all_samples(field_samples, df_col_map, dna_set, seq_set)
     print(f"  all_samples: {len(all_samples)} entries")
 
-    slice_project = build_slice_project(df, field_samples, df_col_map)
+    slice_project = build_slice_project(df, field_samples, df_col_map, dna_set, seq_set)
     print(f"  slice_views.project: {len(slice_project)} entries")
 
     slice_location = build_slice_location(df, field_samples, df_col_map)
