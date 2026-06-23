@@ -272,6 +272,17 @@ def main():
         "projects": {f["project_id"]: build_project_layout(f) for f in facts_all},
     }
 
+    # Parity oracle reference: `python3 scripts/build_layouts.py visibility` prints the
+    # per-project visible-widget grid the runtime evalShowIf must reproduce exactly.
+    if "visibility" in sys.argv[1:]:
+        facts_by_id = {f["project_id"]: f for f in facts_all}
+        grid = {}
+        for pid, lay in out["projects"].items():
+            f = facts_by_id[pid]
+            grid[pid] = [w["id"] for w in lay["widgets"] if eval_show_if(w.get("show_if"), f)]
+        print(json.dumps(grid, sort_keys=True))
+        return
+
     # 1) Schema validation.
     schema = json.load(io.open(SCHEMA, encoding="utf-8"))
     try:

@@ -82,6 +82,11 @@
     let appData = null;
     let chartInstances = {};
 
+    // Phase 2 — declarative slice rendering (complexity review)
+    let projectLayouts = null;        // parsed data/project-layouts.json; null => legacy renderer fallback
+    let dynamicSliceChartIds = [];    // chart ids renderSlice created this pass (torn down on next renderView)
+    const USE_RENDER_SLICE = true;    // feature flag — flip to false for instant rollback to legacy renderProjectView
+
     // Filter state — slice + tag dimensions; replaces former sliceState
     const filterState = {
       slice: {
@@ -1834,6 +1839,10 @@
       SLICE_CHART_KEYS.forEach(function(key) {
         destroyChart(key);
       });
+      // Phase 2: also tear down the deterministic ids the previous renderSlice pass created.
+      dynamicSliceChartIds.forEach(function(key) {
+        destroyChart(key);
+      });
     }
 
     // =============================================================================
@@ -1866,6 +1875,362 @@
           }
         }
       };
+    }
+
+    // =============================================================================
+    // SLICE PANEL — DECLARATIVE WIDGET ENGINE (Phase 2, complexity review)
+    // Interprets data/project-layouts.json via one renderSlice(). computeFactsRuntime
+    // and evalShowIf are 1:1 ports of compute_facts / eval_show_if in
+    // scripts/build_layouts.py (see docs/WIDGET-SCHEMA.md). Keep them in lock-step.
+    // =============================================================================
+
+    function monthIdx(m) { var a = m.split('-'); return (+a[0]) * 12 + (+a[1]); }
+
+    // 1:1 mirror of compute_facts()
+    function computeFactsRuntime(p) {
+      var n   = p.sample_count || 0;
+      var st  = p.sample_types || [];
+      var sd  = p.sampler_type_dist || [];
+      var pl  = p.pipeline || {};
+      var tmp = p.temporal || [];
+      var tg  = p.tag_groups || {};
+      var months = tmp.map(function(t) { return t.month; }).sort();   // MUST .sort() — parity item 5
+      var seqIdx = months.map(monthIdx);
+      var contiguous = true;
+      for (var i = 0; i < seqIdx.length - 1; i++) {
+        if (seqIdx[i + 1] - seqIdx[i] !== 1) { contiguous = false; break; }
+      }
+      var coll = pl.collected || 0, ext = pl.dna_extracted || 0, seq = pl.sequenced || 0;
+      var cov = sd.reduce(function(s, x) { return s + x.count; }, 0);
+      var topCount = tmp.reduce(function(mx, t) { return t.count > mx ? t.count : mx; }, 0);
+      return {
+        project_id: p.project_id,
+        sample_count: n,
+        sample_types_distinct: st.length,
+        samplers_distinct: sd.length,
+        sampler_coverage_ratio: n ? (cov / n) : 0.0,
+        months: months.length,
+        contiguous: contiguous,
+        top_month_share: n ? (topCount / n) : 0.0,
+        collected: coll, dna_extracted: ext, sequenced: seq,
+        stages_all_equal: (coll === ext && ext === seq) && n > 0,
+        populated_tag_groups: Object.keys(tg).filter(function(k) {
+          return !!tg[k] && Object.keys(tg[k]).length > 0;
+        }),
+        has_type_pipeline_crosstab: !!p.type_pipeline_crossTab
+      };
+    }
+
+    // 1:1 mirror of eval_show_if()
+    function evalShowIf(cond, f) {
+      if (cond == null) return true;
+      if (cond.all) return cond.all.every(function(c) { return evalShowIf(c, f); });
+      if (cond.any) return cond.any.some(function(c) { return evalShowIf(c, f); });
+      if (cond.not) return !evalShowIf(cond.not, f);
+      var p = cond.predicate;
+      if (p === 'always') return true;
+      if (p === 'distinct_gte') {
+        var key = { sample_types: 'sample_types_distinct', sampler: 'samplers_distinct' }[cond.field];
+        return f[key] >= cond.value;
+      }
+      if (p === 'field_eq') return f[cond.field] === cond.value;
+      if (p === 'field_gt') return f[cond.field] > cond.value;
+      if (p === 'all_equal') return f.stages_all_equal;
+      if (p === 'coverage_gte') return f.sampler_coverage_ratio >= cond.value;
+      if (p === 'tag_group_nonempty') return f.populated_tag_groups.indexOf(cond.name) !== -1;
+      if (p === 'months_gte') return f.months >= cond.value;
+      if (p === 'contiguous_months') return f.contiguous;
+      if (p === 'top_share_lt') return f.top_month_share < cond.value;
+      throw new Error('unknown predicate ' + p);
+    }
+
+    // null for non-project kinds (the project-kind default references pipeline that
+    // location entries lack) — keeps a future 2b branch from computing on {}.
+    function getLayoutFor(sliceKind, entry) {
+      if (!projectLayouts || sliceKind !== 'project' || !entry) return null;
+      return projectLayouts.projects[entry.project_id] || projectLayouts.default || null;
+    }
+
+    // Subtitles preserved from the former static cards (titles come from the descriptor).
+    var SLICE_WIDGET_SUBTITLE = {
+      sample_types: 'Proportion of samples by material type for this project.',
+      pipeline:     'Sample counts at each pipeline stage for this project.',
+      temporal:     'Monthly sample collection volume for this project.'
+    };
+
+    function makeSliceCard(widget) {
+      var card = document.createElement('div');
+      card.className = 'bg-white p-6' + (widget.size === 'lg' ? ' lg:col-span-2' : '');
+      card.id = 'chart-card-' + widget.id;
+      if (widget.title) {
+        var h3 = document.createElement('h3');
+        h3.className = 'text-lg font-bold text-stone-800 mb-1';
+        h3.textContent = widget.title;
+        card.appendChild(h3);
+      }
+      var sub = SLICE_WIDGET_SUBTITLE[widget.id];
+      if (sub) {
+        var pEl = document.createElement('p');
+        pEl.className = 'text-sm text-stone-500 mb-4';
+        pEl.textContent = sub;
+        card.appendChild(pEl);
+      }
+      return card;
+    }
+
+    function makeCanvas(card, id, ariaLabel) {
+      var wrap = document.createElement('div');
+      wrap.className = 'chart-wrap';
+      var canvas = document.createElement('canvas');
+      canvas.id = id;
+      if (ariaLabel) { canvas.setAttribute('aria-label', ariaLabel); canvas.setAttribute('role', 'img'); }
+      wrap.appendChild(canvas);
+      card.appendChild(wrap);
+      return canvas;
+    }
+
+    function sliceChartId(ctx, widget) { return 'slice_' + ctx.descriptor.slice_kind + '_' + widget.id; }
+
+    // Phase 2b: building these mounts nothing now; the corresponding cards don't exist today either.
+    function renderUnimplemented() { /* grouped_bar, heat_strip, link_chip, stat, tagbar */ }
+
+    var WIDGET_RENDERERS = {
+      stat_strip: function(ctx) {
+        var card = makeSliceCard(ctx.widget);
+        var strip = document.createElement('div');
+        strip.className = 'flex flex-wrap gap-8';
+        function tile(num, label) {
+          var t = document.createElement('div');
+          var nEl = document.createElement('div');
+          nEl.className = 'text-3xl font-bold text-stone-800';
+          nEl.textContent = num;
+          var lEl = document.createElement('div');
+          lEl.className = 'text-sm text-stone-500';
+          lEl.textContent = label;
+          t.appendChild(nEl); t.appendChild(lEl);
+          return t;
+        }
+        strip.appendChild(tile(ctx.entry.sample_count.toLocaleString(), 'Samples'));
+        if (ctx.facts.sample_types_distinct === 1 && ctx.entry.sample_types[0]) {
+          strip.appendChild(tile(ctx.entry.sample_types[0].type, 'Sample type'));
+        }
+        if (ctx.facts.samplers_distinct === 1 && ctx.entry.sampler_type_dist[0]) {
+          strip.appendChild(tile(ctx.entry.sampler_type_dist[0].sampler, 'Sampler'));
+        }
+        var pct = ctx.facts.collected ? Math.round(100 * ctx.facts.sequenced / ctx.facts.collected) : 0;
+        strip.appendChild(tile(pct + '%', 'Sequenced'));
+        card.appendChild(strip);
+        ((ctx.descriptor.banner && ctx.descriptor.banner.absorbed_stats) || []).forEach(function(s) {
+          var pEl = document.createElement('p');
+          pEl.className = 'text-sm text-stone-500 mt-2';
+          pEl.textContent = s;
+          card.appendChild(pEl);
+        });
+        ctx.mount.appendChild(card);
+      },
+
+      completion_badge: function(ctx) {
+        var card = makeSliceCard(ctx.widget);
+        var n = ctx.entry.pipeline.collected;
+        var badge = document.createElement('div');
+        badge.className = 'flex items-center gap-2 text-emerald-700';
+        var check = document.createElement('span');
+        check.setAttribute('aria-hidden', 'true');
+        check.textContent = '✓';
+        var txt = document.createElement('span');
+        txt.className = 'font-semibold';
+        txt.textContent = 'Fully processed — ' + n.toLocaleString() + ' samples through all stages';
+        badge.appendChild(check); badge.appendChild(txt);
+        card.appendChild(badge);
+        ctx.mount.appendChild(card);
+      },
+
+      doughnut: function(ctx) {
+        var entry = ctx.entry;
+        var card = makeSliceCard(ctx.widget);
+        var id = sliceChartId(ctx, ctx.widget);
+        var canvas = makeCanvas(card, id, 'Doughnut chart showing sample type breakdown for selected project');
+        ctx.mount.appendChild(card);
+        destroyChart(id);
+        chartInstances[id] = new Chart(canvas.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: entry.sample_types.map(function(d) { return d.type; }),
+            datasets: [{
+              data: entry.sample_types.map(function(d) { return d.count; }),
+              backgroundColor: CHART_COLORS.sliceSampleTypes,
+              borderColor: CHART_COLORS.donutBorder,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+              legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } } },
+              tooltip: {
+                enabled: true,
+                backgroundColor: CHART_COLORS.tooltip,
+                callbacks: {
+                  label: function(cx) { var ct = entry.type_pipeline_crossTab && entry.type_pipeline_crossTab[cx.label]; return ct ? ['Collected: '+(ct.collected||0).toLocaleString(),'Extracted: '+(ct.dna_extracted||0).toLocaleString(),'Sequenced: '+(ct.sequenced||0).toLocaleString()] : tooltipLabelPct(cx); }
+                }
+              }
+            }
+          }
+        });
+        dynamicSliceChartIds.push(id);
+      },
+
+      pipeline_bar: function(ctx) {
+        var entry = ctx.entry;
+        var card = makeSliceCard(ctx.widget);
+        var id = sliceChartId(ctx, ctx.widget);
+        var canvas = makeCanvas(card, id, 'Horizontal bar chart showing pipeline stage counts for selected project');
+        ctx.mount.appendChild(card);
+        destroyChart(id);
+        chartInstances[id] = new Chart(canvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Collected', 'DNA Extracted', 'Sequenced'],
+            datasets: [{
+              data: [entry.pipeline.collected, entry.pipeline.dna_extracted, entry.pipeline.sequenced],
+              backgroundColor: CHART_COLORS.slicePipeline,
+              borderWidth: 0,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                enabled: true,
+                backgroundColor: CHART_COLORS.tooltip,
+                callbacks: {
+                  label: function(cx) { var pKey={'Collected':'collected','DNA Extracted':'dna_extracted','Sequenced':'sequenced'}[cx.label]; var tl=entry.pipeline_type_crossTab&&pKey&&entry.pipeline_type_crossTab[pKey]; return tl?tl.map(function(t){return t.type+': '+t.count.toLocaleString();}):tooltipLabelSamples(cx); }
+                }
+              }
+            },
+            scales: {
+              x: { beginAtZero: true, grid: { color: CHART_COLORS.gridLine }, ticks: { callback: function(val) { return val >= 1000 ? (val / 1000).toFixed(1) + 'k' : val; } } },
+              y: { grid: { display: false } }
+            }
+          }
+        });
+        dynamicSliceChartIds.push(id);
+        if (ctx.facts.sequenced === 0 && ctx.widget.annotations && ctx.widget.annotations.empty_state) {
+          var cap = document.createElement('p');
+          cap.className = 'text-sm text-stone-500 mt-2';
+          cap.textContent = ctx.widget.annotations.empty_state;
+          card.appendChild(cap);
+        }
+      },
+
+      temporal_bar: function(ctx) {
+        var entry = ctx.entry;
+        var card = makeSliceCard(ctx.widget);
+        var id = sliceChartId(ctx, ctx.widget);
+        var canvas = makeCanvas(card, id, 'Bar chart showing sample count over time for selected project');
+        ctx.mount.appendChild(card);
+        var gapped = insertGapMarkers(entry.temporal);
+        destroyChart(id);
+        chartInstances[id] = new Chart(canvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: gapped.labels,
+            datasets: [{ label: 'Samples Collected', data: gapped.counts, backgroundColor: CHART_COLORS.sliceTemporalBar, borderWidth: 0 }]
+          },
+          options: (function() { var o = buildTemporalChartOptions(); o.plugins = o.plugins || {}; o.plugins.tooltip = o.plugins.tooltip || {}; o.plugins.tooltip.callbacks = { title: function(items) { return items.length ? items[0].label : ''; }, label: function(cx) { if (cx.parsed.y === null || cx.parsed.y === undefined) { return ''; } var te = (entry.temporal||[]).find(function(t){return t.month===cx.label;}); return te && te.types && te.types.length ? te.types.map(function(t){return t.type+': '+t.count.toLocaleString();}) : (te ? te.count.toLocaleString()+' samples' : cx.parsed.y.toLocaleString()+' samples'); } }; return o; }())
+        });
+        dynamicSliceChartIds.push(id);
+      },
+
+      bar: function(ctx) {
+        // Phase 2 implements only the sampler binding; tagbar bindings (tag_groups.*) defer to 2b.
+        var src = ctx.widget.data_binding && ctx.widget.data_binding.source;
+        if (src !== 'sampler_type_dist') { return; }
+        var entry = ctx.entry;
+        var card = makeSliceCard(ctx.widget);
+        var id = sliceChartId(ctx, ctx.widget);
+        makeCanvas(card, id, 'Bar chart showing sampler type breakdown for selected project');
+        ctx.mount.appendChild(card);
+        renderSamplerTypeChart(id, entry.sampler_type_dist);   // reuses log-scale + zero/no-data guards
+        var sc = chartInstances[id];
+        if (sc) {
+          var lbl = entry[ctx.labelField];
+          sc.options.plugins.tooltip.callbacks.label = function(cx) { return cx.parsed.y.toLocaleString() + ' samples' + (lbl ? ' in ' + lbl : ''); };
+          sc.update('none');
+        }
+        dynamicSliceChartIds.push(id);
+        if (ctx.widget.annotations && ctx.widget.annotations.unspecified_remainder && ctx.facts.sampler_coverage_ratio < 1) {
+          var unspec = ctx.entry.sample_count - Math.round(ctx.facts.sampler_coverage_ratio * ctx.entry.sample_count);
+          if (unspec > 0) {
+            var cap = document.createElement('p');
+            cap.className = 'text-sm text-stone-500 mt-2';
+            cap.textContent = unspec.toLocaleString() + ' samples have no sampler recorded.';
+            card.appendChild(cap);
+          }
+        }
+      },
+
+      badge_row: function(ctx) {
+        var card = makeSliceCard(ctx.widget);
+        var container = document.createElement('div');
+        container.id = 'slice_' + ctx.descriptor.slice_kind + '_tags';
+        container.className = 'flex flex-wrap gap-2';
+        card.appendChild(container);
+        ctx.mount.appendChild(card);
+        renderTagGroups(container.id, ctx.entry.tag_groups);   // preserves badge click -> filterState.tags
+      },
+
+      caption: function(ctx) {
+        var card = makeSliceCard(ctx.widget);
+        var pEl = document.createElement('p');
+        pEl.className = 'text-sm text-stone-500';
+        pEl.textContent = (ctx.widget.annotations && ctx.widget.annotations.caption) || ctx.widget.title || '';
+        card.appendChild(pEl);
+        ctx.mount.appendChild(card);
+      },
+
+      grouped_bar: renderUnimplemented,
+      heat_strip: renderUnimplemented,
+      link_chip: renderUnimplemented,
+      stat: renderUnimplemented
+    };
+
+    // Render one slice from its LayoutDescriptor. Previous pass's charts are torn down by
+    // destroyAllSliceCharts() at the top of renderView() before this runs.
+    function renderSlice(descriptor, entry, gridEl) {
+      hideSliceNoData(gridEl);
+      gridEl.innerHTML = '';
+      dynamicSliceChartIds = [];
+      var facts = computeFactsRuntime(entry);
+      descriptor.widgets.forEach(function(widget) {
+        try {
+          if (!evalShowIf(widget.show_if || null, facts)) return;
+          var fn = WIDGET_RENDERERS[widget.type] || renderUnimplemented;
+          fn({ descriptor: descriptor, entry: entry, facts: facts, widget: widget,
+               mount: gridEl, keyField: descriptor.slice_key_field, labelField: descriptor.slice_label_field });
+        } catch (e) {
+          if (window.console) { console.warn('renderSlice widget failed:', widget.id, e); }
+        }
+      });
+    }
+
+    // Dev-only parity oracle (no effect on normal load): load index.html?verifyLayouts and
+    // diff the logged grid against `python3 scripts/build_layouts.py visibility`.
+    function verifyLayoutsOracle() {
+      if (!projectLayouts || !appData || !appData.slice_views || !appData.slice_views.project) { return; }
+      var grid = {};
+      appData.slice_views.project.forEach(function(entry) {
+        var desc = projectLayouts.projects[entry.project_id] || projectLayouts.default;
+        var facts = computeFactsRuntime(entry);
+        grid[entry.project_id] = desc.widgets.filter(function(w) { return evalShowIf(w.show_if || null, facts); }).map(function(w) { return w.id; });
+      });
+      console.log('VERIFY_LAYOUTS_RUNTIME_GRID ' + JSON.stringify(grid));
     }
 
     // =============================================================================
@@ -2493,6 +2858,14 @@
       }
 
       hideSliceNoData(grid);
+
+      // Phase 2: descriptor-driven path. Falls through to the legacy renderer below when the
+      // flag is off or layouts are missing (getLayoutFor returns null).
+      var descriptor = getLayoutFor('project', entry);
+      if (USE_RENDER_SLICE && descriptor) {
+        renderSlice(descriptor, entry, grid);
+        return;
+      }
 
       // Chart 1: Sample Types (Doughnut)
       destroyChart('sliceProjectTypesChart');
@@ -3561,27 +3934,29 @@
       });
     }());
 
-    // Fetch with try/catch + shape validation
+    // Fetch with try/catch + shape validation. data.json is the only hard dependency;
+    // project-layouts.json is best-effort (failure => projectLayouts stays null => legacy renderer).
     document.addEventListener('DOMContentLoaded', function() {
-      fetch('data/data.json')
-        .then(function(resp) {
-          if (!resp.ok) {
-            throw new Error('HTTP ' + resp.status);
-          }
-          return resp.text();
-        })
-        .then(function(text) {
-          var parsed;
-          try {
-            parsed = JSON.parse(text);
-          } catch (parseErr) {
-            showError();
-            return;
-          }
-          // Shape validation inside initDashboard
-          initDashboard(parsed);
-        })
-        .catch(function() {
+      var dataP = fetch('data/data.json').then(function(resp) {
+        if (!resp.ok) { throw new Error('HTTP ' + resp.status); }
+        return resp.text();
+      });
+      var layoutsP = fetch('data/project-layouts.json')
+        .then(function(resp) { return resp.ok ? resp.json() : null; })
+        .catch(function() { return null; });   // layouts never block the dashboard
+      Promise.all([dataP, layoutsP]).then(function(results) {
+        var parsed;
+        try {
+          parsed = JSON.parse(results[0]);
+        } catch (parseErr) {
           showError();
-        });
+          return;
+        }
+        projectLayouts = results[1] || null;
+        // Shape validation inside initDashboard
+        initDashboard(parsed);
+        if (window.location.search.indexOf('verifyLayouts') !== -1) { verifyLayoutsOracle(); }
+      }).catch(function() {
+        showError();
+      });
     });
