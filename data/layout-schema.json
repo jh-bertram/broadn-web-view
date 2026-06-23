@@ -14,7 +14,19 @@
       "type": "object",
       "description": "Keyed by project_id (matches slice_views.project[*].project_id).",
       "additionalProperties": { "$ref": "#/$defs/LayoutDescriptor" }
-    }
+    },
+    "lab_groups": {
+      "type": "object",
+      "description": "Keyed by group_name (slice_views.lab_group[*].group_name).",
+      "additionalProperties": { "$ref": "#/$defs/LayoutDescriptor" }
+    },
+    "lab_group_default": { "$ref": "#/$defs/LayoutDescriptor" },
+    "locations": {
+      "type": "object",
+      "description": "Keyed by site_code (slice_views.location[*].site_code).",
+      "additionalProperties": { "$ref": "#/$defs/LayoutDescriptor" }
+    },
+    "location_default": { "$ref": "#/$defs/LayoutDescriptor" }
   },
   "$defs": {
     "LayoutDescriptor": {
@@ -59,7 +71,7 @@
           "enum": [
             "doughnut", "pipeline_bar", "temporal_bar", "bar", "grouped_bar",
             "heat_strip", "badge_row", "stat", "stat_strip", "completion_badge",
-            "link_chip", "caption"
+            "link_chip", "caption", "sub_sites", "time_of_day"
           ],
           "description": "open-ended widget-type enum (matrix §4.2a)"
         },

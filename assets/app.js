@@ -48,6 +48,8 @@
       sliceTemporalBar:  '#0f766e',
       sliceLocationBar:  '#0369a1',
       sliceTimeOfDay:    ['#166534', '#0f766e', '#b45309', '#6d28d9'],
+      /* HEAT-STRIP RAMP — pale→deep green by % sequenced (quadrant matrix) */
+      sliceHeatRamp:     ['#f0fdf4', '#bbf7d0', '#15803d', '#166534'],
       orangeAccent:      '#ea6c00',
       orangeAccentDim:   'rgba(234,108,0,0.3)',
       samplerType:       ['#166534', '#0f766e', '#b45309', '#1d4ed8', '#78716c']
@@ -306,6 +308,22 @@
       }
     }
 
+    // Shared publication/data link chip — used by the banner AND the link_chip slice widget (DRY).
+    function makeLinkChip(lk) {
+      var a = document.createElement('a');
+      a.href = lk.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.className = 'inline-flex items-center gap-1 rounded-md border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-medium px-3 py-1.5';
+      a.textContent = lk.label;
+      var arrow = document.createElement('span');
+      arrow.setAttribute('aria-hidden', 'true');
+      arrow.className = 'text-stone-400';
+      arrow.textContent = '↗';
+      a.appendChild(arrow);
+      return a;
+    }
+
     // Shows or hides the project-context banner based on filterState.slice.
     // Only visible when category === PROJECT and a group is selected.
     function updateProjectBanner() {
@@ -368,23 +386,13 @@
           peopleEl.classList.add('hidden');
         }
 
-        // Links: publications / data accessions (open in a new tab)
+        // Links: publications / data accessions (open in a new tab). When the active project's
+        // layout owns these via a link_chip widget, the banner yields (link_chip draws them in-grid).
         linksEl.innerHTML = '';
-        if (content && content.links && content.links.length) {
-          content.links.forEach(function(lk) {
-            var a = document.createElement('a');
-            a.href = lk.url;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            a.className = 'inline-flex items-center gap-1 rounded-md border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-medium px-3 py-1.5';
-            a.textContent = lk.label;
-            var arrow = document.createElement('span');
-            arrow.setAttribute('aria-hidden', 'true');
-            arrow.className = 'text-stone-400';
-            arrow.textContent = '↗';
-            a.appendChild(arrow);
-            linksEl.appendChild(a);
-          });
+        var linksOwnedByWidget = USE_RENDER_SLICE && projectLayouts && projectLayouts.projects[group] &&
+          projectLayouts.projects[group].widgets.some(function(w) { return w.type === 'link_chip'; });
+        if (!linksOwnedByWidget && content && content.links && content.links.length) {
+          content.links.forEach(function(lk) { linksEl.appendChild(makeLinkChip(lk)); });
           linksEl.classList.remove('hidden');
         } else {
           linksEl.classList.add('hidden');
@@ -1904,7 +1912,7 @@
       var cov = sd.reduce(function(s, x) { return s + x.count; }, 0);
       var topCount = tmp.reduce(function(mx, t) { return t.count > mx ? t.count : mx; }, 0);
       return {
-        project_id: p.project_id,
+        project_id: p.project_id || p.group_name || p.site_code,   // identity field across slice kinds
         sample_count: n,
         sample_types_distinct: st.length,
         samplers_distinct: sd.length,
@@ -1917,6 +1925,7 @@
         populated_tag_groups: Object.keys(tg).filter(function(k) {
           return !!tg[k] && Object.keys(tg[k]).length > 0;
         }),
+        time_distribution_periods: (p.time_distribution || []).length,
         has_type_pipeline_crosstab: !!p.type_pipeline_crossTab
       };
     }
@@ -1947,8 +1956,17 @@
     // null for non-project kinds (the project-kind default references pipeline that
     // location entries lack) — keeps a future 2b branch from computing on {}.
     function getLayoutFor(sliceKind, entry) {
-      if (!projectLayouts || sliceKind !== 'project' || !entry) return null;
-      return projectLayouts.projects[entry.project_id] || projectLayouts.default || null;
+      if (!projectLayouts || !entry) return null;
+      if (sliceKind === 'project') {
+        return projectLayouts.projects[entry.project_id] || projectLayouts.default || null;
+      }
+      if (sliceKind === 'lab_group') {
+        return (projectLayouts.lab_groups && (projectLayouts.lab_groups[entry.group_name] || projectLayouts.lab_group_default)) || null;
+      }
+      if (sliceKind === 'location') {
+        return (projectLayouts.locations && (projectLayouts.locations[entry.site_code] || projectLayouts.location_default)) || null;
+      }
+      return null;
     }
 
     // Subtitles preserved from the former static cards (titles come from the descriptor).
@@ -2017,8 +2035,10 @@
         if (ctx.facts.samplers_distinct === 1 && ctx.entry.sampler_type_dist[0]) {
           strip.appendChild(tile(ctx.entry.sampler_type_dist[0].sampler, 'Sampler'));
         }
-        var pct = ctx.facts.collected ? Math.round(100 * ctx.facts.sequenced / ctx.facts.collected) : 0;
-        strip.appendChild(tile(pct + '%', 'Sequenced'));
+        if (ctx.facts.collected) {   // omit the Sequenced tile entirely when there is no pipeline (e.g. locations)
+          var pct = Math.round(100 * ctx.facts.sequenced / ctx.facts.collected);
+          strip.appendChild(tile(pct + '%', 'Sequenced'));
+        }
         card.appendChild(strip);
         ((ctx.descriptor.banner && ctx.descriptor.banner.absorbed_stats) || []).forEach(function(s) {
           var pEl = document.createElement('p');
@@ -2149,8 +2169,32 @@
       },
 
       bar: function(ctx) {
-        // Phase 2 implements only the sampler binding; tagbar bindings (tag_groups.*) defer to 2b.
         var src = ctx.widget.data_binding && ctx.widget.data_binding.source;
+        // tag_groups.<dim> binding (height_bar / position_bar): linear vertical bar of token counts.
+        if (src && src.indexOf('tag_groups.') === 0) {
+          var grp = src.slice('tag_groups.'.length);
+          var dict = ctx.entry.tag_groups && ctx.entry.tag_groups[grp];
+          if (!dict || !Object.keys(dict).length) { return; }
+          var keys = Object.keys(dict);
+          if (ctx.widget.data_binding.transform === 'sort_desc') { keys.sort(function(a, b) { return dict[b] - dict[a]; }); }
+          var tgCard = makeSliceCard(ctx.widget);
+          var tgId = sliceChartId(ctx, ctx.widget);
+          var tgCanvas = makeCanvas(tgCard, tgId, 'Bar chart of ' + (ctx.widget.title || grp) + ' counts');
+          ctx.mount.appendChild(tgCard);
+          destroyChart(tgId);
+          chartInstances[tgId] = new Chart(tgCanvas.getContext('2d'), {
+            type: 'bar',
+            data: { labels: keys, datasets: [{ data: keys.map(function(k) { return dict[k]; }), backgroundColor: CHART_COLORS.samplerType }] },
+            options: {
+              responsive: true, maintainAspectRatio: false,
+              plugins: { legend: { display: false }, tooltip: { backgroundColor: CHART_COLORS.tooltip, callbacks: { label: function(cx) { return ' ' + cx.parsed.y.toLocaleString() + ' samples'; } } } },
+              scales: { x: { grid: { display: false }, ticks: { font: { size: 10 } } }, y: { beginAtZero: true, grid: { color: CHART_COLORS.gridLine } } }  // linear (counts can be tiny)
+            }
+          });
+          dynamicSliceChartIds.push(tgId);
+          return;
+        }
+        // sampler binding is the only other supported source; all else no-op.
         if (src !== 'sampler_type_dist') { return; }
         var entry = ctx.entry;
         var card = makeSliceCard(ctx.widget);
@@ -2195,10 +2239,134 @@
         ctx.mount.appendChild(card);
       },
 
-      grouped_bar: renderUnimplemented,
-      heat_strip: renderUnimplemented,
-      link_chip: renderUnimplemented,
-      stat: renderUnimplemented
+      grouped_bar: function(ctx) {
+        var src = ctx.widget.data_binding && ctx.widget.data_binding.source;
+        var rows = [];   // [{label, collected, dna_extracted, sequenced}]
+        if (src === 'type_pipeline_crossTab') {
+          var tab = ctx.entry.type_pipeline_crossTab || {};
+          rows = Object.keys(tab).map(function(k) { var v = tab[k] || {}; return { label: k, collected: v.collected || 0, dna_extracted: v.dna_extracted || 0, sequenced: v.sequenced || 0 }; });
+        } else if (src && src.indexOf('tag_charts.') === 0) {
+          var nm = src.split('.').pop();
+          var chart = (ctx.entry.tag_charts && ctx.entry.tag_charts[nm]) || {};
+          rows = Object.keys(chart).map(function(k) { var pl = (chart[k] && chart[k].pipeline) || {}; return { label: k, collected: pl.collected || 0, dna_extracted: pl.dna_extracted || 0, sequenced: pl.sequenced || 0 }; });
+        } else if (src === 'sampler_type_dist') {
+          // DATA-BLOCKED: no per-sampler pipeline crosstab in data.json; needs scripts/preprocess_data.py
+          // to emit sampler×stage. Affects Spring SASS/Polycarbonate Top/Bottom + Spring Sass/VIVAS.
+          return;
+        } else { return; }
+        if (!rows.length) { return; }
+        var card = makeSliceCard(ctx.widget);
+        var id = sliceChartId(ctx, ctx.widget);
+        var canvas = makeCanvas(card, id, 'Grouped bar of pipeline stages by ' + (ctx.widget.title || 'category'));
+        ctx.mount.appendChild(card);
+        // GROUPED (not stacked): the three stages are nested subsets, so stacking would mislead.
+        var stages = [
+          { key: 'collected', label: 'Collected', color: CHART_COLORS.pipeline[0] },
+          { key: 'dna_extracted', label: 'DNA Extracted', color: CHART_COLORS.pipeline[1] },
+          { key: 'sequenced', label: 'Sequenced', color: CHART_COLORS.pipeline[2] }
+        ];
+        destroyChart(id);
+        chartInstances[id] = new Chart(canvas.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: rows.map(function(r) { return r.label; }),
+            datasets: stages.map(function(s) { return { label: s.label, data: rows.map(function(r) { return r[s.key]; }), backgroundColor: s.color, borderWidth: 0 }; })
+          },
+          options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+              tooltip: { backgroundColor: CHART_COLORS.tooltip, callbacks: { label: function(cx) { return ' ' + cx.dataset.label + ': ' + cx.parsed.x.toLocaleString(); } } }
+            },
+            scales: { x: { beginAtZero: true, grid: { color: CHART_COLORS.gridLine } }, y: { grid: { display: false } } }
+          }
+        });
+        dynamicSliceChartIds.push(id);
+      },
+
+      heat_strip: function(ctx) {
+        var src = ctx.widget.data_binding && ctx.widget.data_binding.source;
+        var nm = (src && src.indexOf('.') >= 0) ? src.split('.').pop() : 'Quadrant';
+        var chart = ctx.entry.tag_charts && ctx.entry.tag_charts[nm];
+        if (!chart) { return; }
+        var keys = Object.keys(chart).sort(function(a, b) { return parseInt(a.slice(1), 10) - parseInt(b.slice(1), 10); });  // Q1,Q2,..Q12 numeric
+        if (!keys.length) { return; }
+        var card = makeSliceCard(ctx.widget);
+        var gridEl = document.createElement('div');
+        gridEl.className = 'grid grid-cols-4 sm:grid-cols-6 gap-2';
+        keys.forEach(function(k) {
+          var pl = (chart[k] && chart[k].pipeline) || {};
+          var coll = pl.collected || 0, seq = pl.sequenced || 0;
+          var pct = coll ? Math.round(100 * seq / coll) : 0;
+          var bucket = pct === 0 ? 0 : (pct <= 33 ? 1 : (pct <= 66 ? 2 : 3));
+          var cell = document.createElement('div');
+          cell.className = 'rounded p-2 text-center';
+          cell.style.backgroundColor = CHART_COLORS.sliceHeatRamp[bucket];
+          cell.style.color = bucket >= 2 ? '#ffffff' : '#14532d';   // WCAG-AA on each ramp stop
+          cell.setAttribute('title', k + ': ' + pct + '% sequenced (' + seq + ' of ' + coll + ')');
+          cell.setAttribute('aria-label', k + ': ' + pct + ' percent sequenced, ' + seq + ' of ' + coll + ' samples');
+          var kEl = document.createElement('div'); kEl.className = 'text-xs font-semibold'; kEl.textContent = k;
+          var pEl = document.createElement('div'); pEl.className = 'text-sm font-bold'; pEl.textContent = pct + '%';
+          cell.appendChild(kEl); cell.appendChild(pEl);
+          gridEl.appendChild(cell);
+        });
+        card.appendChild(gridEl);
+        ctx.mount.appendChild(card);   // pure DOM — no canvas, not pushed to dynamicSliceChartIds
+      },
+
+      link_chip: function(ctx) {
+        var content = PROJECT_CONTENT[ctx.entry[ctx.keyField]];
+        var links = content && content.links;
+        if (!links || !links.length) { return; }   // no_fabricate: nothing renders without real links
+        var card = makeSliceCard(ctx.widget);
+        var row = document.createElement('div');
+        row.className = 'flex flex-wrap gap-2';
+        links.forEach(function(lk) { row.appendChild(makeLinkChip(lk)); });
+        card.appendChild(row);
+        ctx.mount.appendChild(card);
+      },
+
+      sub_sites: function(ctx) {
+        var entry = ctx.entry;
+        if (!entry.sub_sites || !entry.sub_sites.length) { return; }
+        var card = makeSliceCard(ctx.widget);
+        var id = sliceChartId(ctx, ctx.widget);
+        var canvas = makeCanvas(card, id, 'Horizontal bar chart of sub-location sample counts');
+        ctx.mount.appendChild(card);
+        destroyChart(id);
+        chartInstances[id] = new Chart(canvas.getContext('2d'), {
+          type: 'bar',
+          data: { labels: entry.sub_sites.map(function(d) { return d.sub_name; }), datasets: [{ data: entry.sub_sites.map(function(d) { return d.count; }), backgroundColor: CHART_COLORS.sliceLocationBar, borderWidth: 0, borderRadius: 3 }] },
+          options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { backgroundColor: CHART_COLORS.tooltip, callbacks: { label: tooltipLabelSamples } } },
+            scales: { x: { beginAtZero: true, grid: { color: CHART_COLORS.gridLine }, ticks: { callback: function(val) { return val >= 1000 ? (val / 1000).toFixed(1) + 'k' : val; } } }, y: { grid: { display: false }, ticks: { font: { size: 10 } } } }
+          }
+        });
+        dynamicSliceChartIds.push(id);
+      },
+
+      time_of_day: function(ctx) {
+        var entry = ctx.entry;
+        if (!entry.time_distribution || !entry.time_distribution.length) { return; }
+        var card = makeSliceCard(ctx.widget);
+        var id = sliceChartId(ctx, ctx.widget);
+        var canvas = makeCanvas(card, id, 'Bar chart of sample counts by time of day');
+        ctx.mount.appendChild(card);
+        destroyChart(id);
+        chartInstances[id] = new Chart(canvas.getContext('2d'), {
+          type: 'bar',
+          data: { labels: entry.time_distribution.map(function(d) { return d.time_period; }), datasets: [{ data: entry.time_distribution.map(function(d) { return d.count; }), backgroundColor: CHART_COLORS.sliceTimeOfDay, borderWidth: 0 }] },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { backgroundColor: CHART_COLORS.tooltip, callbacks: { label: function(cx) { return ' ' + cx.label + ': ' + cx.parsed.y.toLocaleString() + ' samples'; } } } },
+            scales: { x: { grid: { display: false }, ticks: { font: { size: 11 } }, title: { display: true, text: 'Time Period', color: CHART_COLORS.axisLabel, font: { size: 11 } } }, y: { beginAtZero: true, grid: { color: CHART_COLORS.gridLine }, title: { display: true, text: 'Samples', color: CHART_COLORS.axisLabel, font: { size: 11 } } } }
+          }
+        });
+        dynamicSliceChartIds.push(id);
+      },
+
+      stat: renderUnimplemented   // control_callout — deferred (out of 2b scope)
     };
 
     // Render one slice from its LayoutDescriptor. Previous pass's charts are torn down by
@@ -2223,13 +2391,20 @@
     // Dev-only parity oracle (no effect on normal load): load index.html?verifyLayouts and
     // diff the logged grid against `python3 scripts/build_layouts.py visibility`.
     function verifyLayoutsOracle() {
-      if (!projectLayouts || !appData || !appData.slice_views || !appData.slice_views.project) { return; }
+      if (!projectLayouts || !appData || !appData.slice_views) { return; }
       var grid = {};
-      appData.slice_views.project.forEach(function(entry) {
-        var desc = projectLayouts.projects[entry.project_id] || projectLayouts.default;
-        var facts = computeFactsRuntime(entry);
-        grid[entry.project_id] = desc.widgets.filter(function(w) { return evalShowIf(w.show_if || null, facts); }).map(function(w) { return w.id; });
-      });
+      function addKind(entries, layoutsKey, defaultKey, idField) {
+        var byId = projectLayouts[layoutsKey] || {};
+        (entries || []).forEach(function(entry) {
+          var desc = byId[entry[idField]] || projectLayouts[defaultKey];   // kind-aware; no project-default fallback
+          if (!desc) { return; }
+          var facts = computeFactsRuntime(entry);
+          grid[entry[idField]] = desc.widgets.filter(function(w) { return evalShowIf(w.show_if || null, facts); }).map(function(w) { return w.id; });
+        });
+      }
+      addKind(appData.slice_views.project, 'projects', 'default', 'project_id');
+      addKind(appData.slice_views.lab_group, 'lab_groups', 'lab_group_default', 'group_name');
+      addKind(appData.slice_views.location, 'locations', 'location_default', 'site_code');
       console.log('VERIFY_LAYOUTS_RUNTIME_GRID ' + JSON.stringify(grid));
     }
 
@@ -2994,6 +3169,14 @@
 
       hideSliceNoData(grid);
 
+      // Phase 2b: descriptor-driven path (legacy body below — incl. the static time-of-day card
+      // show/hide — is the flag-off / missing-layout fallback only).
+      var descriptor = getLayoutFor('location', entry);
+      if (USE_RENDER_SLICE && descriptor) {
+        renderSlice(descriptor, entry, grid);
+        return;
+      }
+
       // Chart 1: Sub-Location Sample Counts (Horizontal Bar)
       destroyChart('sliceLocationSubsitesChart');
       var ctx1 = document.getElementById('sliceLocationSubsitesChart').getContext('2d');
@@ -3166,6 +3349,13 @@
       }
 
       hideSliceNoData(grid);
+
+      // Phase 2b: descriptor-driven path (legacy body below is the flag-off / missing-layout fallback).
+      var descriptor = getLayoutFor('lab_group', entry);
+      if (USE_RENDER_SLICE && descriptor) {
+        renderSlice(descriptor, entry, grid);
+        return;
+      }
 
       // Chart 1: Sample Types (Doughnut)
       destroyChart('sliceLabGroupTypesChart');

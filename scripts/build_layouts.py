@@ -42,7 +42,8 @@ def compute_facts(p):
     coll, ext, seq = pl.get("collected", 0), pl.get("dna_extracted", 0), pl.get("sequenced", 0)
     cov = sum(x["count"] for x in sd)
     return {
-        "project_id": p["project_id"],
+        # identity field across slice kinds (project_id | group_name | site_code)
+        "project_id": p.get("project_id") or p.get("group_name") or p.get("site_code"),
         "sample_count": n,
         "sample_types_distinct": len(st),
         "samplers_distinct": len(sd),
@@ -53,6 +54,7 @@ def compute_facts(p):
         "collected": coll, "dna_extracted": ext, "sequenced": seq,
         "stages_all_equal": (coll == ext == seq) and n > 0,
         "populated_tag_groups": [k for k, v in tg.items() if v],
+        "time_distribution_periods": len(p.get("time_distribution") or []),
         "has_type_pipeline_crosstab": bool(p.get("type_pipeline_crossTab")),
     }
 
@@ -226,6 +228,34 @@ def build_project_layout(facts):
     return layout("project", "project_id", "project_id", ordered)
 
 
+# ----------------------------------------------------- lab_group + location (Phase 2b)
+def labgroup_widgets():
+    # Lab-group is a project-clone (HAS pipeline; key==label==group_name). Baseline has no link_chip.
+    return [w.copy() for w in baseline_widgets()]
+
+
+def build_labgroup_layout(facts):
+    return layout("lab_group", "group_name", "group_name", labgroup_widgets())
+
+
+def location_widgets():
+    # Location has NO pipeline -> structurally OMIT pipeline_bar + completion_badge (do NOT rely on
+    # show_if: stages_all_equal computes TRUE on a missing/zero pipeline). Prepend sub_sites (after the
+    # overview stat strip), append the optional time-of-day chart.
+    base = [w.copy() for w in baseline_widgets() if w["id"] not in ("pipeline", "pipeline_complete")]
+    sub = {"id": "sub_sites", "type": "sub_sites", "title": "Sub-Locations", "size": "md",
+           "show_if": {"predicate": "always"}, "data_binding": {"source": "sub_sites"}}
+    tod = {"id": "time_of_day", "type": "time_of_day", "title": "Time of Day", "size": "md",
+           "show_if": {"predicate": "field_gt", "field": "time_distribution_periods", "value": 0},
+           "data_binding": {"source": "time_distribution"}}
+    # overview_stats (base[0]) stays first, then sub_sites, then the rest, then time_of_day.
+    return [base[0], sub] + base[1:] + [tod]
+
+
+def build_location_layout(facts):
+    return layout("location", "site_code", "site_name", location_widgets())
+
+
 # ------------------------------------------------------------ matrix §2 cross-check grid
 # present(K/T) vs absent(C) per the hand-authored matrix §2 table.
 MATRIX = {
@@ -264,22 +294,41 @@ def main():
     data = json.load(io.open(DATA, encoding="utf-8"))
     projects = data["slice_views"]["project"]
     facts_all = [compute_facts(p) for p in projects]
+    lg_facts = [compute_facts(p) for p in data["slice_views"].get("lab_group", [])]
+    loc_facts = [compute_facts(p) for p in data["slice_views"].get("location", [])]
 
     out = {
         "version": "1.0.0",
-        "generated_by": "scripts/build_layouts.py (complexity-review Phase 1)",
+        "generated_by": "scripts/build_layouts.py (complexity-review Phase 1/2b)",
         "default": layout("project", "project_id", "project_id", baseline_widgets()),
         "projects": {f["project_id"]: build_project_layout(f) for f in facts_all},
+        # Phase 2b — additive top-level keys (project default/projects above stay byte-identical)
+        "lab_groups": {f["project_id"]: build_labgroup_layout(f) for f in lg_facts},
+        "lab_group_default": layout("lab_group", "group_name", "group_name", labgroup_widgets()),
+        "locations": {f["project_id"]: build_location_layout(f) for f in loc_facts},
+        "location_default": layout("location", "site_code", "site_name", location_widgets()),
     }
 
-    # Parity oracle reference: `python3 scripts/build_layouts.py visibility` prints the
-    # per-project visible-widget grid the runtime evalShowIf must reproduce exactly.
+    # Hazard guard: no location layout may carry pipeline widgets (location has no pipeline data).
+    for key, lay in list(out["locations"].items()) + [("location_default", out["location_default"])]:
+        ids = [w["id"] for w in lay["widgets"]]
+        assert "pipeline" not in ids and "pipeline_complete" not in ids, \
+            "location layout %s must omit pipeline widgets" % key
+
+    # Parity oracle reference: `python3 scripts/build_layouts.py visibility` prints the per-slice
+    # visible-widget grid the runtime evalShowIf must reproduce exactly (all three kinds).
     if "visibility" in sys.argv[1:]:
-        facts_by_id = {f["project_id"]: f for f in facts_all}
         grid = {}
-        for pid, lay in out["projects"].items():
-            f = facts_by_id[pid]
-            grid[pid] = [w["id"] for w in lay["widgets"] if eval_show_if(w.get("show_if"), f)]
+
+        def emit(layouts_map, facts_list):
+            fb = {f["project_id"]: f for f in facts_list}
+            for key, lay in layouts_map.items():
+                f = fb[key]
+                grid[key] = [w["id"] for w in lay["widgets"] if eval_show_if(w.get("show_if"), f)]
+
+        emit(out["projects"], facts_all)
+        emit(out["lab_groups"], lg_facts)
+        emit(out["locations"], loc_facts)
         print(json.dumps(grid, sort_keys=True))
         return
 
