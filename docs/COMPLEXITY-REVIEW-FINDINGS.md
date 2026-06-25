@@ -12,6 +12,42 @@ Firsthand read of the slice subsystem + an independent adversarial critic pass
 
 ---
 
+## ⚠ STATUS UPDATE — 2026-06-25 (the headline refactors have shipped)
+
+> This document's "before" metrics (§1) and refactor plan (§8) were written on
+> 2026-06-23. **Steps 1 and 2 have since landed**, in sprints that post-date this
+> analysis (the Phase 2b / Phase 3 work — commits `b6c42d7`, `07cf8cc`, `f653d2c`).
+> The body below is **retained verbatim as the historical "before" record**; read it
+> through this banner.
+
+**Refactor-plan status (§8):**
+
+| # | Step | Status (2026-06-25) | Evidence |
+|---|---|---|---|
+| **1** | Extract inline JS → `assets/app.js`, CSS → `assets/styles.css` | ✅ **DONE** | `index.html` **4,577 → 915 lines**; `assets/app.js` (4,555 lines) linked at `index.html:895`, `assets/styles.css` (124 lines) at `index.html:16`. Only **one** inline `<script>` remains — a 13-line nav-shadow IIFE (`index.html:898–911`). |
+| **2** | Collapse 3 slice renderers → one `renderSlice(descriptor)` | ✅ **DONE** (and exceeded) | `renderSlice(descriptor, entry, gridEl)` at `app.js:2464`; `renderProjectView`/`renderLocationView`/`renderLabGroupView` all delegate to it. Went further than planned: a descriptor/widget-palette system driven by `data/project-layouts.json` + a gated `designer-mode` for editing layouts. |
+| **3** | Cut the 3 per-slice sampler charts | ⚠ **OBVIATED, not cut** | Charts are now **widget-driven** via the layout palette (`paletteWidget('bar', 'sampler_type_dist', …)`). The sampler chart is an optional, per-layout config item, not hardcoded triplication. Dropping it is now a config change (edit the layout), not a refactor. |
+| **4** | Fold `PG_*` color maps into `CHART_COLORS`; fix stale "Polar Area" comment | ⬜ **Open** (XS, low value) | Not separately verified post-refactor. |
+| **5** | De-stack altitudes (design decision) | ⬜ **Still open** | The genuine remaining question — exhibit vs. research tool (§3). A design call for Jonathan; the descriptor/layout system may now make options easier. |
+| **6** | Trim `data.json` cross-tab redundancy | ⬜ **Open, worse** | `data/data.json` is now **~2,127 KB** (was 1,957 KB). Still a `preprocess_data.py` concern. |
+
+**Current ground-truth metrics (the new "after"):**
+
+| Metric | 2026-06-23 (before) | 2026-06-25 (now) |
+|---|---|---|
+| `index.html` | 4,577 lines / 218 KB | **915 lines** |
+| Inline JS | ~3,600 lines (79% of file) | **13 lines** (one nav IIFE) |
+| Inline CSS | ~95 lines | **0** (in `assets/styles.css`) |
+| `render*View` copies | 3 near-duplicate | **1** (`renderSlice`) + thin per-view wrappers |
+| `new Chart(` calls | 20 | **28** (dashboard grew: project pages, designer widgets) |
+| `data/data.json` | 1,957 KB | **2,127 KB** |
+
+**What's actually left from this review:** the small `PG_*`/comment tidy (§8 step 4),
+the `data.json` trim (§7/§8 step 6), and — the only substantive one — the **altitude
+design decision** (§3/§8 step 5).
+
+---
+
 ## 0. Bottom line
 
 The complexity is real but **concentrated and tractable**. Two changes recover the
