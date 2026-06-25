@@ -1199,6 +1199,30 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
 </archive_entry>
 
 <archive_entry>
+  <timestamp>2026-06-25T21:27:05Z</timestamp>
+  <task_id>broadn-p10-design-implementation</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Sprint `broadn-p10-design-implementation` delivered the BROADN teal rebrand and P10 design-language implementation through full pipeline execution. Background: prior `broadn-p10-design-language` evaluation (RA dossier + UI critique + AUD screenshot pass + filtered-state confirmation) settled the brand decision (BROADN teal #0c5454/#0c9cb4 replaces CSU green #166534 as Constitution anchor) and confirmed two CANNOT_TELL findings via live Playwright introspection. This sprint shipped that decision into code. Pipeline: PM decomposition (3 tasks after CR#1 BLOCK requiring amendment) → CR#2 CRITIQUE_PASS → UI-001 (DESIGN.md v2.0.0 with teal Constitution, Okabe-Ito SAMPLE_TYPE_COLORS palette, v1→v2 migration table, WCAG note) → UI-002 (implementation across index.html, assets/app.js, assets/styles.css) → AUD-001 (SA/QA/SX = PASS, screenshot-verified live render, prior CANNOT_TELL findings #1 categorical-color anarchy and #7 four oranges confirmed RESOLVED). Seven requirements delivered: (1) DESIGN.md v2 teal Constitution + CSU green #166534 retired + version bump + override note; (2) broadn-logo.webp wired into nav/hero with alt/aria-label (replaced asterism); (3) single Okabe-Ito SAMPLE_TYPE_COLORS palette keyed by category-name replacing three divergent encodings; (4) four oranges collapsed to --color-filter-accent (#c2410c), inverted orange signal fixed (default "All BROADN Samples" button + global-view h3s no longer read as filter-active at rest); (5) Chart.js global Inter default; (6) Pipeline "Sequenced" bar contrast fix (#4ade80 → #4db6c4 ≥3:1); (7) hero stat chips rounded. Two durability commits: 0cba237 (docs/design DESIGN.md v2 teal Constitution) + c14d67b (feat/dashboard teal rebrand + color-accent unification + contrast fixes); both carry `Audit: PASS` trailer. REQVAL COVERED (9/9: 7 human + DRY + A11Y). Known residual deferred (not a gap): floating "Feedback" pill still renders CSU-green (third-party widget outside three-file scope; flagged in REQVAL notes for follow-on rebrand-completion sprint). Key decision rationale: Brand anchor switched CSU-green → BROADN teal (human-ratified in prior P10 eval). Orthogonality principle: chart data series use Okabe-Ito (kept OFF brand teal to ensure brand ≠ data, enabling independent brand evolution). Alternative rejected: retaining CSU-green would misalign with BROADN brand guidance and break visual identity consistency. Decision stored in project memory: `project_broadn_teal_rebrand`.</rationale>
+  <dependencies>
+    - Depends on: `broadn-p10-design-language` evaluation session (RA, UI, AUD agents; human ratification of brand decision; prior filtered-state confirmation ORC#0-direct + Playwright MCP)
+    - Depends on: logo acquisition and placement (assets/broadn-logo.webp extraction)
+    - Unblocks: future feature work referencing brand colors or DESIGN.md v2; feedback-widget rebrand follow-on sprint; design-language audit trails for compliance/brand-consistency reviews
+  </dependencies>
+  <retention_keys>
+    - **Brand decision:** Teal anchor (#0c5454 deep / #0c9cb4 bright) replaces CSU-green (#166534) in DESIGN.md v2 and all rendered surfaces (except deferred feedback widget)
+    - **Color palette unification:** Single Okabe-Ito SAMPLE_TYPE_COLORS encoding eliminates prior anarchy; palette keyed by category-name
+    - **Files changed:** index.html, assets/app.js, assets/styles.css, docs/DESIGN.md
+    - **Commits:** 0cba237 (docs/design DESIGN.md v2), c14d67b (feat/dashboard teal rebrand); both Audit: PASS
+    - **REQVAL status:** COVERED (9/9: 7 human + DRY + A11Y)
+    - **Audit gates:** SA=PASS, QA=PASS (screenshot-verified live render), SX=SECURE
+    - **Prior CANNOT_TELL findings now resolved:** #1 categorical-color anarchy (single Okabe-Ito palette), #7 four oranges (unified to --color-filter-accent token)
+    - **Deferred residual:** Feedback widget CSS rebranding (out-of-scope third-party component; scheduled for follow-on rebrand-completion sprint)
+    - **Memory anchor:** `project_broadn_teal_rebrand` (maintained in auto-memory)
+    - **Artifacts:** all outputs under `.claude/tasks/outputs/broadn-p10-design-implementation*` including PM v1/v2, CR#1/CR#2, UI-001, UI-002, AUD-001, MANIFEST, REQVAL, COMMIT, filtered-state confirm, plus prior P10 eval materials (RA/UI/AUD)
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
   <timestamp>2026-04-02T19:00:00Z</timestamp>
   <task_id>broadn-p7-t1-all-samples</task_id>
   <event_type>TASK_COMPLETE</event_type>
@@ -1345,5 +1369,62 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - REQVAL: all 11 requirements covered; human visual confirmation (Step 4.5) pending
     - Agent performance: PM 67% first-pass (2 revisions pre-Critic), Critic caught both BLOCKERs, BE 100%, UI design gap-fix, FE 1 audit fail (live browser bug) + remediation, Auditor caught runtime defect via live browser
     - Deliverables: 7 data-management metrics integrated into index.html dashboard; Deposition & Processing sections visible; annual-report datasets flowing end-to-end through pipeline
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-06-25T21:58:44Z</timestamp>
+  <task_id>broadn-p11-feedback-widget-teal</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Sprint p11 completed the final surface of the BROADN teal rebrand: the feedback widget. P10 rebranded index.html/app.js/styles.css but left the widget (assets/feedback-widget.css + .js) rendering CSU green. This sprint swapped 24 green-token occurrences to teal per DESIGN.md v2. Critical discovery in PM phase: P10 removed legacy CSS custom properties --color-green-* from styles.css:root but the widget still referenced var(--color-green-800) at 6 sites. Post-P10, these resolved to UNDEFINED, causing the FAB (floating action button) and Submit button backgrounds to render transparent — a P10 regression. The plan corrected this by repointing all 6 refs to var(--color-teal-deep) (existing, wired to #0c5454), fixing both the rebrand AND the breakage. Design decision: deep teal wired via existing var (single-source); mid/dark/light hardcoded with DESIGN.md v2 trace comments because no shipped CSS var exists and styles.css (P10 file) is out-of-scope. Avoids second brand source of truth. Scope discipline: color-token-only; zero behavior/markup/geometry changes. Process deviation: FE pre-committed at 0ef1cc8 before audit (out of lane); ORC audited clean state and reconciled commit trailers (→ fd46e53 with task:/Audit:PASS) to restore audit-before-commit invariant. No code remediation required. Bonus production fix same session: assets/broadn-logo.webp (referenced in P10 index.html but never committed) was untracked → 404 on GitHub Pages though rendered locally. Fixed by bbe04ab (logo now tracked). Root cause: P10 commit-packet's import-closure guard checks JS imports, not HTML &lt;img src&gt;. Audit result: SA=PASS (no new --color-* var defs; DRY wiring), QA=PASS (all 11 SCs verified; FAB renders solid #0c5454 on live render, confirming P10 transparent-FAB regression fixed; popover states verified; no residual green), SX=SECURE. REQVAL COVERED 4/4. Commits: fd46e53 (feat(rebrand): feedback-widget teal; Audit:PASS), bbe04ab (fix(dashboard): commit broadn-logo.webp asset). BROADN teal rebrand now COMPLETE on every rendered surface.</rationale>
+  <dependencies>
+    - Depends on: broadn-p10-design-implementation (DESIGN.md v2 token definitions; styles.css custom properties); p10 also introduced 2 regressions fixed this session (undefined-var FAB, untracked logo asset)
+    - Enables: future UI refreshes to use consistent BROADN teal across all app surfaces; future sprint to centralize mid/dark/light CSS vars in styles.css if needed
+    - Related: .claude/tasks/outputs/broadn-p10-design-implementation-AR-1782422825.md (P10 archive entry for context on dependency)
+  </dependencies>
+  <retention_keys>
+    - Feature: BROADN teal rebrand COMPLETE on all rendered surfaces (index.html, app.js, styles.css from P10; feedback-widget.css/js from p11; logo asset from p10-escape fix)
+    - Commits: fd46e53 (feat(rebrand): feedback-widget teal; task:broadn-p11-001; Audit:PASS), bbe04ab (fix(dashboard): commit broadn-logo.webp asset; task:broadn-p10-design-implementation-UI-002; P10 escape)
+    - P10 Regressions Discovered & Fixed (same session): (1) Undefined-var transparent FAB/Submit — P10 removed --color-green-* vars, widget still referenced them; fixed by p11 repoint to var(--color-teal-deep) (fd46e53). (2) Untracked logo asset — P10 referenced but never committed; fixed by bbe04ab
+    - Unpushed commits on main: bbe04ab, fd46e53 (awaiting human push)
+    - Files modified: assets/feedback-widget.css (48±: 6 var(--color-green-800)→var(--color-teal-deep); 24 hex→teal + trace comments), assets/feedback-widget.js (2 lines: SVG_CHECK #15803d→#0e7474), assets/broadn-logo.webp (committed, was untracked)
+    - Token migration (DESIGN.md v2): #166534→#0c5454 (var(--color-teal-deep)), #15803d→#0e7474 (trace-comment hardcode), #14532d→#083838 (trace-comment hardcode), #dcfce7→#ccefef (trace-comment hardcode)
+    - Success criteria (all 11 verified): SC1-6 grep verification (no green hex, no dangling green var, teal tokens ≥counts), SC7-8 JS verification (no green hex, SVG_CHECK mid-teal), SC9 diff-shape (color & comments only, no behavior/markup/geometry, no new --color-* defs), SC10 WCAG (FAB white-on-#0c5454 ≈9:1 AAA, trigger icons ≥3:1 non-text), SC11 visual (Playwright: FAB solid deep-teal, no residual green)
+    - Audit result: SA=PASS, QA=PASS (FAB solid; P10 transparent-FAB regression confirmed fixed), SX=SECURE; all gates PASS
+    - REQVAL: COVERED 4/4 (rebranding complete; P10 regression discovered & fixed; DRY single-source wiring; WCAG contrast verified)
+    - Agent performance: PM first-pass (critical discovery), Critic first-pass, FE first-pass (with pre-commit deviation reconciled), Auditor first-pass
+    - Design decision: deep teal via existing var(--color-teal-deep) (single-source); mid/dark/light hardcoded with trace comments (no shipped var exists, styles.css out-of-scope). Avoids second brand source of truth. Future sprint can centralize mid/dark/light in styles.css
+    - Process reconciliation: FE pre-committed (0ef1cc8); ORC audited and amended commit (fd46e53) to add trailers, restoring audit-before-commit invariant. No code remediation needed
+    - Memory anchor: project_broadn_teal_rebrand (COMPLETE+SHIPPED; awaiting human push)
+    - Live-render QA verified: FAB renders solid deep-teal #0c5454 (transparent-FAB regression fixed); popover focus/submit states teal; no residual green on any widget surface
+  </retention_keys>
+</archive_entry>
+
+<archive_entry>
+  <timestamp>2026-06-25T22:22:49Z</timestamp>
+  <task_id>broadn-teal-rebrand-postmortem</task_id>
+  <event_type>POST_MORTEM</event_type>
+  <rationale>Post-mortem analysis of the BROADN teal rebrand delivery arc (sprints p10 design-implementation + p11 feedback-widget-teal, plus two ORC-direct production fixes). Both sprints ran the full dispatch-task pipeline and closed clean (p10's Critic issued a BLOCK on unsatisfiable scope, then PASSed on amendment; p11 was first-pass). Two post-delivery runtime bugs discovered: (1) Logo 404 on GitHub Pages — the broadn-logo.webp asset was untracked when FE wired <img src> against it, so it never reached the remote. Root cause: commit-packet's import-closure guard at Step 4a checks **JS imports** for untracked siblings but not **HTML `<img src>` / `<link href>` / CSS `url()`** asset references. QA screenshot ran against local filesystem where the file existed, masking the gap. (2) Feedback widget FAB rendering transparent (P10 regression) — P10 removed the `--color-green-*` CSS custom properties when rewriting :root for the teal migration, but the widget (out of P10's three-file scope) consumed `var(--color-green-800)` in 6 places. Root cause: removing a CSS custom property is a cross-file contract change, but sprint scope limited the auditor's visibility. No step greps the rest of the repo for consumers of a removed/renamed token. Plus a process deviation: FE#1 committed before the audit gate in p11. Four protocol gaps identified with deterministic fixes: Gap 1 (commit-packet missing HTML/CSS asset closure) → route to HR for script-based pre-commit guard; Gap 2 (no repo-wide consumer sweep on CSS token removal) → route to HR for new skill or auditor hardening; Gap 3 (auditor stale-cache hazard on first-load static render) → make hard-reload a standing QA protocol; Gap 4 (FE self-commit before audit) → edit frontend.md pre-flight mandate. Key retention: §8 hand-offs to hone (commit-packet content-quality gaps + convention-detect drift documentation + new token-rename-consumer-sweep skill candidate); §9 standards.md proposal for asset-tracking rule; §10 commit-packet eval scope gap flagged. Commits shipped + pushed: 0cba237 (DESIGN.md v2), c14d67b (P10 teal rebrand), bbe04ab (logo asset fix), fd46e53 (P11 feedback-widget rebrand), 6b580ef (console 404 cleanup + favicon). Total wall-clock span: ~2.5h (p10 PM SPAWN seq 11 → p11 AR COMPLETE seq 38).</rationale>
+  <dependencies>
+    - Post-mortem doc: docs/after-actions/broadn-teal-rebrand.md (§1–§10 structure; §3 runtime bug analysis; §6 gaps per-documented)
+    - P10 sprint closure: broadn-p10-design-implementation archived at seq 24 (AR#1 COMPLETE 2026-06-25T21:30:17Z)
+    - P11 sprint closure: broadn-p11-feedback-widget-teal archived at seq 38 (AR#1 COMPLETE 2026-06-25T22:03:00Z)
+    - Commit evidence: seq 27 (0cba237), seq 28 (c14d67b), seq 41 (bbe04ab), seq 42 (fd46e53); seq 43 not logged (6b580ef ORC-direct cleanup)
+    - UI design spec: .claude/tasks/outputs/broadn-p10-design-language-UI-20260625.md (prior session RA/UI work)
+    - Filtered-state capture: ORC-direct introspection 2026-06-25T20:05:00Z confirmed findings #1/#7 (categorical-color anarchy, four distinct oranges)
+  </dependencies>
+  <retention_keys>
+    - Shipped design: DESIGN.md v2.0.0 with teal Constitution, Okabe-Ito palette, filter-accent, pipeline palette, instrument anchor #4d7c0f
+    - Logo asset: assets/broadn-logo.webp (tracked in commit bbe04ab after being untracked in c14d67b; GitHub Pages 404 remediated)
+    - CSS custom properties removed in P10: --color-green-800, --color-green-700, --color-green-900, --color-green-100 (replaced by --color-teal-deep, --color-accent, etc.)
+    - Feedback widget regression fix: 6 `var(--color-green-800)` refs in feedback-widget.css repointed to `var(--color-teal-deep)` in p11
+    - FE pre-commit: p11's FE#1 self-committed 0ef1cc8 before audit gate (process deviation flagged in frontend.md for correction)
+    - Protocol Gap 1 root: commit-packet Step 4a import-closure guard misses HTML/CSS url() references → needs deterministic content-closure script
+    - Protocol Gap 2 root: auditor scope limits visibility to edited files only; removed CSS tokens have no cross-file impact verification → needs repo-wide grep on token removal or new consumer-sweep skill
+    - Protocol Gap 3 root: auditor's Playwright QA loads cached browser state on first render, masking stale-var breakage → hard-reload/cache-bust required
+    - Protocol Gap 4 root: no pre-flight rule preventing FE self-commit before audit → frontend.md must mandate audit-gate-first
+    - §8 hand-offs: hone receives commit-packet content-quality + convention-detect scope drift + token-rename-consumer-sweep skill candidate
+    - §9 proposal: new standards.md rule for asset-tracking in HTML/CSS at commit boundaries (add to Git Workflow or new Tracking Assets section)
+    - §10 commit-packet eval gap: commits landed but no post-execution validation (check Pages render, check console, check asset resolution) — flag for next sprint's commit-readiness gate
   </retention_keys>
 </archive_entry>
