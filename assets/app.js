@@ -22,41 +22,64 @@
     const PAGE_SIZE = 100;
     var tableCurrentPage = 1;
 
+    // SAMPLE_TYPE_COLORS — SINGLE SOURCE OF TRUTH for all sample-type category color encodings.
+    // Keyed by category NAME (not array index). Okabe-Ito colorblind-safe palette.
+    // ALL sample-type charts (global donut, slice donut, PG timeline, PG cadence fallback, static HTML
+    // legend) derive colors from this object. Brand teal (#0c5454/#0c9cb4) is NOT a member — brand ≠ data.
+    // See DESIGN.md § Sample-Type Data Palette (v2).
+    const SAMPLE_TYPE_COLORS = {
+      'Air':     '#0072B2',  // Okabe-Ito blue
+      'Plant':   '#009E73',  // Okabe-Ito teal-green
+      'Soil':    '#E69F00',  // Okabe-Ito amber
+      'Liquid':  '#56B4E9',  // Okabe-Ito sky blue
+      'Unknown': '#999999'   // neutral gray fallback
+    };
+
     // Rule A: Chart.js and Leaflet hex values — permitted ONLY inside dataset/marker
     // configuration objects (Chart.js datasets arrays, Leaflet circleMarker options).
     const CHART_COLORS = {
-      line:             '#166534',
-      lineArea:         'rgba(22,101,52,0.1)',
+      line:             '#0c5454',              // deep teal (v2 brand; was CSU green)
+      lineArea:         'rgba(12,84,84,0.1)',   // derived from deep teal
       tooltip:          'rgba(28,25,23,0.9)',
       gridLine:         '#e7e5e4',
       axisLabel:        '#78716c',
       donutBorder:      '#ffffff',
-      pipeline:         ['#166534', '#16a34a', '#4ade80'],
-      sampleTypes:      ['#166534', '#047857', '#d97706', '#2563eb', '#a8a29e'],
-      siteBar:          '#15803d',
-      pointBg:          '#166534',
-      mapMarkerFill:    '#166534',
-      mapMarkerBorder:  '#14532d',
+      // Pipeline: navy→teal sequential — all steps ≥3:1 non-text contrast on white (DESIGN.md § Pipeline)
+      pipeline:         ['#1e3a5f', '#2b6c8a', '#4db6c4'],
+      // sampleTypes array RETIRED — use SAMPLE_TYPE_COLORS keyed by name (see above)
+      siteBar:          '#0c5454',              // deep teal (was #15803d)
+      pointBg:          '#0c5454',              // deep teal (v2 brand)
+      mapMarkerFill:    '#0c5454',              // deep teal (v2 brand)
+      mapMarkerBorder:  '#083838',              // dark teal (was #14532d)
       // Slice panel chart colors — Section 7 of design spec
-      sliceSampleTypes:  ['#166534', '#0f766e', '#b45309', '#1d4ed8', '#78716c'],
-      slicePipeline:     ['#166534', '#0f766e', '#6d28d9'],
+      // sliceSampleTypes array RETIRED — use SAMPLE_TYPE_COLORS keyed by name (see above)
+      slicePipeline:     ['#1e3a5f', '#0f766e', '#6d28d9'],  // [0] deep navy pipeline-collected (v2)
       sliceTemporalLine: '#0f766e',
       sliceTemporalArea: 'rgba(15,118,110,0.1)',
       /* TEMPORAL BAR COLOR — edit CHART_COLORS.temporalBar to change global temporal bar fill */
-      temporalBar:       '#166534',
+      temporalBar:       '#0c5454',              // deep teal (v2 brand)
       /* SLICE TEMPORAL BAR COLOR — edit CHART_COLORS.sliceTemporalBar to change slice temporal bar fill */
       sliceTemporalBar:  '#0f766e',
       sliceLocationBar:  '#0369a1',
-      sliceTimeOfDay:    ['#166534', '#0f766e', '#b45309', '#6d28d9'],
-      /* HEAT-STRIP RAMP — pale→deep green by % sequenced (quadrant matrix) */
-      sliceHeatRamp:     ['#f0fdf4', '#bbf7d0', '#15803d', '#166534'],
-      orangeAccent:      '#ea6c00',
-      orangeAccentDim:   'rgba(234,108,0,0.3)',
-      samplerType:       ['#166534', '#0f766e', '#b45309', '#1d4ed8', '#78716c']
+      sliceTimeOfDay:    ['#0c5454', '#0f766e', '#b45309', '#6d28d9'],  // [0] deep teal (v2)
+      /* HEAT-STRIP RAMP — pale→deep teal by % sequenced (quadrant matrix) */
+      sliceHeatRamp:     ['#f0fdf4', '#bbf7d0', '#15803d', '#064e3b'],  // [3] emerald-900 dark end (v2)
+      // FILTER ACCENT — wired to --color-filter-accent (#c2410c). See DESIGN.md § Orange Consolidation.
+      orangeAccent:      '#c2410c',              // matches --color-filter-accent (v2 orange consolidation)
+      orangeAccentDim:   'rgba(194,65,12,0.3)', // derived from #c2410c
+      // samplerType array RETIRED — use SAMPLE_TYPE_COLORS values as generic categorical pool (see below)
     };
 
     const MAP_CENTER_DEFAULT = [39.5, -98.35];
     const MAP_ZOOM_DEFAULT   = 4;
+
+    // =============================================================================
+    // CHART.JS GLOBAL DEFAULTS (set before any new Chart() call)
+    // =============================================================================
+    // Inter font stack — matches DESIGN.md § Typography and body font in styles.css
+    Chart.defaults.font.family = '"Inter", system-ui, -apple-system, Helvetica, Arial, sans-serif';
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#57534e'; // --color-text-secondary
 
     // =============================================================================
     // SLICE PANEL CONSTANTS
@@ -550,7 +573,7 @@
             data: {
               labels: chartData.sample_types.map(function(d) { return d.type; }),
               datasets: [{ data: chartData.sample_types.map(function(d) { return d.count; }),
-                backgroundColor: CHART_COLORS.sliceSampleTypes, borderColor: CHART_COLORS.donutBorder, borderWidth: 2 }]
+                backgroundColor: chartData.sample_types.map(function(d) { return SAMPLE_TYPE_COLORS[d.type] || SAMPLE_TYPE_COLORS['Unknown']; }), borderColor: CHART_COLORS.donutBorder, borderWidth: 2 }]
             },
             options: {
               responsive: true, maintainAspectRatio: false, cutout: '65%',
@@ -854,7 +877,7 @@
           labels: filtered.map(function(d) { return d.sampler; }),
           datasets: [{
             data: filtered.map(function(d) { return d.count; }),
-            backgroundColor: CHART_COLORS.samplerType
+            backgroundColor: Object.values(SAMPLE_TYPE_COLORS)  // Okabe pool for categorical sampler bars
           }]
         },
         options: {
@@ -1107,7 +1130,7 @@
           labels: labels,
           datasets: [{
             data: counts,
-            backgroundColor: CHART_COLORS.sampleTypes,
+            backgroundColor: labels.map(function(t) { return SAMPLE_TYPE_COLORS[t] || SAMPLE_TYPE_COLORS['Unknown']; }),
             borderWidth: 2,
             borderColor: CHART_COLORS.donutBorder
           }]
@@ -2144,7 +2167,7 @@
             labels: entry.sample_types.map(function(d) { return d.type; }),
             datasets: [{
               data: entry.sample_types.map(function(d) { return d.count; }),
-              backgroundColor: CHART_COLORS.sliceSampleTypes,
+              backgroundColor: entry.sample_types.map(function(d) { return SAMPLE_TYPE_COLORS[d.type] || SAMPLE_TYPE_COLORS['Unknown']; }),
               borderColor: CHART_COLORS.donutBorder,
               borderWidth: 2
             }]
@@ -2250,7 +2273,7 @@
           destroyChart(tgId);
           chartInstances[tgId] = new Chart(tgCanvas.getContext('2d'), {
             type: 'bar',
-            data: { labels: keys, datasets: [{ data: keys.map(function(k) { return dict[k]; }), backgroundColor: CHART_COLORS.samplerType }] },
+            data: { labels: keys, datasets: [{ data: keys.map(function(k) { return dict[k]; }), backgroundColor: Object.values(SAMPLE_TYPE_COLORS) }] },
             options: {
               responsive: true, maintainAspectRatio: false,
               plugins: { legend: { display: false }, tooltip: { backgroundColor: CHART_COLORS.tooltip, callbacks: { label: function(cx) { return ' ' + cx.parsed.y.toLocaleString() + ' samples'; } } } },
@@ -2789,11 +2812,15 @@
     // SLICE PANEL — PROJECT GROUP VIEW RENDERER (custom CPER page)
     // =============================================================================
 
+    // PG_TYPE_COLOR — timeline strip hex color for concurrent sub-project bars.
+    // Sourced from SAMPLE_TYPE_COLORS (Okabe-Ito palette, keyed by name).
+    // The old bg-sky/emerald/amber/cyan Tailwind classes are RETIRED per DESIGN.md v2 § Migration Table E.
+    // Consumer sets bar.style.background from this map (not bar.className).
     var PG_TYPE_COLOR = {
-      'Air':    'bg-sky-500',
-      'Plant':  'bg-emerald-600',
-      'Soil':   'bg-amber-700',
-      'Liquid': 'bg-cyan-400'
+      'Air':    SAMPLE_TYPE_COLORS['Air'],
+      'Plant':  SAMPLE_TYPE_COLORS['Plant'],
+      'Soil':   SAMPLE_TYPE_COLORS['Soil'],
+      'Liquid': SAMPLE_TYPE_COLORS['Liquid']
     };
 
     function renderProjectGroupView(groupId) {
@@ -2866,11 +2893,14 @@
     }
 
     // CPER Plot 1: Daily Activity Stack (Chart.js stacked bar)
+    // PG_TYPE_FILL — hex fills for the daily stacked bar chart and cadence heatmap.
+    // Sourced from SAMPLE_TYPE_COLORS (Okabe-Ito, keyed by name) per DESIGN.md v2 § Migration Table F.
+    // Legacy sky-500/emerald-600/amber-700/cyan-400 values are RETIRED.
     var PG_TYPE_FILL = {
-      'Air':    '#0ea5e9',  // sky-500
-      'Plant':  '#059669',  // emerald-600
-      'Soil':   '#b45309',  // amber-700
-      'Liquid': '#22d3ee'   // cyan-400
+      'Air':    SAMPLE_TYPE_COLORS['Air'],    // Okabe #0072B2 (v2 Okabe blue)
+      'Plant':  SAMPLE_TYPE_COLORS['Plant'],  // Okabe #009E73 (v2 Okabe teal-green)
+      'Soil':   SAMPLE_TYPE_COLORS['Soil'],   // Okabe #E69F00 (was amber-700 #b45309 — data use, not warning)
+      'Liquid': SAMPLE_TYPE_COLORS['Liquid']  // Okabe #56B4E9 (was cyan-400)
     };
 
     function renderPgDailyStack(daily) {
@@ -2978,7 +3008,7 @@
             var dom = Object.keys(entry.by_type).reduce(function(a, b) {
               return (entry.by_type[a] || 0) >= (entry.by_type[b] || 0) ? a : b;
             }, 'Air');
-            var hex = PG_TYPE_FILL[dom] || '#166534';
+            var hex = PG_TYPE_FILL[dom] || SAMPLE_TYPE_COLORS['Unknown'];  // Unknown type fallback (#999999)
             var alpha = (0.18 + intensity * 0.82).toFixed(2);
             td.style.background = hexToRgba(hex, alpha);
             td.title = entry.date + ' — ' + entry.total + ' samples (dominant: ' + dom + ')';
@@ -3015,7 +3045,7 @@
 
     // CPER Plot 3: Sampler usage by month (Chart.js stacked bar)
     var PG_SAMPLER_FILL = {
-      'SASS':           '#166534',
+      'SASS':           '#4d7c0f',  // lime-700 — v2 instrument anchor (see DESIGN.md § Sampler Instrument Anchor)
       'Polycarbonate':  '#0f766e',
       'BioSpot VIVAS':  '#22d3ee',
       'Salsola':        '#84cc16',
@@ -3205,8 +3235,9 @@
           var leftPct  = ((spStart - t0) / span) * 100;
           var widthPct = Math.max(0.5, ((spEnd - spStart) / span) * 100);
           var bar = document.createElement('div');
-          var color = PG_TYPE_COLOR[sp.primary_type] || 'bg-stone-500';
-          bar.className = 'absolute top-0 h-full ' + color + ' opacity-90';
+          var colorHex = PG_TYPE_COLOR[sp.primary_type] || SAMPLE_TYPE_COLORS['Unknown'];
+          bar.className = 'absolute top-0 h-full opacity-90';
+          bar.style.background = colorHex;
           bar.style.left = leftPct + '%';
           bar.style.width = widthPct + '%';
           bar.title = sp.project_id + ': ' + sp.date_range.first + ' → ' + sp.date_range.last;
@@ -3403,7 +3434,7 @@
           labels: entry.sample_types.map(function(d) { return d.type; }),
           datasets: [{
             data: entry.sample_types.map(function(d) { return d.count; }),
-            backgroundColor: CHART_COLORS.sliceSampleTypes,
+            backgroundColor: entry.sample_types.map(function(d) { return SAMPLE_TYPE_COLORS[d.type] || SAMPLE_TYPE_COLORS['Unknown']; }),
             borderColor: CHART_COLORS.donutBorder,
             borderWidth: 2
           }]
@@ -3581,7 +3612,7 @@
           labels: entry.sample_types.map(function(d) { return d.type; }),
           datasets: [{
             data: entry.sample_types.map(function(d) { return d.count; }),
-            backgroundColor: CHART_COLORS.sliceSampleTypes,
+            backgroundColor: entry.sample_types.map(function(d) { return SAMPLE_TYPE_COLORS[d.type] || SAMPLE_TYPE_COLORS['Unknown']; }),
             borderColor: CHART_COLORS.donutBorder,
             borderWidth: 2
           }]
@@ -3720,7 +3751,7 @@
           labels: entry.sample_types.map(function(d) { return d.type; }),
           datasets: [{
             data: entry.sample_types.map(function(d) { return d.count; }),
-            backgroundColor: CHART_COLORS.sliceSampleTypes,
+            backgroundColor: entry.sample_types.map(function(d) { return SAMPLE_TYPE_COLORS[d.type] || SAMPLE_TYPE_COLORS['Unknown']; }),
             borderColor: CHART_COLORS.donutBorder,
             borderWidth: 2
           }]
@@ -3994,10 +4025,13 @@
       var btnAll = document.getElementById('slice-btn-all');
       if (btnAll) {
         if (filterState.slice.category === null) {
-          btnAll.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-semibold bg-orange-50 text-orange-700 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset transition-colors';
+          // De-oranged: "All BROADN Samples" active state uses teal neutral, NOT orange (orange = filter signal only)
+          btnAll.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-inset transition-colors';
+          btnAll.style.cssText = 'background:#f0fdfd;color:#0c5454;outline-color:#0c9cb4;';
           btnAll.setAttribute('aria-pressed', 'true');
         } else {
-          btnAll.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors';
+          btnAll.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors';
+          btnAll.style.cssText = '';
           btnAll.setAttribute('aria-pressed', 'false');
         }
       }
@@ -4013,13 +4047,15 @@
         var isActive = filterState.slice.category === cat;
 
         if (isActive) {
-          btn.className = 'relative w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-green-800 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors';
+          btn.className = 'relative w-full text-left px-3 py-2 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors';
+          btn.style.cssText = 'background:#f0fdfd;color:#0c5454;';
           btn.setAttribute('aria-expanded', 'true');
 
           // Add accent bar if not already present
           if (!btn.querySelector('.slice-accent-bar')) {
             var accent = document.createElement('span');
-            accent.className = 'slice-accent-bar absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-green-700 rounded-r-full';
+            accent.className = 'slice-accent-bar absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 rounded-r-full';
+            accent.style.background = '#0c9cb4';  // bright teal accent — non-text use (WCAG: border/accent OK)
             accent.setAttribute('aria-hidden', 'true');
             btn.insertBefore(accent, btn.firstChild);
           }
@@ -4028,7 +4064,8 @@
           var existing = btn.querySelector('.slice-accent-bar');
           if (existing) { btn.removeChild(existing); }
 
-          btn.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors';
+          btn.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors';
+          btn.style.cssText = '';
           btn.setAttribute('aria-expanded', 'false');
         }
       });

@@ -20,32 +20,36 @@
   <nav class="bg-white sticky top-0 z-50" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl font-bold text-green-800 tracking-tight select-none">&#10044; BROADN</span>
+        <div class="flex items-center gap-2" aria-label="BROADN Aerobiome Dashboard">
+          <img src="assets/broadn-logo.webp" alt="BROADN logo" class="h-8 w-auto" />
+          <span class="text-2xl font-bold tracking-tight select-none" style="color:#0c5454">BROADN</span>
           <span class="text-sm text-stone-500 hidden sm:block">Aerobiome Sample Dashboard</span>
         </div>
         <div class="flex items-center gap-1 sm:gap-4" role="list">
-          <a href="#overview"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="overview"   role="listitem">Overview</a>
-          <a href="#geography"  class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="geography"  role="listitem">Geography</a>
-          <a href="#pipeline"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="pipeline"   role="listitem">Pipeline</a>
-          <a href="#data-management" class="nav-link px-3 py-2 min-h-[44px] text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="data-management" role="listitem">Data Management</a>
-          <a href="#explorer"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-green-800 transition-colors border-b-2 border-transparent" data-section="explorer"   role="listitem">Explorer</a>
+          <a href="#overview"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="overview"   role="listitem">Overview</a>
+          <a href="#geography"  class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="geography"  role="listitem">Geography</a>
+          <a href="#pipeline"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="pipeline"   role="listitem">Pipeline</a>
+          <a href="#data-management" class="nav-link px-3 py-2 min-h-[44px] text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="data-management" role="listitem">Data Management</a>
+          <a href="#explorer"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="explorer"   role="listitem">Explorer</a>
         </div>
       </div>
     </div>
   </nav>
 
   <!-- HERO BANNER -->
-  <header class="bg-green-900 text-white py-14 px-4 sm:px-6 lg:px-8" data-feedback="Hero Banner">
+  <header class="text-white py-14 px-4 sm:px-6 lg:px-8" style="background:#083838" data-feedback="Hero Banner">
     <div class="max-w-7xl mx-auto">
+      <div class="flex items-center gap-3 mb-4">
+        <img src="assets/broadn-logo.webp" alt="BROADN logo" class="h-12 w-auto" />
+      </div>
       <h1 class="text-3xl sm:text-4xl font-extrabold mb-3">Exploring the Atmosphere's Hidden Microbiome</h1>
-      <p class="text-green-200 text-lg max-w-3xl mb-6">
+      <p class="text-teal-100 text-lg max-w-3xl mb-6">
         BROADN (Biology Integration Institute Regional OneHealth Aerobiome Discovery Network) is an NSF-funded initiative led by Colorado State University &mdash; with partners at CSU Pueblo, CU Boulder, and Doane University &mdash; investigating airborne microbial communities across diverse ecosystems. Our OneHealth mission connects atmospheric science, ecology, and public health.
       </p>
       <div class="flex flex-wrap gap-4" aria-label="Quick statistics">
-        <div class="bg-green-800 px-4 py-2 text-sm font-semibold" id="hero-samples">—</div>
-        <div class="bg-green-800 px-4 py-2 text-sm font-semibold" id="hero-sites">—</div>
-        <div class="bg-green-800 px-4 py-2 text-sm font-semibold" id="hero-since">—</div>
+        <div class="rounded px-4 py-2 text-sm font-semibold" style="background:#0c5454" id="hero-samples">—</div>
+        <div class="rounded px-4 py-2 text-sm font-semibold" style="background:#0c5454" id="hero-sites">—</div>
+        <div class="rounded px-4 py-2 text-sm font-semibold" style="background:#0c5454" id="hero-since">—</div>
       </div>
     </div>
   </header>
@@ -94,7 +98,7 @@
         <button
           id="slice-collapse-btn"
           type="button"
-          class="absolute right-0 top-3 z-10 flex items-center justify-center w-11 h-11 bg-white border border-stone-200 rounded-md text-stone-500 hover:text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-green-700"
+          class="absolute right-0 top-3 z-10 flex items-center justify-center w-11 h-11 bg-white border border-stone-200 rounded-md text-stone-500 hover:text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-teal-500"
           style="transform: translateX(50%);"
           aria-label="Collapse filter sidebar"
           aria-expanded="true"
@@ -118,7 +122,7 @@
         <!-- Mobile close button (visible only on mobile, inside drawer) -->
         <button type="button"
           id="slice-sidebar-close"
-          class="block lg:hidden self-end mb-4 p-1 text-stone-500 hover:text-stone-700 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-green-700"
+          class="block lg:hidden self-end mb-4 p-1 text-stone-500 hover:text-stone-700 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
           aria-label="Close filter panel">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -138,7 +142,8 @@
               <li role="listitem">
                 <button type="button"
                   id="slice-btn-all"
-                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold bg-orange-50 text-orange-700 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset transition-colors"
+                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
+                  style="background:#f0fdfd;color:#0c5454"
                   aria-pressed="true">
                   All BROADN Samples
                 </button>
@@ -148,7 +153,7 @@
               <li role="listitem">
                 <button type="button"
                   id="slice-btn-project"
-                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
                   aria-expanded="false"
                   aria-controls="project-group-list">
                   Project
@@ -163,7 +168,7 @@
               <li role="listitem">
                 <button type="button"
                   id="slice-btn-location"
-                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
                   aria-expanded="false"
                   aria-controls="location-group-list">
                   Location / Hub
@@ -178,7 +183,7 @@
               <li role="listitem">
                 <button type="button"
                   id="slice-btn-labgroup"
-                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-inset transition-colors"
+                  class="w-full text-left px-3 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
                   aria-expanded="false"
                   aria-controls="labgroup-group-list">
                   Lab Group
@@ -199,7 +204,7 @@
           <!-- Clear filter button -->
           <button type="button"
             id="slice-clear-btn"
-            class="hidden mt-4 w-full px-3 py-2 border border-stone-300 text-sm font-medium text-stone-600 bg-white hover:bg-stone-50 hover:text-stone-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-1 transition-colors"
+            class="hidden mt-4 w-full px-3 py-2 border border-stone-300 text-sm font-medium text-stone-600 bg-white hover:bg-stone-50 hover:text-stone-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 transition-colors"
             aria-label="Clear active slice filter">
             Clear filter
           </button>
@@ -214,7 +219,7 @@
         <!-- Mobile drawer trigger (visible only on mobile) -->
         <button type="button"
           id="slice-drawer-trigger"
-          class="block lg:hidden mb-6 inline-flex items-center gap-2 px-4 py-2 border border-stone-300 bg-white text-sm font-medium text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"
+          class="block lg:hidden mb-6 inline-flex items-center gap-2 px-4 py-2 border border-stone-300 bg-white text-sm font-medium text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
           aria-label="Open slice filter panel"
           aria-expanded="false"
           aria-controls="slice-sidebar">
@@ -241,12 +246,12 @@
           <!-- Project context banner — shown in Project slice view when a project is selected -->
           <div id="project-banner" class="hidden bg-white border border-stone-200 rounded-lg p-5 mb-4">
             <div class="flex items-start gap-4">
-              <div class="w-20 h-20 bg-green-50 text-green-700 rounded-lg flex items-center justify-center shrink-0" aria-hidden="true">
+              <div class="w-20 h-20 rounded-lg flex items-center justify-center shrink-0" style="background:#f0fdfd;color:#0e7474" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.7-6-10a6 6 0 0 1 12 0c0 4.3-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2">
-                  <h2 class="project-banner-name font-semibold text-green-800 text-xl"></h2>
+                  <h2 class="project-banner-name font-semibold text-xl" style="color:#0c5454"></h2>
                   <span class="project-banner-location hidden rounded-full bg-stone-100 text-stone-600 text-xs font-medium px-2.5 py-0.5"></span>
                 </div>
                 <p class="project-banner-desc text-stone-600 text-sm mt-2 leading-relaxed"></p>
@@ -275,7 +280,7 @@
             <div class="bg-white p-6 mb-6" data-feedback="Project Group: Header">
               <div class="flex flex-wrap items-baseline justify-between gap-3 mb-3">
                 <div>
-                  <h2 id="pg-title" class="text-2xl font-bold text-green-800">CPER</h2>
+                  <h2 id="pg-title" class="text-2xl font-bold" style="color:#0c5454">CPER</h2>
                   <p id="pg-subtitle" class="text-sm text-stone-500 mt-1">Cross-project program — concurrent collections at CPER and SGRC, 2022–2023</p>
                 </div>
                 <div class="text-right">
@@ -284,7 +289,7 @@
                 </div>
               </div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                <div class="border-l-4 border-green-700 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Samples</p><p id="pg-stat-samples" class="text-xl font-bold text-stone-800">—</p></div>
+                <div class="border-l-4 pl-3" style="border-color:#0c9cb4"><p class="text-xs uppercase tracking-wide text-stone-400">Samples</p><p id="pg-stat-samples" class="text-xl font-bold text-stone-800">—</p></div>
                 <div class="border-l-4 border-stone-400 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Sub-projects</p><p id="pg-stat-subprojects" class="text-xl font-bold text-stone-800">—</p></div>
                 <div class="border-l-4 border-amber-500 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">DNA extracted</p><p id="pg-stat-dna" class="text-xl font-bold text-stone-800">—</p></div>
                 <div class="border-l-4 border-blue-500 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Sequenced</p><p id="pg-stat-seq" class="text-xl font-bold text-stone-800">—</p></div>
@@ -296,11 +301,12 @@
               <h3 class="text-lg font-bold text-stone-800 mb-1">Concurrent Sub-Projects</h3>
               <p class="text-sm text-stone-500 mb-4">Each bar is one sub-project's date span. Click to drill into that project.</p>
               <div id="pg-timeline" class="space-y-2"></div>
+              <!-- Timeline legend — Okabe-Ito inline hex (sourced from SAMPLE_TYPE_COLORS, DESIGN.md v2) -->
               <div class="flex items-center gap-4 mt-4 text-xs text-stone-500 flex-wrap">
-                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 bg-sky-500"></span>Air</span>
-                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 bg-emerald-600"></span>Plant</span>
-                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 bg-amber-700"></span>Soil</span>
-                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3 bg-cyan-400"></span>Liquid</span>
+                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:#0072B2"></span>Air</span>
+                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:#009E73"></span>Plant</span>
+                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:#E69F00"></span>Soil</span>
+                <span class="inline-flex items-center gap-1"><span class="inline-block w-3 h-3" style="background:#56B4E9"></span>Liquid</span>
               </div>
             </div>
 
@@ -350,7 +356,7 @@
                 <h3 class="text-lg font-bold text-stone-800 mb-1">Freezer Inventory</h3>
                 <p class="text-sm text-stone-500 mb-4">Filter samples remaining for re-analysis (from <code class="text-xs bg-stone-100 px-1">Filter Remaining</code> column).</p>
                 <div class="grid grid-cols-3 gap-3 mb-4">
-                  <div class="border-l-4 border-green-700 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Available</p><p id="pg-freezer-available" class="text-2xl font-bold text-green-800">—</p></div>
+                  <div class="border-l-4 pl-3" style="border-color:#0c9cb4"><p class="text-xs uppercase tracking-wide text-stone-400">Available</p><p id="pg-freezer-available" class="text-2xl font-bold" style="color:#0c5454">—</p></div>
                   <div class="border-l-4 border-stone-400 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Depleted</p><p id="pg-freezer-depleted" class="text-2xl font-bold text-stone-700">—</p></div>
                   <div class="border-l-4 border-stone-300 pl-3"><p class="text-xs uppercase tracking-wide text-stone-400">Unrecorded</p><p id="pg-freezer-unrecorded" class="text-2xl font-bold text-stone-500">—</p></div>
                 </div>
@@ -523,7 +529,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore KPI card border | CHART CARD BG — bg-white; edit here to change KPI card background color -->
             <div id="kpi-card-field-samples" class="bg-white p-6 flex items-center gap-4" data-feedback="KPI: Field Samples">
-              <div class="p-3 bg-green-100 rounded-full flex-shrink-0 text-green-800" aria-hidden="true">
+              <div class="p-3 rounded-full flex-shrink-0" style="background:#ccefef;color:#0c5454" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="20" x2="18" y2="10"></line>
                   <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -666,12 +672,12 @@
             </div>
             <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
             <div class="bg-white p-6">
-              <h3 class="text-lg font-bold slice-chart-title-active mb-3">Sampler Replicate Tags (All)</h3>
+              <h3 class="text-lg font-bold text-stone-800 mb-3">Sampler Replicate Tags (All)</h3>
               <div id="globalReplicateBadges" class="flex flex-wrap gap-2"></div>
             </div>
             <!-- CHART CARD BORDER — removed; add `border border-stone-200` here to restore | CHART CARD BG — bg-white; edit here to change card background color -->
             <div id="chart-card-global-sampler" class="bg-white p-6" data-feedback="Global Sampler Chart">
-              <h3 class="text-lg font-bold slice-chart-title-active mb-1">Sampler Type Distribution (All)</h3>
+              <h3 class="text-lg font-bold text-stone-800 mb-1">Sampler Type Distribution (All)</h3>
               <div class="chart-wrap"><canvas id="globalSamplerChart" aria-label="Doughnut chart showing sampler type distribution across all samples" role="img"></canvas></div>
             </div>
           </div>
@@ -689,7 +695,7 @@
 
             <!-- ARCHIVED & CATALOGED -->
             <div id="dm-card-archived" class="bg-white p-6 flex items-center gap-4">
-              <div class="p-3 bg-green-100 rounded-full flex-shrink-0 text-green-800" aria-hidden="true">
+              <div class="p-3 rounded-full flex-shrink-0" style="background:#ccefef;color:#0c5454" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="21 8 21 21 3 21 3 8"></polyline>
                   <rect x="1" y="3" width="22" height="5"></rect>
@@ -739,7 +745,7 @@
 
             <!-- DEPOSITED IN PUBLIC DATA REPOSITORIES -->
             <div id="dm-card-deposited" class="bg-white p-6 flex items-center gap-4">
-              <div class="p-3 bg-green-100 rounded-full flex-shrink-0 text-green-800" aria-hidden="true">
+              <div class="p-3 rounded-full flex-shrink-0" style="background:#ccefef;color:#0c5454" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="16 16 12 12 8 16"></polyline>
                   <line x1="12" y1="12" x2="12" y2="21"></line>
@@ -812,28 +818,28 @@
               <div>
                 <label for="filter-category" class="block text-xs font-medium text-stone-700 mb-1">Sample Category</label>
                 <select id="filter-category"
-                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
+                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-teal-500 focus:border-teal-500 block p-2.5 min-w-36">
                   <option value="">All Categories</option>
                 </select>
               </div>
               <div>
                 <label for="filter-site" class="block text-xs font-medium text-stone-700 mb-1">Collection Site</label>
                 <select id="filter-site"
-                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
+                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-teal-500 focus:border-teal-500 block p-2.5 min-w-36">
                   <option value="">All Sites</option>
                 </select>
               </div>
               <div>
                 <label for="filter-year" class="block text-xs font-medium text-stone-700 mb-1">Year</label>
                 <select id="filter-year"
-                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-28">
+                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-teal-500 focus:border-teal-500 block p-2.5 min-w-28">
                   <option value="">All Years</option>
                 </select>
               </div>
               <div>
                 <label for="filter-stage" class="block text-xs font-medium text-stone-700 mb-1">Pipeline Stage</label>
                 <select id="filter-stage"
-                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-green-600 focus:border-green-600 block p-2.5 min-w-36">
+                  class="bg-white border border-stone-300 text-stone-900 text-sm focus:ring-teal-500 focus:border-teal-500 block p-2.5 min-w-36">
                   <option value="">All Stages</option>
                   <option value="collected">Collected</option>
                   <option value="extracted">DNA Extracted</option>
