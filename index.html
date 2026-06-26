@@ -18,20 +18,14 @@
 <body class="bg-stone-50 text-stone-900 antialiased flex flex-col min-h-screen">
 
   <!-- STICKY NAV -->
+  <!-- BRAND-ONLY TOP BAR — section links removed (rail is the sole nav) -->
   <nav class="bg-white sticky top-0 z-50" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
+      <div class="flex h-16 items-center">
         <div class="flex items-center gap-2" aria-label="BROADN Aerobiome Dashboard">
           <img src="assets/broadn-logo.webp" alt="BROADN logo" class="h-8 w-auto" />
           <span class="text-2xl font-bold tracking-tight select-none" style="color:#0c5454">BROADN</span>
           <span class="text-sm text-stone-500 hidden sm:block">Aerobiome Sample Dashboard</span>
-        </div>
-        <div class="flex items-center gap-1 sm:gap-4" role="list">
-          <a href="#overview"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="overview"   role="listitem">Overview</a>
-          <a href="#geography"  class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="geography"  role="listitem">Geography</a>
-          <a href="#pipeline"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="pipeline"   role="listitem">Pipeline</a>
-          <a href="#data-management" class="nav-link px-3 py-2 min-h-[44px] text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="data-management" role="listitem">Data Management</a>
-          <a href="#explorer"   class="nav-link px-3 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors border-b-2 border-transparent" data-section="explorer"   role="listitem">Explorer</a>
         </div>
       </div>
     </div>
@@ -132,8 +126,54 @@
 
         <!-- Sidebar content wrapper -->
         <div class="flex flex-col gap-2 p-4">
-          <!-- Section header -->
-          <p class="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-1 px-1">Slice by</p>
+
+          <!-- STORY group header -->
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-1 px-1">Story</p>
+
+          <!-- Story section navigation -->
+          <nav aria-label="Story sections">
+            <ul role="list" id="story-section-list" class="mb-3">
+              <li role="listitem">
+                <button type="button"
+                  id="story-btn-overview"
+                  class="story-rail-btn w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
+                  data-section="overview"
+                  aria-current="false">
+                  Overview
+                </button>
+              </li>
+              <li role="listitem">
+                <button type="button"
+                  id="story-btn-geography"
+                  class="story-rail-btn w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
+                  data-section="geography"
+                  aria-current="false">
+                  Geography
+                </button>
+              </li>
+              <li role="listitem">
+                <button type="button"
+                  id="story-btn-pipeline"
+                  class="story-rail-btn w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
+                  data-section="pipeline"
+                  aria-current="false">
+                  Pipeline
+                </button>
+              </li>
+              <li role="listitem">
+                <button type="button"
+                  id="story-btn-data-management"
+                  class="story-rail-btn w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
+                  data-section="data-management"
+                  aria-current="false">
+                  Data Management
+                </button>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- EXPLORE group header -->
+          <p class="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-1 px-1">Explore</p>
 
           <!-- Category navigation -->
           <nav aria-label="Slice filter categories">
@@ -193,6 +233,16 @@
                   class="hidden mt-1 ml-2 space-y-0.5 max-h-64 overflow-y-auto"
                   role="listbox"
                   aria-label="Lab Group filter options"></ul>
+              </li>
+
+              <!-- Explorer item — drives explorer pane (Data Explorer table) -->
+              <li role="listitem">
+                <button type="button"
+                  id="explore-btn-explorer"
+                  class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors"
+                  aria-pressed="false">
+                  Explorer
+                </button>
               </li>
 
             </ul>
@@ -807,7 +857,8 @@
         </div><!-- /#global-charts-area -->
 
         <!-- DATA EXPLORER -->
-        <section id="explorer" class="scroll-mt-20 pb-8" data-feedback="Data Explorer Section">
+        <!-- Explorer pane: hidden by default; paneMode='explorer' reveals it via renderView() -->
+        <section id="explorer" class="hidden scroll-mt-20 pb-8" data-feedback="Data Explorer Section">
           <div class="mb-8">
             <h2 class="text-3xl font-extrabold text-stone-900 mb-2">Data Explorer</h2>
             <p class="text-stone-600 text-lg max-w-3xl">Browse recent field samples. Filter by sample category, collection site, or year of collection.</p>

@@ -126,6 +126,13 @@
       tags: []  // array of active tag token strings
     };
 
+    // Pane mode — single source of truth for which content pane is visible.
+    // 'story'   = narrative scroll (global-charts-area, hero + 4 sections)
+    // 'tool'    = slice view (slice-view-container; cat !== null)
+    // 'explorer'= Data Explorer table (#explorer)
+    // CRITICAL: cat===null means "All BROADN Samples" (story default); do NOT overload with explorer.
+    var paneMode = 'story';
+
     // Global tag dict — populated in initDashboard, accessible to clearSliceFilter
     // Structure: { colLabel: { token: count } } — mirrors slice entry tag_groups format.
     var globalTagsDict = {};
@@ -1798,21 +1805,43 @@
     // =============================================================================
     // SCROLL SPY
     // =============================================================================
+
+    /**
+     * Set aria-current on the matching story rail button. Called by scroll-spy
+     * and by story-item click handlers to keep state consistent.
+     * @param {string|null} sectionId — data-section value to mark active, or null for none
+     */
+    function setActiveStorySection(sectionId) {
+      var storyBtnIds = [
+        'story-btn-overview',
+        'story-btn-geography',
+        'story-btn-pipeline',
+        'story-btn-data-management'
+      ];
+      storyBtnIds.forEach(function(id) {
+        var btn = document.getElementById(id);
+        if (!btn) return;
+        btn.setAttribute('aria-current', btn.getAttribute('data-section') === sectionId ? 'page' : 'false');
+      });
+    }
+
     function initScrollSpy() {
-      var sections = document.querySelectorAll('section[id]');
-      var navLinks = document.querySelectorAll('.nav-link[data-section]');
+      // Observe only the 4 story sections inside global-charts-area (not #explorer)
+      var sections = document.querySelectorAll('#global-charts-area section[id]');
+      // Story rail buttons replace the removed top-nav links as scroll-spy targets
+      var storyBtns = document.querySelectorAll('.story-rail-btn[data-section]');
 
       var observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            var id = entry.target.getAttribute('id');
-            navLinks.forEach(function(link) {
-              link.classList.remove('active');
-              if (link.getAttribute('data-section') === id) {
-                link.classList.add('active');
-              }
-            });
-          }
+          if (!entry.isIntersecting) return;
+          // Only active in story mode; in tool/explorer mode the observer fires but we skip UI update
+          if (paneMode !== 'story') return;
+          var id = entry.target.getAttribute('id');
+          storyBtns.forEach(function(btn) {
+            var isActive = btn.getAttribute('data-section') === id;
+            btn.setAttribute('aria-current', isActive ? 'page' : 'false');
+          });
+          updateCategoryButtonStates();
         });
       }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
 
@@ -3848,9 +3877,14 @@
     // =============================================================================
 
     /**
-     * renderView — central dispatch for slice panel state.
-     * Called after any filterState mutation.
+     * renderView — central dispatch for pane visibility + slice panel state.
+     * Called after any filterState or paneMode mutation.
      * NEVER calls initDashboard().
+     *
+     * Pane mode switch (single source of truth — §5 item 3):
+     *   paneMode === 'story'   → show #global-charts-area, hide #slice-view-container, hide #explorer
+     *   paneMode === 'tool'    → hide #global-charts-area, show #slice-view-container (cat/group branch), hide #explorer
+     *   paneMode === 'explorer'→ hide #global-charts-area, hide #slice-view-container, show #explorer
      */
     function renderView() {
       var cat   = filterState.slice.category;
@@ -3865,6 +3899,7 @@
       var clearBtn        = document.getElementById('slice-clear-btn');
       var viewTitle       = document.getElementById('slice-view-title');
       var viewSubtitle    = document.getElementById('slice-view-subtitle');
+      var explorerEl      = document.getElementById('explorer');
 
       // --- Update category button visual states ---
       updateCategoryButtonStates();
@@ -3880,8 +3915,38 @@
       // Destroy all existing slice chart instances before any new rendering
       destroyAllSliceCharts();
 
+      // =========================================================================
+      // EXPLORER PANE — distinct third mode; must NOT overload cat===null branch
+      // =========================================================================
+      if (paneMode === 'explorer') {
+        if (globalChartsArea) globalChartsArea.classList.add('hidden');
+        sliceContainer.classList.add('hidden');
+        sliceContainer.classList.remove('block', 'bg-orange-50', 'transition-colors', 'duration-300');
+        projectView.classList.add('hidden');
+        if (projectGroupView) projectGroupView.classList.add('hidden');
+        locationView.classList.add('hidden');
+        labgroupView.classList.add('hidden');
+        activeLabel.classList.add('hidden');
+        activeLabel.classList.remove('block');
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('block');
+        ['project-group-list', 'location-group-list', 'labgroup-group-list'].forEach(function(id) {
+          document.getElementById(id).classList.add('hidden');
+        });
+        var chipExp = document.getElementById('slice-active-chip');
+        if (chipExp) chipExp.classList.add('hidden');
+        // Show explorer pane
+        if (explorerEl) explorerEl.classList.remove('hidden');
+        refreshTableIfReady();
+        return;
+      }
+
+      // Not explorer mode: ensure explorer pane is hidden
+      if (explorerEl) explorerEl.classList.add('hidden');
+
       if (cat === null) {
-        // Default view: hide slice container, show global charts area
+        // Default view (story mode): hide slice container, show global charts area.
+        // This branch is byte-functionally intact — paneMode='explorer' is handled above.
         sliceContainer.classList.add('hidden');
         sliceContainer.classList.remove('block', 'bg-orange-50', 'transition-colors', 'duration-300');
 
@@ -3912,7 +3977,7 @@
         refreshTableIfReady(); return;
       }
 
-      // cat !== null: hide global charts area in BOTH cat!==null branches
+      // cat !== null (paneMode === 'tool'): hide global charts area in BOTH cat!==null branches
       if (globalChartsArea) {
         globalChartsArea.classList.add('hidden');
       }
@@ -4021,11 +4086,30 @@
     // =============================================================================
 
     function updateCategoryButtonStates() {
-      // --- slice-btn-all: active when category === null (full orange fill, no accent bar) ---
+      // === STORY buttons — active (teal) when paneMode==='story' and aria-current==='page' ===
+      var storyBtnIds = [
+        'story-btn-overview', 'story-btn-geography',
+        'story-btn-pipeline', 'story-btn-data-management'
+      ];
+      storyBtnIds.forEach(function(id) {
+        var btn = document.getElementById(id);
+        if (!btn) return;
+        var isCurrent = paneMode === 'story' && btn.getAttribute('aria-current') === 'page';
+        if (isCurrent) {
+          btn.className = 'story-rail-btn w-full text-left px-3 py-2 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors';
+          btn.style.cssText = 'background:#f0fdfd;color:#0c5454;';
+        } else {
+          btn.className = 'story-rail-btn w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors';
+          btn.style.cssText = '';
+        }
+      });
+
+      // === EXPLORE: slice-btn-all — active when paneMode==='story' and cat===null ===
       var btnAll = document.getElementById('slice-btn-all');
       if (btnAll) {
-        if (filterState.slice.category === null) {
-          // De-oranged: "All BROADN Samples" active state uses teal neutral, NOT orange (orange = filter signal only)
+        // Active: story mode with no specific slice (default narrative view)
+        if (filterState.slice.category === null && paneMode === 'story') {
+          // De-oranged: "All BROADN Samples" active state uses teal neutral, NOT orange
           btnAll.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-inset transition-colors';
           btnAll.style.cssText = 'background:#f0fdfd;color:#0c5454;outline-color:#0c9cb4;';
           btnAll.setAttribute('aria-pressed', 'true');
@@ -4036,7 +4120,7 @@
         }
       }
 
-      // --- The 3 category buttons: active with green style + left accent bar ---
+      // === EXPLORE: The 3 category slice buttons — active with teal style + left accent bar ===
       var buttonMap = {};
       buttonMap[SLICE_CATEGORIES.PROJECT]   = 'slice-btn-project';
       buttonMap[SLICE_CATEGORIES.LOCATION]  = 'slice-btn-location';
@@ -4069,6 +4153,20 @@
           btn.setAttribute('aria-expanded', 'false');
         }
       });
+
+      // === Explorer button — active when paneMode==='explorer' ===
+      var btnExplorer = document.getElementById('explore-btn-explorer');
+      if (btnExplorer) {
+        if (paneMode === 'explorer') {
+          btnExplorer.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-inset transition-colors';
+          btnExplorer.style.cssText = 'background:#f0fdfd;color:#0c5454;outline-color:#0c9cb4;';
+          btnExplorer.setAttribute('aria-pressed', 'true');
+        } else {
+          btnExplorer.className = 'w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-stone-700 hover:bg-stone-100 hover:text-stone-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset transition-colors';
+          btnExplorer.style.cssText = '';
+          btnExplorer.setAttribute('aria-pressed', 'false');
+        }
+      }
     }
 
     function updateGroupItemSelection() {
@@ -4089,9 +4187,14 @@
     // =============================================================================
 
     function openMobileDrawer() {
+      var wrapper  = document.getElementById('slice-sidebar-wrapper');
       var sidebar  = document.getElementById('slice-sidebar');
       var overlay  = document.getElementById('slice-sidebar-overlay');
       var trigger  = document.getElementById('slice-drawer-trigger');
+
+      // Un-hide the wrapper so the position:fixed sidebar is not a child of display:none.
+      // On desktop (≥lg) lg:flex already wins over hidden — removing hidden has no desktop effect.
+      if (wrapper) wrapper.classList.remove('hidden');
 
       // Switch sidebar to fixed mobile drawer mode
       sidebar.classList.remove('hidden', 'lg:flex', 'lg:flex-col', 'w-64', 'flex-shrink-0',
@@ -4106,9 +4209,13 @@
     }
 
     function closeMobileDrawer() {
+      var wrapper  = document.getElementById('slice-sidebar-wrapper');
       var sidebar  = document.getElementById('slice-sidebar');
       var overlay  = document.getElementById('slice-sidebar-overlay');
       var trigger  = document.getElementById('slice-drawer-trigger');
+
+      // Restore wrapper hidden state (mobile: display:none; desktop: lg:flex still wins).
+      if (wrapper) wrapper.classList.add('hidden');
 
       // Restore sidebar to desktop sticky mode (hidden on mobile)
       sidebar.className = 'hidden lg:flex lg:flex-col w-64 flex-shrink-0 sticky top-16 self-start max-h-[calc(100vh-4rem)] overflow-y-auto border-r border-stone-200';
@@ -4124,11 +4231,18 @@
     // =============================================================================
 
     function getCategoryButtons() {
+      // Visual top-to-bottom order: STORY (0-3) then EXPLORE (4-8)
+      // Existing keydown wiring must use indices 4-7 for the original EXPLORE buttons.
       return [
-        document.getElementById('slice-btn-all'),       // index 0: All BROADN Samples
-        document.getElementById('slice-btn-project'),   // index 1
-        document.getElementById('slice-btn-location'),  // index 2
-        document.getElementById('slice-btn-labgroup')   // index 3
+        document.getElementById('story-btn-overview'),        // index 0: STORY — Overview
+        document.getElementById('story-btn-geography'),       // index 1: STORY — Geography
+        document.getElementById('story-btn-pipeline'),        // index 2: STORY — Pipeline
+        document.getElementById('story-btn-data-management'), // index 3: STORY — Data Management
+        document.getElementById('slice-btn-all'),             // index 4: EXPLORE — All BROADN Samples
+        document.getElementById('slice-btn-project'),         // index 5: EXPLORE — Project
+        document.getElementById('slice-btn-location'),        // index 6: EXPLORE — Location / Hub
+        document.getElementById('slice-btn-labgroup'),        // index 7: EXPLORE — Lab Group
+        document.getElementById('explore-btn-explorer')       // index 8: EXPLORE — Explorer
       ];
     }
 
@@ -4147,8 +4261,9 @@
         event.preventDefault();
         buttons[btnIndex].click();
         // After click, if group list is now visible, focus first item.
-        // listIds[0] is null (slice-btn-all has no group list) — null guard prevents getElementById(null).
-        var listIds = [null, 'project-group-list', 'location-group-list', 'labgroup-group-list'];
+        // Indices: STORY (0-3) and Explorer (8) have no group list → null.
+        // EXPLORE slice cats: index 5=project, 6=location, 7=labgroup.
+        var listIds = [null, null, null, null, null, 'project-group-list', 'location-group-list', 'labgroup-group-list', null];
         var list = listIds[btnIndex] ? document.getElementById(listIds[btnIndex]) : null;
         if (list && !list.classList.contains('hidden')) {
           var firstItem = list.querySelector('[role="option"]');
@@ -4156,7 +4271,7 @@
         }
       } else if (event.key === 'Escape') {
         event.preventDefault();
-        // Global: clear filter, collapse all, focus first button (slice-btn-all)
+        // Global: clear filter, collapse all, focus first button (story-btn-overview)
         clearSliceFilter();
         buttons[0].focus();
       }
@@ -4195,9 +4310,11 @@
     // =============================================================================
 
     function clearSliceFilter() {
+      paneMode = 'story';
       filterState.slice.category = null;
       filterState.slice.group    = null;
       filterState.tags = [];
+      setActiveStorySection('overview');
       renderView();
       renderTagGroups('globalReplicateBadges', globalTagsDict);
     }
@@ -4213,13 +4330,16 @@
       }
 
       if (filterState.slice.category === category) {
-        // Toggle off: collapse category
+        // Toggle off: collapse category → return to story mode
+        paneMode = 'story';
         filterState.slice.category = null;
         filterState.slice.group    = null;
+        setActiveStorySection('overview');
         renderView();
         return;
       }
 
+      paneMode = 'tool';
       filterState.slice.category = category;
       filterState.slice.group    = null;
 
@@ -4344,43 +4464,108 @@
         closeMobileDrawer();
       });
 
-      // Category button: All BROADN Samples (index 0 — default global view)
+      // -----------------------------------------------------------------------
+      // MOBILE DRAWER GUARD — fires closeMobileDrawer() only when drawer is open
+      // (prevents trigger.focus() from stealing focus on desktop clicks)
+      // -----------------------------------------------------------------------
+      function closeDrawerIfOpen() {
+        var trigger = document.getElementById('slice-drawer-trigger');
+        if (trigger && trigger.getAttribute('aria-expanded') === 'true') {
+          closeMobileDrawer();
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // STORY rail item handlers (indices 0-3 in getCategoryButtons())
+      // D1-a: click sets paneMode='story', scrolls to section, closes mobile drawer
+      // -----------------------------------------------------------------------
+      var storyBtnDefs = [
+        { id: 'story-btn-overview',        section: 'overview',         idx: 0 },
+        { id: 'story-btn-geography',       section: 'geography',        idx: 1 },
+        { id: 'story-btn-pipeline',        section: 'pipeline',         idx: 2 },
+        { id: 'story-btn-data-management', section: 'data-management',  idx: 3 }
+      ];
+      storyBtnDefs.forEach(function(def) {
+        var btn = document.getElementById(def.id);
+        if (!btn) return;
+        btn.addEventListener('click', function() {
+          paneMode = 'story';
+          filterState.slice.category = null;
+          filterState.slice.group    = null;
+          setActiveStorySection(def.section);
+          closeDrawerIfOpen();
+          renderView();
+          // Scroll to the target section (D1-a: scroll-to within narrative pane)
+          var targetSection = document.getElementById(def.section);
+          if (targetSection) { targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+        btn.addEventListener('keydown', function(e) {
+          handleCategoryButtonKeydown(e, def.idx);
+        });
+      });
+
+      // -----------------------------------------------------------------------
+      // EXPLORE rail item handlers
+      // -----------------------------------------------------------------------
+
+      // Category button: All BROADN Samples (index 4 — default global/story view)
       var btnAll = document.getElementById('slice-btn-all');
       btnAll.addEventListener('click', function() {
+        paneMode = 'story';
         filterState.slice.category = null;
         filterState.slice.group    = null;
+        setActiveStorySection('overview');
+        closeDrawerIfOpen();
         renderView();
       });
       btnAll.addEventListener('keydown', function(e) {
-        handleCategoryButtonKeydown(e, 0);
+        handleCategoryButtonKeydown(e, 4);
       });
 
-      // Category button: Project (index 1)
+      // Category button: Project (index 5)
       var btnProject = document.getElementById('slice-btn-project');
       btnProject.addEventListener('click', function() {
+        closeDrawerIfOpen();
         handleCategoryClick(SLICE_CATEGORIES.PROJECT);
       });
       btnProject.addEventListener('keydown', function(e) {
-        handleCategoryButtonKeydown(e, 1);
+        handleCategoryButtonKeydown(e, 5);
       });
 
-      // Category button: Location / Hub (index 2)
+      // Category button: Location / Hub (index 6)
       var btnLocation = document.getElementById('slice-btn-location');
       btnLocation.addEventListener('click', function() {
+        closeDrawerIfOpen();
         handleCategoryClick(SLICE_CATEGORIES.LOCATION);
       });
       btnLocation.addEventListener('keydown', function(e) {
-        handleCategoryButtonKeydown(e, 2);
+        handleCategoryButtonKeydown(e, 6);
       });
 
-      // Category button: Lab Group (index 3)
+      // Category button: Lab Group (index 7)
       var btnLabgroup = document.getElementById('slice-btn-labgroup');
       btnLabgroup.addEventListener('click', function() {
+        closeDrawerIfOpen();
         handleCategoryClick(SLICE_CATEGORIES.LAB_GROUP);
       });
       btnLabgroup.addEventListener('keydown', function(e) {
-        handleCategoryButtonKeydown(e, 3);
+        handleCategoryButtonKeydown(e, 7);
       });
+
+      // Explorer button (index 8) — drives explorer pane (Data Explorer table)
+      var btnExplorer = document.getElementById('explore-btn-explorer');
+      if (btnExplorer) {
+        btnExplorer.addEventListener('click', function() {
+          paneMode = 'explorer';
+          filterState.slice.category = null;
+          filterState.slice.group    = null;
+          closeDrawerIfOpen();
+          renderView();
+        });
+        btnExplorer.addEventListener('keydown', function(e) {
+          handleCategoryButtonKeydown(e, 8);
+        });
+      }
 
       // Group list item click and keydown — delegated on each list
       function wireGroupList(listId, ownerBtnId) {
@@ -4480,7 +4665,9 @@
         });
       }
 
-      // Initial render pass — shows default 7-chart view
+      // Initial render pass — story mode, Overview as first active section
+      paneMode = 'story';
+      setActiveStorySection('overview');
       renderView();
     }
 
