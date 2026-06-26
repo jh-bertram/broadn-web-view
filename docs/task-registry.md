@@ -1,3 +1,16 @@
+## Rollback Point (current)
+commit: 23277f1290beae4038aa5676e64b2c8bcad62b71
+recorded: 2026-06-26T00:30:00Z
+task_id: broadn-p12-altitude-single-rail
+status: CLOSED — single-rail nav SHIPPED (Audit PASS, REQVAL 13/13); awaiting human browser verify + push
+
+To recover: git reset --hard 23277f1290beae4038aa5676e64b2c8bcad62b71
+
+### Prior rollback point (superseded)
+commit: 8e9a436c22226db74060bda4c37f762d029a1977 (broadn-p12 pre-sprint, 2026-06-25T23:12:33Z)
+
+---
+
 # Task Registry — broadn-p9-data-management-stats
 
 ## Rollback Point
@@ -834,3 +847,49 @@ recorded: 2026-06-25T21:36:18Z
 task_id: broadn-p11-feedback-widget-teal
 
 To recover: git reset --hard c14d67b79003777d019a270a9609d49bdaece99c
+
+---
+
+# Task Registry — broadn-p12-altitude-single-rail
+
+## Rollback Point
+commit: 8e9a436c22226db74060bda4c37f762d029a1977
+recorded: 2026-06-25T23:12:33Z
+task_id: broadn-p12-altitude-single-rail
+
+To recover: git reset --hard 8e9a436c22226db74060bda4c37f762d029a1977
+
+## Expectation Manifest (PM plan + amendment folded in)
+
+| task_id | agent | expected_tag | wave | blocks |
+|---|---|---|---|---|
+| broadn-p12-FE-001 | FE#1 | ui_packet | 0 | NONE (audit→REQVAL→commit→archive follow) |
+
+<expectation_manifest>
+  <sprint_id>broadn-p12-altitude-single-rail</sprint_id>
+  <generated>2026-06-25T23:30:00Z</generated>
+  <assignments>
+    <assignment>
+      <task_id>broadn-p12-FE-001</task_id>
+      <agent>FE#1</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/tasks/outputs/broadn-p12-FE-001-FE-*.md</expected_file>
+      <wave>0</wave>
+      <blocks>NONE</blocks>
+      <receipt_check>
+        <item>M1 data-section enumeration present; zero orphaned references reported</item>
+        <item>M2 top-nav before/after: 5 links removed, brand/logo/tagline kept</item>
+        <item>M3 renderView pane-mode switch quoted; single source of truth (no second show/hide fn)</item>
+        <item>M4 #explorer gated by pane mode (no longer unconditional)</item>
+        <item>M5 inline-style sweep result reported for all three gated panes</item>
+        <item>M6 explicit statement FE did NOT git commit (working tree dirty)</item>
+        <item>M7 group-header greps: STORY present, EXPLORE present, "Slice by"=0, "Location / Hub"=1</item>
+        <item>M8 close-on-select enumeration: every selection handler (4 STORY + Explorer + 4 slice) → closeMobileDrawer behind drawer-open guard; closeMobileDrawer count=1 (reused)</item>
+        <item>M9 roving-handler coverage statement (button-array extension OR anchor native-focus rationale)</item>
+        <item>design_system_source = DESIGN_MD; no new tokens / untraceable hex</item>
+        <item>hash routing (item 7) NOT implemented; ?design / charts / data untouched</item>
+        <item>Browser walk B1–B9 reported (auditor re-runs at audit gate)</item>
+      </receipt_check>
+    </assignment>
+  </assignments>
+</expectation_manifest>
