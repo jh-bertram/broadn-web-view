@@ -1,3 +1,5 @@
+> **CLOSED 2026-06-25** — this sprint RAN and SHIPPED (artifact chain PM→CR→FE→AUD→REQVAL→COMMIT→AR in .claude/tasks/outputs/, teal verified live: green-token greps = 0). Stub retained for history; do NOT re-dispatch. Marked by ORC 2026-07-02.
+
 # Task: broadn-p11-feedback-widget-teal (QUEUED — next sprint)
 
 > **Queued 2026-06-25** as the follow-on to `broadn-p10-design-implementation`. Completes the BROADN
