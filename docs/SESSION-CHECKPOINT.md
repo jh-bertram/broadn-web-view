@@ -5,7 +5,7 @@ type: project-doc
 # Session Checkpoint
 
 **Project:** broadn-web-view
-**Updated:** 2026-06-26 00:02:40 UTC (auto-rebuilt by session-end-checkpoint hook)
+**Updated:** 2026-06-26 01:03:30 UTC (auto-rebuilt by session-end-checkpoint hook)
 
 ## ⚠ STALE — UNCOMMITTED DEBT PRESENT
 
@@ -14,10 +14,7 @@ reflects the CURRENT working tree state but the listed files have not been commi
 Do not treat this checkpoint as authoritative for sprint state until debt is resolved.
 
 **Uncommitted tracked paths (debt):**
-  - `assets/app.js`
-  - `docs/project-conventions.md`
-  - `docs/task-registry.md`
-  - `index.html`
+  - `docs/project_log.md`
 
 Ceremony-class files (chore(orchestration) commit class per
 `.claude/skills/commit-packet/SKILL.md §Two-Commit Pattern`) should be committed
@@ -25,7 +22,7 @@ before this checkpoint is treated as fresh. Non-ceremony files must NOT be
 auto-committed by this hook — manual ORC commit-packet is required.
 
 ## Agent Log Summary
-*Scanned at 2026-06-26T00:02:40.549792+00:00*
+*Scanned at 2026-06-26T01:03:30.290622+00:00*
 
 ### INTERRUPTED (2 task(s))
 
@@ -51,11 +48,12 @@ interrupted task's files are included in the debt list above.
   - `broadn-p1-web-view-consult-RA` (RA) — `docs/agent-logs/RA/broadn-p1-web-view-consult-RA.md`
   - `recon-broadn-web` (RA) — `docs/agent-logs/RA/recon-broadn-web.md`
 
-### CLOSED (144 task(s) — Stage-3 COMPLETE or drained)
+### CLOSED (147 task(s) — Stage-3 COMPLETE or drained)
 
   - `agent-improvement-2026-04-02-2` (AR) — `docs/agent-logs/AR/agent-improvement-2026-04-02-2.md`
   - `agent-improvement-2026-04-03-1` (AR) — `docs/agent-logs/AR/agent-improvement-2026-04-03-1.md`
   - `broadn-p10-design-implementation` (AR) — `docs/agent-logs/AR/broadn-p10-design-implementation.md`
+  - `broadn-p12-altitude-single-rail-postmortem` (AR) — `docs/agent-logs/AR/broadn-p12-altitude-single-rail-postmortem.md`
   - `broadn-p2-003` (AR) — `docs/agent-logs/AR/broadn-p2-003.md`
   - `broadn-p2-004a` (AR) — `docs/agent-logs/AR/broadn-p2-004a.md`
   - `broadn-p4-t4-bysite-show-all` (AR) — `docs/agent-logs/AR/broadn-p4-t4-bysite-show-all.md`
@@ -69,7 +67,9 @@ interrupted task's files are included in the debt list above.
   - `session-2026-04-27-pages-build-fix-postmortem` (AR) — `docs/agent-logs/AR/session-2026-04-27-pages-build-fix-postmortem.md`
   - `broadn-p1-web-view` (AUD) — `docs/agent-logs/AUD/broadn-p1-web-view.md`
   - `broadn-p10-design-implementation-AUD-001` (AUD) — `docs/agent-logs/AUD/broadn-p10-design-implementation-AUD-001.md`
+  - `broadn-p12-FE-001-reaudit` (AUD) — `docs/agent-logs/AUD/broadn-p12-FE-001-reaudit.md`
   - `broadn-p12-FE-001` (AUD) — `docs/agent-logs/AUD/broadn-p12-FE-001.md`
+  - `broadn-p12-FE-002-layout-collapse-reaudit` (AUD) — `docs/agent-logs/AUD/broadn-p12-FE-002-layout-collapse-reaudit.md`
   - `broadn-p2-001` (AUD) — `docs/agent-logs/AUD/broadn-p2-001.md`
   - `broadn-p2-002` (AUD) — `docs/agent-logs/AUD/broadn-p2-002.md`
   - `broadn-p2-003` (AUD) — `docs/agent-logs/AUD/broadn-p2-003.md`
@@ -202,9 +202,16 @@ interrupted task's files are included in the debt list above.
 *Source: agent-events-2026-06-26.jsonl*
 
 ```
-{"seq": 1, "ts": "2026-06-26T00:00:54Z", "ev": "AUDIT_FAIL", "task_id": "broadn-p12-FE-001", "agent_id": "AUD#1", "parent_id": "ORC#0", "edge_label": "audit_review FAIL", "output_files": [".claude/tasks/outputs/broadn-p12-FE-001-AUD-1782429581.md"], "reason": "QA B6 FAIL: mobile drawer (sole nav post-refactor) never opens; #slice-sidebar-wrapper stays display:none"}
-{"seq": 2, "ts": "2026-06-26T00:05:00Z", "ev": "SPAWN", "task_id": "broadn-p12-FE-001-rem", "agent_id": "FE#1", "parent_id": "ORC#0", "edge_label": "remediation_request", "expected_output": ".claude/tasks/outputs/broadn-p12-FE-001-rem-FE-1782429581.md", "note": "audit FAIL B6 mobile drawer 0x0; ralph-loop remediation"}
-{"seq":3,"ts":"2026-06-26T00:02:40Z","ev":"BACKFILL_SCAN","task_id":"system","agent_id":"ORC#0","parent_id":"HUMAN_SESSION","edge_label":"backfill_scan_report","note":"backfill-autofire scan: checked=1 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0","scan_summary":{"checked":1,"backfilled":0,"ghost_tombstoned":0,"ghost_skip_tombstoned":0,"duplicate_skipped":0,"failed":0}}
+{"seq": 13, "ts": "2026-06-26T00:27:29Z", "ev": "BACKFILL_SCAN", "task_id": "system", "agent_id": "ORC#0", "parent_id": "HUMAN_SESSION", "edge_label": "backfill_scan_report", "note": "backfill-autofire scan: checked=1 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0", "scan_summary": {"checked": 1, "backfilled": 0, "ghost_tombstoned": 0, "ghost_skip_tombstoned": 0, "duplicate_skipped": 0, "failed": 0}}
+{"seq": 14, "ts": "2026-06-26T01:05:00Z", "ev": "COMPLETE", "task_id": "broadn-p12-FE-002-layout-collapse", "agent_id": "FE#1", "parent_id": "ORC#0", "edge_label": "remediation_request", "output_files": ["index.html"], "note": "backfilled by ORC \u2014 agent added w-full to #dashboard-layout (index.html:84) but did not write packet/verify; fix code-verified by ORC"}
+{"seq": 15, "ts": "2026-06-26T01:06:00Z", "ev": "SPAWN", "task_id": "broadn-p12-FE-002-layout-collapse-reaudit", "agent_id": "AUD#1", "parent_id": "ORC#0", "edge_label": "audit_review", "expected_output": ".claude/tasks/outputs/broadn-p12-FE-002-layout-collapse-reaudit-AUD-1782432000.md"}
+{"seq": 16, "ts": "2026-06-26T00:36:26Z", "ev": "AUDIT_PASS", "task_id": "broadn-p12-FE-002-layout-collapse-reaudit", "agent_id": "AUD#1", "parent_id": "ORC#0", "edge_label": "audit_review PASS", "output_files": [".claude/tasks/outputs/broadn-p12-FE-002-layout-collapse-reaudit-AUD-1782432000.md"]}
+{"seq": 17, "ts": "2026-06-26T01:15:00Z", "ev": "COMPLETE", "task_id": "broadn-p12-FE-002-layout-collapse-reaudit", "agent_id": "AUD#1", "parent_id": "ORC#0", "edge_label": "audit_review", "output_files": [".claude/tasks/outputs/broadn-p12-FE-002-layout-collapse-reaudit-AUD-1782432000.md"], "note": "backfilled by ORC \u2014 hook logged AUDIT_PASS verdict not lifecycle COMPLETE"}
+{"seq":18,"ts":"2026-06-26T00:38:14Z","ev":"BACKFILL_SCAN","task_id":"system","agent_id":"ORC#0","parent_id":"HUMAN_SESSION","edge_label":"backfill_scan_report","note":"backfill-autofire scan: checked=0 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0","scan_summary":{"checked":0,"backfilled":0,"ghost_tombstoned":0,"ghost_skip_tombstoned":0,"duplicate_skipped":0,"failed":0}}
+{"seq":19,"ts":"2026-06-26T00:55:08Z","ev":"BACKFILL_SCAN","task_id":"system","agent_id":"ORC#0","parent_id":"HUMAN_SESSION","edge_label":"backfill_scan_report","note":"backfill-autofire scan: checked=0 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0","scan_summary":{"checked":0,"backfilled":0,"ghost_tombstoned":0,"ghost_skip_tombstoned":0,"duplicate_skipped":0,"failed":0}}
+{"seq": 20, "ts": "2026-06-26T01:30:00Z", "ev": "SPAWN", "task_id": "broadn-p12-altitude-single-rail-postmortem", "agent_id": "AR#1", "parent_id": "ORC#0", "edge_label": "post_mortem", "expected_output": "docs/after-actions/broadn-p12-altitude-single-rail.md"}
+{"seq":21,"ts":"2026-06-26T01:03:13Z","ev":"COMPLETE","task_id":"broadn-p12-altitude-single-rail-postmortem","agent_id":"AR#1","parent_id":"ORC#0","edge_label":"archive_entry","output_files":[".claude/tasks/outputs/broadn-p12-altitude-single-rail-postmortem-AR-1782433200.md"],"auto_logged":true}
+{"seq":22,"ts":"2026-06-26T01:03:30Z","ev":"BACKFILL_SCAN","task_id":"system","agent_id":"ORC#0","parent_id":"HUMAN_SESSION","edge_label":"backfill_scan_report","note":"backfill-autofire scan: checked=0 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0","scan_summary":{"checked":0,"backfilled":0,"ghost_tombstoned":0,"ghost_skip_tombstoned":0,"duplicate_skipped":0,"failed":0}}
 ```
 
 ---
