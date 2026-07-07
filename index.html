@@ -898,20 +898,33 @@
                   <option value="sequenced">Sequenced</option>
                 </select>
               </div>
-              <span class="text-sm text-stone-500 ml-auto self-center" id="table-row-count"></span>
+              <div class="ml-auto flex items-center gap-3">
+                <button type="button" id="explorer-csv-btn"
+                  class="inline-flex items-center gap-1.5 rounded-md bg-[var(--color-teal-deep)] hover:brightness-90 text-white text-sm font-medium px-3 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--color-accent)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100"
+                  aria-label="Download the currently filtered samples as a CSV file">
+                  <svg aria-hidden="true" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16" />
+                  </svg>
+                  Download CSV
+                </button>
+                <span class="text-sm text-stone-500 self-center" id="table-row-count"></span>
+              </div>
             </div>
+            <!-- Screen-reader-only live region for Explorer actions (CSV export). Visitors never
+                 enter designer mode, so #design-status (announce()) is not guaranteed to exist. -->
+            <span id="explorer-status" class="sr-only" aria-live="polite"></span>
 
             <!-- TABLE -->
             <div class="overflow-x-auto">
               <table id="explorer-table" class="w-full text-sm text-left text-stone-600" aria-label="Field samples">
                 <thead class="bg-stone-100 text-stone-600 text-xs font-semibold uppercase tracking-wide">
                   <tr>
-                    <th scope="col" class="px-6 py-3">Sample ID</th>
-                    <th scope="col" class="px-6 py-3">Date</th>
-                    <th scope="col" class="px-6 py-3">Site</th>
-                    <th scope="col" class="px-6 py-3">Type</th>
-                    <th scope="col" class="px-6 py-3">Category</th>
-                    <th scope="col" class="px-6 py-3">Stage</th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="id" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Sample ID">Sample ID <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="date" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Date">Date <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="site" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Site">Site <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="type" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Type">Type <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="category" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Category">Category <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="pipeline_stage" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Pipeline Stage">Stage <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3">Request</th>
                   </tr>
                 </thead>
