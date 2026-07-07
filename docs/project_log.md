@@ -1526,3 +1526,26 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - Agent performance: BE first-pass (Critic amendment addressing date_only bucketing), Statistician first-pass (all 6 checks PASS), Auditor first-pass (all gates PASS, GATE-RUN confirmed reproducibility)
   </retention_keys>
 </archive_entry>
+
+<archive_entry>
+  <timestamp>2026-07-07T19:07:44Z</timestamp>
+  <task_id>broadn-p15-covariate-window-longitude</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Phase 1.5 corrects the p14 covariate deliverable per PI feedback (2026-07-07). Two PI-confirmed corrections shipped to `scripts/enrich_covariates.py` (rewritten, 688 lines) with regenerated `data/covariates.json` + `data/cache/covariates-cache.json`: (1) Window-aggregate model replaces point-in-time covariate extraction. PI confirmed air samples are 12/24-hour TIME-INTEGRATED, so single-hour window is scientifically wrong. Covariates now aggregate over each sample's real collection window `[Collected Time, +Sample Collection Duration]` (decimal hours). Tier precedence: no_date → window_exact (date+time+duration; 731) → window_assumed_24h (date+time, no duration → +24h default; 132) → date_only (date only → full calendar day; 3050). Multi-day windows fetch multiple days, select hours in [start,end). Aggregation rules unchanged (precip SUM, wind_direction circular mean, others mean, temp min/max). Calendar-day reference table `covariates_daily` retained for validation. The p14 AM/PM-imputation tier was intentionally dropped (superseded by date_only full-day window). (2) Longitude sign-fix. 402 positive longitudes (data-entry errors in raw xlsx) negated into US bounds with coord_corrected=true marker. Recovers 13 previously-skipped dated samples (independent PI verification of samples-with-dates inventory). Corrected coordinates pass bounds check (Colorado + adjacent state extents). `skipped_bad_coord` reduced from 90 to 77 — all genuinely null/invalid coordinates (permanently unfixable). IMPORTANT CORRECTION TO PRIOR RECORD: earlier estimate of "~90 recovered samples" was overstated. Independently verified only 13 dated samples had recoverable positive-longitude errors; the remaining ~377 positive-lon rows were undated (no recovery path). Coverage reconciles: 4569 total samples (coordinate_corrected 402; skipped 77; date binned into tiers as above). API calls: 1202, zero failures, offline reproducibility confirmed (GATE-RUN cache-only, byte-identical output). Commit: 4559f0f.</rationale>
+  <dependencies>
+    - Predecessor sprint: broadn-p14-covariate-enrichment (commit 27cbfe5; evidence for tier structure and API integration)
+    - PI feedback: 2026-07-07 discussion confirming time-integrated sample windows and positive-longitude data-entry patterns
+    - Audit packets: BE `.claude/tasks/outputs/broadn-p15-BE-1783450458.md`, AUD `.claude/tasks/outputs/broadn-p15-AUD-1783451186.md` (consolidation: SA=PASS, QA=PASS, SX=SECURE; reproducibility verified offline)
+    - Feature commit: 4559f0f `fix(covariates): window-aggregate model + longitude sign-fix (Phase 1.5)` (on sprint/broadn-p14-covariate-enrichment branch)
+  </dependencies>
+  <retention_keys>
+    - Correction to prior archive entry: broadn-p14-covariate-enrichment estimated "~90 recovered samples"; p15 independently verified only 13. The 90 estimate combined two incompatible groups: 77 null-coords (unfixable) + 13 positive-lon-dated (fixable). Updated skipped_bad_coord=77 reflects only unfixable nulls.
+    - Window aggregation model files: scripts/enrich_covariates.py lines 1-150 (tier classification), lines 151-350 (window fetch/aggregate logic), lines 351-550 (API call / cache), lines 551-688 (output write + stats)
+    - Longitude correction: lines 400-420 bounds check (bounds-corrected if float ∈ 35–42 lat, -109–-102 lon; otherwise skipped)
+    - Reproducibility gate: auditor executed offline rebuild with HTTP(S)_PROXY=127.0.0.1:9 (cache-only), zero live calls, sha256-verified byte-identical output for both covariates.json and covariates-cache.json
+    - Coverage summary: 4569 samples, 402 coord_corrected, 77 skipped_bad_coord, 1202 API calls, 0 failures; 731 window_exact + 132 window_assumed_24h + 3050 date_only + 1656 no_date (distribution across tiers)
+    - Not shipped (Phase 2 scope): UI surfacing, data.json integration, preprocess_data.py wiring, frontend components
+    - Data-entry pattern noted: TEMP column (xlsx) labeled "temporary" (filename-sorting marker), not field temperature — ground-truth field-temp not available in dataset; Phase 1.5 candidate for re-export if PI obtains corrected xlsx
+    - Commit trailer verification PENDING — feature commit 4559f0f supplied in brief; ORC to verify task: trailer matches task_id before durability claim finalized
+  </retention_keys>
+</archive_entry>
