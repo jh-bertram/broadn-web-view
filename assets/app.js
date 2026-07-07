@@ -1504,6 +1504,15 @@
     };
     var STAGE_LABELS = { collected: 'Collected', extracted: 'DNA Extracted', sequenced: 'Sequenced' };
 
+    // Pipeline-stage sort rank — Explorer "Stage" column sorts by process order, not alphabetically.
+    var PIPELINE_STAGE_RANK = { collected: 0, extracted: 1, sequenced: 2 };
+
+    // Explorer sort state — module-level, mirrors tableCurrentPage. Default is neutral/natural-order:
+    // no sort is applied on load, so the table renders data.json's all_samples order unchanged
+    // (zero on-load regression). Sorting is opt-in — the first click on any header engages an
+    // ascending sort for that column; see the click handler in initDashboard.
+    var explorerSort = { key: null, dir: null };
+
     // Sample-request ("checkout") email targets. Data inbox is primary; OneHealth contact is cc'd.
     var REQUEST_EMAIL_TO = 'ohi_broadn_data@colostate.edu';
     var REQUEST_EMAIL_CC = 'onehealth_contact@colostate.edu';
@@ -1534,9 +1543,10 @@
         '&body=' + encodeURIComponent(body);
     }
 
-    function renderTable(samples, page) {
-      page = page || 1;
-
+    // Single source of truth for "what the Explorer shows" — dashboard slice/tag filter (Step A),
+    // local dropdown filter (Step B), and current sort order. renderTable() paginates this result;
+    // the CSV export reads the same result in full, so table order and export order always match.
+    function computeExplorerFiltered(samples) {
       // --- Step A: dashboard filter ---
       var dashFiltered = samples.filter(function(s) {
         var sliceCat   = filterState.slice.category;
@@ -1590,6 +1600,70 @@
         return matchCat && matchSite && matchYear && matchStage;
       });
 
+      return sortExplorerRows(filtered);
+    }
+
+    // True when a row's value for `key` should always sort last, regardless of direction.
+    function isExplorerValueEmpty(key, row) {
+      var v = row[key];
+      if (v === null || v === undefined || v === '') return true;
+      if (key === 'pipeline_stage' && !(v in PIPELINE_STAGE_RANK)) return true;
+      return false;
+    }
+
+    // Comparator for two NON-empty values of `key`. Strings (id/site/type/category) use
+    // case-insensitive localeCompare; date sorts lexicographically on the ISO string (per spec,
+    // not localeCompare, to avoid locale-specific numeric collation); pipeline_stage sorts by
+    // process rank, not alphabetically.
+    function compareExplorerNonEmpty(key, a, b) {
+      if (key === 'pipeline_stage') {
+        return PIPELINE_STAGE_RANK[a.pipeline_stage] - PIPELINE_STAGE_RANK[b.pipeline_stage];
+      }
+      if (key === 'date') {
+        if (a.date < b.date) return -1;
+        if (a.date > b.date) return 1;
+        return 0;
+      }
+      return String(a[key]).localeCompare(String(b[key]), undefined, { sensitivity: 'base' });
+    }
+
+    // Sorts `rows` in place per the current explorerSort state. Empty/missing values always sort
+    // last, independent of asc/desc — so emptiness is resolved before direction is applied.
+    function sortExplorerRows(rows) {
+      if (!explorerSort.key) { return rows; }
+      var key  = explorerSort.key;
+      var mult = explorerSort.dir === 'desc' ? -1 : 1;
+      rows.sort(function(a, b) {
+        var aEmpty = isExplorerValueEmpty(key, a);
+        var bEmpty = isExplorerValueEmpty(key, b);
+        if (aEmpty && bEmpty) return 0;
+        if (aEmpty) return 1;
+        if (bEmpty) return -1;
+        return mult * compareExplorerNonEmpty(key, a, b);
+      });
+      return rows;
+    }
+
+    // Updates aria-sort + the visual ▲/▼ indicator on every sortable Explorer header. Called on
+    // every renderTable() pass so the UI always reflects the current explorerSort state.
+    function updateExplorerSortIndicators() {
+      var buttons = document.querySelectorAll('#explorer-table thead [data-sort-key]');
+      buttons.forEach(function(btn) {
+        var key = btn.getAttribute('data-sort-key');
+        var th  = btn.closest('th');
+        var indicator = btn.querySelector('.sort-indicator');
+        var active = key === explorerSort.key;
+        var ariaSort = active ? (explorerSort.dir === 'asc' ? 'ascending' : 'descending') : 'none';
+        if (th) th.setAttribute('aria-sort', ariaSort);
+        if (indicator) indicator.textContent = active ? (explorerSort.dir === 'asc' ? '▲' : '▼') : '';
+      });
+    }
+
+    function renderTable(samples, page) {
+      page = page || 1;
+
+      var filtered = computeExplorerFiltered(samples);
+
       // --- Step C: pagination ---
       var total      = filtered.length;
       var totalPages = Math.ceil(total / PAGE_SIZE) || 1;
@@ -1599,6 +1673,15 @@
 
       var start    = (page - 1) * PAGE_SIZE;
       var pageRows = filtered.slice(start, start + PAGE_SIZE);
+
+      updateExplorerSortIndicators();
+
+      // --- Update CSV button state — disabled when nothing to export ---
+      var csvBtn = document.getElementById('explorer-csv-btn');
+      if (csvBtn) {
+        csvBtn.disabled = total === 0;
+        csvBtn.setAttribute('aria-disabled', total === 0 ? 'true' : 'false');
+      }
 
       // --- Update row count ---
       var countEl = document.getElementById('table-row-count');
@@ -1676,6 +1759,57 @@
         tableCurrentPage = 1;
         renderTable(appData.all_samples, 1);
       }
+    }
+
+    // Explorer-scoped screen-reader announcement. announce() targets #design-status, which only
+    // exists in designer mode (?design) — normal visitors need their own live region.
+    function announceExplorer(msg) {
+      var live = document.getElementById('explorer-status');
+      if (live) { live.textContent = msg; }
+    }
+
+    // CSV cell encoder: null/undefined -> '', formula-injection guard (leading =, +, -, @, tab, CR
+    // gets a leading single-quote so spreadsheet apps treat it as text, not a formula), then
+    // quote-wraps and doubles embedded double-quotes.
+    function csvCell(value) {
+      var str = (value === null || value === undefined) ? '' : String(value);
+      if (/^[=+\-@\t\r]/.test(str)) { str = "'" + str; }
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+
+    var EXPLORER_CSV_HEADER = ['Sample ID', 'Date', 'Site', 'Type', 'Category', 'Pipeline Stage'];
+    var EXPLORER_CSV_FIELDS = ['id', 'date', 'site', 'type', 'category', 'pipeline_stage'];
+
+    function buildExplorerCsv(rows) {
+      var lines = [EXPLORER_CSV_HEADER.map(csvCell).join(',')];
+      rows.forEach(function(row) {
+        lines.push(EXPLORER_CSV_FIELDS.map(function(f) { return csvCell(row[f]); }).join(','));
+      });
+      // UTF-8 BOM so Excel detects the encoding correctly.
+      return '﻿' + lines.join('\r\n');
+    }
+
+    // Exports the FULL current filtered + sorted set (all pages), matching the exact table order —
+    // reuses the Blob/URL.createObjectURL/temporary-<a>/revokeObjectURL pattern from downloadExport().
+    function downloadExplorerCsv() {
+      if (!appData || !appData.all_samples) return;
+      var rows = computeExplorerFiltered(appData.all_samples);
+      if (rows.length === 0) return;
+
+      var csv = buildExplorerCsv(rows);
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var today = new Date();
+      var mm = String(today.getMonth() + 1).padStart(2, '0');
+      var dd = String(today.getDate()).padStart(2, '0');
+      var filename = 'broadn-samples-' + today.getFullYear() + '-' + mm + '-' + dd + '.csv';
+
+      var a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+
+      announceExplorer('Downloaded ' + rows.length.toLocaleString() + ' samples as CSV');
     }
 
     function escapeHtml(str) {
@@ -4664,6 +4798,31 @@
           renderTable(appData.all_samples, 1);
         });
       }
+
+      // Explorer CSV download button — bound once; exports the current filtered + sorted set.
+      var csvBtn = document.getElementById('explorer-csv-btn');
+      if (csvBtn) {
+        csvBtn.addEventListener('click', function() {
+          downloadExplorerCsv();
+        });
+      }
+
+      // Explorer sortable column headers — bound once; the thead is static HTML, not
+      // re-rendered per page, so this listener persists across every renderTable() pass.
+      var sortButtons = document.querySelectorAll('#explorer-table thead [data-sort-key]');
+      sortButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var key = btn.getAttribute('data-sort-key');
+          if (explorerSort.key === key) {
+            explorerSort.dir = explorerSort.dir === 'asc' ? 'desc' : 'asc';
+          } else {
+            explorerSort.key = key;
+            explorerSort.dir = 'asc';
+          }
+          tableCurrentPage = 1;
+          renderTable(appData.all_samples, 1);
+        });
+      });
 
       // Initial render pass — story mode, Overview as first active section
       paneMode = 'story';
