@@ -40,6 +40,7 @@ Non-negotiable rules for this app's visual identity.
 | `--color-error` | `#b91c1c` | Error states, failed pipeline steps (red-700) |
 | `--color-tooltip-bg` | `rgba(28,25,23,0.92)` | Chart tooltip background (dark overlay) |
 | `--color-tooltip-text` | `#ffffff` | Chart tooltip text |
+| `--color-weather-overlay` | `#a21caf` | Modeled weather overlay line — slice temporal chart (`CHART_COLORS.weatherOverlay`); non-text data-encoding only, deliberately outside the Okabe sample-type set, brand teal, and pipeline-stage sets (broadn-p16-covariate-ui) |
 
 ### Orange Token Consolidation (Four-Orange Collapse)
 

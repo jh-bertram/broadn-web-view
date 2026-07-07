@@ -60,6 +60,10 @@
       temporalBar:       '#0c5454',              // deep teal (v2 brand)
       /* SLICE TEMPORAL BAR COLOR — edit CHART_COLORS.sliceTemporalBar to change slice temporal bar fill */
       sliceTemporalBar:  '#0f766e',
+      /* WEATHER OVERLAY LINE — modeled grid-cell weather overlay on the slice temporal chart.
+         Deliberately outside Okabe/brand-teal/pipeline sets — see DESIGN.md § Color Tokens
+         (--color-weather-overlay). broadn-p16-covariate-ui-T3. */
+      weatherOverlay:    '#a21caf',
       sliceLocationBar:  '#0369a1',
       sliceTimeOfDay:    ['#0c5454', '#0f766e', '#b45309', '#6d28d9'],  // [0] deep teal (v2)
       /* HEAT-STRIP RAMP — pale→deep teal by % sequenced (quadrant matrix) */
@@ -636,6 +640,10 @@
             },
             options: buildTemporalChartOptions()
           });
+          // SECONDARY overlay site (broadn-p16-covariate-ui-T3): chartData.temporal carries no
+          // `weather` key in tag-active mode (mergeTagChartData) — applyWeatherOverlay gracefully
+          // omits the whole overlay in that case (temporalHasWeather() gate), never throws.
+          applyWeatherOverlay(ctxTm.parentNode.parentNode, ctxTm, temporalId, chartInstances[temporalId], chartData.temporal);
         }
       }
 
@@ -1030,9 +1038,13 @@
      *   "2020-12" -> "2021-01"  → consecutive (no gap marker inserted)
      *   "2020-11" -> "2021-01"  → NOT consecutive (one gap marker inserted)
      */
-    function insertGapMarkers(temporal) {
+    // weatherKey (optional): when passed, also builds `result.weatherPoints`, a (null |
+    // {value,n,fidelity})[] array aligned 1:1 with `labels`/`counts` (null at gap-marker slots and
+    // at any real month whose weather[weatherKey] is null/absent) \u2014 broadn-p16-covariate-ui-T3.
+    function insertGapMarkers(temporal, weatherKey) {
       var labels = [];
       var counts = [];
+      var weatherPoints = weatherKey ? [] : null;
 
       for (var i = 0; i < temporal.length; i++) {
         var entry = temporal[i];
@@ -1051,13 +1063,21 @@
           if (currYear !== expYear || currMonth !== expMonth) {
             labels.push('\u00B7\u00B7\u00B7');
             counts.push(null);
+            if (weatherPoints) { weatherPoints.push(null); }
           }
         }
         labels.push(formatMonth(entry.month));
         counts.push(entry.count);
+        if (weatherPoints) {
+          var w = entry.weather;
+          var val = (w && w[weatherKey] !== null && w[weatherKey] !== undefined) ? w[weatherKey] : null;
+          weatherPoints.push(val === null ? null : { value: val, n: w.n, fidelity: w.fidelity });
+        }
       }
 
-      return { labels: labels, counts: counts };
+      var result = { labels: labels, counts: counts };
+      if (weatherPoints) { result.weatherPoints = weatherPoints; }
+      return result;
     }
 
     // =============================================================================
@@ -1517,6 +1537,31 @@
     var REQUEST_EMAIL_TO = 'ohi_broadn_data@colostate.edu';
     var REQUEST_EMAIL_CC = 'onehealth_contact@colostate.edu';
 
+    // Explorer weather columns (broadn-p16-covariate-ui-T4). Compact glyph set — distinct from the
+    // slice panel's WEATHER_FIDELITY_LABELS sentence-form text — appended to the formatted cell value.
+    var EXPLORER_FIDELITY_MARKERS = { window_exact: '', window_assumed_24h: '*', date_only: '†' };
+
+    // Flattens each sample's nested `covariates` object into flat, nullable row properties once at
+    // data-load time (not per render) so the EXISTING isExplorerValueEmpty()/compareExplorerNonEmpty()
+    // empty-sorts-last logic works with zero special-casing (design_spec §9). `samples` is the same
+    // array reference reused by renderTable()/downloadExplorerCsv(), so this runs exactly once.
+    function flattenSampleCovariates(samples) {
+      samples.forEach(function(s) {
+        var c = s.covariates;
+        s.covariates_temp = c ? c.temp : null;
+        s.covariates_humidity = c ? c.humidity : null;
+        s.covariates_fidelity = c ? c.fidelity : null;
+      });
+    }
+
+    // Shared table/CSV cell text for the two new Explorer weather columns — the SAME function
+    // produces both the <td> text and the CSV cell text (structural parity, per the p13 DRY
+    // contract). Missing covariates (object null OR field null) render the em dash and nothing else.
+    function formatExplorerWeather(value, fidelity, decimals, unit) {
+      if (value === null || value === undefined) { return '—'; }
+      return value.toFixed(decimals) + unit + (EXPLORER_FIDELITY_MARKERS[fidelity] || '');
+    }
+
     // Build a prefilled mailto: link for requesting a physical sample. Returns the raw URL;
     // callers embedding in innerHTML must &amp;-escape it (browsers decode it back for the href).
     function buildRequestHref(row) {
@@ -1624,6 +1669,9 @@
         if (a.date > b.date) return 1;
         return 0;
       }
+      if (key === 'covariates_temp' || key === 'covariates_humidity') {
+        return a[key] - b[key];
+      }
       return String(a[key]).localeCompare(String(b[key]), undefined, { sensitivity: 'base' });
     }
 
@@ -1701,7 +1749,7 @@
 
       if (pageRows.length === 0) {
         var tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="7" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
+        tr.innerHTML = '<td colspan="9" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
         tbody.appendChild(tr);
       } else {
         pageRows.forEach(function(row) {
@@ -1716,6 +1764,8 @@
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + typeCls + '">' + escapeHtml(row.type) + '</span></td>' +
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>' +
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + (STAGE_BADGE_CLASSES[row.pipeline_stage] || 'bg-stone-100 text-stone-600') + '">' + escapeHtml(STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || '—') + '</span></td>' +
+            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerWeather(row.covariates_temp, row.covariates_fidelity, 1, '°C')) + '</td>' +
+            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerWeather(row.covariates_humidity, row.covariates_fidelity, 0, '%')) + '</td>' +
             '<td class="px-6 py-4"><a href="' + buildRequestHref(row).replace(/&/g, '&amp;') + '" class="inline-flex items-center gap-1 rounded-md border border-green-700 text-green-800 hover:bg-green-50 text-xs font-medium px-2 py-1" aria-label="Request sample ' + escapeHtml(row.id) + ' by email">Request ✉</a></td>';
           tbody.appendChild(tr);
         });
@@ -1777,13 +1827,17 @@
       return '"' + str.replace(/"/g, '""') + '"';
     }
 
-    var EXPLORER_CSV_HEADER = ['Sample ID', 'Date', 'Site', 'Type', 'Category', 'Pipeline Stage'];
+    var EXPLORER_CSV_HEADER = ['Sample ID', 'Date', 'Site', 'Type', 'Category', 'Pipeline Stage', 'Temperature (°C)', 'Humidity (%)'];
     var EXPLORER_CSV_FIELDS = ['id', 'date', 'site', 'type', 'category', 'pipeline_stage'];
 
     function buildExplorerCsv(rows) {
       var lines = [EXPLORER_CSV_HEADER.map(csvCell).join(',')];
       rows.forEach(function(row) {
-        lines.push(EXPLORER_CSV_FIELDS.map(function(f) { return csvCell(row[f]); }).join(','));
+        var cells = EXPLORER_CSV_FIELDS.map(function(f) { return csvCell(row[f]); });
+        // Same shared formatter as the table cell — structural table/CSV parity (p13 DRY contract).
+        cells.push(csvCell(formatExplorerWeather(row.covariates_temp, row.covariates_fidelity, 1, '°C')));
+        cells.push(csvCell(formatExplorerWeather(row.covariates_humidity, row.covariates_fidelity, 0, '%')));
+        lines.push(cells.join(','));
       });
       // UTF-8 BOM so Excel detects the encoding correctly.
       return '﻿' + lines.join('\r\n');
@@ -2120,6 +2174,176 @@
     }
 
     // =============================================================================
+    // SLICE PANEL — TEMPORAL WEATHER OVERLAY (broadn-p16-covariate-ui-T3)
+    // Reads slice_views.*.temporal[].weather (baked by T1). Single shared entry point
+    // (applyWeatherOverlay) used by both the PRIMARY cold-open site
+    // (WIDGET_RENDERERS['temporal_bar']) and the SECONDARY tag-filter re-render site
+    // (updateSliceCharts) so the overlay/graceful-degrade logic is not duplicated.
+    // =============================================================================
+
+    var WEATHER_VARIABLES = [
+      { key: 'temp',          label: 'Temperature',   unit: '°C', optionLabel: 'Temperature (°C)', axisTitle: 'Temp (°C)' },
+      { key: 'humidity',      label: 'Humidity',      unit: '%',       optionLabel: 'Humidity (%)',          axisTitle: 'Humidity (%)' },
+      { key: 'wind_speed',    label: 'Wind Speed',    unit: ' m/s',    optionLabel: 'Wind Speed (m/s)',       axisTitle: 'Wind Speed (m/s)' },
+      { key: 'precipitation', label: 'Precipitation', unit: ' mm',     optionLabel: 'Precipitation (mm)',     axisTitle: 'Precipitation (mm)' }
+    ];
+    var WEATHER_DEFAULT_VARIABLE = 'temp';
+    var WEATHER_FIDELITY_LABELS = {
+      window_exact:       'exact window match',
+      window_assumed_24h: '±24h window estimate',
+      date_only:          'date-only estimate'
+    };
+
+    function weatherVarCfg(key) {
+      for (var i = 0; i < WEATHER_VARIABLES.length; i++) { if (WEATHER_VARIABLES[i].key === key) { return WEATHER_VARIABLES[i]; } }
+      return WEATHER_VARIABLES[0];
+    }
+
+    // Gate for the ENTIRE overlay (header/select/legend/caption/summary/dataset[1]): true only if
+    // >=1 bucket carries a non-null weather object. False for tag-active mode (mergeTagChartData
+    // carries no weather key) and for an all-null-weather slice — both graceful-degrade to bars-only.
+    function temporalHasWeather(temporal) {
+      return (temporal || []).some(function(t) { return t && t.weather && typeof t.weather === 'object'; });
+    }
+
+    function mkEl(tag, className, text) {
+      var el = document.createElement(tag);
+      if (className) { el.className = className; }
+      if (text !== undefined) { el.textContent = text; }
+      return el;
+    }
+
+    function overlayAriaLabel(variableKey) {
+      return 'Monthly sample collection counts shown as bars, overlaid with a modeled grid-cell ' +
+        weatherVarCfg(variableKey).label + ' estimate line (dashed). The overlay is a modeled estimate, not a site measurement.';
+    }
+
+    function buildWeatherSummaryText(temporal, variableKey) {
+      var cfg = weatherVarCfg(variableKey);
+      var counts = temporal.map(function(t) { return t.count; });
+      var weatherVals = [], fidelitySeen = {};
+      temporal.forEach(function(t) {
+        var w = t.weather, v = w && w[variableKey];
+        if (v !== null && v !== undefined) { weatherVals.push(v); if (w.fidelity) { fidelitySeen[w.fidelity] = true; } }
+      });
+      var fidelityList = ['window_exact', 'window_assumed_24h', 'date_only']
+        .filter(function(k) { return fidelitySeen[k]; }).map(function(k) { return WEATHER_FIDELITY_LABELS[k]; }).join(', ');
+      return 'Monthly sample collection counts range from ' + Math.min.apply(null, counts) + ' to ' + Math.max.apply(null, counts) +
+        ' across ' + temporal.length + ' months. A modeled ' + cfg.label + ' overlay is available for ' + weatherVals.length +
+        ' of ' + temporal.length + ' months, ranging from ' + (weatherVals.length ? Math.min.apply(null, weatherVals) : 0) +
+        ' to ' + (weatherVals.length ? Math.max.apply(null, weatherVals) : 0) + cfg.unit + '. Fidelity: ' + (fidelityList || 'none') +
+        '. This is a modeled grid-cell estimate (~11–25 km resolution), not a site measurement.';
+    }
+
+    // Compact native <select> + badge + label header row. `onVarChange(newKey)` fires on change.
+    function buildWeatherOverlayHeader(selectId, selectedVar, onVarChange) {
+      var header = mkEl('div', 'weather-overlay-header flex flex-wrap items-center justify-between gap-2 mb-3');
+      var leftCluster = mkEl('div', 'flex items-center gap-2 flex-wrap');
+      leftCluster.appendChild(mkEl('span', 'bg-stone-100 border border-stone-200 text-stone-600 text-xs font-medium px-2 py-1 rounded-full', 'Modeled Estimate'));
+      var label = mkEl('label', 'text-xs font-medium text-stone-600', 'Weather overlay');
+      label.setAttribute('for', selectId);
+      leftCluster.appendChild(label);
+      header.appendChild(leftCluster);
+
+      var select = mkEl('select', 'bg-white border border-stone-300 text-stone-900 text-sm rounded-md p-2.5 hover:bg-stone-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]');
+      select.id = selectId;
+      WEATHER_VARIABLES.forEach(function(cfg) {
+        var opt = mkEl('option', null, cfg.optionLabel);
+        opt.value = cfg.key;
+        if (cfg.key === selectedVar) { opt.selected = true; }
+        select.appendChild(opt);
+      });
+      select.addEventListener('change', function() { onVarChange(select.value); });
+      header.appendChild(select);
+      return header;
+    }
+
+    // Wires (or gracefully omits) the weather overlay dataset/header/caption/summary around an
+    // already-constructed bar `chart` on `canvas` inside `card`. `temporal` = the raw bucket array
+    // (slice_views.*.temporal[]) — carries `.weather` per the T1 contract, or is weather-less in
+    // tag-active mode. Idempotent: safe to call repeatedly on re-render (tears down its own prior
+    // DOM/dataset first) — required for the SECONDARY (tag-filter) re-render site.
+    function applyWeatherOverlay(card, canvas, canvasId, chart, temporal) {
+      var prior;
+      if ((prior = card.querySelector('.weather-overlay-header'))) { prior.parentNode.removeChild(prior); }
+      if ((prior = card.querySelector('.weather-overlay-caption'))) { prior.parentNode.removeChild(prior); }
+      if ((prior = document.getElementById(canvasId + '-summary'))) { prior.parentNode.removeChild(prior); }
+      if (chart.data.datasets.length > 1) { chart.data.datasets.length = 1; }
+      if (chart.options.scales) { delete chart.options.scales.y1; }
+      chart.options.plugins.legend = { display: false };
+      delete chart.options.plugins.tooltip.mode;
+      delete chart.options.plugins.tooltip.intersect;
+      if (chart.options.plugins.tooltip.callbacks && chart.options.plugins.tooltip.callbacks.filter) {
+        var _cb = {}; for (var _k in chart.options.plugins.tooltip.callbacks) { if (_k !== 'filter') { _cb[_k] = chart.options.plugins.tooltip.callbacks[_k]; } }
+        chart.options.plugins.tooltip.callbacks = _cb;
+      }
+
+      if (!temporalHasWeather(temporal)) {
+        canvas.setAttribute('aria-label', 'Bar chart showing sample count over time for selected project.');
+        canvas.removeAttribute('aria-describedby');
+        chart.update();
+        return;
+      }
+
+      var variable = WEATHER_DEFAULT_VARIABLE;
+      var gapped = insertGapMarkers(temporal, variable);
+
+      function overlayDataset() {
+        return {
+          type: 'line', label: weatherVarCfg(variable).label + ' (modeled estimate)',
+          data: gapped.weatherPoints.map(function(p) { return p ? p.value : null; }),
+          yAxisID: 'y1', borderColor: CHART_COLORS.weatherOverlay, pointBackgroundColor: '#ffffff',
+          pointBorderColor: CHART_COLORS.weatherOverlay, pointBorderWidth: 2, pointRadius: 4,
+          borderDash: [6, 4], tension: 0, spanGaps: false, fill: false
+        };
+      }
+
+      chart.data.datasets[1] = overlayDataset();
+      chart.options.scales.y1 = {
+        type: 'linear', position: 'right', beginAtZero: false, grid: { display: false },
+        title: { display: true, text: weatherVarCfg(variable).axisTitle, color: CHART_COLORS.axisLabel, font: { size: 11 } }
+      };
+      chart.options.plugins.legend = { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 } } };
+      chart.options.plugins.tooltip.mode = 'index';
+      chart.options.plugins.tooltip.intersect = false;
+      var baseLabelFn = (chart.options.plugins.tooltip.callbacks && chart.options.plugins.tooltip.callbacks.label) ||
+        function(cx) { return (cx.dataset.label ? cx.dataset.label + ': ' : '') + cx.formattedValue; };
+      chart.options.plugins.tooltip.callbacks = {
+        filter: function(item) {
+          return item.datasetIndex !== 1 || !!gapped.weatherPoints[item.dataIndex];
+        },
+        label: function(cx) {
+          if (cx.datasetIndex !== 1) { return baseLabelFn(cx); }
+          var wp = gapped.weatherPoints[cx.dataIndex], cfg = weatherVarCfg(variable);
+          return 'Modeled ' + cfg.label + ': ' + wp.value + cfg.unit + ' — n=' + wp.n + ', ' + (WEATHER_FIDELITY_LABELS[wp.fidelity] || wp.fidelity);
+        }
+      };
+
+      canvas.setAttribute('aria-label', overlayAriaLabel(variable));
+      canvas.setAttribute('aria-describedby', canvasId + '-summary');
+
+      var wrap = canvas.parentNode;
+      var header = buildWeatherOverlayHeader(canvasId + '-weather-variable', variable, function(newVar) {
+        variable = newVar;
+        gapped = insertGapMarkers(temporal, variable);
+        chart.data.datasets[1] = overlayDataset();
+        chart.options.scales.y1.title.text = weatherVarCfg(variable).axisTitle;
+        canvas.setAttribute('aria-label', overlayAriaLabel(variable));
+        var summaryEl = document.getElementById(canvasId + '-summary');
+        if (summaryEl) { summaryEl.textContent = buildWeatherSummaryText(temporal, variable); }
+        chart.update();
+      });
+      card.insertBefore(header, wrap);
+      var summaryP = mkEl('p', 'sr-only', buildWeatherSummaryText(temporal, variable));
+      summaryP.id = canvasId + '-summary';
+      card.insertBefore(summaryP, wrap.nextSibling);
+      card.insertBefore(mkEl('p', 'weather-overlay-caption text-xs text-stone-600 mt-2',
+        'Modeled grid-cell estimate (~11–25 km resolution), not a site measurement. Fidelity varies by month — hover a point for detail.'),
+        summaryP.nextSibling);
+      chart.update();
+    }
+
+    // =============================================================================
     // SLICE PANEL — DECLARATIVE WIDGET ENGINE (Phase 2, complexity review)
     // Interprets data/project-layouts.json via one renderSlice(). computeFactsRuntime
     // and evalShowIf are 1:1 ports of compute_facts / eval_show_if in
@@ -2418,6 +2642,7 @@
           options: (function() { var o = buildTemporalChartOptions(); o.plugins = o.plugins || {}; o.plugins.tooltip = o.plugins.tooltip || {}; o.plugins.tooltip.callbacks = { title: function(items) { return items.length ? items[0].label : ''; }, label: function(cx) { if (cx.parsed.y === null || cx.parsed.y === undefined) { return ''; } var te = (entry.temporal||[]).find(function(t){return t.month===cx.label;}); return te && te.types && te.types.length ? te.types.map(function(t){return t.type+': '+t.count.toLocaleString();}) : (te ? te.count.toLocaleString()+' samples' : cx.parsed.y.toLocaleString()+' samples'); } }; return o; }())
         });
         dynamicSliceChartIds.push(id);
+        applyWeatherOverlay(card, canvas, id, chartInstances[id], entry.temporal);
       },
 
       bar: function(ctx) {
@@ -4767,6 +4992,9 @@
       destroyChart('globalSamplerChart');
       renderSamplerTypeChart('globalSamplerChart', globalSamplerDist);
 
+      // Flatten each sample's nested `covariates` object into flat row properties once, before the
+      // Explorer's filter/sort/CSV path ever touches it (design_spec §9 — zero per-render cost).
+      flattenSampleCovariates(data.all_samples);
       buildFilterOptions(data.all_samples);
       tableCurrentPage = 1;
       renderTable(data.all_samples, 1);
