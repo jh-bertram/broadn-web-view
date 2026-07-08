@@ -925,12 +925,15 @@
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="type" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Type">Type <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="category" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Category">Category <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="pipeline_stage" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Pipeline Stage">Stage <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="covariates_temp" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Temperature — modeled grid-cell estimate, not a site measurement">Temp (Modeled) <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="covariates_humidity" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Humidity — modeled grid-cell estimate, not a site measurement">Humidity (Modeled) <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3">Request</th>
                   </tr>
                 </thead>
                 <tbody id="explorer-tbody"></tbody>
               </table>
             </div>
+            <p class="weather-fidelity-caption bg-stone-100 border-t border-stone-200 text-stone-600 text-xs px-6 py-2">Temp / Humidity are modeled grid-cell estimates (~11&ndash;25 km resolution), not site measurements. * = &plusmn;24h window estimate &nbsp; &dagger; = date-only estimate (coarsest fidelity)</p>
             <div id="table-pagination" class="flex items-center justify-center gap-4 mt-4 pb-4 text-sm text-stone-600"></div>
           </div>
         </section>

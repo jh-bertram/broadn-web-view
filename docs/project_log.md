@@ -1579,3 +1579,39 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - Architecture decision: Phase 0 intentionally excludes backend; covariate enrichment (Phase 1) and checkout/sample-request flow (Phase 5) deferred pending data availability and system design (tracked in ROADMAP.md)
   </retention_keys>
 </archive_entry>
+
+<archive_entry>
+  <timestamp>2026-07-07T23:42:45Z</timestamp>
+  <task_id>broadn-p16-covariate-ui</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>Sprint p16 delivered Phase 2 of the covariate/explorer/checkout roadmap: surface the p14/p15 window covariates in the dashboard UI across two surfaces (slice-view weather overlay + Explorer data columns), all fed by a build-time covariate bake into data.json. Static site, no backend, no new dependencies. Full pipeline: PM decompose (4 packets: T1 BE bake, T2 UI spec, T3 FE overlay, T4 FE explorer cols) → Critic BLOCK on T3 render-site scope (aimed at tag-only updateSliceCharts path, missing the live declarative WIDGET_RENDERERS['temporal_bar'] on-open renderer) + 3 design warnings (build_temporal parametrization, NaN serialization, tag-mode degrade) → PM REV1 addresses all 4 findings → Critic PASS → agent execution: T1 (BE) extended scripts/preprocess_data.py to bake covariate summaries into data.json at build time (per-sample covariates {temp,humidity,wind_speed,precipitation,fidelity} on all_samples[], per-slice-per-month weather aggregate on slice_views.*.temporal[] via parametrized build_temporal; null→null coercion; deterministic rebuild) → T2 (UI) design_spec for overlay color #a21caf (new DESIGN.md token --color-weather-overlay), compact variable selector, grid-cell-estimate + fidelity labeling, Temp+Humidity as the 2 Explorer columns → T3 (FE) weather overlay on temporal_bar widget renderer (dashed line on y1 axis, variable selector, null-month gaps, graceful omit in tag-active mode, aria-label + accessible summary) → T4 (FE) Explorer columns through computeExplorerFiltered/renderTable/CSV/sort single path (numeric comparator, "—" for missing in table AND CSV, footer fidelity legend) → Audit step encountered INDETERMINATE (interaction-class SCs not executable on read-only MCP) → ORC headless-browser walk found critical defect: applyWeatherOverlay threw RangeError (Chart.js reactive-proxy infinite recursion in tooltip callbacks) swallowed by renderSlice try/catch, preventing overlay render on weather-bearing slices → FE remediation (assign fresh callbacks object literal wholesale instead of in-place mutation) re-dispatched → Audit PASS on post-fix verification (all 8 SCs re-verified end-to-end). Known detail: source data has covariates modeled at ~11-25km grid-cell resolution, labeled as such in UI (grid-cell-estimate field). Phase 2 shipped; checkout (Phase 5, needs backend) deferred.</rationale>
+  <dependencies>
+    - PM brief + amendments: `.claude/tasks/outputs/broadn-p16-covariate-ui-PM-*.md` (initial → BLOCK critique → REV1 amendment with all 4 findings addressed)
+    - Critic review: `.claude/tasks/outputs/broadn-p16-covariate-ui-CR-*.md` (initial BLOCK on T3 render-site scope + 3 warnings; REV1 PASS on amendment)
+    - T1 BE implementation: `.claude/tasks/outputs/broadn-p16-covariate-ui-BE-*.md` (scripts/preprocess_data.py, data/data.json bake, parametrized build_temporal)
+    - T2 UI spec: `.claude/tasks/outputs/broadn-p16-covariate-ui-UI-*.md` (DESIGN.md token, overlay color, variable selector, Explorer columns spec)
+    - T3 FE overlay implementation: `.claude/tasks/outputs/broadn-p16-covariate-ui-FE#1-*.md` (initial → REMEDIATION REV2 after RangeError fix)
+    - T4 FE explorer columns: `.claude/tasks/outputs/broadn-p16-covariate-ui-FE#2-*.md` (computeExplorerFiltered columns, CSV handling, footer legend)
+    - Audit packets: initial AUD at seq 26 (INDETERMINATE), remediation AUD#1-rev1 at seq 31, final AUDIT_PASS at seq 36 (`.claude/tasks/outputs/broadn-p16-covariate-ui-AUD-final.md`)
+    - Event log: `docs/events/agent-events-2026-07-07.jsonl` (seq 14–37 timeline)
+    - Feature commit: 7ccf6bd (verified in git log)
+    - Predecessor sprints: broadn-p14-covariate-enrichment (commit b915021), broadn-p15-covariate-window-longitude (commit 4559f0f)
+    - Build-time data contract: `.claude/tasks/outputs/broadn-p16-covariate-ui-FE#1-*.md` payload defines data.json schema for covariates (per-sample + per-slice-month temporal.weather)
+    - Playwright evidence (cold-open overlay verification): `.playwright-mcp/p16-verify-overlay-coldopen.png`
+  </dependencies>
+  <retention_keys>
+    - Commit: 7ccf6bd `feat(covariates): surface window covariates in the UI — slice weather overlay + Explorer columns (broadn-p16)` on sprint/broadn-p16-covariate-ui; branched from clean main 0234adc after p13+p14+p15 merged
+    - Files modified: scripts/preprocess_data.py (extended to bake covariate summaries into data.json), data/data.json (regenerated with per-sample covariates and per-slice-month weather aggregates), assets/app.js (weather overlay renderer, Explorer column computations), index.html (Explorer column headers, fidelity legend), DESIGN.md (new token --color-weather-overlay: #a21caf)
+    - T1 deliverable: parametrized build_temporal(group, covariates_index=None) function; per-sample covariates {temp,humidity,wind_speed,precipitation,fidelity} on all_samples[]; per-slice-per-month temporal.weather aggregate; null-coercion (empty→null, no NaN/Infinity); deterministic rebuild byte-stable except meta.generated wall-clock stamp
+    - T2 design spec: overlay color #a21caf (--color-weather-overlay token, outside Okabe/brand-teal/pipeline sets); compact <select> for variable picker; grid-cell-estimate + fidelity labeling; Temp+Humidity as the 2 Explorer data columns; copy dictionary for tooltips/legends
+    - T3 render path: WIDGET_RENDERERS['temporal_bar'] (app.js:2404) is primary render site for weather overlay; dashed line on y1 axis; variable selector; null-month gaps; graceful omit in tag-active mode; aria-label + accessible summary
+    - T3 Chart.js lesson (critical catch): mutation of chart.options.plugins.tooltip.callbacks.filter/.label in-place caused Object.set infinite recursion in Chart.js reactive proxy; fix was to assign a fresh object literal wholesale (not delete individual keys). This class of defect is now a load-bearing integration detail for any future Chart.js extensions
+    - T4 Explorer columns: Temp (Modeled) + Humidity (Modeled) columns through single computeExplorerFiltered/renderTable/CSV/sort code path; numeric comparator for sort; "—" (em-dash) for missing values in both table AND CSV export; footer fidelity legend; colspan grid-cell-estimate in header
+    - Coverage: covariates modeled at ~11–25 km grid-cell resolution (labeled as such in UI grid-cell-estimate field); not point samples
+    - Audit timeline: initial AUDIT_INDETERMINATE at seq 26 (interaction-class SCs not executable on read-only MCP) → ORC headless walk discovered RangeError in applyWeatherOverlay → FE remediation (REV2) → AUDIT_PASS at seq 36 (AUD#1-rev1 re-adjudication post-fix; SA PASS / SX SECURE / QA PASS on ORC interactive evidence per spec §2.3(b) hand-back)
+    - Screenshot evidence: `.playwright-mcp/p16-verify-overlay-coldopen.png` (cold-open overlay, all 8 SCs end-to-end verification)
+    - Build stability: deterministic rebuild confirmed (exclude meta.generated, sort_keys=True); GATE-RUN reproducibility inherited from p14/p15
+    - Phase state: Phase 2 (covariate UI) SHIPPED; Phase 5 (checkout, needs backend) deferred pending system design
+    - Human push: NOT PUSHED (feature branch, ready for PR to main once human reviews)
+  </retention_keys>
+</archive_entry>
