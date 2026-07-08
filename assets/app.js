@@ -2294,11 +2294,12 @@
           data: gapped.weatherPoints.map(function(p) { return p ? p.value : null; }),
           yAxisID: 'y1', borderColor: CHART_COLORS.weatherOverlay, pointBackgroundColor: '#ffffff',
           pointBorderColor: CHART_COLORS.weatherOverlay, pointBorderWidth: 2, pointRadius: 4,
-          borderDash: [6, 4], tension: 0, spanGaps: false, fill: false
+          borderDash: [6, 4], tension: 0, spanGaps: false, fill: false, order: 0
         };
       }
 
       chart.data.datasets[1] = overlayDataset();
+      chart.data.datasets[0].order = 1;
       chart.options.scales.y1 = {
         type: 'linear', position: 'right', beginAtZero: false, grid: { display: false },
         title: { display: true, text: weatherVarCfg(variable).axisTitle, color: CHART_COLORS.axisLabel, font: { size: 11 } }
