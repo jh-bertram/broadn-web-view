@@ -136,6 +136,48 @@ If the row appears, the integration is working correctly.
 
 ---
 
+## Step 7a — Requests Sheet (Sample Checkout Cart)
+
+The same spreadsheet and the same `/exec` deployment also handle sample-request
+submissions from the checkout cart (broadn-p17). This uses a **second tab**, separate
+from the Feedback tab, in the *same* Google Sheet you created in Step 1.
+
+1. Open the Google Sheet from Step 1.
+2. Click the **+** button at the bottom to add a new tab.
+3. Rename the new tab to **"Requests"** (double-click the tab name, type `Requests`,
+   press Enter). This must match `REQUEST_SHEET_NAME` in `Code.gs` exactly (case-sensitive).
+4. Leave the tab empty — `Code.gs` auto-creates the header row on first submission,
+   the same way the Feedback tab does.
+
+The Requests tab's fixed 14-column order (auto-written as the header row on first
+submission) is:
+
+1. `Timestamp`
+2. `Request ID`
+3. `Requester Name`
+4. `Requester Email`
+5. `Affiliation`
+6. `Intended Use`
+7. `Sample ID`
+8. `Sample Type`
+9. `Sample Site`
+10. `Sample Date`
+11. `Sample Project`
+12. `Sample Stage`
+13. `Page URL`
+14. `User Agent`
+
+One row is written **per sample** in a submitted cart — a request for 3 samples
+produces 3 rows sharing the same `Timestamp` and `Request ID`.
+
+**Client config note:** the dashboard reads the deployment URL for sample requests
+from the `window.BROADN_REQUEST_URL` global in `assets/feedback-config.js`. This is
+an alias of `window.BROADN_FEEDBACK_URL` (the same value you pasted in Step 6) — there
+is only one deployment URL for the whole site; you do not need to paste a second URL
+anywhere.
+
+---
+
 ## Step 8 — Updating the Script Code Later
 
 **Important:** When you update `Code.gs`, you must NOT create a new deployment. A new deployment
@@ -230,3 +272,33 @@ accepting requests immediately upon archival.
 URL. Submissions are therefore not fully anonymous at the browser level. If your audience includes
 research participants or users who expect anonymity, add a one-line disclosure — for example:
 *"Feedback submissions are not anonymous and include your browser type and current page URL."*
+
+---
+
+## Deployment Revocation (Feedback + Requests share one deployment)
+
+There is a **single** `/exec` deployment URL serving both handlers — `doPost` branches
+internally on `payload.kind` to route to the Feedback path or `handleSampleRequest`
+(the sample checkout cart, broadn-p17). Revoking or rotating the deployment affects
+**both** features simultaneously; you cannot disable one without disabling the other.
+
+**To revoke (stop accepting submissions of either kind):**
+
+1. Open the Apps Script editor for this project at [script.google.com](https://script.google.com).
+2. Click **Deploy** → **Manage deployments**.
+3. Click the pencil (edit) icon next to the active deployment.
+4. Click **Archive**. The URL immediately stops accepting requests — both Feedback
+   and Requests submissions will fail client-side.
+
+**To re-deploy with updated code (e.g. after pulling the `handleSampleRequest` change
+from this repository for the first time):**
+
+1. Open `apps-script/Code.gs` in this repository and copy its entire current contents.
+2. In the Apps Script editor, select all existing code and replace it with the copied
+   contents, then Save (see Step 3 above for the paste procedure).
+3. Follow **Step 8** below ("Updating the Script Code Later") to push a new version to
+   the *existing* deployment — do **not** create a new deployment, or the URL will
+   change and you will need to update `assets/feedback-config.js` again.
+4. The `handleSampleRequest` function only goes live once this paste-and-redeploy step
+   is completed by a human with access to the Apps Script project; committing
+   `Code.gs` to this git repository alone does not affect the live endpoint.
