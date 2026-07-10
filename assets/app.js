@@ -1533,9 +1533,636 @@
     // ascending sort for that column; see the click handler in initDashboard.
     var explorerSort = { key: null, dir: null };
 
-    // Sample-request ("checkout") email targets. Data inbox is primary; OneHealth contact is cc'd.
-    var REQUEST_EMAIL_TO = 'ohi_broadn_data@colostate.edu';
-    var REQUEST_EMAIL_CC = 'onehealth_contact@colostate.edu';
+    // =============================================================================
+    // SAMPLE CHECKOUT CART (broadn-p17) — multi-sample cart + checkout, replaces the
+    // old per-row email-request link. In-session state ONLY (no localStorage) —
+    // reloading the page empties the cart by design (D2). See T1 design spec
+    // (broadn-p17-sample-checkout-cart-T1-UI-final.md) and T2 payload contract
+    // (broadn-p17-sample-checkout-cart-T2-BE-final.md) for the authoritative spec.
+    // =============================================================================
+
+    // ---- Inline SVG icons (sizeless — viewBox only; CSS sets px size per context) ----
+    var CART_SVG_CART = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+    var CART_SVG_CHECK = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>';
+    var CART_SVG_X = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    var CART_SVG_ALERT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16.01" x2="12" y2="16"/></svg>';
+    var CART_SVG_SUCCESS = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+    var CART_SVG_SPINNER = '<svg class="cart-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="60" stroke-dashoffset="45" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/></svg>';
+
+    // ---- Endpoint config (T2/D1: BE adds BROADN_REQUEST_URL to feedback-config.js) ----
+    // Read lazily (not cached at init time) — feedback-config.js loads after app.js in
+    // index.html, so caching at IIFE-init would permanently see `undefined`.
+    function getRequestUrl() {
+      return (typeof window.BROADN_REQUEST_URL === 'string') ? window.BROADN_REQUEST_URL.trim() : '';
+    }
+    function isRequestConfigured() {
+      return getRequestUrl().length > 0;
+    }
+
+    // ---- Cart state — in-memory array of the minimal T2 payload item shape ----
+    var cart = [];
+    var cartTriggerEl = null;      // element to restore focus to when the review panel closes
+    var dialogTriggerEl = null;    // element to restore focus to when the request dialog closes
+    var cartDialogSubmitting = false;
+    var CART_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    function cartIndexOf(sampleId) {
+      for (var i = 0; i < cart.length; i++) { if (cart[i].sample_id === sampleId) return i; }
+      return -1;
+    }
+    function isInCart(sampleId) { return cartIndexOf(sampleId) !== -1; }
+
+    function addToCartFromDataset(ds) {
+      if (isInCart(ds.cartId)) return;
+      cart.push({
+        sample_id: ds.cartId || '',
+        sample_type: ds.cartType || '',
+        sample_site: ds.cartSite || '',
+        sample_date: ds.cartDate || '',
+        sample_project: ds.cartProject || '',
+        sample_stage: ds.cartStage || ''
+      });
+      onCartChanged('Sample ' + ds.cartId + ' added to cart');
+    }
+
+    function removeFromCart(sampleId) {
+      var idx = cartIndexOf(sampleId);
+      if (idx === -1) return;
+      cart.splice(idx, 1);
+      onCartChanged('Sample ' + sampleId + ' removed from cart');
+    }
+
+    function clearCartState() { cart = []; }
+
+    // Runs after every cart mutation: syncs the badge, the currently-rendered row
+    // controls (renderTable() rebuilds innerHTML on every filter/sort/paginate, so
+    // row state must be re-derived from `cart` here rather than cached), the review
+    // panel body (if open), and the aria-live announcement.
+    function onCartChanged(announceMsg) {
+      updateCartBadge();
+      refreshRowCartButtons();
+      if (cartPanelIsOpen()) { renderCartPanelBody(); }
+      var live = document.getElementById('cart-live-region');
+      if (live) { live.textContent = announceMsg; }
+    }
+
+    function updateCartBadge() {
+      var btn = document.getElementById('cart-badge-btn');
+      var chip = document.getElementById('cart-badge-chip');
+      if (!btn || !chip) return;
+      var n = cart.length;
+      if (n === 0) {
+        btn.classList.remove('cart-badge-btn--active');
+        chip.textContent = '';
+        chip.style.display = 'none';
+        btn.setAttribute('aria-label', 'Cart, empty');
+      } else {
+        btn.classList.add('cart-badge-btn--active');
+        chip.textContent = n > 99 ? '99+' : String(n);
+        chip.style.display = '';
+        btn.setAttribute('aria-label', 'Cart, ' + n + ' sample' + (n === 1 ? '' : 's'));
+      }
+    }
+
+    // Builds the per-row add-to-cart cell HTML. Called from renderTable() for every
+    // row on every render pass, so it always reflects current cart membership —
+    // this is the fix for the "renderTable rebuilds innerHTML" stale-state risk.
+    function cartButtonHtml(row) {
+      var idAttr = escapeHtml(row.id || '');
+      var inCart = isInCart(row.id || '');
+      var cls = 'cart-add-btn' + (inCart ? ' cart-add-btn--in-cart' : '');
+      var label = inCart
+        ? 'Sample ' + idAttr + ' is in your cart. Activate to remove.'
+        : 'Add sample ' + idAttr + ' to cart';
+      return '<button type="button" class="' + cls + '" data-cart-toggle' +
+        ' data-cart-id="' + idAttr + '" data-cart-type="' + escapeHtml(row.type || '') +
+        '" data-cart-site="' + escapeHtml(row.site || '') + '" data-cart-date="' + escapeHtml(row.date || '') +
+        '" data-cart-project="' + escapeHtml(row.project || '') + '" data-cart-stage="' + escapeHtml(row.pipeline_stage || '') +
+        '" aria-pressed="' + (inCart ? 'true' : 'false') + '" aria-label="' + label + '">' +
+        '<span class="cart-add-btn-icon cart-add-btn-icon--cart" aria-hidden="true">' + CART_SVG_CART + '</span>' +
+        '<span class="cart-add-btn-icon cart-add-btn-icon--check" aria-hidden="true">' + CART_SVG_CHECK + '</span>' +
+        '<span class="cart-add-btn-icon cart-add-btn-icon--x" aria-hidden="true">' + CART_SVG_X + '</span>' +
+        '<span class="cart-add-btn-label cart-add-btn-label--default">Add to cart</span>' +
+        '<span class="cart-add-btn-label cart-add-btn-label--idle">In cart ✓</span>' +
+        '<span class="cart-add-btn-label cart-add-btn-label--hover">Remove</span>' +
+        '</button>';
+    }
+
+    // Re-derives every currently-rendered row button's visual/aria state from
+    // `cart` — called after any cart mutation (including removals made from the
+    // review panel, which may target a sample not on the current Explorer page;
+    // this is a safe no-op in that case since the loop simply finds no match).
+    function refreshRowCartButtons() {
+      var buttons = document.querySelectorAll('#explorer-tbody [data-cart-toggle]');
+      buttons.forEach(function(btn) {
+        var id = btn.getAttribute('data-cart-id') || '';
+        var inCart = isInCart(id);
+        btn.classList.toggle('cart-add-btn--in-cart', inCart);
+        btn.setAttribute('aria-pressed', inCart ? 'true' : 'false');
+        btn.setAttribute('aria-label', inCart
+          ? 'Sample ' + id + ' is in your cart. Activate to remove.'
+          : 'Add sample ' + id + ' to cart');
+      });
+    }
+
+    // Single delegated click handler on the (persistent) tbody element — avoids
+    // rewiring per-button listeners on every renderTable() innerHTML rebuild.
+    function wireCartRowDelegation() {
+      var tbody = document.getElementById('explorer-tbody');
+      if (!tbody) return;
+      tbody.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-cart-toggle]');
+        if (!btn) return;
+        var id = btn.getAttribute('data-cart-id') || '';
+        if (isInCart(id)) {
+          removeFromCart(id);
+        } else {
+          addToCartFromDataset({
+            cartId: id,
+            cartType: btn.getAttribute('data-cart-type') || '',
+            cartSite: btn.getAttribute('data-cart-site') || '',
+            cartDate: btn.getAttribute('data-cart-date') || '',
+            cartProject: btn.getAttribute('data-cart-project') || '',
+            cartStage: btn.getAttribute('data-cart-stage') || ''
+          });
+        }
+      });
+    }
+
+    // ---- Generic focus-trap helpers (p8-g2 fix: filter offsetParent !== null so
+    // display:none descendants never break the first/last trap identity) ----
+    function getFocusableWithin(container) {
+      var nodeList = container.querySelectorAll(
+        'button:not([disabled]), textarea:not([disabled]), input:not([disabled]), a[href]'
+      );
+      return Array.prototype.filter.call(nodeList, function(el) { return el.offsetParent !== null; });
+    }
+
+    function trapTabWithin(container, e) {
+      var focusable = getFocusableWithin(container);
+      if (focusable.length === 0) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+
+    // ---- Cart review panel (slide-over) ----
+    function buildCartPanel() {
+      var el = document.createElement('div');
+      el.id = 'cart-panel';
+      el.className = 'cart-panel';
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-modal', 'true');
+      el.setAttribute('aria-labelledby', 'cart-panel-title');
+      el.innerHTML =
+        '<div class="cart-panel-header">' +
+          '<h2 id="cart-panel-title" class="cart-panel-title">Sample Cart (0)</h2>' +
+          '<button type="button" id="cart-panel-close-btn" class="cart-icon-btn" aria-label="Close cart">' + CART_SVG_X + '</button>' +
+        '</div>' +
+        '<div id="cart-panel-body" class="cart-panel-body"></div>' +
+        '<div id="cart-panel-footer" class="cart-panel-footer" style="display:none;">' +
+          '<span id="cart-panel-count" class="cart-panel-count"></span>' +
+          '<button type="button" id="cart-request-btn" class="cart-btn cart-btn--primary">Request These Samples</button>' +
+        '</div>';
+      document.body.appendChild(el);
+      document.getElementById('cart-panel-close-btn').addEventListener('click', closeCartPanel);
+      document.getElementById('cart-request-btn').addEventListener('click', function() {
+        openCartDialog(document.getElementById('cart-request-btn'));
+      });
+      return el;
+    }
+
+    function buildCartPanelBackdrop() {
+      var el = document.createElement('div');
+      el.id = 'cart-panel-backdrop';
+      el.className = 'cart-panel-backdrop';
+      document.body.appendChild(el);
+      return el;
+    }
+
+    function renderCartPanelBody() {
+      var body = document.getElementById('cart-panel-body');
+      var footer = document.getElementById('cart-panel-footer');
+      var title = document.getElementById('cart-panel-title');
+      var countEl = document.getElementById('cart-panel-count');
+      if (!body) return;
+      title.textContent = 'Sample Cart (' + cart.length + ')';
+
+      if (cart.length === 0) {
+        footer.style.display = 'none';
+        body.innerHTML =
+          '<div class="cart-empty-state">' +
+            '<div class="cart-empty-icon" aria-hidden="true">' + CART_SVG_CART + '</div>' +
+            '<p class="cart-empty-heading">Your cart is empty</p>' +
+            '<p class="cart-empty-body">Add samples from the Explorer table to request them.</p>' +
+          '</div>';
+        return;
+      }
+
+      footer.style.display = '';
+      countEl.textContent = cart.length + ' sample' + (cart.length === 1 ? '' : 's') + ' selected';
+
+      body.innerHTML = '<div class="cart-item-list">' + cart.map(function(item) {
+        return '<div class="cart-item-row">' +
+          '<div class="cart-item-info">' +
+            '<p class="cart-item-id">' + escapeHtml(item.sample_id) + '</p>' +
+            '<p class="cart-item-meta">' + escapeHtml(item.sample_site) + ' · ' + escapeHtml(item.sample_date) + '</p>' +
+          '</div>' +
+          '<button type="button" class="cart-icon-btn" data-cart-remove="' + escapeHtml(item.sample_id) +
+            '" aria-label="Remove sample ' + escapeHtml(item.sample_id) + ' from cart">' + CART_SVG_X + '</button>' +
+        '</div>';
+      }).join('') + '</div>';
+    }
+
+    // Delegated on #cart-panel-body — the element persists across renderCartPanelBody()
+    // innerHTML swaps, so this is wired once.
+    function wireCartPanelBodyDelegation() {
+      var body = document.getElementById('cart-panel-body');
+      if (!body) return;
+      body.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-cart-remove]');
+        if (!btn) return;
+        removeFromCart(btn.getAttribute('data-cart-remove') || '');
+      });
+    }
+
+    function cartPanelIsOpen() {
+      var panel = document.getElementById('cart-panel');
+      return !!panel && panel.classList.contains('cart-panel--open');
+    }
+
+    function openCartPanel(trigger) {
+      cartTriggerEl = trigger || null;
+      renderCartPanelBody();
+      var panel = document.getElementById('cart-panel');
+      var backdrop = document.getElementById('cart-panel-backdrop');
+      panel.classList.add('cart-panel--open');
+      if (backdrop) backdrop.classList.add('cart-panel-backdrop--visible');
+      document.addEventListener('keydown', panelKeydownHandler);
+      document.addEventListener('mousedown', panelOutsideClickHandler);
+      var focusable = getFocusableWithin(panel);
+      if (focusable.length) { focusable[0].focus(); }
+    }
+
+    function closeCartPanel() {
+      var panel = document.getElementById('cart-panel');
+      var backdrop = document.getElementById('cart-panel-backdrop');
+      if (!panel || !panel.classList.contains('cart-panel--open')) return;
+      panel.classList.remove('cart-panel--open');
+      if (backdrop) backdrop.classList.remove('cart-panel-backdrop--visible');
+      document.removeEventListener('keydown', panelKeydownHandler);
+      document.removeEventListener('mousedown', panelOutsideClickHandler);
+      if (cartTriggerEl) { cartTriggerEl.focus(); }
+      cartTriggerEl = null;
+    }
+
+    function panelKeydownHandler(e) {
+      if (cartDialogIsOpen()) return; // request dialog is topmost — panel yields
+      if (e.key === 'Escape') { e.preventDefault(); closeCartPanel(); return; }
+      if (e.key !== 'Tab') return;
+      trapTabWithin(document.getElementById('cart-panel'), e);
+    }
+
+    function panelOutsideClickHandler(e) {
+      if (cartDialogIsOpen()) return;
+      var panel = document.getElementById('cart-panel');
+      if (!panel || panel.contains(e.target)) return;
+      if (cartTriggerEl && cartTriggerEl.contains(e.target)) return;
+      closeCartPanel();
+    }
+
+    // ---- Request-form dialog (stacks on top of the review panel) ----
+    function buildCartDialog() {
+      var scrim = document.createElement('div');
+      scrim.id = 'cart-dialog-scrim';
+      scrim.className = 'cart-dialog-scrim';
+      document.body.appendChild(scrim);
+
+      var el = document.createElement('div');
+      el.id = 'cart-dialog';
+      el.className = 'cart-dialog';
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-modal', 'true');
+      el.setAttribute('aria-labelledby', 'cart-dialog-title');
+      el.innerHTML =
+        '<div class="cart-panel-header">' +
+          '<h2 id="cart-dialog-title" class="cart-panel-title">Request These Samples</h2>' +
+          '<button type="button" id="cart-dialog-close-btn" class="cart-icon-btn" aria-label="Close request form">' + CART_SVG_X + '</button>' +
+        '</div>' +
+        '<div id="cart-dialog-body" class="cart-dialog-body"></div>' +
+        '<div id="cart-dialog-footer" class="cart-dialog-footer"></div>';
+      document.body.appendChild(el);
+
+      document.getElementById('cart-dialog-close-btn').addEventListener('click', closeCartDialogIfIdle);
+      return el;
+    }
+
+    // Shared by the dialog's Close (X) button and its Cancel button — both are
+    // no-ops while a submit is in flight (prevents a cancel/submit race).
+    function closeCartDialogIfIdle() {
+      if (!cartDialogSubmitting) closeCartDialog();
+    }
+
+    function cartFieldGroupHtml(id, type, labelText) {
+      var isTextarea = type === 'textarea';
+      var tag = isTextarea ? 'textarea' : 'input';
+      var typeAttr = isTextarea ? '' : ' type="' + type + '"';
+      var rowsAttr = isTextarea ? ' rows="3"' : '';
+      return '<div class="cart-field-group">' +
+        '<label for="' + id + '" class="cart-field-label">' + labelText + '</label>' +
+        '<' + tag + ' id="' + id + '" class="cart-field-input"' + typeAttr + rowsAttr +
+          ' aria-required="true" aria-describedby="' + id + '-error"></' + tag + '>' +
+        '<p id="' + id + '-error" class="cart-field-error" style="display:none;"></p>' +
+      '</div>';
+    }
+
+    function clearCartFieldError(fieldId) {
+      var input = document.getElementById(fieldId);
+      var err = document.getElementById(fieldId + '-error');
+      if (input) { input.classList.remove('cart-field-input--error'); input.removeAttribute('aria-invalid'); }
+      if (err) { err.style.display = 'none'; err.textContent = ''; }
+    }
+
+    function setCartFieldError(fieldId, message) {
+      var input = document.getElementById(fieldId);
+      var err = document.getElementById(fieldId + '-error');
+      if (input) { input.classList.add('cart-field-input--error'); input.setAttribute('aria-invalid', 'true'); }
+      if (err) {
+        if (!err.hasAttribute('role')) { err.setAttribute('role', 'alert'); } // announce once, not on every re-render
+        err.textContent = message;
+        err.style.display = 'block';
+      }
+    }
+
+    // Rebuilds the dialog body into its blank form state — every open starts
+    // blank per D2 (no persisted requester identity).
+    function renderCartDialogForm() {
+      var body = document.getElementById('cart-dialog-body');
+      var footer = document.getElementById('cart-dialog-footer');
+
+      footer.innerHTML =
+        '<button type="button" id="cart-cancel-btn" class="cart-btn cart-btn--secondary">Cancel</button>' +
+        '<button type="button" id="cart-submit-btn" class="cart-btn cart-btn--primary">Submit</button>';
+      document.getElementById('cart-cancel-btn').addEventListener('click', closeCartDialogIfIdle);
+      document.getElementById('cart-submit-btn').addEventListener('click', handleCartSubmit);
+
+      body.innerHTML =
+        cartFieldGroupHtml('cart-field-name', 'text', 'Requester Name') +
+        cartFieldGroupHtml('cart-field-email', 'email', 'Requester Email') +
+        cartFieldGroupHtml('cart-field-affiliation', 'text', 'Affiliation') +
+        cartFieldGroupHtml('cart-field-use', 'textarea', 'Intended Use') +
+        '<p id="cart-submit-error" class="cart-error-banner" role="alert" style="display:none;"></p>' +
+        (isRequestConfigured() ? '' :
+          '<p id="cart-unconfigured-notice" class="cart-inline-notice">Sample requests aren’t configured yet. Contact the BROADN team directly.</p>');
+
+      body.querySelectorAll('.cart-field-input').forEach(function(input) {
+        input.addEventListener('input', function() { clearCartFieldError(input.id); });
+      });
+
+      updateSubmitDisabledState();
+    }
+
+    function updateSubmitDisabledState() {
+      var btn = document.getElementById('cart-submit-btn');
+      if (!btn) return;
+      var disabled = !isRequestConfigured() || cartDialogSubmitting;
+      btn.disabled = disabled;
+      btn.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    }
+
+    function hideCartSubmitError() {
+      var errEl = document.getElementById('cart-submit-error');
+      if (errEl) { errEl.style.display = 'none'; errEl.innerHTML = ''; }
+    }
+
+    function showCartSubmitError() {
+      var errEl = document.getElementById('cart-submit-error');
+      if (!errEl) return;
+      // FIXED client string — server-supplied error text is intentionally ignored (defense-in-depth, p8).
+      errEl.innerHTML = '<span class="cart-error-banner-icon" aria-hidden="true">' + CART_SVG_ALERT + '</span>' +
+        '<span>Something went wrong submitting your request. Try again.</span>';
+      errEl.style.display = 'flex';
+    }
+
+    function showCartDialogSuccess(submittedCount) {
+      var body = document.getElementById('cart-dialog-body');
+      var footer = document.getElementById('cart-dialog-footer');
+      body.innerHTML =
+        '<div class="cart-success-state" role="status">' +
+          '<div class="cart-success-icon" aria-hidden="true">' + CART_SVG_SUCCESS + '</div>' +
+          '<p class="cart-success-heading">Request submitted</p>' +
+          '<p class="cart-success-body">We’ll be in touch about your ' + submittedCount +
+            ' requested sample' + (submittedCount === 1 ? '' : 's') + '.</p>' +
+        '</div>';
+      footer.innerHTML = '<button type="button" id="cart-dialog-done-btn" class="cart-btn cart-btn--secondary">Close</button>';
+      document.getElementById('cart-dialog-done-btn').addEventListener('click', function() {
+        closeCartDialog();
+        renderCartPanelBody(); // cart is now empty — panel falls back to its empty state
+      });
+    }
+
+    function validateCartForm() {
+      var nameEl = document.getElementById('cart-field-name');
+      var emailEl = document.getElementById('cart-field-email');
+      var affEl = document.getElementById('cart-field-affiliation');
+      var useEl = document.getElementById('cart-field-use');
+      var valid = true;
+      var firstInvalid = null;
+
+      if (!nameEl.value.trim()) {
+        setCartFieldError('cart-field-name', 'Requester name is required.');
+        valid = false; firstInvalid = firstInvalid || nameEl;
+      }
+      var emailVal = emailEl.value.trim();
+      if (!emailVal) {
+        setCartFieldError('cart-field-email', 'Requester email is required.');
+        valid = false; firstInvalid = firstInvalid || emailEl;
+      } else if (!CART_EMAIL_RE.test(emailVal)) {
+        setCartFieldError('cart-field-email', 'Enter a valid email address.');
+        valid = false; firstInvalid = firstInvalid || emailEl;
+      }
+      if (!affEl.value.trim()) {
+        setCartFieldError('cart-field-affiliation', 'Affiliation is required.');
+        valid = false; firstInvalid = firstInvalid || affEl;
+      }
+      if (!useEl.value.trim()) {
+        setCartFieldError('cart-field-use', 'Intended use is required.');
+        valid = false; firstInvalid = firstInvalid || useEl;
+      }
+
+      if (!valid && firstInvalid) { firstInvalid.focus(); }
+      return valid;
+    }
+
+    function setCartSubmitting(isSubmitting) {
+      cartDialogSubmitting = isSubmitting;
+      var btn = document.getElementById('cart-submit-btn');
+      var cancelBtn = document.getElementById('cart-cancel-btn');
+      if (btn) {
+        btn.setAttribute('aria-busy', isSubmitting ? 'true' : 'false');
+        btn.classList.toggle('cart-btn--submitting', isSubmitting);
+        btn.innerHTML = isSubmitting ? (CART_SVG_SPINNER + '<span>Submitting…</span>') : 'Submit';
+        updateSubmitDisabledState();
+      }
+      if (cancelBtn) {
+        cancelBtn.disabled = isSubmitting;
+        cancelBtn.setAttribute('aria-disabled', isSubmitting ? 'true' : 'false');
+      }
+      document.querySelectorAll('#cart-dialog-body .cart-field-input').forEach(function(f) {
+        f.disabled = isSubmitting;
+        f.setAttribute('aria-disabled', isSubmitting ? 'true' : 'false');
+      });
+    }
+
+    // Client-side-only defense: T2's server does NOT reject an empty samples[]
+    // (GAS always returns 200), so the non-empty-cart guard is FE's responsibility.
+    function handleCartSubmit() {
+      if (!isRequestConfigured() || cartDialogSubmitting) return;
+      hideCartSubmitError();
+
+      if (cart.length === 0) { showCartSubmitError(); return; }
+      if (!validateCartForm()) { return; }
+
+      var payload = {
+        kind: 'sample_request',
+        samples: cart.slice(),
+        requester_name: document.getElementById('cart-field-name').value.trim(),
+        requester_email: document.getElementById('cart-field-email').value.trim(),
+        affiliation: document.getElementById('cart-field-affiliation').value.trim(),
+        intended_use: document.getElementById('cart-field-use').value.trim(),
+        page_url: window.location.href,
+        user_agent: navigator.userAgent
+      };
+
+      setCartSubmitting(true);
+
+      fetch(getRequestUrl(), {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+          if (data.ok === true || data.status === 'ok') {
+            var submittedCount = cart.length;
+            clearCartState();
+            updateCartBadge();
+            refreshRowCartButtons();
+            showCartDialogSuccess(submittedCount);
+          } else {
+            showCartSubmitError();
+            setCartSubmitting(false);
+          }
+        })
+        .catch(function() {
+          showCartSubmitError();
+          setCartSubmitting(false);
+        });
+    }
+
+    function cartDialogIsOpen() {
+      var dialog = document.getElementById('cart-dialog');
+      return !!dialog && dialog.classList.contains('cart-dialog--open');
+    }
+
+    function openCartDialog(trigger) {
+      dialogTriggerEl = trigger || null;
+      cartDialogSubmitting = false;
+      hideCartSubmitError();
+      renderCartDialogForm();
+
+      document.getElementById('cart-dialog-scrim').classList.add('cart-dialog-scrim--open');
+      document.getElementById('cart-dialog').classList.add('cart-dialog--open');
+      var panel = document.getElementById('cart-panel');
+      if (panel) { panel.setAttribute('inert', ''); } // topmost dialog — panel behind scrim is inert
+
+      document.addEventListener('keydown', dialogKeydownHandler);
+      document.addEventListener('mousedown', dialogOutsideClickHandler);
+
+      var focusable = getFocusableWithin(document.getElementById('cart-dialog'));
+      if (focusable.length) { focusable[0].focus(); }
+    }
+
+    function closeCartDialog() {
+      var dialog = document.getElementById('cart-dialog');
+      if (!dialog || !dialog.classList.contains('cart-dialog--open')) return;
+      document.getElementById('cart-dialog-scrim').classList.remove('cart-dialog-scrim--open');
+      dialog.classList.remove('cart-dialog--open');
+      var panel = document.getElementById('cart-panel');
+      if (panel) { panel.removeAttribute('inert'); }
+
+      document.removeEventListener('keydown', dialogKeydownHandler);
+      document.removeEventListener('mousedown', dialogOutsideClickHandler);
+
+      cartDialogSubmitting = false;
+      if (dialogTriggerEl) { dialogTriggerEl.focus(); }
+      dialogTriggerEl = null;
+    }
+
+    function dialogKeydownHandler(e) {
+      if (e.key === 'Escape') {
+        if (cartDialogSubmitting) return;
+        e.preventDefault();
+        closeCartDialog();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      trapTabWithin(document.getElementById('cart-dialog'), e);
+    }
+
+    // Any mousedown target outside the dialog element is either the scrim (which
+    // covers the panel + page) or the dialog's own boundary — closing is correct
+    // either way while the dialog is the topmost modal.
+    function dialogOutsideClickHandler(e) {
+      if (cartDialogSubmitting) return;
+      var dialog = document.getElementById('cart-dialog');
+      if (!dialog || dialog.contains(e.target)) return;
+      closeCartDialog();
+    }
+
+    function buildCartBadgeButton() {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.id = 'cart-badge-btn';
+      btn.className = 'cart-badge-btn ml-auto';
+      btn.setAttribute('aria-haspopup', 'dialog');
+      btn.setAttribute('aria-label', 'Cart, empty');
+      btn.innerHTML = CART_SVG_CART + '<span id="cart-badge-chip" class="cart-badge-chip" style="display:none;" aria-hidden="true"></span>';
+      btn.addEventListener('click', function() { openCartPanel(btn); });
+      return btn;
+    }
+
+    // Wires the whole cart feature into the DOM. Called immediately below (not
+    // deferred to DOMContentLoaded) — app.js executes as a synchronous <script>
+    // placed after the sticky nav and Explorer table markup, so both already
+    // exist in the DOM at this point (only the row DATA is still async).
+    function initCartUI() {
+      buildCartPanelBackdrop();
+      buildCartPanel();
+      buildCartDialog();
+
+      var badgeBtn = buildCartBadgeButton();
+      var navRight = document.querySelector('nav[aria-label="Main navigation"] .flex.h-16.items-center');
+      if (navRight) { navRight.appendChild(badgeBtn); }
+
+      var liveRegion = document.createElement('span');
+      liveRegion.id = 'cart-live-region';
+      liveRegion.className = 'cart-sr-only';
+      liveRegion.setAttribute('aria-live', 'polite');
+      document.body.appendChild(liveRegion);
+
+      wireCartRowDelegation();
+      wireCartPanelBodyDelegation();
+
+      var cartHeaderTh = document.querySelector('#explorer-table thead th:last-child');
+      if (cartHeaderTh) { cartHeaderTh.textContent = 'Cart'; }
+
+      updateCartBadge();
+    }
 
     // Explorer weather columns (broadn-p16-covariate-ui-T4). Compact glyph set — distinct from the
     // slice panel's WEATHER_FIDELITY_LABELS sentence-form text — appended to the formatted cell value.
@@ -1560,32 +2187,6 @@
     function formatExplorerWeather(value, fidelity, decimals, unit) {
       if (value === null || value === undefined) { return '—'; }
       return value.toFixed(decimals) + unit + (EXPLORER_FIDELITY_MARKERS[fidelity] || '');
-    }
-
-    // Build a prefilled mailto: link for requesting a physical sample. Returns the raw URL;
-    // callers embedding in innerHTML must &amp;-escape it (browsers decode it back for the href).
-    function buildRequestHref(row) {
-      var subject = 'BROADN sample request: ' + (row.id || '');
-      var body = [
-        'I would like to request the following BROADN sample:',
-        '',
-        'Sample ID: ' + (row.id || ''),
-        'Type: ' + (row.type || ''),
-        'Site: ' + (row.site || ''),
-        'Collection date: ' + (row.date || ''),
-        'Project: ' + (row.project || ''),
-        'Pipeline stage: ' + (STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || ''),
-        '',
-        'Requester name: ',
-        'Affiliation: ',
-        'Intended use: ',
-        '',
-        '(Sent from the BROADN Data Explorer)'
-      ].join('\n');
-      return 'mailto:' + REQUEST_EMAIL_TO +
-        '?cc=' + encodeURIComponent(REQUEST_EMAIL_CC) +
-        '&subject=' + encodeURIComponent(subject) +
-        '&body=' + encodeURIComponent(body);
     }
 
     // Single source of truth for "what the Explorer shows" — dashboard slice/tag filter (Step A),
@@ -1766,7 +2367,7 @@
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + (STAGE_BADGE_CLASSES[row.pipeline_stage] || 'bg-stone-100 text-stone-600') + '">' + escapeHtml(STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || '—') + '</span></td>' +
             '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerWeather(row.covariates_temp, row.covariates_fidelity, 1, '°C')) + '</td>' +
             '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerWeather(row.covariates_humidity, row.covariates_fidelity, 0, '%')) + '</td>' +
-            '<td class="px-6 py-4"><a href="' + buildRequestHref(row).replace(/&/g, '&amp;') + '" class="inline-flex items-center gap-1 rounded-md border border-green-700 text-green-800 hover:bg-green-50 text-xs font-medium px-2 py-1" aria-label="Request sample ' + escapeHtml(row.id) + ' by email">Request ✉</a></td>';
+            '<td class="px-6 py-4">' + cartButtonHtml(row) + '</td>';
           tbody.appendChild(tr);
         });
       }
@@ -5096,6 +5697,13 @@
         }
       });
     }());
+
+    // =============================================================================
+    // SAMPLE CHECKOUT CART — init (broadn-p17). Called here, not inside
+    // DOMContentLoaded, matching the sidebar-toggle IIFE above: this script tag is
+    // placed after the sticky nav + Explorer table markup, so both already exist.
+    // =============================================================================
+    initCartUI();
 
     // Fetch with try/catch + shape validation. data.json is the only hard dependency;
     // project-layouts.json is best-effort (failure => projectLayouts stays null => legacy renderer).

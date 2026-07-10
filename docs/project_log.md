@@ -1615,3 +1615,37 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - Human push: NOT PUSHED (feature branch, ready for PR to main once human reviews)
   </retention_keys>
 </archive_entry>
+
+<archive_entry>
+  <timestamp>2026-07-10T15:00:00Z</timestamp>
+  <task_id>broadn-p17-sample-checkout-cart</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>
+    Multi-sample checkout cart via Apps Script Sheet bridge (Phase 5 of covariate/explorer/checkout roadmap). Locked decisions: (1) reuse existing Apps Script → Sheet write pattern from feedback widget (doPost kind-discriminator keeps feedback path byte-stable); (2) in-session cart interaction (no localStorage) with per-row add control + sticky-nav badge + modal review/request form + text/plain submit. Pipeline: PM decomposition → Critic BLOCK×2 (config-location misstatement; unsatisfiable insert-only grep recipe) → REV×2 → PASS → Wave-0 UI+BE audit PASS → Wave-1 FE audit FAIL (load-order bug: app.js IIFE caching window.BROADN_REQUEST_URL before feedback-config.js set it, rendering checkout permanently non-functional) → FE REV (lazy getRequestUrl read at dialog-open + submit time) → audit re-verify PASS. Critical insight: static analysis (FE self-check, SA gate) missed the script-sequencing dependency; only ORC's write-capable browser walk caught it. Architecture: cart state per-session in app.js scope (not stored), REQUEST_URL read from global window.BROADN_REQUEST_URL (seeded in feedback-config.js at line 5 with live /exec endpoint), 14-col Requests sheet tab with row_per_sample + shared request_id, error handling ignores server text (fixed client string), focus trap uses offsetParent nullness filter for Modal focus containment.
+  </rationale>
+  <dependencies>
+    - p13 Phase 0 (CSV export): establishes renderTable/computeExplorerFiltered path for cart-reflect integration
+    - p14/p15 Phase 1/1.5 (weather enrichment + window aggregation): covariates modeled into data.json enabling per-sample request enrichment
+    - p16 Phase 2 (covariate UI): establishes DESIGN.md v2 tokens (--color-tooltip-bg for scrim, no raw hex), cart.css additive stylesheet convention matching feedback-widget.css
+    - Feedback widget precedent (apps-script/Code.gs, doPost pattern, sanitizeForSheet, buildResponse): checkout request path mirrors feedback path with kind discriminator
+    - BROADN data schema: request packet includes sample_id, dataset_id, temp, humidity, wind_speed, precipitation, fidelity (14 cols on Requests sheet)
+  </dependencies>
+  <retention_keys>
+    - Commit: fe99d15 `feat(checkout): multi-sample cart on Explorer → Apps Script Sheet bridge (broadn-p17)` on sprint/broadn-p17-sample-checkout-cart
+    - Event timeline: docs/events/agent-events-2026-07-10.jsonl seq 4–28 (orchestrator RESUME → PM decomp → Critic BLOCK×2 + REV×2 → PASS → Wave-0 audit PASS → Wave-1 audit FAIL → FE REV → audit PASS)
+    - Deliverables (6 files, +1164/-30):
+      - apps-script/Code.gs: handleSampleRequest() (line 93+), kind-discriminator in doPost (line 81–88), REQUEST_SHEET_NAME='Requests' + REQUEST_HEADERS (14 cols), reuses sanitizeForSheet/buildResponse, feedback path byte-stable
+      - apps-script/SETUP.md: new Requests-tab section (column order, deployment revocation procedure)
+      - assets/feedback-config.js: BROADN_REQUEST_URL='https://script.google.com/macros/d/{DEPLOYMENT_ID}/usercodeapps/exec' seeded at line 5 (insert-only SC: grep -c '^-[^-]' ==0 on git diff)
+      - assets/app.js: cart state management (per-session, no persistence), per-row add-to-cart control (toggleMembershipAcrossRenders), sticky-nav badge w/ aria-live count, Modal CartReview + nested RequestForm, role=dialog + focus trap (offsetParent filter), lazy getRequestUrl() call at dialog-open + submit (FE#1-rev1 fix for load-order bug), text/plain submit, IS_REQUEST_CONFIGURED gate, error handler (fixed client string, no server-error-text leakage per SX spec), mailto path removed
+      - assets/cart.css: 367-line additive stylesheet (add-to-cart control, badge, review panel, dialog form states); token convention matching feedback-widget.css (--color-tooltip-bg for scrim, no raw #hex)
+      - index.html: one <link rel=stylesheet href=assets/cart.css> (loaded after feedback-config.js, app.js loads after it per index.html line order)
+    - Script load order (CRITICAL): app.js (line 963) must load AFTER feedback-config.js (line 980) so that getRequestUrl() lazy-read finds window.BROADN_REQUEST_URL pre-populated (requirement uncovered by ORC interactive walk, seq 23 QA_FAIL; root cause: IIFE-caching pattern lost to load-order dependency)
+    - QA insight (load-order bug discovery): ORC write-capable browser walk (seq 23) found Submit permanently disabled (IS_REQUEST_CONFIGURED===false) because window.BROADN_REQUEST_URL was undefined during app.js IIFE. Static review + FE self-check missed it. Remediation: convert IIFE caching to lazy getRequestUrl() call (FE#1-rev1). Post-fix verification (seq 25 ORC interactive re-walk): submit enables, valid 2-sample request → exact payload (kind='sample_request', 2 samples, text/plain) → success + cart cleared; error path → fixed client string, server error text NOT leaked, cart preserved; zero live endpoint hits (mocked).
+    - Audit narrative: T1 design_spec PASS (UA#1, seq 19, SA tokens + new cart CSS convention); T2 BE code + SETUP.md PASS (AUD#1 Wave-0 consolidated, seq 21, SA standards + SX formula-injection + insert-only grep); T3 FE FAIL (seq 23 ORC interactive, load-order bug → app.js IIFE caches undefined) → REV (lazy getRequestUrl) → T3 FE audit re-verify PASS (AUD#2, seq 27, SA + QA adjudicated on ORC evidence + SX).
+    - Interop check: per-sample request payload matches Requests sheet schema exactly (sample_id, dataset_id, temp_C, humidity_pct, wind_speed_kmh, precip_mm, fidelity_label, requester, timestamp, request_id, collection_date, notes=empty). Apps Script apps.json ScriptProperties.TRIGGER_SAMPLE_REQUEST='https://...' used by future tooling; current human manual copy Code.gs + create Requests tab + re-deploy /exec endpoint.
+    - Live activation (human-owned): paste updated Code.gs into Apps Script project; create "Requests" sheet tab with 14-col headers per SETUP.md order; re-deploy the /exec deployment (new/overwrite existing).
+    - Phase state: Phase 5 (checkout via Apps Script Sheet bridge) SHIPPED; roadmap complete (p13 CSV → p14 weather → p15 windowing → p16 covariate UI → p17 checkout cart).
+    - Human push: NOT PUSHED (feature branch sprint/broadn-p17-sample-checkout-cart, commit fe99d15; human reviews & pushes). Live activation deferred pending manual Apps Script update by human.
+  </retention_keys>
+</archive_entry>
