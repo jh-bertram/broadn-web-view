@@ -52,6 +52,7 @@ import pandas as pd
 REPO_ROOT = Path(__file__).resolve().parent.parent
 XLSX_PATH = REPO_ROOT / "Bdb-317.xlsx"
 SITES_JSON_PATH = REPO_ROOT / "data" / "sites.json"
+COVARIATES_JSON_PATH = REPO_ROOT / "data" / "covariates.json"
 OUTPUT_PATH = REPO_ROOT / "data" / "data.json"
 
 # ── Column name mapping ─────────────────────────────────────────────────────────
@@ -113,6 +114,13 @@ def load_sites(path: Path) -> dict:
     return {s["code"]: s for s in sites_list}
 
 
+def load_covariates(path: Path) -> dict:
+    """Load covariates.json and return its `samples` map, already indexed by BROADN ID."""
+    with open(path) as f:
+        data = json.load(f)
+    return data["samples"]
+
+
 def has_sequencing_string(row: pd.Series) -> bool:
     """Return True if any sequencing column contains a non-empty, non-null string.
 
@@ -154,32 +162,66 @@ def _parent_broadn_id(series: pd.Series) -> pd.Series:
     return series.str.split(".").str[0]
 
 
-def compute_pipeline_counts(df: pd.DataFrame, field_ids: set) -> tuple[int, int, int]:
-    """Return (collected, dna_extracted, sequenced) for field samples.
+def compute_specimen_stage_sets(df: pd.DataFrame) -> tuple[set, set]:
+    """Return (dna_set, seq_set) of parent field-specimen IDs that reached each stage.
 
-    - collected: count of field sample rows
-    - dna_extracted: count of unique field specimen IDs that have a DNA
-      derivative row (Product == 'DNA').  Derivative IDs contain '.' so
-      the specimen ID is the part before '.'.
-    - sequenced: count of unique field specimen IDs that have a
-      derivative row with at least one non-empty sequencing column.
+    - dna_set: specimen IDs with a DNA derivative row (Product == 'DNA').
+    - seq_set: specimen IDs with a derivative row carrying a non-empty sequencing column.
+    Derivative IDs contain '.'; the parent specimen ID is the part before it.
+    Single source for both the aggregate pipeline counts and per-sample stage classification.
     """
-    collected = len(field_ids)
-
-    # DNA extraction count
     dna_rows = df[df[COL_PRODUCT] == "DNA"].copy()
-    dna_rows["_specimen_id"] = _parent_broadn_id(dna_rows[COL_BROADN_ID])
-    dna_extracted = len(set(dna_rows["_specimen_id"]) & field_ids)
+    dna_set = set(_parent_broadn_id(dna_rows[COL_BROADN_ID]))
 
-    # Sequencing count — via derivative rows
     seq_mask = df[SEQ_COLS].apply(
         lambda col: col.notna() & col.astype(str).str.strip().ne("")
     ).any(axis=1)
     seq_rows = df[seq_mask].copy()
-    seq_rows["_specimen_id"] = _parent_broadn_id(seq_rows[COL_BROADN_ID])
-    sequenced = len(set(seq_rows["_specimen_id"]) & field_ids)
+    seq_set = set(_parent_broadn_id(seq_rows[COL_BROADN_ID]))
+    return dna_set, seq_set
 
-    return collected, dna_extracted, sequenced
+
+def stage_of(sample_id: str, dna_set: set, seq_set: set) -> str:
+    """Furthest pipeline stage a field specimen reached: sequenced > extracted > collected."""
+    if sample_id in seq_set:
+        return "sequenced"
+    if sample_id in dna_set:
+        return "extracted"
+    return "collected"
+
+
+def compute_pipeline_counts(df: pd.DataFrame, field_ids: set) -> tuple[int, int, int]:
+    """Return (collected, dna_extracted, sequenced) for field samples.
+
+    - collected: count of field sample rows
+    - dna_extracted: count of unique field specimen IDs that have a DNA derivative row
+    - sequenced: count of unique field specimen IDs with a sequenced derivative row
+    Uses compute_specimen_stage_sets so per-sample stage and these aggregates never drift.
+    """
+    dna_set, seq_set = compute_specimen_stage_sets(df)
+    return len(field_ids), len(dna_set & field_ids), len(seq_set & field_ids)
+
+
+def build_sampler_pipeline(group: pd.DataFrame, dna_set: set, seq_set: set) -> dict:
+    """Per-sampler pipeline funnel for a slice: { sampler: {collected,dna_extracted,sequenced} }.
+
+    Same shape as type_pipeline_crossTab. Empty {} if the sampler column is absent or its
+    fill rate within the group is below the 5% threshold used by build_sampler_type_dist.
+    """
+    if COL_SAMPLER_TYPE not in group.columns:
+        return {}
+    valid = group.dropna(subset=[COL_SAMPLER_TYPE])
+    if len(group) == 0 or (len(valid) / len(group)) < 0.05:
+        return {}
+    out: dict = {}
+    for sampler, srows in valid.groupby(COL_SAMPLER_TYPE):
+        ids = set(srows[COL_BROADN_ID].tolist())
+        out[str(sampler)] = {
+            "collected": len(ids),
+            "dna_extracted": len(ids & dna_set),
+            "sequenced": len(ids & seq_set),
+        }
+    return out
 
 
 def compute_data_management(
@@ -452,8 +494,107 @@ def print_data_quality_warnings(df: pd.DataFrame, field_samples: pd.DataFrame) -
         print("  INFO: All PGF field samples use 'Unknown' specific site (BROADN ID code 'PX'). PI/PG codes have no field samples.")
 
 
-def build_temporal(field_samples: pd.DataFrame) -> list:
-    """One entry per year-month; each entry gains a 'types' key (top TOP_N_TYPES by count)."""
+# ── Covariate bake helpers (p16: window covariates → data.json) ────────────────
+# Coarsest-first ordering for aggregate fidelity: least-precise value wins so a
+# mixed-fidelity month reports one deterministic, conservative string (never "mixed").
+FIDELITY_RANK = {"window_exact": 0, "window_assumed_24h": 1, "date_only": 2}
+
+
+def _clean_float(val: object) -> float | None:
+    """Coerce a raw covariate value to a finite float; NaN/Infinity/missing -> None."""
+    if val is None:
+        return None
+    try:
+        f = float(val)
+    except (TypeError, ValueError):
+        return None
+    if f != f or f in (float("inf"), float("-inf")):  # NaN / Infinity guard
+        return None
+    return f
+
+
+def _extract_raw_covariates(broadn_id: str, covariates_index: dict) -> tuple[dict | None, str | None]:
+    """Look up a sample's window covariates + time_fidelity from covariates_index.
+
+    Returns (None, None) unless provenance.fetch_status == 'success'. Field values are
+    clean (possibly-None) floats, UNROUNDED — callers round once at their own precision
+    to avoid double-rounding drift between the per-sample and per-slice-month bakes.
+    """
+    entry = covariates_index.get(broadn_id)
+    if entry is None:
+        return None, None
+    prov = entry.get("provenance", {})
+    if prov.get("fetch_status") != "success":
+        return None, None
+    cov = entry.get("covariates") or {}
+    raw = {
+        "temp": _clean_float(cov.get("temp")),
+        "humidity": _clean_float(cov.get("humidity")),
+        "wind_speed": _clean_float(cov.get("wind_speed")),
+        "precipitation": _clean_float(cov.get("precipitation")),
+    }
+    return raw, prov.get("time_fidelity")
+
+
+def bake_sample_covariates(broadn_id: str, covariates_index: dict) -> dict | None:
+    """Per-sample headline covariates bake (CONTRACT §a). None when fetch_status != 'success'."""
+    raw, fidelity = _extract_raw_covariates(broadn_id, covariates_index)
+    if raw is None:
+        return None
+    return {
+        "temp": round(raw["temp"], 1) if raw["temp"] is not None else None,
+        "humidity": round(raw["humidity"]) if raw["humidity"] is not None else None,
+        "wind_speed": round(raw["wind_speed"], 1) if raw["wind_speed"] is not None else None,
+        "precipitation": round(raw["precipitation"], 1) if raw["precipitation"] is not None else None,
+        "fidelity": fidelity,
+    }
+
+
+def _coarsest_fidelity(fidelities: list[str]) -> str | None:
+    """Return the least-precise time_fidelity present among contributors, or None if empty."""
+    if not fidelities:
+        return None
+    return max(fidelities, key=lambda f: FIDELITY_RANK.get(f, -1))
+
+
+def build_weather_bucket(broadn_ids: list, covariates_index: dict) -> dict | None:
+    """Per-slice-per-month weather aggregate (CONTRACT §b): mean of contributing samples'
+    raw window covariates + coarsest fidelity + contributor count `n`. None if no
+    covariate-bearing sample is present among broadn_ids for this slice-month."""
+    temps, hums, winds, precs, fids = [], [], [], [], []
+    for bid in broadn_ids:
+        raw, fidelity = _extract_raw_covariates(bid, covariates_index)
+        if raw is None:
+            continue
+        if raw["temp"] is not None:
+            temps.append(raw["temp"])
+        if raw["humidity"] is not None:
+            hums.append(raw["humidity"])
+        if raw["wind_speed"] is not None:
+            winds.append(raw["wind_speed"])
+        if raw["precipitation"] is not None:
+            precs.append(raw["precipitation"])
+        fids.append(fidelity)
+    if not fids:
+        return None
+    return {
+        "temp": round(sum(temps) / len(temps), 1) if temps else None,
+        "humidity": round(sum(hums) / len(hums)) if hums else None,
+        "wind_speed": round(sum(winds) / len(winds), 1) if winds else None,
+        "precipitation": round(sum(precs) / len(precs), 1) if precs else None,
+        "n": len(fids),
+        "fidelity": _coarsest_fidelity(fids),
+    }
+
+
+def build_temporal(field_samples: pd.DataFrame, covariates_index: dict | None = None) -> list:
+    """One entry per year-month; each entry gains a 'types' key (top TOP_N_TYPES by count).
+
+    When covariates_index is provided, each entry additionally gains a 'weather' key (the
+    slice-month baked covariate aggregate, CONTRACT §b). Left at its None default for the
+    top-level global call (main():1532) so the root-level temporal[] array is byte-unchanged
+    — weather is a slice_views-only addition, passed explicitly at the four slice call sites.
+    """
     dated = field_samples.dropna(subset=[COL_COLLECTED_DATE]).copy()
     dated["_ym"] = dated[COL_COLLECTED_DATE].dt.to_period("M").astype(str)
     counts = dated.groupby("_ym").size().reset_index(name="count")
@@ -464,7 +605,10 @@ def build_temporal(field_samples: pd.DataFrame) -> list:
         month_rows = dated[dated["_ym"] == ym]
         type_counts = month_rows[COL_SAMPLE_SOURCE_TYPE].value_counts()
         types = [{"type": str(t), "count": int(c)} for t, c in type_counts.items()][:TOP_N_TYPES]
-        result.append({"month": ym, "count": int(row["count"]), "types": types})
+        entry = {"month": ym, "count": int(row["count"]), "types": types}
+        if covariates_index is not None:
+            entry["weather"] = build_weather_bucket(month_rows[COL_BROADN_ID].tolist(), covariates_index)
+        result.append(entry)
     return result
 
 
@@ -612,8 +756,22 @@ def build_recent_samples(field_samples: pd.DataFrame, n: int = 100) -> list:
     return results
 
 
-def build_all_samples(field_samples: pd.DataFrame, df_col_map: dict) -> list:
-    """Return all field samples with extended tag fields for the Data Explorer."""
+def build_all_samples(
+    field_samples: pd.DataFrame,
+    df_col_map: dict,
+    dna_set: set,
+    seq_set: set,
+    covariates_index: dict,
+) -> list:
+    """Return all field samples with extended tag fields for the Data Explorer.
+
+    Each record carries pipeline_stage (collected|extracted|sequenced) — the furthest stage
+    that specimen reached, derived from derivative rows. This is the stable per-sample status
+    field a future 'sample checkout' system joins on (checkout_status/availability is a separate
+    field that needs a real reservation source and is not derivable here).
+
+    Each record also carries `covariates` — the per-sample headline window-covariate bake
+    (CONTRACT §a), or None for the samples with no usable window covariates."""
     import math
 
     def nullable(val) -> str | None:
@@ -635,8 +793,9 @@ def build_all_samples(field_samples: pd.DataFrame, df_col_map: dict) -> list:
                 return None
             return nullable(row.get(col_const))
 
+        broadn_id = str(row[COL_BROADN_ID])
         results.append({
-            "id":            str(row[COL_BROADN_ID]),
+            "id":            broadn_id,
             "date":          row[COL_COLLECTED_DATE].strftime("%Y-%m-%d") if pd.notna(row[COL_COLLECTED_DATE]) else None,
             "site":          nullable(row.get(COL_COLLECTION_LOCATION)),
             "type":          nullable(row.get(COL_SAMPLE_SOURCE_TYPE)),
@@ -649,6 +808,8 @@ def build_all_samples(field_samples: pd.DataFrame, df_col_map: dict) -> list:
             "quadrant":      col_val(COL_SAMPLE_QUADRANT),
             "position":      col_val(COL_SAMPLE_POSITION),
             "field_control": col_val(COL_SAMPLE_FC),
+            "pipeline_stage": stage_of(broadn_id, dna_set, seq_set),
+            "covariates":    bake_sample_covariates(broadn_id, covariates_index),
         })
     return results
 
@@ -926,6 +1087,9 @@ def build_slice_project(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
     df_col_map: dict,
+    dna_set: set,
+    seq_set: set,
+    covariates_index: dict,
 ) -> list:
     """Build slice_views.project — group field samples by 'Project ID'.
 
@@ -958,10 +1122,11 @@ def build_slice_project(
                 "dna_extracted": dna_extracted,
                 "sequenced": sequenced,
             },
-            "temporal": build_temporal(group),
+            "temporal": build_temporal(group, covariates_index),
             "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
             "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
             "sampler_type_dist": build_sampler_type_dist(group),
+            "sampler_pipeline": build_sampler_pipeline(group, dna_set, seq_set),
             "replicate_tags": parse_replicate_tags(group[COL_SAMPLE_REPLICATE]),
             "tag_groups": build_tag_groups(group, df_col_map),
             "tag_charts": build_tag_charts(group, df_col_map, df),
@@ -1227,6 +1392,7 @@ def build_slice_project_group(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
     df_col_map: dict,
+    covariates_index: dict,
 ) -> list:
     """Build slice_views.project_group — aggregate by 'Project Group' column.
 
@@ -1273,7 +1439,7 @@ def build_slice_project_group(
                 "dna_extracted": dna_extracted,
                 "sequenced": sequenced,
             },
-            "temporal": build_temporal(group),
+            "temporal": build_temporal(group, covariates_index),
             "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
             "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
             "sampler_type_dist": build_sampler_type_dist(group),
@@ -1295,6 +1461,7 @@ def build_slice_location(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
     df_col_map: dict,
+    covariates_index: dict,
 ) -> list:
     """Build slice_views.location — group field samples by 'Sample Collection Location'.
 
@@ -1336,7 +1503,7 @@ def build_slice_location(
             "sample_count": sample_count,
             "sub_sites": sub_sites,
             "sample_types": sample_types,
-            "temporal": build_temporal(group),
+            "temporal": build_temporal(group, covariates_index),
             "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
             "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
             "sampler_type_dist": build_sampler_type_dist(group),
@@ -1358,6 +1525,7 @@ def build_slice_lab_group(
     df: pd.DataFrame,
     field_samples: pd.DataFrame,
     df_col_map: dict,
+    covariates_index: dict,
 ) -> list:
     """Build slice_views.lab_group — group field samples by 'Project Lead'.
 
@@ -1390,7 +1558,7 @@ def build_slice_lab_group(
                 "dna_extracted": dna_extracted,
                 "sequenced": sequenced,
             },
-            "temporal": build_temporal(group),
+            "temporal": build_temporal(group, covariates_index),
             "type_pipeline_crossTab": build_type_pipeline_crossTab(group, df),
             "pipeline_type_crossTab": build_pipeline_type_crossTab(group, df),
             "sampler_type_dist": build_sampler_type_dist(group),
@@ -1418,6 +1586,11 @@ def main() -> None:
     print("\n[2] Loading sites.json...")
     sites_lookup = load_sites(SITES_JSON_PATH)
     print(f"  Loaded {len(sites_lookup)} site entries from sites.json")
+
+    # ── Load covariates index (p16: window covariates → data.json) ────────────────
+    print("\n[2b] Loading covariates.json...")
+    covariates_index = load_covariates(COVARIATES_JSON_PATH)
+    print(f"  Loaded {len(covariates_index)} covariate entries from covariates.json")
 
     # ── Filter field samples ────────────────────────────────────────────────────
     field_samples = df[df[COL_SAMPLE_CATEGORY] == FIELD_SAMPLE_CATEGORY].copy()
@@ -1538,19 +1711,22 @@ def main() -> None:
     if not new_cols_present:
         df_col_map[COL_SAMPLE_REPLICATE_R] = None
 
-    all_samples = build_all_samples(field_samples, df_col_map)
+    # Per-specimen stage sets (shared: per-sample pipeline_stage + per-sampler funnel)
+    dna_set, seq_set = compute_specimen_stage_sets(df)
+
+    all_samples = build_all_samples(field_samples, df_col_map, dna_set, seq_set, covariates_index)
     print(f"  all_samples: {len(all_samples)} entries")
 
-    slice_project = build_slice_project(df, field_samples, df_col_map)
+    slice_project = build_slice_project(df, field_samples, df_col_map, dna_set, seq_set, covariates_index)
     print(f"  slice_views.project: {len(slice_project)} entries")
 
-    slice_location = build_slice_location(df, field_samples, df_col_map)
+    slice_location = build_slice_location(df, field_samples, df_col_map, covariates_index)
     print(f"  slice_views.location: {len(slice_location)} entries")
 
-    slice_lab_group = build_slice_lab_group(df, field_samples, df_col_map)
+    slice_lab_group = build_slice_lab_group(df, field_samples, df_col_map, covariates_index)
     print(f"  slice_views.lab_group: {len(slice_lab_group)} entries")
 
-    slice_project_group = build_slice_project_group(df, field_samples, df_col_map)
+    slice_project_group = build_slice_project_group(df, field_samples, df_col_map, covariates_index)
     print(f"  slice_views.project_group: {len(slice_project_group)} entries")
     for pg in slice_project_group:
         print(f"    {pg['group_id']}: {pg['sample_count']} samples, "

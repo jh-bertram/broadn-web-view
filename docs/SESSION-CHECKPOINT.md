@@ -1,7 +1,229 @@
+---
+type: project-doc
+---
+
+# Session Checkpoint
+
+**Project:** broadn-web-view
+**Updated:** 2026-06-26 01:03:30 UTC (auto-rebuilt by session-end-checkpoint hook)
+
+## ⚠ STALE — UNCOMMITTED DEBT PRESENT
+
+Tracked-modified files detected at session-end checkpoint rebuild. This checkpoint
+reflects the CURRENT working tree state but the listed files have not been committed.
+Do not treat this checkpoint as authoritative for sprint state until debt is resolved.
+
+**Uncommitted tracked paths (debt):**
+  - `docs/project_log.md`
+
+Ceremony-class files (chore(orchestration) commit class per
+`.claude/skills/commit-packet/SKILL.md §Two-Commit Pattern`) should be committed
+before this checkpoint is treated as fresh. Non-ceremony files must NOT be
+auto-committed by this hook — manual ORC commit-packet is required.
+
+## Agent Log Summary
+*Scanned at 2026-06-26T01:03:30.290622+00:00*
+
+### INTERRUPTED (2 task(s))
+
+These agents have a [STAGE 3] INTERRUPTED marker and require re-dispatch:
+
+  - `broadn-p11-feedback-widget-teal` (AR) — `docs/agent-logs/AR/broadn-p11-feedback-widget-teal.md`
+  - `broadn-p10-design-implementation` (CR) — `docs/agent-logs/CR/broadn-p10-design-implementation.md`
+
+**Note:** INTERRUPTED logs exist alongside uncommitted debt — check if the
+interrupted task's files are included in the debt list above.
+
+### IN-FLIGHT (11 task(s) — no Stage-3 yet)
+
+  - `broadn-p1-001` (AUD) — `docs/agent-logs/AUD/broadn-p1-001.md`
+  - `broadn-p1-002` (AUD) — `docs/agent-logs/AUD/broadn-p1-002.md`
+  - `broadn-p1-003a` (AUD) — `docs/agent-logs/AUD/broadn-p1-003a.md`
+  - `broadn-p1-003b` (AUD) — `docs/agent-logs/AUD/broadn-p1-003b.md`
+  - `broadn-p1-004` (AUD) — `docs/agent-logs/AUD/broadn-p1-004.md`
+  - `broadn-p1-005a` (AUD) — `docs/agent-logs/AUD/broadn-p1-005a.md`
+  - `broadn-p1-005b-gap-R011` (AUD) — `docs/agent-logs/AUD/broadn-p1-005b-gap-R011.md`
+  - `broadn-p1-005b` (AUD) — `docs/agent-logs/AUD/broadn-p1-005b.md`
+  - `broadn-p9-data-management-stats-r2` (CR) — `docs/agent-logs/CR/broadn-p9-data-management-stats-r2.md`
+  - `broadn-p1-web-view-consult-RA` (RA) — `docs/agent-logs/RA/broadn-p1-web-view-consult-RA.md`
+  - `recon-broadn-web` (RA) — `docs/agent-logs/RA/recon-broadn-web.md`
+
+### CLOSED (147 task(s) — Stage-3 COMPLETE or drained)
+
+  - `agent-improvement-2026-04-02-2` (AR) — `docs/agent-logs/AR/agent-improvement-2026-04-02-2.md`
+  - `agent-improvement-2026-04-03-1` (AR) — `docs/agent-logs/AR/agent-improvement-2026-04-03-1.md`
+  - `broadn-p10-design-implementation` (AR) — `docs/agent-logs/AR/broadn-p10-design-implementation.md`
+  - `broadn-p12-altitude-single-rail-postmortem` (AR) — `docs/agent-logs/AR/broadn-p12-altitude-single-rail-postmortem.md`
+  - `broadn-p2-003` (AR) — `docs/agent-logs/AR/broadn-p2-003.md`
+  - `broadn-p2-004a` (AR) — `docs/agent-logs/AR/broadn-p2-004a.md`
+  - `broadn-p4-t4-bysite-show-all` (AR) — `docs/agent-logs/AR/broadn-p4-t4-bysite-show-all.md`
+  - `broadn-p5-t1-tag-banner` (AR) — `docs/agent-logs/AR/broadn-p5-t1-tag-banner.md`
+  - `broadn-p6-001a` (AR) — `docs/agent-logs/AR/broadn-p6-001a.md`
+  - `broadn-p6-002b` (AR) — `docs/agent-logs/AR/broadn-p6-002b.md`
+  - `broadn-p7-sample-table-postmortem` (AR) — `docs/agent-logs/AR/broadn-p7-sample-table-postmortem.md`
+  - `broadn-p7-t2-table-filter` (AR) — `docs/agent-logs/AR/broadn-p7-t2-table-filter.md`
+  - `broadn-p9-data-management-stats` (AR) — `docs/agent-logs/AR/broadn-p9-data-management-stats.md`
+  - `broadn-studio-clarity-postmortem` (AR) — `docs/agent-logs/AR/broadn-studio-clarity-postmortem.md`
+  - `session-2026-04-27-pages-build-fix-postmortem` (AR) — `docs/agent-logs/AR/session-2026-04-27-pages-build-fix-postmortem.md`
+  - `broadn-p1-web-view` (AUD) — `docs/agent-logs/AUD/broadn-p1-web-view.md`
+  - `broadn-p10-design-implementation-AUD-001` (AUD) — `docs/agent-logs/AUD/broadn-p10-design-implementation-AUD-001.md`
+  - `broadn-p12-FE-001-reaudit` (AUD) — `docs/agent-logs/AUD/broadn-p12-FE-001-reaudit.md`
+  - `broadn-p12-FE-001` (AUD) — `docs/agent-logs/AUD/broadn-p12-FE-001.md`
+  - `broadn-p12-FE-002-layout-collapse-reaudit` (AUD) — `docs/agent-logs/AUD/broadn-p12-FE-002-layout-collapse-reaudit.md`
+  - `broadn-p2-001` (AUD) — `docs/agent-logs/AUD/broadn-p2-001.md`
+  - `broadn-p2-002` (AUD) — `docs/agent-logs/AUD/broadn-p2-002.md`
+  - `broadn-p2-003` (AUD) — `docs/agent-logs/AUD/broadn-p2-003.md`
+  - `broadn-p2-004a` (AUD) — `docs/agent-logs/AUD/broadn-p2-004a.md`
+  - `broadn-p2-004b` (AUD) — `docs/agent-logs/AUD/broadn-p2-004b.md`
+  - `broadn-p2-t1-design` (AUD) — `docs/agent-logs/AUD/broadn-p2-t1-design.md`
+  - `broadn-p2-t2a-gap-markers` (AUD) — `docs/agent-logs/AUD/broadn-p2-t2a-gap-markers.md`
+  - `broadn-p2-t2b-charts-map` (AUD) — `docs/agent-logs/AUD/broadn-p2-t2b-charts-map.md`
+  - `broadn-p2-t3-filter` (AUD) — `docs/agent-logs/AUD/broadn-p2-t3-filter.md`
+  - `broadn-p2-t4-tags-be` (AUD) — `docs/agent-logs/AUD/broadn-p2-t4-tags-be.md`
+  - `broadn-p2-t5-tags-fe` (AUD) — `docs/agent-logs/AUD/broadn-p2-t5-tags-fe.md`
+  - `broadn-p3-t1-pipeline` (AUD) — `docs/agent-logs/AUD/broadn-p3-t1-pipeline.md`
+  - `broadn-p3-t2-filter-fe` (AUD) — `docs/agent-logs/AUD/broadn-p3-t2-filter-fe.md`
+  - `broadn-p4-t1-sidebar-toggle` (AUD) — `docs/agent-logs/AUD/broadn-p4-t1-sidebar-toggle.md`
+  - `broadn-p4-t2-border-cleanup` (AUD) — `docs/agent-logs/AUD/broadn-p4-t2-border-cleanup.md`
+  - `broadn-p4-t3-bar-charts` (AUD) — `docs/agent-logs/AUD/broadn-p4-t3-bar-charts.md`
+  - `broadn-p4-t4-bysite-show-all` (AUD) — `docs/agent-logs/AUD/broadn-p4-t4-bysite-show-all.md`
+  - `broadn-p5-t1-tag-banner` (AUD) — `docs/agent-logs/AUD/broadn-p5-t1-tag-banner.md`
+  - `broadn-p5-t2-project-banner` (AUD) — `docs/agent-logs/AUD/broadn-p5-t2-project-banner.md`
+  - `broadn-p6-001a` (AUD) — `docs/agent-logs/AUD/broadn-p6-001a.md`
+  - `broadn-p6-001b` (AUD) — `docs/agent-logs/AUD/broadn-p6-001b.md`
+  - `broadn-p6-002a` (AUD) — `docs/agent-logs/AUD/broadn-p6-002a.md`
+  - `broadn-p6-002b` (AUD) — `docs/agent-logs/AUD/broadn-p6-002b.md`
+  - `broadn-p7-t1-all-samples` (AUD) — `docs/agent-logs/AUD/broadn-p7-t1-all-samples.md`
+  - `broadn-p7-t2-table-filter` (AUD) — `docs/agent-logs/AUD/broadn-p7-t2-table-filter.md`
+  - `broadn-p8-t1-ui` (AUD) — `docs/agent-logs/AUD/broadn-p8-t1-ui.md`
+  - `broadn-p8-t2-be` (AUD) — `docs/agent-logs/AUD/broadn-p8-t2-be.md`
+  - `broadn-p8-t3-fe-remediation` (AUD) — `docs/agent-logs/AUD/broadn-p8-t3-fe-remediation.md`
+  - `broadn-p8-t3-fe` (AUD) — `docs/agent-logs/AUD/broadn-p8-t3-fe.md`
+  - `broadn-p9-t1-data-layer` (AUD) — `docs/agent-logs/AUD/broadn-p9-t1-data-layer.md`
+  - `broadn-p9-t3-frontend` (AUD) — `docs/agent-logs/AUD/broadn-p9-t3-frontend.md`
+  - `location-migration-verify` (AUD) — `docs/agent-logs/AUD/location-migration-verify.md`
+  - `studio-clarity` (AUD) — `docs/agent-logs/AUD/studio-clarity.md`
+  - `broadn-p1-001` (BE) — `docs/agent-logs/BE/broadn-p1-001.md`
+  - `broadn-p1-data-prep` (BE) — `docs/agent-logs/BE/broadn-p1-data-prep.md`
+  - `broadn-p2-t4-tags-be-discovery-1742688900` (BE) — `docs/agent-logs/BE/broadn-p2-t4-tags-be-discovery-1742688900.md`
+  - `broadn-p2-t4-tags-be` (BE) — `docs/agent-logs/BE/broadn-p2-t4-tags-be.md`
+  - `broadn-p3-t1-pipeline` (BE) — `docs/agent-logs/BE/broadn-p3-t1-pipeline.md`
+  - `broadn-p6-001a` (BE) — `docs/agent-logs/BE/broadn-p6-001a.md`
+  - `broadn-p6-001b` (BE) — `docs/agent-logs/BE/broadn-p6-001b.md`
+  - `broadn-p7-t1-all-samples` (BE) — `docs/agent-logs/BE/broadn-p7-t1-all-samples.md`
+  - `broadn-p8-t2-be-remediation` (BE) — `docs/agent-logs/BE/broadn-p8-t2-be-remediation.md`
+  - `broadn-p8-t2-be` (BE) — `docs/agent-logs/BE/broadn-p8-t2-be.md`
+  - `broadn-p9-t1-data-layer` (BE) — `docs/agent-logs/BE/broadn-p9-t1-data-layer.md`
+  - `broadn-p1-dashboard-enhancements-rev2` (CR) — `docs/agent-logs/CR/broadn-p1-dashboard-enhancements-rev2.md`
+  - `broadn-p1-dashboard-enhancements-rev3` (CR) — `docs/agent-logs/CR/broadn-p1-dashboard-enhancements-rev3.md`
+  - `broadn-p1-dashboard-enhancements-rev4` (CR) — `docs/agent-logs/CR/broadn-p1-dashboard-enhancements-rev4.md`
+  - `broadn-p1-dashboard-enhancements` (CR) — `docs/agent-logs/CR/broadn-p1-dashboard-enhancements.md`
+  - `broadn-p1-web-view` (CR) — `docs/agent-logs/CR/broadn-p1-web-view-CR.md`
+  - `broadn-p11-feedback-widget-teal` (CR) — `docs/agent-logs/CR/broadn-p11-feedback-widget-teal.md`
+  - `broadn-p12-altitude-single-rail` (CR) — `docs/agent-logs/CR/broadn-p12-altitude-single-rail.md`
+  - `broadn-p2-dashboard-v2` (CR) — `docs/agent-logs/CR/broadn-p2-dashboard-v2-CR2.md`
+  - `broadn-p2-dashboard-v2` (CR) — `docs/agent-logs/CR/broadn-p2-dashboard-v2.md`
+  - `broadn-p2-slice-panel` (CR) — `docs/agent-logs/CR/broadn-p2-slice-panel-CR-v2.md`
+  - `broadn-p2-slice-panel` (CR) — `docs/agent-logs/CR/broadn-p2-slice-panel-CR.md`
+  - `broadn-p4-2026-03-26` (CR) — `docs/agent-logs/CR/broadn-p4-2026-03-26-CR2.md`
+  - `broadn-p4-2026-03-26` (CR) — `docs/agent-logs/CR/broadn-p4-2026-03-26.md`
+  - `broadn-p5-2026-03-27` (CR) — `docs/agent-logs/CR/broadn-p5-2026-03-27-CR2.md`
+  - `broadn-p5-2026-03-27` (CR) — `docs/agent-logs/CR/broadn-p5-2026-03-27.md`
+  - `broadn-p6-2026-03-28-CR2` (CR) — `docs/agent-logs/CR/broadn-p6-2026-03-28-CR2.md`
+  - `broadn-p6-2026-03-28` (CR) — `docs/agent-logs/CR/broadn-p6-2026-03-28-CR3.md`
+  - `broadn-p6-2026-03-28` (CR) — `docs/agent-logs/CR/broadn-p6-2026-03-28-CR4.md`
+  - `broadn-p6-2026-03-28` (CR) — `docs/agent-logs/CR/broadn-p6-2026-03-28.md`
+  - `broadn-p7-sample-table-CR2` (CR) — `docs/agent-logs/CR/broadn-p7-sample-table-CR2.md`
+  - `broadn-p7-sample-table` (CR) — `docs/agent-logs/CR/broadn-p7-sample-table.md`
+  - `broadn-p8-feedback-widget` (CR) — `docs/agent-logs/CR/broadn-p8-feedback-widget.md`
+  - `broadn-p9-data-management-stats` (CR) — `docs/agent-logs/CR/broadn-p9-data-management-stats.md`
+  - `broadn-p1-002` (FE) — `docs/agent-logs/FE/broadn-p1-002.md`
+  - `broadn-p1-003a` (FE) — `docs/agent-logs/FE/broadn-p1-003a.md`
+  - `broadn-p1-003b` (FE) — `docs/agent-logs/FE/broadn-p1-003b.md`
+  - `broadn-p1-004` (FE) — `docs/agent-logs/FE/broadn-p1-004.md`
+  - `broadn-p1-005a` (FE) — `docs/agent-logs/FE/broadn-p1-005a.md`
+  - `broadn-p1-005b-gap-R011` (FE) — `docs/agent-logs/FE/broadn-p1-005b-gap-R011.md`
+  - `broadn-p1-005b` (FE) — `docs/agent-logs/FE/broadn-p1-005b.md`
+  - `broadn-p1-fe-scaffold` (FE) — `docs/agent-logs/FE/broadn-p1-fe-scaffold.md`
+  - `broadn-p1-vfix-001` (FE) — `docs/agent-logs/FE/broadn-p1-vfix-001.md`
+  - `broadn-p10-design-implementation-UI-002` (FE) — `docs/agent-logs/FE/broadn-p10-design-implementation-UI-002.md`
+  - `broadn-p11-001` (FE) — `docs/agent-logs/FE/broadn-p11-001.md`
+  - `broadn-p12-FE-001` (FE) — `docs/agent-logs/FE/broadn-p12-FE-001.md`
+  - `broadn-p2-004a` (FE) — `docs/agent-logs/FE/broadn-p2-004a.md`
+  - `broadn-p2-004b` (FE) — `docs/agent-logs/FE/broadn-p2-004b.md`
+  - `broadn-p2-t1-design` (FE) — `docs/agent-logs/FE/broadn-p2-t1-design-remediation.md`
+  - `broadn-p2-t1-design` (FE) — `docs/agent-logs/FE/broadn-p2-t1-design.md`
+  - `broadn-p2-t2a-gap-markers` (FE) — `docs/agent-logs/FE/broadn-p2-t2a-gap-markers.md`
+  - `broadn-p2-t2b-charts-map` (FE) — `docs/agent-logs/FE/broadn-p2-t2b-charts-map.md`
+  - `broadn-p2-t3-filter` (FE) — `docs/agent-logs/FE/broadn-p2-t3-filter.md`
+  - `broadn-p2-t5-tags-fe` (FE) — `docs/agent-logs/FE/broadn-p2-t5-tags-fe.md`
+  - `broadn-p3-t2-filter-fe` (FE) — `docs/agent-logs/FE/broadn-p3-t2-filter-fe.md`
+  - `broadn-p4-t1-sidebar-toggle` (FE) — `docs/agent-logs/FE/broadn-p4-t1-sidebar-toggle.md`
+  - `broadn-p4-t2-border-cleanup` (FE) — `docs/agent-logs/FE/broadn-p4-t2-border-cleanup.md`
+  - `broadn-p4-t3-bar-charts` (FE) — `docs/agent-logs/FE/broadn-p4-t3-bar-charts.md`
+  - `broadn-p4-t4-bysite-show-all` (FE) — `docs/agent-logs/FE/broadn-p4-t4-bysite-show-all.md`
+  - `broadn-p5-t1-tag-banner` (FE) — `docs/agent-logs/FE/broadn-p5-t1-tag-banner.md`
+  - `broadn-p5-t2-project-banner` (FE) — `docs/agent-logs/FE/broadn-p5-t2-project-banner.md`
+  - `broadn-p6-002a` (FE) — `docs/agent-logs/FE/broadn-p6-002a.md`
+  - `broadn-p6-002b` (FE) — `docs/agent-logs/FE/broadn-p6-002b.md`
+  - `broadn-p7-t2-table-filter` (FE) — `docs/agent-logs/FE/broadn-p7-t2-table-filter.md`
+  - `broadn-p8-t3-fe-remediation` (FE) — `docs/agent-logs/FE/broadn-p8-t3-fe-remediation.md`
+  - `broadn-p8-t3-fe` (FE) — `docs/agent-logs/FE/broadn-p8-t3-fe.md`
+  - `broadn-p9-t3-frontend` (FE) — `docs/agent-logs/FE/broadn-p9-t3-frontend.md`
+  - `studio-clarity` (FE) — `docs/agent-logs/FE/studio-clarity.md`
+  - `broadn-p1-dashboard-enhancements-rev2` (PM) — `docs/agent-logs/PM/broadn-p1-dashboard-enhancements-rev2.md`
+  - `broadn-p1-dashboard-enhancements-rev3` (PM) — `docs/agent-logs/PM/broadn-p1-dashboard-enhancements-rev3.md`
+  - `broadn-p1-dashboard-enhancements-rev4` (PM) — `docs/agent-logs/PM/broadn-p1-dashboard-enhancements-rev4.md`
+  - `broadn-p1-dashboard-enhancements` (PM) — `docs/agent-logs/PM/broadn-p1-dashboard-enhancements.md`
+  - `broadn-p1-web-view` (PM) — `docs/agent-logs/PM/broadn-p1-web-view.md`
+  - `broadn-p11-feedback-widget-teal` (PM) — `docs/agent-logs/PM/broadn-p11-feedback-widget-teal.md`
+  - `broadn-p2-dashboard-v2-rev1` (PM) — `docs/agent-logs/PM/broadn-p2-dashboard-v2-rev1.md`
+  - `broadn-p2-dashboard-v2` (PM) — `docs/agent-logs/PM/broadn-p2-dashboard-v2.md`
+  - `broadn-p2-slice-panel` (PM) — `docs/agent-logs/PM/broadn-p2-slice-panel.md`
+  - `broadn-p4-2026-03-26` (PM) — `docs/agent-logs/PM/broadn-p4-2026-03-26.md`
+  - `broadn-p5-2026-03-27` (PM) — `docs/agent-logs/PM/broadn-p5-2026-03-27.md`
+  - `broadn-p6-2026-03-28` (PM) — `docs/agent-logs/PM/broadn-p6-2026-03-28.md`
+  - `broadn-p7-sample-table` (PM) — `docs/agent-logs/PM/broadn-p7-sample-table.md`
+  - `broadn-p8-feedback-widget` (PM) — `docs/agent-logs/PM/broadn-p8-feedback-widget.md`
+  - `broadn-p9-data-management-stats` (PM) — `docs/agent-logs/PM/broadn-p9-data-management-stats.md`
+  - `broadn-p10-design-language` (RA) — `docs/agent-logs/RA/broadn-p10-design-language.md`
+  - `broadn-p8-feedback-widget` (RA) — `docs/agent-logs/RA/broadn-p8-feedback-widget.md`
+  - `broadn-viz-dossier-2026-05-08` (RA) — `docs/agent-logs/RA/broadn-viz-dossier-2026-05-08.md`
+  - `ui-agent-skills-RA-1774671891` (RA) — `docs/agent-logs/RA/ui-agent-skills-RA-1774671891.md`
+  - `broadn-p1-annual-report-metrics` (ST) — `docs/agent-logs/ST/broadn-p1-annual-report-metrics.md`
+  - `broadn-p10-design-implementation-UI-001` (UI) — `docs/agent-logs/UI/broadn-p10-design-implementation-UI-001.md`
+  - `broadn-p10-design-language` (UI) — `docs/agent-logs/UI/broadn-p10-design-language.md`
+  - `broadn-p2-003` (UI) — `docs/agent-logs/UI/broadn-p2-003.md`
+  - `broadn-p8-t1-ui` (UI) — `docs/agent-logs/UI/broadn-p8-t1-ui.md`
+  - `broadn-p9-t2-design-spec` (UI) — `docs/agent-logs/UI/broadn-p9-t2-design-spec.md`
+  - `studio-clarity` (UI) — `docs/agent-logs/UI/studio-clarity-UI.md`
+
+## Event Log Tail (last 10)
+*Source: agent-events-2026-06-26.jsonl*
+
+```
+{"seq": 13, "ts": "2026-06-26T00:27:29Z", "ev": "BACKFILL_SCAN", "task_id": "system", "agent_id": "ORC#0", "parent_id": "HUMAN_SESSION", "edge_label": "backfill_scan_report", "note": "backfill-autofire scan: checked=1 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0", "scan_summary": {"checked": 1, "backfilled": 0, "ghost_tombstoned": 0, "ghost_skip_tombstoned": 0, "duplicate_skipped": 0, "failed": 0}}
+{"seq": 14, "ts": "2026-06-26T01:05:00Z", "ev": "COMPLETE", "task_id": "broadn-p12-FE-002-layout-collapse", "agent_id": "FE#1", "parent_id": "ORC#0", "edge_label": "remediation_request", "output_files": ["index.html"], "note": "backfilled by ORC \u2014 agent added w-full to #dashboard-layout (index.html:84) but did not write packet/verify; fix code-verified by ORC"}
+{"seq": 15, "ts": "2026-06-26T01:06:00Z", "ev": "SPAWN", "task_id": "broadn-p12-FE-002-layout-collapse-reaudit", "agent_id": "AUD#1", "parent_id": "ORC#0", "edge_label": "audit_review", "expected_output": ".claude/tasks/outputs/broadn-p12-FE-002-layout-collapse-reaudit-AUD-1782432000.md"}
+{"seq": 16, "ts": "2026-06-26T00:36:26Z", "ev": "AUDIT_PASS", "task_id": "broadn-p12-FE-002-layout-collapse-reaudit", "agent_id": "AUD#1", "parent_id": "ORC#0", "edge_label": "audit_review PASS", "output_files": [".claude/tasks/outputs/broadn-p12-FE-002-layout-collapse-reaudit-AUD-1782432000.md"]}
+{"seq": 17, "ts": "2026-06-26T01:15:00Z", "ev": "COMPLETE", "task_id": "broadn-p12-FE-002-layout-collapse-reaudit", "agent_id": "AUD#1", "parent_id": "ORC#0", "edge_label": "audit_review", "output_files": [".claude/tasks/outputs/broadn-p12-FE-002-layout-collapse-reaudit-AUD-1782432000.md"], "note": "backfilled by ORC \u2014 hook logged AUDIT_PASS verdict not lifecycle COMPLETE"}
+{"seq":18,"ts":"2026-06-26T00:38:14Z","ev":"BACKFILL_SCAN","task_id":"system","agent_id":"ORC#0","parent_id":"HUMAN_SESSION","edge_label":"backfill_scan_report","note":"backfill-autofire scan: checked=0 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0","scan_summary":{"checked":0,"backfilled":0,"ghost_tombstoned":0,"ghost_skip_tombstoned":0,"duplicate_skipped":0,"failed":0}}
+{"seq":19,"ts":"2026-06-26T00:55:08Z","ev":"BACKFILL_SCAN","task_id":"system","agent_id":"ORC#0","parent_id":"HUMAN_SESSION","edge_label":"backfill_scan_report","note":"backfill-autofire scan: checked=0 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0","scan_summary":{"checked":0,"backfilled":0,"ghost_tombstoned":0,"ghost_skip_tombstoned":0,"duplicate_skipped":0,"failed":0}}
+{"seq": 20, "ts": "2026-06-26T01:30:00Z", "ev": "SPAWN", "task_id": "broadn-p12-altitude-single-rail-postmortem", "agent_id": "AR#1", "parent_id": "ORC#0", "edge_label": "post_mortem", "expected_output": "docs/after-actions/broadn-p12-altitude-single-rail.md"}
+{"seq":21,"ts":"2026-06-26T01:03:13Z","ev":"COMPLETE","task_id":"broadn-p12-altitude-single-rail-postmortem","agent_id":"AR#1","parent_id":"ORC#0","edge_label":"archive_entry","output_files":[".claude/tasks/outputs/broadn-p12-altitude-single-rail-postmortem-AR-1782433200.md"],"auto_logged":true}
+{"seq":22,"ts":"2026-06-26T01:03:30Z","ev":"BACKFILL_SCAN","task_id":"system","agent_id":"ORC#0","parent_id":"HUMAN_SESSION","edge_label":"backfill_scan_report","note":"backfill-autofire scan: checked=0 backfilled=0 ghost_tombstoned=0 ghost_skip_tombstoned=0 duplicate_skipped=0 failed=0","scan_summary":{"checked":0,"backfilled":0,"ghost_tombstoned":0,"ghost_skip_tombstoned":0,"duplicate_skipped":0,"failed":0}}
+```
+
+---
+
+> This checkpoint is auto-rebuilt by `session-end-checkpoint.sh` on every
+> main-session Stop. For authoritative sprint state, see the prior human-written
+> sections below (retained on first write; not overwritten by this hook).
+
 # SESSION-CHECKPOINT
-**Written:** 2026-04-02
+**Written:** 2026-06-25
 **Project:** broadn-web-view (`/home/jhber/projects/broadn-web-view/`)
-**Session closed after:** Studio Clarity UI refresh sprint COMPLETE — 6 deliverables shipped (Inter font, sidebar collapse, KPI icons, filter chip, nav shadow, table styling) + DESIGN.md v1.0.0 established
+**Session closed after:** broadn-p10-design-implementation sprint COMPLETE — BROADN teal rebrand + design-language implementation via full pipeline (PM → Critic → UI-001/UI-002 → Auditor); DESIGN.md v2.0.0 shipped; 7 requirements delivered; REQVAL COVERED (9/9); commits 0cba237, c14d67b
 
 ---
 
@@ -18,10 +240,10 @@ This is a static single-page dashboard (`index.html`) — no build system, no de
 
 ## Current State
 
-All p1–p6 sprints COMPLETE with post-mortem finalized. **Studio Clarity UI refresh sprint COMPLETE — 6 visual/interactive deliverables shipped with DESIGN.md v1.0.0 as single source of truth for all future UI work. First-pass audit: FAIL (QA) → remediation → re-audit: PASS (all gates).**
+All p1–p10 sprints COMPLETE. **p10 design-implementation sprint COMPLETE — BROADN teal rebrand shipped via full pipeline execution. DESIGN.md v2.0.0 established (teal Constitution replacing CSU green). All audit gates PASS (SA/QA/SX). REQVAL COVERED (9/9: 7 human + DRY + A11Y). Durability commits: 0cba237, c14d67b (both Audit: PASS; not yet pushed — human-owned).**
 
-**HEAD:** TBD (Studio Clarity changes not yet committed; awaiting user commit)
-**Branch:** `sprint/broadn-p1-2026-03-22`
+**HEAD:** c14d67b (feat(dashboard): teal rebrand + color-accent unification)
+**Branch:** `main` (commits ready for push; awaiting human decision)
 
 ### Post-Mortem Key Findings (p5 + p6)
 
@@ -72,6 +294,13 @@ All p1–p6 sprints COMPLETE with post-mortem finalized. **Studio Clarity UI ref
 | Studio Clarity | DESIGN.md v1.0.0 created | `/home/jhber/projects/broadn-web-view/DESIGN.md` — token source of truth for all future UI work |
 | p7 | Data sample records (all_samples key) | `data/data.json`, 4571 field samples with 12 fields each; generated by preprocess_data.py |
 | p7 | Data Explorer table with filtering + pagination | `renderTable()` (130 lines), `buildFilterOptions()`, `refreshTableIfReady()`, `#explorer-table` with aria-label, filters by category + site + year + tag with AND logic, 100 items/page with prev/next controls |
+| p10 | DESIGN.md v2.0.0 — teal rebrand + Constitution | `/home/jhber/projects/broadn-web-view/DESIGN.md` updated: CSU green #166534 → BROADN teal #0c5454/#0c9cb4; Okabe-Ito SAMPLE_TYPE_COLORS palette; v1→v2 migration table; WCAG note |
+| p10 | broadn-logo.webp wired into nav + hero | Official logo replaces asterism; alt text + aria-label; CSS styling for nav/hero placement |
+| p10 | Unified color palette (Okabe-Ito SAMPLE_TYPE_COLORS) | Single palette keyed by category-name replacing three divergent encodings (sampleTypes/sliceSampleTypes/samplerType + sky/cyan timeline legend); implemented in index.html + assets/app.js |
+| p10 | Unified --color-filter-accent token | Four oranges (#f97316, #ea580c, #dc2626, #c2410c) collapsed to single #c2410c; inverted orange signal fixed (default "All BROADN Samples" button + global-view h3s no longer read as filter-active) |
+| p10 | Chart.js global Inter default | Global font-family: Inter applied across all chart renders |
+| p10 | Pipeline "Sequenced" bar contrast fix | Bar color #4ade80 → #4db6c4 (≥3:1 WCAG AA contrast) |
+| p10 | Hero stat chips rounded | Rounded border-radius styling applied to hero KPI chip components |
 
 ---
 

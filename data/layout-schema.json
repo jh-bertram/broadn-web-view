@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://broadn.colostate.edu/schemas/layout-schema.json",
+  "title": "BROADN slice LayoutDescriptor set",
+  "description": "Per-slice declarative widget layouts for the BROADN dashboard. One LayoutDescriptor per project (and a safe default), interpreted by a single renderSlice(descriptor). Formalizes docs/COMPLEXITY-PER-PROJECT-MATRIX.md §4. Layouts describe STRUCTURE only; banner prose/people/publications live in PROJECT_CONTENT (no duplication, no fabrication).",
+  "type": "object",
+  "required": ["version", "default", "projects"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string" },
+    "generated_by": { "type": "string" },
+    "default": { "$ref": "#/$defs/LayoutDescriptor" },
+    "projects": {
+      "type": "object",
+      "description": "Keyed by project_id (matches slice_views.project[*].project_id).",
+      "additionalProperties": { "$ref": "#/$defs/LayoutDescriptor" }
+    },
+    "lab_groups": {
+      "type": "object",
+      "description": "Keyed by group_name (slice_views.lab_group[*].group_name).",
+      "additionalProperties": { "$ref": "#/$defs/LayoutDescriptor" }
+    },
+    "lab_group_default": { "$ref": "#/$defs/LayoutDescriptor" },
+    "locations": {
+      "type": "object",
+      "description": "Keyed by site_code (slice_views.location[*].site_code).",
+      "additionalProperties": { "$ref": "#/$defs/LayoutDescriptor" }
+    },
+    "location_default": { "$ref": "#/$defs/LayoutDescriptor" }
+  },
+  "$defs": {
+    "LayoutDescriptor": {
+      "type": "object",
+      "required": ["slice_kind", "slice_key_field", "slice_label_field", "banner", "widgets"],
+      "additionalProperties": false,
+      "properties": {
+        "slice_kind": { "enum": ["project", "location", "lab_group", "project_group"] },
+        "slice_key_field": { "type": "string", "description": "lookup key, e.g. project_id / site_code / group_name (matrix §4.2g hazard 1)" },
+        "slice_label_field": { "type": "string", "description": "display label field, kept separate from key (matrix §4.2g)" },
+        "banner": { "$ref": "#/$defs/BannerDescriptor" },
+        "widgets": {
+          "type": "array",
+          "description": "ORDERED top-to-bottom; not a fixed grid (matrix §4 hazard 2). Order encodes priority.",
+          "items": { "$ref": "#/$defs/WidgetDescriptor" }
+        }
+      }
+    },
+    "BannerDescriptor": {
+      "type": "object",
+      "required": ["enabled"],
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "content_source": { "type": "string", "description": "where prose/people/pubs hydrate from; default PROJECT_CONTENT" },
+        "suppress_if_null": { "type": "boolean", "description": "drop any chip whose source is null; never render blank (matrix §4.3)" },
+        "no_fabricate": { "type": "boolean", "description": "publication/data chips render only from a real accession/DOI (matrix §4.3)" },
+        "absorbed_stats": {
+          "type": "array",
+          "description": "facts cut from degenerate charts, surfaced as banner stats so nothing is lost (matrix §4.3)",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "WidgetDescriptor": {
+      "type": "object",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "description": "stable widget key, unique within the layout" },
+        "type": {
+          "enum": [
+            "doughnut", "pipeline_bar", "temporal_bar", "bar", "grouped_bar",
+            "heat_strip", "badge_row", "stat", "stat_strip", "completion_badge",
+            "link_chip", "caption", "sub_sites", "time_of_day"
+          ],
+          "description": "open-ended widget-type enum (matrix §4.2a)"
+        },
+        "title": { "type": "string" },
+        "size": { "enum": ["sm", "md", "lg"], "default": "md", "description": "matrix §4.2c" },
+        "binds_entry": { "type": "boolean", "default": true, "description": "spec receives live slice entry, not pre-baked data (matrix §4.2h hazard 3)" },
+        "show_if": { "$ref": "#/$defs/ShowIf", "description": "render-condition over slice metadata (matrix §4.2b). Absent = always render." },
+        "data_binding": { "$ref": "#/$defs/DataBinding" },
+        "annotations": { "$ref": "#/$defs/Annotations" }
+      }
+    },
+    "DataBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "binds a widget to a named metadata field / derived expression (matrix §4.2e)",
+      "properties": {
+        "source": { "type": "string", "description": "field path, e.g. sample_types | sampler_type_dist | tag_groups.Position | tag_charts.Quadrant | type_pipeline_crossTab" },
+        "transform": { "enum": ["none", "sort_desc", "group_by_year", "group_by_season", "crosstab"], "default": "none" },
+        "denominator": { "type": "string", "description": "explicit denominator for honest partial-coverage rendering (e.g. sample_count)" }
+      }
+    },
+    "Annotations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "empty_state": { "type": "string", "description": "literal text when the bound data is empty/zero — status, not a bug (matrix §4.2f)" },
+        "caption": { "type": "string" },
+        "callouts": { "type": "array", "items": { "type": "string" } },
+        "unspecified_remainder": { "type": "boolean", "description": "surface the unattributed count explicitly (sampler partial coverage)" }
+      }
+    },
+    "ShowIf": {
+      "type": "object",
+      "description": "A predicate over slice metadata. Exactly one of the predicate forms OR one composition key.",
+      "additionalProperties": false,
+      "properties": {
+        "predicate": {
+          "enum": [
+            "always", "distinct_gte", "field_eq", "field_gt", "all_equal",
+            "coverage_gte", "tag_group_nonempty", "months_gte", "contiguous_months",
+            "top_share_lt"
+          ]
+        },
+        "field": { "type": "string" },
+        "fields": { "type": "array", "items": { "type": "string" } },
+        "name": { "type": "string" },
+        "value": { "type": "number" },
+        "not": { "$ref": "#/$defs/ShowIf" },
+        "all": { "type": "array", "items": { "$ref": "#/$defs/ShowIf" } },
+        "any": { "type": "array", "items": { "$ref": "#/$defs/ShowIf" } }
+      }
+    }
+  }
+}

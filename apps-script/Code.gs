@@ -48,6 +48,29 @@ const HEADERS = [
   'Viewport'
 ];
 
+// ─── Sample-request configuration (broadn-p17: sample checkout cart) ──────────
+// Same spreadsheet (SHEET_ID), separate tab. One shared /exec deployment serves
+// both the Feedback and Requests handlers — see SETUP.md "Deployment revocation".
+
+const REQUEST_SHEET_NAME = 'Requests';
+
+const REQUEST_HEADERS = [
+  'Timestamp',
+  'Request ID',
+  'Requester Name',
+  'Requester Email',
+  'Affiliation',
+  'Intended Use',
+  'Sample ID',
+  'Sample Type',
+  'Sample Site',
+  'Sample Date',
+  'Sample Project',
+  'Sample Stage',
+  'Page URL',
+  'User Agent'
+];
+
 // ─── Handlers ─────────────────────────────────────────────────────────────────
 
 /**
@@ -66,6 +89,8 @@ function doPost(e) {
     // 1. Parse body — client sends text/plain with JSON-stringified body.
     //    Must use e.postData.contents, NOT e.parameter (which is for form-encoded POSTs).
     var payload = JSON.parse(e.postData.contents);
+
+    if (payload.kind === 'sample_request') { return handleSampleRequest(payload); }
 
     // 2. Validate required field — empty feedback_text returns {ok: false} with HTTP 200.
     //    (GAS cannot reliably set non-200 status codes from doPost.)
@@ -134,6 +159,66 @@ function doPost(e) {
  */
 function doGet() {
   return buildResponse({ status: 'BROADN feedback endpoint ready' });
+}
+
+/**
+ * handleSampleRequest(payload) — appends one row per requested sample to the
+ * Requests tab. Called from doPost() when payload.kind === 'sample_request'.
+ * Reuses sanitizeForSheet/buildResponse — no duplication of the feedback path.
+ *
+ * @param {Object} payload - Parsed JSON body; see Code.gs header comment / SETUP.md.
+ * @returns {GoogleAppsScript.Content.TextOutput} JSON response {ok: boolean, error?: string}
+ */
+function handleSampleRequest(payload) {
+  try {
+    var ss    = SpreadsheetApp.openById(SHEET_ID);
+    var sheet = ss.getSheetByName(REQUEST_SHEET_NAME);
+
+    if (sheet === null) {
+      console.error('BROADN Requests: sheet tab "' + REQUEST_SHEET_NAME + '" not found in spreadsheet ' + SHEET_ID);
+      return buildResponse({ ok: false, error: 'Requests sheet not found' });
+    }
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(REQUEST_HEADERS);
+    }
+
+    var timestamp = new Date().toISOString();
+    var requestId = Utilities.getUuid();
+    var requesterName  = sanitizeForSheet(String(payload.requester_name  || ''));
+    var requesterEmail = sanitizeForSheet(String(payload.requester_email || ''));
+    var affiliation    = sanitizeForSheet(String(payload.affiliation     || ''));
+    var intendedUse    = sanitizeForSheet(String(payload.intended_use    || ''));
+    var pageUrl        = sanitizeForSheet(String(payload.page_url        || ''));
+    var userAgent      = sanitizeForSheet(String(payload.user_agent      || ''));
+    var samples = Array.isArray(payload.samples) ? payload.samples : [];
+
+    for (var i = 0; i < samples.length; i++) {
+      var s = samples[i] || {};
+      sheet.appendRow([
+        timestamp,
+        requestId,
+        requesterName,
+        requesterEmail,
+        affiliation,
+        intendedUse,
+        sanitizeForSheet(String(s.sample_id      || '')),
+        sanitizeForSheet(String(s.sample_type    || '')),
+        sanitizeForSheet(String(s.sample_site    || '')),
+        sanitizeForSheet(String(s.sample_date    || '')),
+        sanitizeForSheet(String(s.sample_project || '')),
+        sanitizeForSheet(String(s.sample_stage   || '')),
+        pageUrl,
+        userAgent
+      ]);
+    }
+
+    return buildResponse({ ok: true });
+
+  } catch (err) {
+    console.error('BROADN Requests handleSampleRequest error: ' + err.message);
+    return buildResponse({ ok: false, error: err.message });
+  }
 }
 
 // ─── Helper ───────────────────────────────────────────────────────────────────

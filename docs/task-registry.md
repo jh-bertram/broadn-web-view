@@ -1,3 +1,16 @@
+## Rollback Point (current)
+commit: 23277f1290beae4038aa5676e64b2c8bcad62b71
+recorded: 2026-06-26T00:30:00Z
+task_id: broadn-p12-altitude-single-rail
+status: CLOSED — single-rail nav SHIPPED (Audit PASS, REQVAL 13/13); awaiting human browser verify + push
+
+To recover: git reset --hard 23277f1290beae4038aa5676e64b2c8bcad62b71
+
+### Prior rollback point (superseded)
+commit: 8e9a436c22226db74060bda4c37f762d029a1977 (broadn-p12 pre-sprint, 2026-06-25T23:12:33Z)
+
+---
+
 # Task Registry — broadn-p9-data-management-stats
 
 ## Rollback Point
@@ -763,3 +776,120 @@ recorded: 2026-03-28T05:20:00Z
 task_id: broadn-p6-2026-03-28
 
 To recover: git -C /home/jhber/projects/broadn-web-view reset --hard ce6fbead4013bc3e3e03a7b05df243138a462cd4
+
+## Rollback Point
+commit: 5a2fa1e78d0cb03cbdc3fa89373a89886d00ba38
+recorded: 2026-06-25T20:12:49Z
+task_id: broadn-p10-design-implementation
+
+To recover: git reset --hard 5a2fa1e78d0cb03cbdc3fa89373a89886d00ba38
+
+## Expectation Manifest — broadn-p10-design-implementation (rev2)
+<expectation_manifest>
+  <sprint_id>broadn-p10-design-implementation</sprint_id>
+  <generated>2026-06-25T00:00:00Z</generated>
+  <revision>2</revision>
+  <assignments>
+    <assignment>
+      <task_id>broadn-p10-design-implementation-UI-001</task_id>
+      <agent>UI#1</agent>
+      <expected_tag>design_spec</expected_tag>
+      <expected_file>.claude/tasks/outputs/broadn-p10-design-implementation-UI-001-UI-*.md</expected_file>
+      <blocks>broadn-p10-design-implementation-UI-002</blocks>
+      <receipt_check>
+        <item>DESIGN.md frontmatter Version: 2.0.0 / Updated: 2026-06-25</item>
+        <item>teal Constitution rule + "OVERRIDES v1.0.0" note; #166534 absent from Constitution/Color-Tokens</item>
+        <item>SAMPLE_TYPE_COLORS five-pair Okabe map keyed by name</item>
+        <item>--color-filter-accent #c2410c with four-orange collapse + #b45309 split</item>
+        <item>pipeline 3-stage palette replacing #4ade80 with ratios</item>
+        <item>sampler-instrument anchor replacement for #166534 (non-Okabe, non-brand-teal)</item>
+        <item>COMPLETE migration table covering all 13 #166534 sites (incl. :2981, :3018), PG maps, static HTML legend</item>
+        <item>WCAG note restricting bright-teal #0c9cb4 normal-text use</item>
+        <item>git diff touches DESIGN.md ONLY</item>
+      </receipt_check>
+    </assignment>
+    <assignment>
+      <task_id>broadn-p10-design-implementation-UI-002</task_id>
+      <agent>FE#1</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/tasks/outputs/broadn-p10-design-implementation-UI-002-FE-*.md</expected_file>
+      <blocks>broadn-p10-design-implementation-AUD-001</blocks>
+      <receipt_check>
+        <item>grep '#166534' == 0 across all three files (incl. :2981 fallback + :3018 SASS); #0c5454 present; no green-700/800/900 Tailwind in index.html</item>
+        <item>broadn-logo.webp in nav + hero with alt + aria-label; &#10044; removed</item>
+        <item>ONE SAMPLE_TYPE_COLORS; PG_TYPE_COLOR + PG_TYPE_FILL + :2981 fallback + static HTML legend all source from it; #0ea5e9==0, #059669==0, bg-classes==0 in both files; #22d3ee==1 (BioSpot, expected)</item>
+        <item>--color-filter-accent #c2410c wired; #ea6c00==0; no orphan orange tokens; --color-warning unchanged</item>
+        <item>global h3s 669/674 neutralized; slice-panel h3s 410-504 unchanged; default "All" button de-oranged</item>
+        <item>Chart.defaults.font.family Inter before first new Chart(); #4ade80==0; hero chips rounded</item>
+        <item>bright-teal text restriction applied (deep teal for link/active text; #0c9cb4 not on normal-size text)</item>
+        <item>packet states the change was viewed on the live render</item>
+      </receipt_check>
+    </assignment>
+    <assignment>
+      <task_id>broadn-p10-design-implementation-AUD-001</task_id>
+      <agent>AUD#1</agent>
+      <expected_tag>completion_packet</expected_tag>
+      <expected_file>.claude/tasks/outputs/broadn-p10-design-implementation-AUD-001-AUD-*.md</expected_file>
+      <blocks>NONE</blocks>
+      <receipt_check>
+        <item>SA + QA + SX verdicts each present (PASS/FAIL)</item>
+        <item>screenshot evidence for teal brand + single-palette + signal-fix; grep evidence for dormant PG legend + #166534==0 + #22d3ee==1</item>
+        <item>findings #1 and #7 confirmed resolved</item>
+        <item>bright-teal text binding (R1) verified on FE code; no FAILs against deferred surfaces or BioSpot instrument color</item>
+      </receipt_check>
+    </assignment>
+  </assignments>
+</expectation_manifest>
+
+## Rollback Point
+commit: c14d67b79003777d019a270a9609d49bdaece99c
+recorded: 2026-06-25T21:36:18Z
+task_id: broadn-p11-feedback-widget-teal
+
+To recover: git reset --hard c14d67b79003777d019a270a9609d49bdaece99c
+
+---
+
+# Task Registry — broadn-p12-altitude-single-rail
+
+## Rollback Point
+commit: 8e9a436c22226db74060bda4c37f762d029a1977
+recorded: 2026-06-25T23:12:33Z
+task_id: broadn-p12-altitude-single-rail
+
+To recover: git reset --hard 8e9a436c22226db74060bda4c37f762d029a1977
+
+## Expectation Manifest (PM plan + amendment folded in)
+
+| task_id | agent | expected_tag | wave | blocks |
+|---|---|---|---|---|
+| broadn-p12-FE-001 | FE#1 | ui_packet | 0 | NONE (audit→REQVAL→commit→archive follow) |
+
+<expectation_manifest>
+  <sprint_id>broadn-p12-altitude-single-rail</sprint_id>
+  <generated>2026-06-25T23:30:00Z</generated>
+  <assignments>
+    <assignment>
+      <task_id>broadn-p12-FE-001</task_id>
+      <agent>FE#1</agent>
+      <expected_tag>ui_packet</expected_tag>
+      <expected_file>.claude/tasks/outputs/broadn-p12-FE-001-FE-*.md</expected_file>
+      <wave>0</wave>
+      <blocks>NONE</blocks>
+      <receipt_check>
+        <item>M1 data-section enumeration present; zero orphaned references reported</item>
+        <item>M2 top-nav before/after: 5 links removed, brand/logo/tagline kept</item>
+        <item>M3 renderView pane-mode switch quoted; single source of truth (no second show/hide fn)</item>
+        <item>M4 #explorer gated by pane mode (no longer unconditional)</item>
+        <item>M5 inline-style sweep result reported for all three gated panes</item>
+        <item>M6 explicit statement FE did NOT git commit (working tree dirty)</item>
+        <item>M7 group-header greps: STORY present, EXPLORE present, "Slice by"=0, "Location / Hub"=1</item>
+        <item>M8 close-on-select enumeration: every selection handler (4 STORY + Explorer + 4 slice) → closeMobileDrawer behind drawer-open guard; closeMobileDrawer count=1 (reused)</item>
+        <item>M9 roving-handler coverage statement (button-array extension OR anchor native-focus rationale)</item>
+        <item>design_system_source = DESIGN_MD; no new tokens / untraceable hex</item>
+        <item>hash routing (item 7) NOT implemented; ?design / charts / data untouched</item>
+        <item>Browser walk B1–B9 reported (auditor re-runs at audit gate)</item>
+      </receipt_check>
+    </assignment>
+  </assignments>
+</expectation_manifest>

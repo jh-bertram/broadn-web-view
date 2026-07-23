@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://broadn.colostate.edu/schemas/layout-overrides-schema.json",
+  "title": "BROADN designer-mode layout overrides",
+  "description": "Hand-authored per-slice LayoutDescriptor overrides exported by designer mode. Merged (whole-descriptor-per (kind,key)) on top of the generated data/project-layouts.json by BOTH the runtime (getLayoutFor) and scripts/build_layouts.py. Each override descriptor reuses the canonical LayoutDescriptor contract from layout-schema.json (no duplication). location overrides are keyed by site_code, lab_group by group_name, project by project_id.",
+  "type": "object",
+  "required": ["version", "overrides"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string" },
+    "generated_by": { "type": "string" },
+    "overrides": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "type": "object",
+          "description": "Keyed by project_id.",
+          "additionalProperties": { "$ref": "layout-schema.json#/$defs/LayoutDescriptor" }
+        },
+        "lab_group": {
+          "type": "object",
+          "description": "Keyed by group_name.",
+          "additionalProperties": { "$ref": "layout-schema.json#/$defs/LayoutDescriptor" }
+        },
+        "location": {
+          "type": "object",
+          "description": "Keyed by site_code.",
+          "additionalProperties": { "$ref": "layout-schema.json#/$defs/LayoutDescriptor" }
+        }
+      }
+    }
+  }
+}

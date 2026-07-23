@@ -1,0 +1,32 @@
+{
+  "method": "manual-pm-scan",
+  "reason": "PM runtime lacked a Bash tool; the .claude/skills/sc-locked-value-consistency script could not be executed. This is a manual Step 7.5 locked-value self-lint of the draft decomposition. ORC/harness should run the mechanical script before dispatch to satisfy the Critic's report requirement.",
+  "task_id": "broadn-p16-covariate-ui",
+  "generated": "2026-07-07",
+  "locked_value_scs_examined": [
+    {
+      "sc": "T1-SC1",
+      "form": "python scripts/preprocess_data.py && git diff --exit-code data/data.json (exit 0)",
+      "is_locked_value_grep": false,
+      "satisfiable": true,
+      "note": "Deterministic rebuild check, not a grep of a locked frontmatter/copy line."
+    },
+    {
+      "sc": "T1-SC4",
+      "form": "field names/units/rounding/null-rules match the pinned CONTRACT",
+      "is_locked_value_grep": false,
+      "satisfiable": true,
+      "note": "Structural (jq/python) equality against the frozen contract; no forbidden-char-on-a-locked-line hazard."
+    },
+    {
+      "sc": "T3-SC6 / T4 grid guard",
+      "form": "grep guard: overlay color NOT any Okabe/brand-teal/pipeline hex (absence == 0)",
+      "is_locked_value_grep": true,
+      "satisfiable": true,
+      "note": "Absence check (count==0) against an enumerated exclusion set, mirroring DESIGN.md grep guards. The single positive value is T2's chosen non-colliding hex, so the absence-of-excluded-hexes SC and the presence-of-chosen-hex are not in conflict."
+    }
+  ],
+  "unsatisfiable_locked_value_scs": [],
+  "field_token_grep_scs": [],
+  "findings": "No unsatisfiable-on-faithful-execution locked-value SC found. No SC forbids a character that a locked value contains. No SC verifies N-1 of N locked fields. No bare-key field-token count SC (per Step 7.8) was authored; instance counts use structural/value-anchored checks. The one locked-value grep (overlay-color exclusion) is an absence check and is satisfiable alongside the paired presence check."
+}

@@ -2,9 +2,9 @@
    BROADN Feedback Widget Styles
    Class prefix: .fb-  (all widget classes — avoids collision with Tailwind)
    Token references: var(--color-*) from index.html :root where available;
-   DESIGN.md hex values used for tokens not in :root (stone-600 #57534e,
-   stone-900 #1c1917, green-700 #15803d, green-900 #14532d, red-700 #b91c1c,
-   green-100 #dcfce7, white #ffffff).
+   DESIGN.md v2 hex values used for tokens not in :root (stone-600 #57534e,
+   stone-900 #1c1917, mid teal #0e7474, dark teal #083838, red-700 #b91c1c,
+   light teal #ccefef, white #ffffff).
    ===================================================================== */
 
 /* ----- Spinner keyframe ----- */
@@ -44,27 +44,27 @@
 
 .fb-icon:hover {
   background-color: var(--color-stone-50);   /* stone-100 #f5f5f4 — --color-surface-alt */
-  color: var(--color-green-800);             /* green-800 #166534 — --color-primary */
+  color: var(--color-teal-deep);             /* deep teal #0c5454 — var(--color-teal-deep) */
   opacity: 1;
 }
 
 .fb-icon:focus-visible {
   background-color: var(--color-stone-50);
-  color: var(--color-green-800);
+  color: var(--color-teal-deep);
   opacity: 1;
-  outline: 2px solid #15803d;               /* green-700 — --color-primary-mid */
+  outline: 2px solid #0e7474;               /* mid teal — DESIGN.md v2 --color-primary-mid */
   outline-offset: 2px;
 }
 
 .fb-icon:active {
   background-color: var(--color-stone-200);  /* stone-200 #e7e5e4 — --color-surface-hover */
-  color: var(--color-green-800);
+  color: var(--color-teal-deep);
 }
 
 /* Open state — shows which element's feedback popover is open */
 .fb-icon--open {
-  background-color: #dcfce7;               /* green-100 — --color-primary-light */
-  color: var(--color-green-800);
+  background-color: #ccefef;               /* light teal — DESIGN.md v2 --color-primary-light */
+  color: var(--color-teal-deep);
   opacity: 1;
 }
 
@@ -82,7 +82,7 @@
   min-height: 44px;
   border: none;
   border-radius: 9999px;
-  background-color: var(--color-green-800);
+  background-color: var(--color-teal-deep);
   color: #ffffff;
   font-size: 14px;
   font-weight: 600;
@@ -93,16 +93,16 @@
 }
 
 #fb-floating-btn:hover {
-  background-color: #15803d;              /* green-700 — --color-primary-mid */
+  background-color: #0e7474;              /* mid teal — DESIGN.md v2 --color-primary-mid */
 }
 
 #fb-floating-btn:focus-visible {
-  outline: 2px solid #15803d;
+  outline: 2px solid #0e7474;            /* mid teal — DESIGN.md v2 --color-primary-mid */
   outline-offset: 2px;
 }
 
 #fb-floating-btn:active {
-  background-color: #14532d;             /* green-900 — --color-primary-dark */
+  background-color: #083838;             /* dark teal — DESIGN.md v2 --color-primary-dark */
 }
 
 /* Mobile: icon-only circle */
@@ -238,7 +238,7 @@
 }
 
 .fb-close-btn:focus-visible {
-  outline: 2px solid #15803d;
+  outline: 2px solid #0e7474;            /* mid teal — DESIGN.md v2 --color-primary-mid */
   outline-offset: 2px;
 }
 
@@ -281,8 +281,8 @@
 }
 
 .fb-textarea:focus {
-  border-color: #15803d;                  /* green-700 — --color-primary-mid */
-  box-shadow: 0 0 0 2px #15803d;
+  border-color: #0e7474;                  /* mid teal — DESIGN.md v2 --color-primary-mid */
+  box-shadow: 0 0 0 2px #0e7474;
 }
 
 .fb-textarea--error {
@@ -321,7 +321,7 @@
 }
 
 .fb-identity-toggle:focus-visible {
-  outline: 2px solid #15803d;
+  outline: 2px solid #0e7474;            /* mid teal — DESIGN.md v2 --color-primary-mid */
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -355,8 +355,8 @@
 }
 
 .fb-input:focus {
-  border-color: #15803d;
-  box-shadow: 0 0 0 2px #15803d;
+  border-color: #0e7474;                 /* mid teal — DESIGN.md v2 --color-primary-mid */
+  box-shadow: 0 0 0 2px #0e7474;
 }
 
 /* ----- Submit button ----- */
@@ -374,22 +374,22 @@
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  background-color: var(--color-green-800);   /* green-800 — --color-primary */
+  background-color: var(--color-teal-deep);   /* deep teal #0c5454 — var(--color-teal-deep) */
   color: #ffffff;
   transition: background-color 100ms ease;
 }
 
 .fb-submit:hover:not(:disabled) {
-  background-color: #15803d;             /* green-700 — --color-primary-mid */
+  background-color: #0e7474;             /* mid teal — DESIGN.md v2 --color-primary-mid */
 }
 
 .fb-submit:focus-visible {
-  outline: 2px solid #15803d;
+  outline: 2px solid #0e7474;            /* mid teal — DESIGN.md v2 --color-primary-mid */
   outline-offset: 2px;
 }
 
 .fb-submit:active:not(:disabled) {
-  background-color: #14532d;            /* green-900 — --color-primary-dark */
+  background-color: #083838;            /* dark teal — DESIGN.md v2 --color-primary-dark */
 }
 
 .fb-submit:disabled,
