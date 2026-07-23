@@ -34,6 +34,7 @@ Claude Code proposes a mapping from your columns to the NCBI required fields, pr
 | NCBI field | Likely BROADN column (confirm) | Required for "ready"? |
 |---|---|---|
 | `sample_name` | Sample ID | yes |
+| `organism` | *(metagenome name, e.g. "air metagenome")* | yes |
 | `collection_date` | Collection date (+ time / AM-PM) | yes |
 | `geo_loc_name` | Site / location | yes |
 | `lat_lon` | Latitude, Longitude | yes |
@@ -44,10 +45,13 @@ Claude Code proposes a mapping from your columns to the NCBI required fields, pr
 | `target_subfragment` | Region (V4, ITS1…) | recommended |
 | `pcr_primers` | Primers used | recommended |
 | `instrument_model` | Sequencer / platform | yes if sequenced |
+| `library_ID` | Library / run ID | yes if sequenced (unique, short) |
 | `library_layout` | Paired/single (or read count) | yes if sequenced |
 | **sequencing status** | "Sequenced?" / pipeline stage | drives scope |
 | **raw files** | FASTQ path / filename | yes to actually submit |
 | project / PI | Project, collection, PI | context |
+
+*Submission constants — `library_strategy=AMPLICON`, `library_source`, `library_selection=PCR`, and `platform` if uniform — are chosen once at upload, not per sample; don't count them as per-sample gaps.*
 
 Anything with no matching column = a **gap for the whole dataset** (flag it once, loudly — e.g., "no `env_broad_scale` column exists anywhere").
 
@@ -69,6 +73,8 @@ A field can be present but unusable. Also check:
 - `geo_loc_name` starts with a country.
 - `env_*` values look like ENVO terms (`label [ENVO:…]`) — if they're free text, flag as "needs ENVO mapping" (don't invent terms).
 - `target_gene` ∈ {16S rRNA, ITS, 18S rRNA} (normalize variants like "16s", "ITS2").
+- `library_ID` present, short, and **unique** across the table; flag duplicate `sample_name` (should be one BioSample per sample).
+- FASTQ: only confirm a file is **located**. Format rules (gzip/bzip2 not zip, reads-not-assemblies, R1+R2 paired, ≤100 GB) are upload-time — but if filenames exist, flag any `.zip` and, for paired layout, note rows missing an R2.
 
 ## Step 5 — Output
 
@@ -98,10 +104,11 @@ and its column headers. Identify which sheet(s) hold (a) sample metadata and
 STEP 2 — MAP COLUMNS: Propose a mapping from the workbook columns to these NCBI
 fields, and print it as a table for my confirmation. Flag any field that has NO
 matching column as a dataset-wide gap.
-  Required (BioSample): sample_name, collection_date, geo_loc_name, lat_lon,
-    env_broad_scale, env_local_scale, env_medium
-  Required if sequenced (SRA): target_gene, instrument_model, library_layout,
-    library_strategy=AMPLICON, library_source, library_selection=PCR
+  Required (BioSample): sample_name, organism (metagenome name), collection_date,
+    geo_loc_name, lat_lon, env_broad_scale, env_local_scale, env_medium
+  Required if sequenced (SRA): library_ID, target_gene, instrument_model, library_layout
+  Submission constants (do NOT flag as per-sample gaps; set once at upload):
+    library_strategy=AMPLICON, library_source, library_selection=PCR, platform
   Recommended: target_subfragment, pcr_primers
   Also find: sequencing-status/pipeline-stage column, and any FASTQ file path/name.
 Wait for my OK before Step 3.
@@ -116,7 +123,12 @@ STEP 4 — VALIDATE format (count as invalid if it fails):
   collection_date -> ISO YYYY-MM-DD ; lat_lon -> two numbers in range ;
   geo_loc_name -> starts with a country ; env_* -> looks like an ENVO term
   (flag free text as "needs ENVO mapping", do NOT invent terms) ;
-  target_gene -> one of {16S rRNA, ITS, 18S rRNA} (normalize spelling).
+  target_gene -> one of {16S rRNA, ITS, 18S rRNA} (normalize spelling) ;
+  library_ID -> present, short, and UNIQUE across the table ;
+  sample_name -> flag duplicates (should be one BioSample per sample).
+  FASTQ: only confirm a file is referenced/located. Do NOT validate file format from
+  the sheet (gzip/bzip2-not-zip, no assemblies, R1+R2 paired, <100GB are upload-time) —
+  but if filenames exist, flag any ".zip" and, for paired layout, note rows missing R2.
 
 STEP 5 — OUTPUT:
   1) Print a summary: total samples; counts by status; a project x status table;
@@ -144,5 +156,7 @@ report them as gaps.
 - **"Sequenced" ambiguity** — your pipeline tracker may use stage labels (Collected / Extracted / Sequenced / Deposited). Point Claude Code at that column so scope is right.
 - **ENVO terms almost certainly don't exist yet** in the DB — expect the audit to say "N samples need ENVO environment fields." That's a real, expected finding, and a good candidate for a one-time bulk fill (one ENVO triplet per site type).
 - **Formatting vs. missing** — a lat/long that exists but is in DMS still counts as "needs work." The format checks catch that.
+- **Submission constants ≠ gaps** — `AMPLICON` / `METAGENOMIC` / `PCR` / `platform` are applied uniformly at upload; a sample isn't "incomplete" for lacking them in the DB.
+- **File-format rules are upload-time** — gzip/bzip2 (not zip), reads-not-assemblies, R1+R2 in one RUN, ≤100 GB/file are checked when you push files. The audit only confirms a file is *located*.
 
 *Companion file: `NCBI-amplicon-SRA-metadata-requirements.md` (full field definitions and formats).*
