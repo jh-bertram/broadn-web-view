@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generated": "2026-07-07T23:02:30Z",
-    "total_rows": 8075,
-    "field_samples": 4569,
-    "derivatives": 3506
+    "generated": "2026-07-23T21:11:09Z",
+    "total_rows": 7846,
+    "field_samples": 4494,
+    "derivatives": 3352
   },
   "kpis": {
-    "field_samples": 4569,
+    "field_samples": 4494,
     "unique_sites": 29,
     "active_since": "2021",
-    "sequenced": 2960
+    "sequenced": 2926
   },
   "temporal": [
     {
@@ -176,19 +176,11 @@
     },
     {
       "month": "2022-06",
-      "count": 273,
+      "count": 198,
       "types": [
         {
           "type": "Air",
           "count": 185
-        },
-        {
-          "type": "Soil",
-          "count": 46
-        },
-        {
-          "type": "Plant",
-          "count": 29
         },
         {
           "type": "Liquid",
@@ -506,11 +498,11 @@
     },
     {
       "type": "Plant",
-      "count": 870
+      "count": 841
     },
     {
       "type": "Soil",
-      "count": 750
+      "count": 704
     },
     {
       "type": "Liquid",
@@ -522,9 +514,9 @@
     }
   ],
   "pipeline": {
-    "collected": 4569,
-    "dna_extracted": 3250,
-    "sequenced": 2960
+    "collected": 4494,
+    "dna_extracted": 3217,
+    "sequenced": 2926
   },
   "sites": [
     {
@@ -532,7 +524,7 @@
       "name": "SGRC — Environment",
       "lat": 40.809,
       "lon": -104.777,
-      "count": 1313,
+      "count": 1238,
       "primary_types": [
         "Air",
         "Plant",
@@ -830,7 +822,7 @@
     {
       "site": "SGRC — Environment",
       "code": "SN",
-      "count": 1313
+      "count": 1238
     },
     {
       "site": "SGRC — East",
@@ -975,13 +967,6 @@
   ],
   "recent_samples": [
     {
-      "id": "BOD0005A",
-      "date": "2025-07-14",
-      "site": "Other",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
       "id": "BOD0012L",
       "date": "2025-07-14",
       "site": "Other",
@@ -990,6 +975,13 @@
     },
     {
       "id": "BOD0009A",
+      "date": "2025-07-14",
+      "site": "Other",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0005A",
       "date": "2025-07-14",
       "site": "Other",
       "type": "Air",
@@ -1017,17 +1009,17 @@
       "category": "Field Sample"
     },
     {
-      "id": "BOD0001A",
-      "date": "2025-07-02",
-      "site": "Other",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
       "id": "BOD0010L",
       "date": "2025-07-02",
       "site": "Other",
       "type": "Liquid",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BOD0001A",
+      "date": "2025-07-02",
+      "site": "Other",
+      "type": "Air",
       "category": "Field Sample"
     },
     {
@@ -1059,6 +1051,41 @@
       "category": "Field Sample"
     },
     {
+      "id": "BSN0337A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0334A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0335A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0336A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0341A",
+      "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
       "id": "BSN0338A",
       "date": "2025-02-22",
       "site": "SGRC",
@@ -1073,43 +1100,15 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0341A",
-      "date": "2025-02-22",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0337A",
-      "date": "2025-02-22",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0336A",
-      "date": "2025-02-22",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0335A",
-      "date": "2025-02-22",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0334A",
-      "date": "2025-02-22",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
       "id": "BSN0340A",
       "date": "2025-02-22",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0330A",
+      "date": "2025-02-21",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1123,13 +1122,6 @@
     },
     {
       "id": "BSN0329A",
-      "date": "2025-02-21",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0330A",
       "date": "2025-02-21",
       "site": "SGRC",
       "type": "Air",
@@ -1157,7 +1149,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0324A",
+      "id": "BSN0320A",
       "date": "2025-02-20",
       "site": "SGRC",
       "type": "Air",
@@ -1185,7 +1177,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0322A",
+      "id": "BSN0324A",
       "date": "2025-02-20",
       "site": "SGRC",
       "type": "Air",
@@ -1199,6 +1191,13 @@
       "category": "Field Sample"
     },
     {
+      "id": "BSN0322A",
+      "date": "2025-02-20",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
       "id": "BSN0321A",
       "date": "2025-02-20",
       "site": "SGRC",
@@ -1206,35 +1205,14 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0320A",
-      "date": "2025-02-20",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0317A",
+      "id": "BSN0315A",
       "date": "2025-02-19",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0318A",
-      "date": "2025-02-19",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0316A",
-      "date": "2025-02-19",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0319A",
+      "id": "BSN0312A",
       "date": "2025-02-19",
       "site": "SGRC",
       "type": "Air",
@@ -1255,22 +1233,29 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0315A",
+      "id": "BSN0319A",
       "date": "2025-02-19",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0312A",
+      "id": "BSN0316A",
       "date": "2025-02-19",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0311A",
-      "date": "2025-02-17",
+      "id": "BSN0317A",
+      "date": "2025-02-19",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0318A",
+      "date": "2025-02-19",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1283,8 +1268,8 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0309A",
-      "date": "2025-02-14",
+      "id": "BSN0311A",
+      "date": "2025-02-17",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1297,14 +1282,14 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0307A",
+      "id": "BSN0309A",
       "date": "2025-02-14",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0306A",
+      "id": "BSN0307A",
       "date": "2025-02-14",
       "site": "SGRC",
       "type": "Air",
@@ -1325,15 +1310,8 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0303A",
-      "date": "2025-02-13",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0302A",
-      "date": "2025-02-13",
+      "id": "BSN0306A",
+      "date": "2025-02-14",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1362,6 +1340,27 @@
     {
       "id": "BSN0298A",
       "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0302A",
+      "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0303A",
+      "date": "2025-02-13",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0297A",
+      "date": "2025-02-12",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1402,35 +1401,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0297A",
-      "date": "2025-02-12",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0288A",
-      "date": "2025-02-10",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0291A",
-      "date": "2025-02-10",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0290A",
-      "date": "2025-02-10",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0289A",
+      "id": "BSN0280A",
       "date": "2025-02-10",
       "site": "SGRC",
       "type": "Air",
@@ -1444,6 +1415,13 @@
       "category": "Field Sample"
     },
     {
+      "id": "BSN0283A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
       "id": "BSN0286A",
       "date": "2025-02-10",
       "site": "SGRC",
@@ -1451,14 +1429,42 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0284A",
+      "id": "BSN0290A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0288A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0289A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0291A",
+      "date": "2025-02-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0285A",
       "date": "2025-02-07",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0283A",
+      "id": "BSN0284A",
       "date": "2025-02-07",
       "site": "SGRC",
       "type": "Air",
@@ -1474,34 +1480,6 @@
     {
       "id": "BSN0281A",
       "date": "2025-02-07",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0280A",
-      "date": "2025-02-07",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0285A",
-      "date": "2025-02-07",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0275A",
-      "date": "2025-02-06",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0274A",
-      "date": "2025-02-06",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
@@ -1535,21 +1513,28 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0620A",
-      "date": "2024-11-12",
+      "id": "BSN0275A",
+      "date": "2025-02-06",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0623A",
-      "date": "2024-11-12",
+      "id": "BSN0274A",
+      "date": "2025-02-06",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
       "id": "BSN0621A",
+      "date": "2024-11-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0620A",
       "date": "2024-11-12",
       "site": "SGRC",
       "type": "Air",
@@ -1563,6 +1548,13 @@
       "category": "Field Sample"
     },
     {
+      "id": "BSN0623A",
+      "date": "2024-11-12",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
       "id": "BSN0619A",
       "date": "2024-11-11",
       "site": "SGRC",
@@ -1570,28 +1562,7 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0610A",
-      "date": "2024-11-11",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0608A",
-      "date": "2024-11-11",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
       "id": "BSN0618A",
-      "date": "2024-11-11",
-      "site": "SGRC",
-      "type": "Air",
-      "category": "Field Sample"
-    },
-    {
-      "id": "BSN0609A",
       "date": "2024-11-11",
       "site": "SGRC",
       "type": "Air",
@@ -1647,14 +1618,28 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0604A",
-      "date": "2024-11-10",
+      "id": "BSN0610A",
+      "date": "2024-11-11",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample"
     },
     {
-      "id": "BSN0605A",
+      "id": "BSN0608A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0609A",
+      "date": "2024-11-11",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0607A",
       "date": "2024-11-10",
       "site": "SGRC",
       "type": "Air",
@@ -1668,7 +1653,14 @@
       "category": "Field Sample"
     },
     {
-      "id": "BSN0607A",
+      "id": "BSN0605A",
+      "date": "2024-11-10",
+      "site": "SGRC",
+      "type": "Air",
+      "category": "Field Sample"
+    },
+    {
+      "id": "BSN0604A",
       "date": "2024-11-10",
       "site": "SGRC",
       "type": "Air",
@@ -7601,7 +7593,7 @@
       "quadrant": null,
       "position": "B (bottom)",
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "extracted",
       "covariates": {
         "temp": 15.0,
         "humidity": 65,
@@ -74267,374 +74259,6 @@
       }
     },
     {
-      "id": "BSN0154P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0155P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0156P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0157P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0158P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0159P",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0160P",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0161P",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0162P",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0163P",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0164P",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0165P",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0166P",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0167P",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0168P",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": "C (nearby)",
-      "field_control": "Field Control",
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0169P",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
       "id": "BSN0170A",
       "date": "2022-09-20",
       "site": "SGRC",
@@ -74653,972 +74277,6 @@
         "temp": 23.0,
         "humidity": 23,
         "wind_speed": 3.4,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0171P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0172P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0173P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0174P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0175P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0176P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0177P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0178P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0179P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0180P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0181P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0182S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0183S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0184S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0185S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0186S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0187S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0188S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0189S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0190S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0191S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0192S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0193S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0194S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0195S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0196S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0197S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0198S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0199S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0200S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0201S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0202S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0203S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0204S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0205S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0206S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0207S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0208S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0209S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0210S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0211S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0212S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "collected",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
         "precipitation": 0.0,
         "fidelity": "date_only"
       }
@@ -77166,7 +75824,7 @@
     },
     {
       "id": "BSN0280A",
-      "date": "2025-02-07",
+      "date": "2025-02-10",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample",
@@ -77180,9 +75838,9 @@
       "field_control": null,
       "pipeline_stage": "collected",
       "covariates": {
-        "temp": 9.4,
+        "temp": 1.4,
         "humidity": 26,
-        "wind_speed": 2.7,
+        "wind_speed": 4.2,
         "precipitation": 0.0,
         "fidelity": "window_exact"
       }
@@ -77235,7 +75893,7 @@
     },
     {
       "id": "BSN0283A",
-      "date": "2025-02-07",
+      "date": "2025-02-10",
       "site": "SGRC",
       "type": "Air",
       "category": "Field Sample",
@@ -77249,9 +75907,9 @@
       "field_control": null,
       "pipeline_stage": "collected",
       "covariates": {
-        "temp": 9.4,
+        "temp": 1.4,
         "humidity": 26,
-        "wind_speed": 2.7,
+        "wind_speed": 4.2,
         "precipitation": 0.0,
         "fidelity": "window_exact"
       }
@@ -83899,351 +82557,6 @@
         "temp": 24.3,
         "humidity": 47,
         "wind_speed": 3.5,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0573S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0574S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0575S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0576S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0577S",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0578S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0579S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0580S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0581S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0582S",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0583S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0584S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0585S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0586S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
-        "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN0587S",
-      "date": "2022-06-10",
-      "site": "SGRC",
-      "type": "Soil",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": null,
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 23.1,
-        "humidity": 41,
-        "wind_speed": 2.7,
         "precipitation": 0.0,
         "fidelity": "date_only"
       }
@@ -102194,29 +100507,6 @@
       }
     },
     {
-      "id": "BSN1378P",
-      "date": "2022-06-01",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": "A (top)",
-      "field_control": "Field Control",
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 8.9,
-        "humidity": 69,
-        "wind_speed": 2.1,
-        "precipitation": 1.3,
-        "fidelity": "date_only"
-      }
-    },
-    {
       "id": "BSN1379A",
       "date": "2022-05-30",
       "site": "SGRC",
@@ -102305,29 +100595,6 @@
         "humidity": 52,
         "wind_speed": 3.7,
         "precipitation": 0.0,
-        "fidelity": "date_only"
-      }
-    },
-    {
-      "id": "BSN1383P",
-      "date": "2022-06-05",
-      "site": "SGRC",
-      "type": "Plant",
-      "category": "Field Sample",
-      "project": "Spring Plants & Soil",
-      "project_group": null,
-      "lab_group": "Kreidenweis",
-      "am_pm": null,
-      "replicate": null,
-      "quadrant": null,
-      "position": null,
-      "field_control": "Field Control",
-      "pipeline_stage": "sequenced",
-      "covariates": {
-        "temp": 19.5,
-        "humidity": 44,
-        "wind_speed": 2.8,
-        "precipitation": 3.5,
         "fidelity": "date_only"
       }
     },
@@ -103104,11 +101371,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -103141,11 +101408,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -103178,11 +101445,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -103215,11 +101482,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -103252,11 +101519,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -103289,11 +101556,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -103326,11 +101593,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -103363,11 +101630,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -103400,11 +101667,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -103437,11 +101704,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -103474,11 +101741,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -103511,11 +101778,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -103719,15 +101986,15 @@
               },
               "sampler_type_dist": [
                 {
+                  "sampler": "Sagegrass",
+                  "count": 60
+                },
+                {
                   "sampler": "RusThistle",
                   "count": 60
                 },
                 {
                   "sampler": "Tall Grass",
-                  "count": 60
-                },
-                {
-                  "sampler": "Sagegrass",
                   "count": 60
                 }
               ]
@@ -103760,15 +102027,15 @@
               },
               "sampler_type_dist": [
                 {
+                  "sampler": "Sagegrass",
+                  "count": 30
+                },
+                {
                   "sampler": "RusThistle",
                   "count": 30
                 },
                 {
                   "sampler": "Tall Grass",
-                  "count": 30
-                },
-                {
-                  "sampler": "Sagegrass",
                   "count": 30
                 }
               ]
@@ -103807,11 +102074,11 @@
                   "count": 90
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Sagegrass",
                   "count": 50
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "RusThistle",
                   "count": 50
                 }
               ]
@@ -103969,15 +102236,15 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "RusThistle",
-                  "count": 15
-                },
-                {
                   "sampler": "Tall Grass",
                   "count": 15
                 },
                 {
                   "sampler": "Sagegrass",
+                  "count": 15
+                },
+                {
+                  "sampler": "RusThistle",
                   "count": 15
                 }
               ]
@@ -104250,11 +102517,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 51
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 51
                 }
               ]
@@ -104287,11 +102554,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 51
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 51
                 }
               ]
@@ -104326,11 +102593,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -104363,11 +102630,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -104400,11 +102667,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -104545,7 +102812,7 @@
               }
             ],
             "weather": {
-              "temp": -2.5,
+              "temp": -2.7,
               "humidity": 53,
               "wind_speed": 1.8,
               "precipitation": 0.0,
@@ -104858,7 +103125,7 @@
         "pipeline": {
           "collected": 304,
           "dna_extracted": 140,
-          "sequenced": 139
+          "sequenced": 138
         },
         "temporal": [
           {
@@ -104938,7 +103205,7 @@
           "Air": {
             "collected": 304,
             "dna_extracted": 140,
-            "sequenced": 139
+            "sequenced": 138
           }
         },
         "pipeline_type_crossTab": {
@@ -104957,7 +103224,7 @@
           "sequenced": [
             {
               "type": "Air",
-              "count": 139
+              "count": 138
             }
           ]
         },
@@ -104980,7 +103247,7 @@
           "SASS": {
             "collected": 145,
             "dna_extracted": 140,
-            "sequenced": 139
+            "sequenced": 138
           }
         },
         "replicate_tags": {
@@ -105059,7 +103326,7 @@
               "pipeline": {
                 "collected": 113,
                 "dna_extracted": 53,
-                "sequenced": 52
+                "sequenced": 51
               },
               "sampler_type_dist": [
                 {
@@ -105135,7 +103402,7 @@
               "pipeline": {
                 "collected": 124,
                 "dna_extracted": 60,
-                "sequenced": 59
+                "sequenced": 58
               },
               "sampler_type_dist": [
                 {
@@ -106350,420 +104617,6 @@
         },
         "tag_groups": {},
         "tag_charts": {}
-      },
-      {
-        "project_id": "Spring Plants & Soil",
-        "sample_count": 93,
-        "sample_types": [
-          {
-            "type": "Soil",
-            "count": 47
-          },
-          {
-            "type": "Plant",
-            "count": 29
-          },
-          {
-            "type": "Air",
-            "count": 17
-          }
-        ],
-        "pipeline": {
-          "collected": 93,
-          "dna_extracted": 51,
-          "sequenced": 50
-        },
-        "temporal": [
-          {
-            "month": "2022-05",
-            "count": 3,
-            "types": [
-              {
-                "type": "Air",
-                "count": 3
-              }
-            ],
-            "weather": {
-              "temp": 14.5,
-              "humidity": 45,
-              "wind_speed": 5.1,
-              "precipitation": 7.7,
-              "n": 3,
-              "fidelity": "date_only"
-            }
-          },
-          {
-            "month": "2022-06",
-            "count": 82,
-            "types": [
-              {
-                "type": "Soil",
-                "count": 46
-              },
-              {
-                "type": "Plant",
-                "count": 29
-              },
-              {
-                "type": "Air",
-                "count": 7
-              }
-            ],
-            "weather": {
-              "temp": 16.3,
-              "humidity": 54,
-              "wind_speed": 2.6,
-              "precipitation": 1.4,
-              "n": 82,
-              "fidelity": "date_only"
-            }
-          },
-          {
-            "month": "2022-09",
-            "count": 1,
-            "types": [
-              {
-                "type": "Air",
-                "count": 1
-              }
-            ],
-            "weather": {
-              "temp": 17.2,
-              "humidity": 34,
-              "wind_speed": 3.1,
-              "precipitation": 0.0,
-              "n": 1,
-              "fidelity": "window_assumed_24h"
-            }
-          },
-          {
-            "month": "2023-02",
-            "count": 3,
-            "types": [
-              {
-                "type": "Air",
-                "count": 3
-              }
-            ],
-            "weather": {
-              "temp": 3.7,
-              "humidity": 38,
-              "wind_speed": 2.8,
-              "precipitation": 0.1,
-              "n": 3,
-              "fidelity": "date_only"
-            }
-          }
-        ],
-        "type_pipeline_crossTab": {
-          "Air": {
-            "collected": 17,
-            "dna_extracted": 17,
-            "sequenced": 16
-          },
-          "Plant": {
-            "collected": 29,
-            "dna_extracted": 18,
-            "sequenced": 18
-          },
-          "Soil": {
-            "collected": 47,
-            "dna_extracted": 16,
-            "sequenced": 16
-          }
-        },
-        "pipeline_type_crossTab": {
-          "collected": [
-            {
-              "type": "Soil",
-              "count": 47
-            },
-            {
-              "type": "Plant",
-              "count": 29
-            },
-            {
-              "type": "Air",
-              "count": 17
-            }
-          ],
-          "dna_extracted": [
-            {
-              "type": "Plant",
-              "count": 18
-            },
-            {
-              "type": "Air",
-              "count": 17
-            },
-            {
-              "type": "Soil",
-              "count": 16
-            }
-          ],
-          "sequenced": [
-            {
-              "type": "Plant",
-              "count": 18
-            },
-            {
-              "type": "Air",
-              "count": 16
-            },
-            {
-              "type": "Soil",
-              "count": 16
-            }
-          ]
-        },
-        "sampler_type_dist": [
-          {
-            "sampler": "SASS",
-            "count": 13
-          }
-        ],
-        "sampler_pipeline": {
-          "SASS": {
-            "collected": 13,
-            "dna_extracted": 13,
-            "sequenced": 13
-          }
-        },
-        "replicate_tags": {
-          "time_of_day": [],
-          "replicate": [],
-          "position": [],
-          "clock_quadrant": [],
-          "field_controls": [],
-          "other": [
-            "RH"
-          ]
-        },
-        "tag_groups": {
-          "AM/PM": {
-            "AM": 1
-          },
-          "Replicate": {
-            "RH": 2
-          },
-          "Position": {
-            "A (top)": 3,
-            "C (nearby)": 1,
-            "B (bottom)": 1
-          },
-          "Field Control": {
-            "Field Control": 3,
-            "Kit Blank": 3,
-            "Field Blank": 2
-          }
-        },
-        "tag_charts": {
-          "AM/PM": {
-            "AM": {
-              "temporal": [
-                {
-                  "month": "2022-09",
-                  "count": 1
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 1
-                }
-              ],
-              "pipeline": {
-                "collected": 1,
-                "dna_extracted": 1,
-                "sequenced": 1
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 1
-                }
-              ]
-            }
-          },
-          "Replicate": {
-            "RH": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 2
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 2
-                }
-              ],
-              "pipeline": {
-                "collected": 2,
-                "dna_extracted": 2,
-                "sequenced": 2
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 2
-                }
-              ]
-            }
-          },
-          "Position": {
-            "C (nearby)": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 1
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Plant",
-                  "count": 1
-                }
-              ],
-              "pipeline": {
-                "collected": 1,
-                "dna_extracted": 1,
-                "sequenced": 1
-              },
-              "sampler_type_dist": []
-            },
-            "A (top)": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 2
-                },
-                {
-                  "month": "2022-09",
-                  "count": 1
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 2
-                },
-                {
-                  "type": "Plant",
-                  "count": 1
-                }
-              ],
-              "pipeline": {
-                "collected": 3,
-                "dna_extracted": 3,
-                "sequenced": 3
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 2
-                }
-              ]
-            },
-            "B (bottom)": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 1
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 1
-                }
-              ],
-              "pipeline": {
-                "collected": 1,
-                "dna_extracted": 1,
-                "sequenced": 1
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 1
-                }
-              ]
-            }
-          },
-          "Field Control": {
-            "Field Control": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 3
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Plant",
-                  "count": 3
-                }
-              ],
-              "pipeline": {
-                "collected": 3,
-                "dna_extracted": 3,
-                "sequenced": 3
-              },
-              "sampler_type_dist": []
-            },
-            "Kit Blank": {
-              "temporal": [
-                {
-                  "month": "2023-02",
-                  "count": 3
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 3
-                }
-              ],
-              "pipeline": {
-                "collected": 3,
-                "dna_extracted": 3,
-                "sequenced": 3
-              },
-              "sampler_type_dist": []
-            },
-            "Field Blank": {
-              "temporal": [
-                {
-                  "month": "2022-05",
-                  "count": 1
-                },
-                {
-                  "month": "2022-06",
-                  "count": 1
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 2
-                }
-              ],
-              "pipeline": {
-                "collected": 2,
-                "dna_extracted": 2,
-                "sequenced": 2
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 2
-                }
-              ]
-            }
-          }
-        }
       },
       {
         "project_id": "2022 Fall CPER",
@@ -108279,6 +106132,345 @@
         }
       },
       {
+        "project_id": "Spring Plants & Soil",
+        "sample_count": 18,
+        "sample_types": [
+          {
+            "type": "Air",
+            "count": 17
+          },
+          {
+            "type": "Soil",
+            "count": 1
+          }
+        ],
+        "pipeline": {
+          "collected": 18,
+          "dna_extracted": 18,
+          "sequenced": 17
+        },
+        "temporal": [
+          {
+            "month": "2022-05",
+            "count": 3,
+            "types": [
+              {
+                "type": "Air",
+                "count": 3
+              }
+            ],
+            "weather": {
+              "temp": 14.5,
+              "humidity": 45,
+              "wind_speed": 5.1,
+              "precipitation": 7.7,
+              "n": 3,
+              "fidelity": "date_only"
+            }
+          },
+          {
+            "month": "2022-06",
+            "count": 7,
+            "types": [
+              {
+                "type": "Air",
+                "count": 7
+              }
+            ],
+            "weather": {
+              "temp": 20.7,
+              "humidity": 49,
+              "wind_speed": 3.3,
+              "precipitation": 0.3,
+              "n": 7,
+              "fidelity": "date_only"
+            }
+          },
+          {
+            "month": "2022-09",
+            "count": 1,
+            "types": [
+              {
+                "type": "Air",
+                "count": 1
+              }
+            ],
+            "weather": {
+              "temp": 17.2,
+              "humidity": 34,
+              "wind_speed": 3.1,
+              "precipitation": 0.0,
+              "n": 1,
+              "fidelity": "window_assumed_24h"
+            }
+          },
+          {
+            "month": "2023-02",
+            "count": 3,
+            "types": [
+              {
+                "type": "Air",
+                "count": 3
+              }
+            ],
+            "weather": {
+              "temp": 3.7,
+              "humidity": 38,
+              "wind_speed": 2.8,
+              "precipitation": 0.1,
+              "n": 3,
+              "fidelity": "date_only"
+            }
+          }
+        ],
+        "type_pipeline_crossTab": {
+          "Air": {
+            "collected": 17,
+            "dna_extracted": 17,
+            "sequenced": 16
+          },
+          "Soil": {
+            "collected": 1,
+            "dna_extracted": 1,
+            "sequenced": 1
+          }
+        },
+        "pipeline_type_crossTab": {
+          "collected": [
+            {
+              "type": "Air",
+              "count": 17
+            },
+            {
+              "type": "Soil",
+              "count": 1
+            }
+          ],
+          "dna_extracted": [
+            {
+              "type": "Air",
+              "count": 17
+            },
+            {
+              "type": "Soil",
+              "count": 1
+            }
+          ],
+          "sequenced": [
+            {
+              "type": "Air",
+              "count": 16
+            },
+            {
+              "type": "Soil",
+              "count": 1
+            }
+          ]
+        },
+        "sampler_type_dist": [
+          {
+            "sampler": "SASS",
+            "count": 13
+          }
+        ],
+        "sampler_pipeline": {
+          "SASS": {
+            "collected": 13,
+            "dna_extracted": 13,
+            "sequenced": 13
+          }
+        },
+        "replicate_tags": {
+          "time_of_day": [],
+          "replicate": [],
+          "position": [],
+          "clock_quadrant": [],
+          "field_controls": [],
+          "other": [
+            "RH"
+          ]
+        },
+        "tag_groups": {
+          "AM/PM": {
+            "AM": 1
+          },
+          "Replicate": {
+            "RH": 2
+          },
+          "Position": {
+            "A (top)": 2,
+            "B (bottom)": 1
+          },
+          "Field Control": {
+            "Kit Blank": 3,
+            "Field Blank": 2
+          }
+        },
+        "tag_charts": {
+          "AM/PM": {
+            "AM": {
+              "temporal": [
+                {
+                  "month": "2022-09",
+                  "count": 1
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 1
+                }
+              ],
+              "pipeline": {
+                "collected": 1,
+                "dna_extracted": 1,
+                "sequenced": 1
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "Replicate": {
+            "RH": {
+              "temporal": [
+                {
+                  "month": "2022-06",
+                  "count": 2
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 2
+                }
+              ],
+              "pipeline": {
+                "collected": 2,
+                "dna_extracted": 2,
+                "sequenced": 2
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 2
+                }
+              ]
+            }
+          },
+          "Position": {
+            "A (top)": {
+              "temporal": [
+                {
+                  "month": "2022-06",
+                  "count": 1
+                },
+                {
+                  "month": "2022-09",
+                  "count": 1
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 2
+                }
+              ],
+              "pipeline": {
+                "collected": 2,
+                "dna_extracted": 2,
+                "sequenced": 2
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 2
+                }
+              ]
+            },
+            "B (bottom)": {
+              "temporal": [
+                {
+                  "month": "2022-06",
+                  "count": 1
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 1
+                }
+              ],
+              "pipeline": {
+                "collected": 1,
+                "dna_extracted": 1,
+                "sequenced": 1
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "Field Control": {
+            "Kit Blank": {
+              "temporal": [
+                {
+                  "month": "2023-02",
+                  "count": 3
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 3
+                }
+              ],
+              "pipeline": {
+                "collected": 3,
+                "dna_extracted": 3,
+                "sequenced": 3
+              },
+              "sampler_type_dist": []
+            },
+            "Field Blank": {
+              "temporal": [
+                {
+                  "month": "2022-05",
+                  "count": 1
+                },
+                {
+                  "month": "2022-06",
+                  "count": 1
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 2
+                }
+              ],
+              "pipeline": {
+                "collected": 2,
+                "dna_extracted": 2,
+                "sequenced": 2
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 2
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
         "project_id": "2022 Fall CPER Extra",
         "sample_count": 15,
         "sample_types": [
@@ -108426,12 +106618,12 @@
       {
         "site_code": "SGRC",
         "site_name": "SGRC (Sagebrush Grassland Research Center)",
-        "sample_count": 2057,
+        "sample_count": 1982,
         "sub_sites": [
           {
             "sub_code": "Environment",
             "sub_name": "Environment",
-            "count": 1313,
+            "count": 1238,
             "sample_types": [
               {
                 "type": "Air",
@@ -108439,11 +106631,11 @@
               },
               {
                 "type": "Plant",
-                "count": 264
+                "count": 235
               },
               {
                 "type": "Soil",
-                "count": 149
+                "count": 103
               },
               {
                 "type": "Liquid",
@@ -108474,11 +106666,11 @@
           },
           {
             "type": "Plant",
-            "count": 726
+            "count": 697
           },
           {
             "type": "Soil",
-            "count": 431
+            "count": 385
           },
           {
             "type": "Liquid",
@@ -108510,19 +106702,11 @@
           },
           {
             "month": "2022-06",
-            "count": 142,
+            "count": 67,
             "types": [
               {
                 "type": "Air",
                 "count": 54
-              },
-              {
-                "type": "Soil",
-                "count": 46
-              },
-              {
-                "type": "Plant",
-                "count": 29
               },
               {
                 "type": "Liquid",
@@ -108530,11 +106714,11 @@
               }
             ],
             "weather": {
-              "temp": 18.2,
-              "humidity": 49,
-              "wind_speed": 3.0,
-              "precipitation": 1.1,
-              "n": 142,
+              "temp": 20.9,
+              "humidity": 43,
+              "wind_speed": 3.6,
+              "precipitation": 0.7,
+              "n": 67,
               "fidelity": "date_only"
             }
           },
@@ -108822,7 +107006,7 @@
               }
             ],
             "weather": {
-              "temp": -2.5,
+              "temp": -2.7,
               "humidity": 53,
               "wind_speed": 1.8,
               "precipitation": 0.0,
@@ -108833,14 +107017,14 @@
         ],
         "type_pipeline_crossTab": {
           "Plant": {
-            "collected": 726,
-            "dna_extracted": 411,
-            "sequenced": 411
+            "collected": 697,
+            "dna_extracted": 393,
+            "sequenced": 393
           },
           "Soil": {
-            "collected": 431,
-            "dna_extracted": 242,
-            "sequenced": 242
+            "collected": 385,
+            "dna_extracted": 227,
+            "sequenced": 227
           },
           "Air": {
             "collected": 879,
@@ -108861,11 +107045,11 @@
             },
             {
               "type": "Plant",
-              "count": 726
+              "count": 697
             },
             {
               "type": "Soil",
-              "count": 431
+              "count": 385
             },
             {
               "type": "Liquid",
@@ -108879,11 +107063,11 @@
             },
             {
               "type": "Plant",
-              "count": 411
+              "count": 393
             },
             {
               "type": "Soil",
-              "count": 242
+              "count": 227
             },
             {
               "type": "Liquid",
@@ -108893,7 +107077,7 @@
           "sequenced": [
             {
               "type": "Plant",
-              "count": 411
+              "count": 393
             },
             {
               "type": "Air",
@@ -108901,7 +107085,7 @@
             },
             {
               "type": "Soil",
-              "count": 242
+              "count": 227
             },
             {
               "type": "Liquid",
@@ -109018,12 +107202,12 @@
           "Position": {
             "Bottom": 142,
             "Top": 142,
-            "C (nearby)": 72,
+            "C (nearby)": 71,
             "B (bottom)": 50,
-            "A (top)": 37
+            "A (top)": 36
           },
           "Field Control": {
-            "Field Control": 40,
+            "Field Control": 37,
             "Blank": 32,
             "Precision Test": 20,
             "Field Blank": 10,
@@ -109409,11 +107593,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -109446,11 +107630,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -109483,11 +107667,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -109591,11 +107775,11 @@
                   "count": 16
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 }
               ]
@@ -109628,11 +107812,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -109665,11 +107849,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -109718,11 +107902,11 @@
                   "count": 16
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 }
               ]
@@ -109767,11 +107951,11 @@
                   "count": 31
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Tall Grass",
                   "count": 16
                 },
                 {
@@ -109914,11 +108098,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -109951,11 +108135,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -109988,11 +108172,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -110025,63 +108209,22 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
             }
           },
           "Position": {
-            "C (nearby)": {
-              "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 1
-                },
-                {
-                  "month": "2022-10",
-                  "count": 5
-                },
-                {
-                  "month": "2023-05",
-                  "count": 20
-                },
-                {
-                  "month": "2023-06",
-                  "count": 46
-                }
-              ],
-              "sample_types": [
-                {
-                  "type": "Air",
-                  "count": 71
-                },
-                {
-                  "type": "Plant",
-                  "count": 1
-                }
-              ],
-              "pipeline": {
-                "collected": 72,
-                "dna_extracted": 71,
-                "sequenced": 71
-              },
-              "sampler_type_dist": [
-                {
-                  "sampler": "SASS",
-                  "count": 71
-                }
-              ]
-            },
             "A (top)": {
               "temporal": [
                 {
                   "month": "2022-06",
-                  "count": 2
+                  "count": 1
                 },
                 {
                   "month": "2022-09",
@@ -110100,16 +108243,12 @@
                 {
                   "type": "Air",
                   "count": 36
-                },
-                {
-                  "type": "Plant",
-                  "count": 1
                 }
               ],
               "pipeline": {
-                "collected": 37,
-                "dna_extracted": 37,
-                "sequenced": 37
+                "collected": 36,
+                "dna_extracted": 36,
+                "sequenced": 36
               },
               "sampler_type_dist": [
                 {
@@ -110248,15 +108387,44 @@
                   "count": 50
                 }
               ]
+            },
+            "C (nearby)": {
+              "temporal": [
+                {
+                  "month": "2022-10",
+                  "count": 5
+                },
+                {
+                  "month": "2023-05",
+                  "count": 20
+                },
+                {
+                  "month": "2023-06",
+                  "count": 46
+                }
+              ],
+              "sample_types": [
+                {
+                  "type": "Air",
+                  "count": 71
+                }
+              ],
+              "pipeline": {
+                "collected": 71,
+                "dna_extracted": 70,
+                "sequenced": 70
+              },
+              "sampler_type_dist": [
+                {
+                  "sampler": "SASS",
+                  "count": 71
+                }
+              ]
             }
           },
           "Field Control": {
             "Field Control": {
               "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 3
-                },
                 {
                   "month": "2022-09",
                   "count": 17
@@ -110278,16 +108446,12 @@
                 {
                   "type": "Air",
                   "count": 37
-                },
-                {
-                  "type": "Plant",
-                  "count": 3
                 }
               ],
               "pipeline": {
-                "collected": 40,
-                "dna_extracted": 38,
-                "sequenced": 37
+                "collected": 37,
+                "dna_extracted": 35,
+                "sequenced": 34
               },
               "sampler_type_dist": [
                 {
@@ -110332,11 +108496,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "SASS",
+                  "sampler": "BioSpot VIVAS",
                   "count": 5
                 },
                 {
-                  "sampler": "BioSpot VIVAS",
+                  "sampler": "SASS",
                   "count": 5
                 }
               ]
@@ -111061,7 +109225,7 @@
           "Air": {
             "collected": 649,
             "dna_extracted": 357,
-            "sequenced": 356
+            "sequenced": 355
           }
         },
         "pipeline_type_crossTab": {
@@ -111080,7 +109244,7 @@
           "sequenced": [
             {
               "type": "Air",
-              "count": 356
+              "count": 355
             }
           ]
         },
@@ -111200,7 +109364,7 @@
               "pipeline": {
                 "collected": 122,
                 "dna_extracted": 62,
-                "sequenced": 61
+                "sequenced": 60
               },
               "sampler_type_dist": [
                 {
@@ -111336,7 +109500,7 @@
               "pipeline": {
                 "collected": 128,
                 "dna_extracted": 60,
-                "sequenced": 59
+                "sequenced": 58
               },
               "sampler_type_dist": [
                 {
@@ -113474,29 +111638,25 @@
       },
       {
         "group_name": "Kreidenweis",
-        "sample_count": 1263,
+        "sample_count": 1188,
         "sample_types": [
           {
             "type": "Air",
             "count": 1166
           },
           {
-            "type": "Soil",
-            "count": 47
-          },
-          {
-            "type": "Plant",
-            "count": 29
-          },
-          {
             "type": "Liquid",
             "count": 21
+          },
+          {
+            "type": "Soil",
+            "count": 1
           }
         ],
         "pipeline": {
-          "collected": 1263,
-          "dna_extracted": 771,
-          "sequenced": 732
+          "collected": 1188,
+          "dna_extracted": 738,
+          "sequenced": 698
         },
         "temporal": [
           {
@@ -113559,19 +111719,11 @@
           },
           {
             "month": "2022-06",
-            "count": 167,
+            "count": 92,
             "types": [
               {
                 "type": "Air",
                 "count": 79
-              },
-              {
-                "type": "Soil",
-                "count": 46
-              },
-              {
-                "type": "Plant",
-                "count": 29
               },
               {
                 "type": "Liquid",
@@ -113579,11 +111731,11 @@
               }
             ],
             "weather": {
-              "temp": 18.5,
-              "humidity": 48,
-              "wind_speed": 3.1,
-              "precipitation": 1.1,
-              "n": 167,
+              "temp": 20.7,
+              "humidity": 43,
+              "wind_speed": 3.6,
+              "precipitation": 0.7,
+              "n": 92,
               "fidelity": "date_only"
             }
           },
@@ -113722,22 +111874,17 @@
           "Air": {
             "collected": 1166,
             "dna_extracted": 735,
-            "sequenced": 696
+            "sequenced": 695
           },
           "Liquid": {
             "collected": 21,
             "dna_extracted": 2,
             "sequenced": 2
           },
-          "Plant": {
-            "collected": 29,
-            "dna_extracted": 18,
-            "sequenced": 18
-          },
           "Soil": {
-            "collected": 47,
-            "dna_extracted": 16,
-            "sequenced": 16
+            "collected": 1,
+            "dna_extracted": 1,
+            "sequenced": 1
           }
         },
         "pipeline_type_crossTab": {
@@ -113747,16 +111894,12 @@
               "count": 1166
             },
             {
-              "type": "Soil",
-              "count": 47
-            },
-            {
-              "type": "Plant",
-              "count": 29
-            },
-            {
               "type": "Liquid",
               "count": 21
+            },
+            {
+              "type": "Soil",
+              "count": 1
             }
           ],
           "dna_extracted": [
@@ -113765,34 +111908,26 @@
               "count": 735
             },
             {
-              "type": "Plant",
-              "count": 18
+              "type": "Liquid",
+              "count": 2
             },
             {
               "type": "Soil",
-              "count": 16
-            },
-            {
-              "type": "Liquid",
-              "count": 2
+              "count": 1
             }
           ],
           "sequenced": [
             {
               "type": "Air",
-              "count": 696
-            },
-            {
-              "type": "Plant",
-              "count": 18
-            },
-            {
-              "type": "Soil",
-              "count": 16
+              "count": 695
             },
             {
               "type": "Liquid",
               "count": 2
+            },
+            {
+              "type": "Soil",
+              "count": 1
             }
           ]
         },
@@ -113860,11 +111995,11 @@
           },
           "Position": {
             "B (bottom)": 177,
-            "A (top)": 161,
-            "C (nearby)": 72
+            "A (top)": 160,
+            "C (nearby)": 71
           },
           "Field Control": {
-            "Field Control": 50,
+            "Field Control": 47,
             "Field Blank": 25,
             "Lab Blank": 12,
             "Kit Blank": 7
@@ -113953,7 +112088,7 @@
               "pipeline": {
                 "collected": 264,
                 "dna_extracted": 162,
-                "sequenced": 161
+                "sequenced": 160
               },
               "sampler_type_dist": [
                 {
@@ -114174,7 +112309,7 @@
               "temporal": [
                 {
                   "month": "2022-06",
-                  "count": 7
+                  "count": 6
                 },
                 {
                   "month": "2022-09",
@@ -114197,16 +112332,12 @@
                 {
                   "type": "Air",
                   "count": 160
-                },
-                {
-                  "type": "Plant",
-                  "count": 1
                 }
               ],
               "pipeline": {
-                "collected": 161,
-                "dna_extracted": 94,
-                "sequenced": 94
+                "collected": 160,
+                "dna_extracted": 93,
+                "sequenced": 93
               },
               "sampler_type_dist": [
                 {
@@ -114251,7 +112382,7 @@
               "pipeline": {
                 "collected": 177,
                 "dna_extracted": 110,
-                "sequenced": 109
+                "sequenced": 108
               },
               "sampler_type_dist": [
                 {
@@ -114266,10 +112397,6 @@
             },
             "C (nearby)": {
               "temporal": [
-                {
-                  "month": "2022-06",
-                  "count": 1
-                },
                 {
                   "month": "2022-10",
                   "count": 5
@@ -114287,16 +112414,12 @@
                 {
                   "type": "Air",
                   "count": 71
-                },
-                {
-                  "type": "Plant",
-                  "count": 1
                 }
               ],
               "pipeline": {
-                "collected": 72,
-                "dna_extracted": 71,
-                "sequenced": 71
+                "collected": 71,
+                "dna_extracted": 70,
+                "sequenced": 70
               },
               "sampler_type_dist": [
                 {
@@ -114311,7 +112434,7 @@
               "temporal": [
                 {
                   "month": "2022-06",
-                  "count": 9
+                  "count": 6
                 },
                 {
                   "month": "2022-09",
@@ -114334,16 +112457,12 @@
                 {
                   "type": "Air",
                   "count": 47
-                },
-                {
-                  "type": "Plant",
-                  "count": 3
                 }
               ],
               "pipeline": {
-                "collected": 50,
-                "dna_extracted": 48,
-                "sequenced": 47
+                "collected": 47,
+                "dna_extracted": 45,
+                "sequenced": 44
               },
               "sampler_type_dist": [
                 {
@@ -114392,11 +112511,11 @@
                   "count": 15
                 },
                 {
-                  "sampler": "SASS",
+                  "sampler": "BioSpot VIVAS",
                   "count": 5
                 },
                 {
-                  "sampler": "BioSpot VIVAS",
+                  "sampler": "SASS",
                   "count": 5
                 }
               ]
@@ -114929,11 +113048,11 @@
                   "count": 90
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Sagegrass",
                   "count": 50
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "RusThistle",
                   "count": 50
                 }
               ]
@@ -114966,11 +113085,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -115003,11 +113122,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -115040,11 +113159,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Hetero",
                   "count": 34
                 },
                 {
-                  "sampler": "Hetero",
+                  "sampler": "Salsola",
                   "count": 34
                 }
               ]
@@ -115148,11 +113267,11 @@
                   "count": 16
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 }
               ]
@@ -115185,11 +113304,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -115222,11 +113341,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -115275,11 +113394,11 @@
                   "count": 16
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "RusThistle",
                   "count": 15
                 },
                 {
-                  "sampler": "RusThistle",
+                  "sampler": "Tall Grass",
                   "count": 15
                 }
               ]
@@ -115324,11 +113443,11 @@
                   "count": 31
                 },
                 {
-                  "sampler": "Tall Grass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Tall Grass",
                   "count": 16
                 },
                 {
@@ -115471,11 +113590,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -115508,11 +113627,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -115545,11 +113664,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -115582,11 +113701,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -115727,7 +113846,7 @@
               }
             ],
             "weather": {
-              "temp": -2.5,
+              "temp": -2.7,
               "humidity": 53,
               "wind_speed": 1.8,
               "precipitation": 0.0,
@@ -116969,12 +115088,12 @@
     "Air": {
       "collected": 2919,
       "dna_extracted": 2152,
-      "sequenced": 1870
+      "sequenced": 1869
     },
     "Soil": {
-      "collected": 750,
-      "dna_extracted": 561,
-      "sequenced": 560
+      "collected": 704,
+      "dna_extracted": 546,
+      "sequenced": 545
     },
     "Liquid": {
       "collected": 29,
@@ -116987,9 +115106,9 @@
       "sequenced": 0
     },
     "Plant": {
-      "collected": 870,
-      "dna_extracted": 528,
-      "sequenced": 528
+      "collected": 841,
+      "dna_extracted": 510,
+      "sequenced": 510
     }
   },
   "pipeline_type_crossTab": {
@@ -117000,11 +115119,11 @@
       },
       {
         "type": "Plant",
-        "count": 870
+        "count": 841
       },
       {
         "type": "Soil",
-        "count": 750
+        "count": 704
       },
       {
         "type": "Liquid",
@@ -117022,11 +115141,11 @@
       },
       {
         "type": "Soil",
-        "count": 561
+        "count": 546
       },
       {
         "type": "Plant",
-        "count": 528
+        "count": 510
       },
       {
         "type": "Liquid",
@@ -117040,15 +115159,15 @@
     "sequenced": [
       {
         "type": "Air",
-        "count": 1870
+        "count": 1869
       },
       {
         "type": "Soil",
-        "count": 560
+        "count": 545
       },
       {
         "type": "Plant",
-        "count": 528
+        "count": 510
       },
       {
         "type": "Liquid",
@@ -117175,14 +115294,14 @@
     }
   },
   "data_management": {
-    "n_field_samples": 4569,
+    "n_field_samples": 4494,
     "archived": {
-      "count": 3530,
-      "pct": 77.3
+      "count": 3984,
+      "pct": 88.7
     },
     "amplicon": {
-      "count": 2960,
-      "pct": 64.8
+      "count": 2926,
+      "pct": 65.1
     },
     "metagenomics": {
       "count": 63,
@@ -117192,12 +115311,12 @@
     "uploaded": {
       "strict": {
         "count": 623,
-        "pct": 13.6,
+        "pct": 13.9,
         "label": "Deposited in public data repositories"
       },
       "broad": {
         "count": 780,
-        "pct": 17.1,
+        "pct": 17.4,
         "label": "Linked to a publication or public record"
       }
     },

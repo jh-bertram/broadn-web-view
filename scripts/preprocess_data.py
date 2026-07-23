@@ -1825,9 +1825,9 @@ def main() -> None:
     print("\n=== DATA_MANAGEMENT ANCHOR VERIFICATION ===")
     dm = output["data_management"]
     dm_checks = [
-        ("n_field_samples", dm["n_field_samples"], 4569),           # VERIFIED: 2026-06-04
-        ("archived.count", dm["archived"]["count"], 3530),          # VERIFIED: 2026-06-04
-        ("amplicon.count", dm["amplicon"]["count"], 2960),          # VERIFIED: 2026-06-04
+        ("n_field_samples", dm["n_field_samples"], 4494),           # VERIFIED: 2026-07-23 (xlsx refresh; retired 4569 pre-refresh baseline)
+        ("archived.count", dm["archived"]["count"], 3984),          # VERIFIED: 2026-07-23 (xlsx refresh; retired 3530 — archival-status update, +454)
+        ("amplicon.count", dm["amplicon"]["count"], 2926),          # VERIFIED: 2026-07-23 (xlsx refresh; retired 2960 pre-refresh baseline)
         ("metagenomics.count", dm["metagenomics"]["count"], 63),    # VERIFIED: 2026-06-04
         ("metagenomics.deposited", dm["metagenomics"]["deposited"], 0),  # VERIFIED: 2026-06-04
         ("uploaded.strict.count", dm["uploaded"]["strict"]["count"], 623),  # VERIFIED: 2026-06-04
