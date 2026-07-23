@@ -969,7 +969,7 @@
      * @param {Object} dm - data.data_management
      */
     function renderDataManagement(dm) {
-      // --- KPI: Archived & Cataloged ---
+      // --- KPI: In Physical Storage ---
       document.getElementById('dm-archived-value').textContent = dm.archived.count.toLocaleString();
       document.getElementById('dm-archived-pct').textContent = dm.archived.pct + '%';
 
