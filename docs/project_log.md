@@ -1675,3 +1675,35 @@ Sprint metrics: 8 tasks delivered (6 FE, 1 BE, 1 gap fill). Audit pass rate 7/8 
     - Commit: NOT COMMITTED pending human mapping-confirmation + re-run decision on 5 open items above
   </retention_keys>
 </archive_entry>
+
+<archive_entry>
+  <timestamp>2026-07-24T23:47:30Z</timestamp>
+  <task_id>broadn-p20-acknowledgements</task_id>
+  <event_type>TASK_COMPLETE</event_type>
+  <rationale>
+    Acknowledgements & Citation footer section added to the BROADN web-view dashboard (index.html, +24 lines). Sprint delivered 6 verbatim acknowledgement blocks (A1-A6) plus NEON citation link, fully sourced by RA research against three external authorities. Key finding: the human's initial premise (Niwot forest tower on RMNP/NPS land) was contradicted by RA evidence; the tower is sited on U.S. Forest Service land (Arapaho &amp; Roosevelt National Forests, accessed via CU Boulder Mountain Research Station). A6 land-acknowledgement block mirrors the RA-verified fact and carries the corrected USFS/CU-MRS attribution. IMPROVE acknowledgement (A5) included because the dashboard surfaces IMPROVE Fungi project data in app.js (evidence: RA dossier Q2 confirmed official IMPROVE language exists at https://vista.cira.colostate.edu/Improve/data-acknowledgment/ and should be included if the site uses IMPROVE data; inclusion decision made on this evidence). Implementation: native HTML &lt;details&gt;/&lt;summary&gt; collapsible (no JavaScript); footer link uses Tailwind `text-[var(--color-accent)]` (#0c9cb4) with permanent underline, computing to ~5.35:1 WCAG AA contrast on the dark footer (verified by auditor). Pipeline: RA research (Q1 Cornell et al. 2026 Acknowledgements + Q2 IMPROVE official statement + Q3 Niwot forest tower land ownership verified against 4 sources: NEON NIWO, AmeriFlux LTER, Niwot Ridge LTER, Wikipedia) → PM task decomposition (UI+FE packets) → Critic PASS → UI design_spec → FE implementation → Auditor SA/QA/SX all PASS (seq 12 AUDIT_PASS). Non-blocking human-confirmation items flagged (email with task staff 2026-07-24): (1) truncated initial request sentence ("we need a link to the ___") resolved as NEON citing page; (2) RMNP→USFS correction in A6 wording; (3) Indigenous land acknowledgement surfaced as follow-up research (not sourced this sprint per RA note in dossier). Out-of-scope: Two-Towers-specific AmeriFlux/DOE credits (DOE funding was acknowledged in Cornell et al., not separately added).
+  </rationale>
+  <dependencies>
+    - RA research sources (all fetched 2026-07-24): (Q1) Cornell et al. 2026 mBio "Two Towers" Acknowledgements https://journals.asm.org/doi/10.1128/mbio.03057-25 (DOI resolved, full open-access text retrieved); (Q2) IMPROVE data-acknowledgment official statement https://vista.cira.colostate.edu/Improve/data-acknowledgment/ (retrieved from CIRA/CSU); (Q3) NEON NIWO field-site page https://www.neonscience.org/field-sites/niwo (forest-tower land manager = U.S. Forest Service Arapaho &amp; Roosevelt NF via CU MRS); (Q3) AmeriFlux US-NR1 site page https://ameriflux.lbl.gov/sites/siteinfo/US-NR1 (Niwot Ridge tower, 3050 m, confirms USFS land); (Q3) Niwot Ridge LTER https://nwt.lternet.edu/ (INSTAAR/CU Boulder, confirms USFS/Roosevelt NF); (Q3) Wikipedia Niwot Ridge article (confirms Roosevelt National Forest location, NOT RMNP)
+    - Task spec: `.claude/tasks/broadn-p20-acknowledgements.md` (grounding facts, open research items)
+    - RA evidence dossier: `.claude/tasks/outputs/broadn-p20-acknowledgements-RA-1784934255.md` (sourced findings, verbatim acknowledgement blocks Q1/Q2/Q3)
+    - Design reference: DESIGN.md color tokens (--color-accent #0c9cb4 for footer link, verified ~5.35:1 AA on dark footer #1c1917)
+    - Index.html footer structure (lines 946-961 pre-existing, new content lines 961-984, NSF disclaimer retained unmodified)
+  </dependencies>
+  <retention_keys>
+    - Six acknowledgement blocks shipped (A1-A6, all verbatim from sources):
+      A1: NSF Biology Integration Institutes Program Award # 2120117 + CSU One Health Institute
+      A2: SGRC facilities (Amy Bibbey, Troy Bauder, Colorado Agricultural Experiment Station)
+      A3: NEON (NSF/Battelle, NEON Assignable Assets program) + link https://www.neonscience.org/data/guidelines-policies/citing
+      A4: USDA-ARS Central Plains Experimental Range (CPER) site access
+      A5: IMPROVE (EPA primary funder, NPS contracting support, UC-Davis central lab, RTI + DRI analysis) — conditionally included because dashboard surfaces IMPROVE data
+      A6: Niwot Ridge forest tower on Arapaho &amp; Roosevelt National Forests (USFS) land, accessed via CU Boulder Mountain Research Station (CORRECTED from initial RMNP/NPS premise)
+    - Implementation details: footer new &lt;section&gt; with &lt;h2&gt;"Acknowledgements &amp; Citation" + &lt;details&gt;/&lt;summary&gt; (native keyboard-operable, no JS); two &lt;h3&gt; groups ("Funding &amp; Program Support", "Site Access &amp; Facilities"); NEON &lt;a href&gt; with rel="noopener noreferrer" + underline + focus-visible outline in --color-accent
+    - A11y verified (auditor): heading levels continue page pattern (no skips); summary label descriptive ("View funding, site access &amp; facility acknowledgements"); link color 5.35:1 AA contrast; underline distinguishes link without relying on color; no onClick handlers; all semantic HTML
+    - Design tokens used: text-stone-200 (~13.93:1 AAA on footer), text-stone-400 (~6.94:1 AA on footer), text-[var(--color-accent)] #0c9cb4 (~5.35:1 AA); spacing scale per DESIGN.md (mt-8 = 32px, space-y-4/6/3 = 16/24/12px); typography text-sm + text-xs + font-semibold uppercase tracking-wide (mirrors Data Table headers); max-w-3xl prose width constraint; zero raw hex, zero inline style= attributes
+    - Commits: 06fea47 `feat(dashboard): add Acknowledgements &amp; Citation footer section (index.html, +24 lines)` + a4973e6 `chore(orchestration): archive sprint artifacts` on sprint/broadn-p20-acknowledgements (both committed, branch ready for human PR to main)
+    - Event log (seq 1-13): RA SPAWN/COMPLETE (seq 1-2) → PM SPAWN/COMPLETE (seq 3-4) → Critic SPAWN/COMPLETE (seq 5-6) → UI SPAWN/COMPLETE (seq 7-8) → FE SPAWN/COMPLETE (seq 9-10) → Auditor SPAWN/AUDIT_PASS (seq 11-12) → Archivist SPAWN (seq 13)
+    - Non-delivered: Indigenous land acknowledgement (flagged as follow-up research, no authoritative tribal-source confirmation obtained this sprint); AmeriFlux/DOE credits (covered under Cornell et al. Acknowledgements, not separately added per scope)
+    - Human-surfaced follow-up items: (1) confirm truncated request sentence was NEON citing page intent, (2) verify RMNP→USFS correction &amp; A6 wording, (3) future: Indigenous land acknowledgement (requires separate sourcing/tribal consultation)
+  </retention_keys>
+</archive_entry>
