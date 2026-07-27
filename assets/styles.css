@@ -122,3 +122,20 @@
     }
     .design-continuation { outline: 1px dotted #e7e5e4; }
     .design-placeholder { color: #78716c; font-style: italic; }
+
+    /* Temperature unit toggle in the Explorer's weather-fidelity bar.
+       Display-only: covariate temps stay in °C everywhere downstream. */
+    .temp-unit-btn {
+      background: #ffffff;
+      color: #57534e;               /* stone-600 — 7.0:1 on white, AA pass */
+      cursor: pointer;
+      line-height: 1.25;
+    }
+    .temp-unit-btn:hover { background: #f5f5f4; }
+    .temp-unit-btn--active {
+      background: var(--color-teal-deep);   /* BROADN deep teal #0c5454 */
+      border-color: var(--color-teal-deep);
+      color: #ffffff;                     /* 9.4:1 on #0c5454, AA pass */
+      font-weight: 600;
+    }
+    .temp-unit-btn--active:hover { background: var(--color-teal-deep); }

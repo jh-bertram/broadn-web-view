@@ -71,6 +71,7 @@ COL_PROJECT_LEAD = "Project Lead"
 COL_FILTER_REMAINING = "Filter Remaining"  # freezer inventory (e.g. '3/4', '0/4')
 COL_COLLECTED_TIME = "Sample Collected Time"
 COL_SAMPLER_TYPE = "Sampler Type"       # device/method used (e.g. 'SASS', 'SKC BioSampler') — 73.9% fill on field samples (verified 2026-03-22)
+COL_COLLECTION_MEDIUM = "Sample Collection Medium"  # what the sample was captured onto/into (e.g. 'Polycarbonate', 'Liquid wash', 'PTFE') — 33.4% fill across all rows (verified 2026-07-27). Distinct from COL_SAMPLE_SOURCE_TYPE, which is the matrix sampled (Air/Plant/Soil/Liquid).
 COL_SAMPLE_REPLICATE = "Sample Replicate"  # batch/replicate tag (e.g. 'AM', 'PM') — 45.9% fill on field samples (verified 2026-03-22)
 
 # New typed tag columns (added in xlsx split — may not yet exist in current xlsx).
@@ -803,6 +804,14 @@ def build_all_samples(
             "project":       nullable(row.get(COL_PROJECT_ID)),
             "project_group": nullable(row.get(COL_PROJECT_GROUP)),
             "lab_group":     nullable(row.get(COL_PROJECT_LEAD)),
+            # Explorer columns (2026-07-27 feedback). Read via row.get like site/type,
+            # NOT col_val — col_val gates on df_col_map, which holds only the five tag
+            # columns, and adding these to it would also turn them into filter pills.
+            # Both are partially filled — sampler ~77%, medium ~33% — so the table
+            # renders an em dash for nulls and the existing empty-sorts-last
+            # comparator handles them unchanged.
+            "sampler":       nullable(row.get(COL_SAMPLER_TYPE)),
+            "medium":        nullable(row.get(COL_COLLECTION_MEDIUM)),
             "am_pm":         col_val(COL_SAMPLE_AMPM),
             "replicate":     col_val(COL_SAMPLE_REPLICATE_R),
             "quadrant":      col_val(COL_SAMPLE_QUADRANT),

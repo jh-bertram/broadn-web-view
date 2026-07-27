@@ -929,6 +929,21 @@
                  enter designer mode, so #design-status (announce()) is not guaranteed to exist. -->
             <span id="explorer-status" class="sr-only" aria-live="polite"></span>
 
+            <!-- Weather-fidelity note sits ABOVE the table (2026-07-08 feedback): it qualifies
+                 what the Temp / Humidity columns mean, so it has to be read before the numbers,
+                 not discovered underneath them. The °C/°F toggle rides in the same bar because
+                 it governs the same column. -->
+            <div class="weather-fidelity-caption bg-stone-100 border-b border-stone-200 text-stone-600 text-xs px-6 py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+              <p>Temp / Humidity are modeled grid-cell estimates (~11&ndash;25 km resolution), not site measurements. * = &plusmn;24h window estimate &nbsp; &dagger; = date-only estimate (coarsest fidelity)</p>
+              <div class="flex items-center gap-1 shrink-0" role="group" aria-label="Temperature units">
+                <span class="text-stone-500">Temperature in</span>
+                <button type="button" id="temp-unit-c" data-temp-unit="C" aria-pressed="true"
+                  class="temp-unit-btn px-2 py-0.5 rounded border border-stone-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]">&deg;C</button>
+                <button type="button" id="temp-unit-f" data-temp-unit="F" aria-pressed="false"
+                  class="temp-unit-btn px-2 py-0.5 rounded border border-stone-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]">&deg;F</button>
+              </div>
+            </div>
+
             <!-- TABLE -->
             <div class="overflow-x-auto">
               <table id="explorer-table" class="w-full text-sm text-left text-stone-600" aria-label="Field samples">
@@ -938,9 +953,11 @@
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="date" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Date">Date <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="site" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Site">Site <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="type" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Type">Type <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="medium" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by collection medium — what the sample was captured onto or into">Medium <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="sampler" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by sampling equipment — the device or method used to collect the sample">Sampler <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="category" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Category">Category <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="pipeline_stage" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Pipeline Stage">Stage <span class="sort-indicator" aria-hidden="true"></span></button></th>
-                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="covariates_temp" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Temperature — modeled grid-cell estimate, not a site measurement">Temp (Modeled) <span class="sort-indicator" aria-hidden="true"></span></button></th>
+                    <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="covariates_temp" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Temperature — modeled grid-cell estimate, not a site measurement">Temp <span id="temp-col-unit">&deg;C</span> (Modeled) <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3" aria-sort="none"><button type="button" data-sort-key="covariates_humidity" class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded" aria-label="Sort by Humidity — modeled grid-cell estimate, not a site measurement">Humidity (Modeled) <span class="sort-indicator" aria-hidden="true"></span></button></th>
                     <th scope="col" class="px-6 py-3">Request</th>
                   </tr>
@@ -948,7 +965,6 @@
                 <tbody id="explorer-tbody"></tbody>
               </table>
             </div>
-            <p class="weather-fidelity-caption bg-stone-100 border-t border-stone-200 text-stone-600 text-xs px-6 py-2">Temp / Humidity are modeled grid-cell estimates (~11&ndash;25 km resolution), not site measurements. * = &plusmn;24h window estimate &nbsp; &dagger; = date-only estimate (coarsest fidelity)</p>
             <div id="table-pagination" class="flex items-center justify-center gap-4 mt-4 pb-4 text-sm text-stone-600"></div>
           </div>
         </section>

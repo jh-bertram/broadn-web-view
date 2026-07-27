@@ -1465,43 +1465,26 @@
             borderWidth: 0
           }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: CHART_COLORS.tooltip,
-              padding: 10,
-              titleFont: { size: 12 },
-              bodyFont: { size: 12 },
-              callbacks: {
-                title: function(items) { return items[0].label; },
-                label: function(ctx) {
-                  if (ctx.parsed.y === null || ctx.parsed.y === undefined) { return ''; }
-                  var monthLabel = ctx.label;
-                  var entry = (appData && appData.temporal || []).find(function(t) { return t.month === monthLabel; });
-                  if (!entry || !entry.types || entry.types.length === 0) {
-                    return ' ' + ctx.parsed.y.toLocaleString() + ' samples';
-                  }
-                  return entry.types.map(function(t) { return ' ' + t.type + ': ' + t.count.toLocaleString(); });
-                }
+        // Was a full inline copy of buildTemporalChartOptions() plus tooltip callbacks.
+        // The duplicate is why the mobile x-axis overlap fix initially missed THIS
+        // chart — the very one the report was about. Now it derives from the shared
+        // helper like the four slice temporal charts do, so axis changes reach all five.
+        options: (function() {
+          var o = buildTemporalChartOptions();
+          o.plugins.tooltip.callbacks = {
+            title: function(items) { return items[0].label; },
+            label: function(ctx) {
+              if (ctx.parsed.y === null || ctx.parsed.y === undefined) { return ''; }
+              var monthLabel = ctx.label;
+              var entry = (appData && appData.temporal || []).find(function(t) { return t.month === monthLabel; });
+              if (!entry || !entry.types || entry.types.length === 0) {
+                return ' ' + ctx.parsed.y.toLocaleString() + ' samples';
               }
+              return entry.types.map(function(t) { return ' ' + t.type + ': ' + t.count.toLocaleString(); });
             }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              grid: { color: CHART_COLORS.gridLine },
-              title: { display: true, text: 'Samples', color: CHART_COLORS.axisLabel, font: { size: 11 } }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { maxRotation: 45, autoSkip: false, font: { size: 10 } },
-              title: { display: true, text: 'Collection Date (Month/Year)', color: CHART_COLORS.axisLabel, font: { size: 11 } }
-            }
-          }
-        }
+          };
+          return o;
+        }())
       });
     }
 
@@ -2552,6 +2535,54 @@
       return value.toFixed(decimals) + unit + (EXPLORER_FIDELITY_MARKERS[fidelity] || '');
     }
 
+    // --- Temperature unit toggle (2026-07-08 feedback) --------------------------
+    // Covariate temps are stored in °C throughout (data.json, the slice weather
+    // overlay, the CSV). This is a DISPLAY-only conversion for the Explorer's Temp
+    // column; nothing downstream reads the converted number. Sorting deliberately
+    // stays on the raw °C value — °F is a strictly increasing function of °C, so
+    // the row order is identical either way and the comparator needs no unit
+    // awareness. Persisted so the choice survives a reload.
+    var TEMP_UNIT_STORAGE_KEY = 'broadn.explorer.tempUnit';
+    var explorerTempUnit = 'C';   // 'C' | 'F'
+
+    function loadTempUnit() {
+      try {
+        var saved = window.localStorage.getItem(TEMP_UNIT_STORAGE_KEY);
+        if (saved === 'C' || saved === 'F') { explorerTempUnit = saved; }
+      } catch (e) { /* private mode / storage disabled — keep the °C default */ }
+    }
+
+    function tempUnitLabel() { return explorerTempUnit === 'F' ? '°F' : '°C'; }
+
+    // Formats the Temp cell in the active unit. Same fidelity markers either way.
+    function formatExplorerTemp(celsius, fidelity) {
+      if (celsius === null || celsius === undefined) { return '—'; }
+      var value = explorerTempUnit === 'F' ? (celsius * 9 / 5) + 32 : celsius;
+      return formatExplorerWeather(value, fidelity, 1, tempUnitLabel());
+    }
+
+    // Repaints the toggle's pressed state and the Temp column header unit.
+    function updateTempUnitUi() {
+      document.querySelectorAll('.temp-unit-btn').forEach(function(btn) {
+        var active = btn.getAttribute('data-temp-unit') === explorerTempUnit;
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        btn.classList.toggle('temp-unit-btn--active', active);
+      });
+      var unitEl = document.getElementById('temp-col-unit');
+      if (unitEl) { unitEl.textContent = tempUnitLabel(); }
+    }
+
+    function setExplorerTempUnit(unit) {
+      if (unit !== 'C' && unit !== 'F') { return; }
+      if (unit === explorerTempUnit) { return; }
+      explorerTempUnit = unit;
+      try { window.localStorage.setItem(TEMP_UNIT_STORAGE_KEY, unit); } catch (e) { /* non-fatal */ }
+      updateTempUnitUi();
+      // Re-render the current page in place — the sort order cannot change, so the
+      // page number stays valid and there is nothing to recompute beyond the cells.
+      if (appData && appData.all_samples) { renderTable(appData.all_samples, tableCurrentPage); }
+    }
+
     // Single source of truth for "what the Explorer shows" — dashboard slice/tag filter (Step A),
     // local dropdown filter (Step B), and current sort order. renderTable() paginates this result;
     // the CSV export reads the same result in full, so table order and export order always match.
@@ -2713,7 +2744,9 @@
 
       if (pageRows.length === 0) {
         var tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="9" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
+        // colspan tracks the header: ID, Date, Site, Type, Medium, Sampler,
+        // Category, Stage, Temp, Humidity, Request.
+        tr.innerHTML = '<td colspan="11" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
         tbody.appendChild(tr);
       } else {
         pageRows.forEach(function(row) {
@@ -2726,9 +2759,12 @@
             '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.date) + '</td>' +
             '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.site) + '</td>' +
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + typeCls + '">' + escapeHtml(row.type) + '</span></td>' +
+            // Sampler ~75% filled, medium ~36% — the em dash is the common case, not an error.
+            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.medium || '—') + '</td>' +
+            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.sampler || '—') + '</td>' +
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>' +
             '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + (STAGE_BADGE_CLASSES[row.pipeline_stage] || 'bg-stone-100 text-stone-600') + '">' + escapeHtml(STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || '—') + '</span></td>' +
-            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerWeather(row.covariates_temp, row.covariates_fidelity, 1, '°C')) + '</td>' +
+            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerTemp(row.covariates_temp, row.covariates_fidelity)) + '</td>' +
             '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerWeather(row.covariates_humidity, row.covariates_fidelity, 0, '%')) + '</td>' +
             '<td class="px-6 py-4">' + cartButtonHtml(row) + '</td>';
           tbody.appendChild(tr);
@@ -2791,15 +2827,23 @@
       return '"' + str.replace(/"/g, '""') + '"';
     }
 
-    var EXPLORER_CSV_HEADER = ['Sample ID', 'Date', 'Site', 'Type', 'Category', 'Pipeline Stage', 'Temperature (°C)', 'Humidity (%)'];
-    var EXPLORER_CSV_FIELDS = ['id', 'date', 'site', 'type', 'category', 'pipeline_stage'];
+    // Column order mirrors the table header exactly. The temperature header is built
+    // per export rather than being a constant, so the CSV is labelled in whichever
+    // unit the toggle is showing — a file headed °C holding °F values would be worse
+    // than either choice on its own.
+    var EXPLORER_CSV_FIELDS = ['id', 'date', 'site', 'type', 'medium', 'sampler', 'category', 'pipeline_stage'];
+
+    function explorerCsvHeader() {
+      return ['Sample ID', 'Date', 'Site', 'Type', 'Collection Medium', 'Sampler',
+              'Category', 'Pipeline Stage', 'Temperature (' + tempUnitLabel() + ')', 'Humidity (%)'];
+    }
 
     function buildExplorerCsv(rows) {
-      var lines = [EXPLORER_CSV_HEADER.map(csvCell).join(',')];
+      var lines = [explorerCsvHeader().map(csvCell).join(',')];
       rows.forEach(function(row) {
         var cells = EXPLORER_CSV_FIELDS.map(function(f) { return csvCell(row[f]); });
         // Same shared formatter as the table cell — structural table/CSV parity (p13 DRY contract).
-        cells.push(csvCell(formatExplorerWeather(row.covariates_temp, row.covariates_fidelity, 1, '°C')));
+        cells.push(csvCell(formatExplorerTemp(row.covariates_temp, row.covariates_fidelity)));
         cells.push(csvCell(formatExplorerWeather(row.covariates_humidity, row.covariates_fidelity, 0, '%')));
         lines.push(cells.join(','));
       });
@@ -3130,7 +3174,12 @@
           },
           x: {
             grid: { display: false },
-            ticks: { maxRotation: 45, autoSkip: false, font: { size: 10 } },
+            // autoSkip MUST stay true. With it off, every month label is forced to
+            // render, and on a ~330px phone a multi-year span collapses into an
+            // unreadable smear of overlapping text (reported 2026-07-23). Chart.js
+            // thins the labels to fit the actual width, so this self-corrects across
+            // viewports instead of needing a breakpoint.
+            ticks: { maxRotation: 45, autoSkip: true, autoSkipPadding: 6, font: { size: 10 } },
             title: { display: true, text: 'Collection Date (Month/Year)', color: CHART_COLORS.axisLabel, font: { size: 11 } }
           }
         }
@@ -5550,6 +5599,21 @@
       trigger.focus();
     }
 
+    // MOBILE DRAWER GUARD — closes the drawer only when it is actually open, so
+    // trigger.focus() cannot steal focus on a desktop click.
+    //
+    // Call this ONLY from controls that navigate somewhere: the story rail, All
+    // BROADN Samples, Explorer, and group-list leaf items. The Project / Location /
+    // Lab Group category buttons must NOT call it — they only expand or collapse a
+    // group list inside the drawer, and closing the drawer there hid the very list
+    // the tap had just opened (reported 2026-07-27).
+    function closeDrawerIfOpen() {
+      var trigger = document.getElementById('slice-drawer-trigger');
+      if (trigger && trigger.getAttribute('aria-expanded') === 'true') {
+        closeMobileDrawer();
+      }
+    }
+
     // =============================================================================
     // SLICE SIDEBAR — KEYBOARD NAVIGATION
     // =============================================================================
@@ -5684,8 +5748,13 @@
     // SLICE SIDEBAR — GROUP ITEM CLICK HANDLER
     // =============================================================================
 
+    // Single funnel for selecting a group, mouse or keyboard — handleGroupItemKeydown
+    // dispatches Enter/Space through li.click(). Selecting a leaf navigates the pane
+    // behind the drawer, so this is where the mobile drawer gets dismissed; the
+    // category buttons above it must not.
     function handleGroupItemClick(groupId) {
       filterState.slice.group = groupId;
+      closeDrawerIfOpen();
       renderView();
     }
 
@@ -5793,17 +5862,6 @@
       });
 
       // -----------------------------------------------------------------------
-      // MOBILE DRAWER GUARD — fires closeMobileDrawer() only when drawer is open
-      // (prevents trigger.focus() from stealing focus on desktop clicks)
-      // -----------------------------------------------------------------------
-      function closeDrawerIfOpen() {
-        var trigger = document.getElementById('slice-drawer-trigger');
-        if (trigger && trigger.getAttribute('aria-expanded') === 'true') {
-          closeMobileDrawer();
-        }
-      }
-
-      // -----------------------------------------------------------------------
       // STORY rail item handlers (indices 0-3 in getCategoryButtons())
       // D1-a: click sets paneMode='story', scrolls to section, closes mobile drawer
       // -----------------------------------------------------------------------
@@ -5851,9 +5909,10 @@
       });
 
       // Category button: Project (index 5)
+      // NOTE: the three category buttons deliberately do NOT close the mobile
+      // drawer — they expand/collapse a group list inside it. See closeDrawerIfOpen().
       var btnProject = document.getElementById('slice-btn-project');
       btnProject.addEventListener('click', function() {
-        closeDrawerIfOpen();
         handleCategoryClick(SLICE_CATEGORIES.PROJECT);
       });
       btnProject.addEventListener('keydown', function(e) {
@@ -5863,7 +5922,6 @@
       // Category button: Location / Hub (index 6)
       var btnLocation = document.getElementById('slice-btn-location');
       btnLocation.addEventListener('click', function() {
-        closeDrawerIfOpen();
         handleCategoryClick(SLICE_CATEGORIES.LOCATION);
       });
       btnLocation.addEventListener('keydown', function(e) {
@@ -5873,7 +5931,6 @@
       // Category button: Lab Group (index 7)
       var btnLabgroup = document.getElementById('slice-btn-labgroup');
       btnLabgroup.addEventListener('click', function() {
-        closeDrawerIfOpen();
         handleCategoryClick(SLICE_CATEGORIES.LAB_GROUP);
       });
       btnLabgroup.addEventListener('keydown', function(e) {
@@ -6018,6 +6075,16 @@
           }
           tableCurrentPage = 1;
           renderTable(appData.all_samples, 1);
+        });
+      });
+
+      // Temperature unit toggle — restore the saved choice before the first render
+      // so the table never paints in °C and then flips.
+      loadTempUnit();
+      updateTempUnitUi();
+      document.querySelectorAll('.temp-unit-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          setExplorerTempUnit(btn.getAttribute('data-temp-unit'));
         });
       });
 
