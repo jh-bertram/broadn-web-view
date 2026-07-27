@@ -295,11 +295,24 @@
             <span id="slice-active-chip" class="hidden rounded-full bg-orange-100 text-orange-700 border border-orange-300 text-xs font-medium px-3 py-1 whitespace-nowrap" aria-live="polite"></span>
           </div>
 
-          <!-- Project context banner — shown in Project slice view when a project is selected -->
+          <!-- Slice context banner — shown in the Project and Location slice views when a group
+               is selected. When SLICE_PHOTOS has a landscape for the slice, the figure below
+               renders full-bleed above the bio row (negative margins cancel the card's p-5);
+               badge-kind photos swap into the icon square instead and the strip stays hidden. -->
           <div id="project-banner" class="hidden bg-white border border-stone-200 rounded-lg p-5 mb-4">
+            <figure class="project-banner-photo hidden -mx-5 -mt-5 mb-5">
+              <!-- 7px, not rounded-t-lg: nests inside the card's 8px radius minus its 1px border -->
+              <div class="overflow-hidden rounded-t-[7px] bg-stone-100">
+                <!-- no src= until updateBannerPhoto() sets one: src="" re-requests the page URL -->
+                <img class="project-banner-photo-img w-full h-28 sm:h-36 md:h-44 object-cover block"
+                     alt="" loading="lazy" decoding="async" />
+              </div>
+              <figcaption class="project-banner-photo-credit hidden text-[11px] leading-snug text-stone-500 px-5 pt-2"></figcaption>
+            </figure>
             <div class="flex items-start gap-4">
-              <div class="w-20 h-20 rounded-lg flex items-center justify-center shrink-0" style="background:#f0fdfd;color:#0e7474" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.7-6-10a6 6 0 0 1 12 0c0 4.3-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
+              <div class="project-banner-icon w-20 h-20 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style="background:#f0fdfd;color:#0e7474" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="project-banner-icon-svg w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.7-6-10a6 6 0 0 1 12 0c0 4.3-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>
+                <img class="project-banner-badge hidden w-full h-full object-contain" alt="" loading="lazy" decoding="async" />
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2">

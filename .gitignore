@@ -20,3 +20,12 @@ Thumbs.db
 
 # Local working backups
 *.bak-*
+
+# Full-resolution photo drops staged in the repo root. The web-sized crops that
+# the dashboard actually serves live in assets/photos/ and ARE tracked; these
+# multi-megabyte originals are not, so a stray `git add -A` cannot publish them.
+/*.JPG
+/*.jpg
+/*.jpeg
+/*.png
+/*.webp

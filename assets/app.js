@@ -315,6 +315,247 @@
       }
     };
 
+    // Per-location page content (bucket B, location slices). Keyed by site_code
+    // (matches slice_views.location[].site_code). Same field shape as
+    // PROJECT_CONTENT so updateSliceBanner() reads both through one code path;
+    // locations carry no lead/coInvestigators. Summaries are condensed from the
+    // per-sub-site descriptions in data/sites.json — no facts added. Sites with
+    // no entry ("Unknown") render no banner rather than a fabricated blurb.
+    const LOCATION_CONTENT = {
+      "CPER": {
+        location: "Nunn, Colorado",
+        summary: "The Central Plains Experimental Range — the program's primary shortgrass steppe field site. Paired tower-top and tower-bottom air sampling quantifies vertical gradients in microbial community composition, alongside soil, plant, and ambient air collected across the surrounding range."
+      },
+      "SGRC": {
+        location: "Nunn, Colorado",
+        summary: "Grassland research site near Nunn, a few kilometres from CPER. East and South sampling positions give directional contrast for aerobiome source attribution, and general-environment collections add soil and plant matrices to the air filters."
+      },
+      "NWT": {
+        location: "Niwot Ridge LTER, Colorado",
+        summary: "Niwot Ridge Long-Term Ecological Research site in the Colorado Front Range. Top, middle, and bottom positions form an altitudinal transect running from montane forest, through the subalpine forest–tundra ecotone, to high-alpine tundra above treeline."
+      },
+      "IMPROVE": {
+        location: "U.S. national parks",
+        summary: "Archived aerosol filters from IMPROVE network monitoring stations in national parks across the country — Acadia, Everglades, Grand Canyon, Great Smoky Mountains, Hawai‘i Volcanoes, Rocky Mountain, Olympic, and Voyageurs — spanning deciduous forest, subtropical wetland, arid canyon, tropical island, montane, temperate rainforest, and boreal settings."
+      },
+      "ARDEC": {
+        location: "Fort Collins, Colorado",
+        summary: "The Agricultural Research, Development and Education Center. Paired upwind and downwind positions characterize the background aerobiome and measure how livestock and crop operations change it."
+      },
+      "Foothills Campus": {
+        location: "Fort Collins, Colorado",
+        summary: "Stations on the CSU Foothills Campus — the Atmospheric Chemistry building to the north and the Regional Innovation Campus to the south — monitoring urban-influenced aerobiome at the mountain–plains interface."
+      },
+      "Big Spring, Texas": {
+        location: "Howard County, Texas",
+        summary: "Semi-arid rangeland deployment on the southern Great Plains, running SASS and Mini SASS samplers side by side to compare high-volume and compact aerobiome collection under dry conditions."
+      },
+      "PGF": {
+        location: "CSU campus, Fort Collins, Colorado",
+        summary: "Greenhouse and incubation areas at the Plant Growth Facility, used for controlled aerobiome exposure studies inside defined plant-growth environments."
+      },
+      "Other": {
+        summary: "Sites outside the core network — South Carolina collections for the Fragmented Landscape project, and partner sampling at Doane University in Crete, Nebraska."
+      }
+    };
+
+    // Field photography for slice banners, keyed by project_id (projects) and
+    // site_code (locations). A slice with no entry renders the banner with no
+    // photo — nothing is fabricated or substituted.
+    //   src         path relative to the page
+    //   alt         described for screen readers; '' only for the decorative badge
+    //   kind        'badge' swaps the image into the banner's icon square instead of
+    //               the wide strip (project marks and logos, not landscapes)
+    //   position    object-position, to keep the subject inside the letterbox crop
+    //   credit      attribution line; REQUIRED for any image BROADN does not own
+    //   creditUrl   link to the source/licence page, shown as a "source" link
+    //   placeholder true when the image only *represents* the site rather than
+    //               depicting it — renders a "Representative image" prefix so the
+    //               page never implies a stand-in was taken at the site
+    //
+    // Every third-party file below was fetched from Wikimedia Commons, its licence
+    // read off the file page, and stored locally (Commons must not be hotlinked).
+    // All were cropped to the banner's 3.2:1 letterbox — noted in each credit as
+    // CC BY / BY-SA require indicating modifications.
+    const PHOTO_DIR = 'assets/photos/';
+    const SLICE_PHOTOS = {
+      project: {
+        // Supplied with the photo drop, but neither depicts its project's actual
+        // ground (this project samples South Carolina; IMPROVE samples U.S. national
+        // parks) and neither arrived with provenance. Flagged as placeholders until
+        // the team either confirms the rights or sends a real field photo.
+        "IMPROVE Fungi": {
+          src: PHOTO_DIR + 'improve-network.jpg',
+          alt: 'Sunrise over an alpine meadow below a rocky ridgeline.',
+          placeholder: true,
+          credit: 'Stock image supplied as a stand-in — source and licence not yet confirmed.'
+        },
+        "Fragmented Landscape": {
+          src: PHOTO_DIR + 'fragmented-landscape.jpg',
+          alt: 'A dark lava flow spreading in patches across a pale open plain, with hazy hills behind.',
+          placeholder: true,
+          credit: 'Stock image supplied as a stand-in — source and licence not yet confirmed.'
+        },
+        "Fall Plant Circle": {
+          src: PHOTO_DIR + 'fall-plant-circle.jpg',
+          alt: 'Shortgrass prairie under towering cumulus, with a line of bare cottonwoods along the far edge.'
+        },
+        "Spring Plant Circle": {
+          src: PHOTO_DIR + 'spring-plant-circle.jpg',
+          alt: 'A field of yellow spring bloom behind a barbed-wire fence, with a research tower on the horizon.'
+        },
+        "Fall Plants & Soil": {
+          src: PHOTO_DIR + 'plants-and-soil.jpg',
+          alt: 'A dirt ranch road running alongside a field of yellow bloom out to a distant mountain skyline.'
+        },
+        "Spring Plants & Soil": {
+          src: PHOTO_DIR + 'plants-and-soil.jpg',
+          alt: 'A dirt ranch road running alongside a field of yellow bloom out to a distant mountain skyline.'
+        },
+        "Flux": {
+          src: PHOTO_DIR + 'farm-flux-badge.png',
+          kind: 'badge',
+          alt: ''
+        },
+        "2024 Summer": {
+          src: PHOTO_DIR + 'sgrc-cottonwoods.jpg',
+          alt: 'A fallen cottonwood limb arching across a grazed cottonwood grove, with cattle in the distance.'
+        },
+
+        // CPER campaigns — season-matched to the program's own CPER photography.
+        "2022 Fall CPER": {
+          src: PHOTO_DIR + 'fall-plant-circle.jpg',
+          alt: 'Shortgrass prairie under towering cumulus, with a line of bare cottonwoods along the far edge.'
+        },
+        "2022 Fall CPER Control": {
+          src: PHOTO_DIR + 'fall-plant-circle.jpg',
+          alt: 'Shortgrass prairie under towering cumulus, with a line of bare cottonwoods along the far edge.'
+        },
+        "2022 Fall CPER Extra": {
+          src: PHOTO_DIR + 'fall-plant-circle.jpg',
+          alt: 'Shortgrass prairie under towering cumulus, with a line of bare cottonwoods along the far edge.'
+        },
+        "Spring Chemistry": {
+          src: PHOTO_DIR + 'spring-plant-circle.jpg',
+          alt: 'A field of yellow spring bloom behind a barbed-wire fence, with a research tower on the horizon.'
+        },
+        "Spring SKC": {
+          src: PHOTO_DIR + 'spring-plant-circle.jpg',
+          alt: 'A field of yellow spring bloom behind a barbed-wire fence, with a research tower on the horizon.'
+        },
+
+        // Representative placeholders — see the `placeholder` note above.
+        "Two Towers": {
+          src: PHOTO_DIR + 'flux-tower.jpg',
+          alt: 'An instrumented lattice flux tower carrying sonic anemometers and radiation sensors, beneath a storm dropping rain shafts over open grassland.',
+          placeholder: true,
+          credit: 'NEON flux tower, Jornada Experimental Range, New Mexico. Photo by Robin Luna / NEON Science, CC BY 2.0, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:NEON_Tower.jpg'
+        },
+        "BACS": {
+          src: PHOTO_DIR + 'convective-storm.jpg',
+          alt: 'A broad laminated shelf cloud on a thunderstorm gust front arcing across open Great Plains grassland.',
+          placeholder: true,
+          credit: 'Shelf cloud over the Great Plains, 3 June 2008. Photo by Sean Waugh, NOAA/NSSL — public domain, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Nssl0225_-_Flickr_-_NOAA_Photo_Library.jpg'
+        },
+        "Ice-Nucleating Particles": {
+          src: PHOTO_DIR + 'convective-storm.jpg',
+          alt: 'A broad laminated shelf cloud on a thunderstorm gust front arcing across open Great Plains grassland.',
+          placeholder: true,
+          credit: 'Shelf cloud over the Great Plains, 3 June 2008. Photo by Sean Waugh, NOAA/NSSL — public domain, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Nssl0225_-_Flickr_-_NOAA_Photo_Library.jpg'
+        },
+        "Spring SASS/Polycarbonate Top/Bottom": {
+          src: PHOTO_DIR + 'air-sampler-filter.jpg',
+          alt: 'A gloved hand holding a labelled filter-pack cartridge just removed from a field air-sampling station.',
+          placeholder: true,
+          credit: 'CASTNet filter pack, Shenandoah National Park. Photo by Mary O’Neill, U.S. National Park Service — public domain, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Ozone_and_Dry_Deposition_(22a01cff-831c-42a6-a5f2-78e0e869be9b).jpg'
+        },
+        "Spring Sass/VIVAS": {
+          src: PHOTO_DIR + 'air-sampler-filter.jpg',
+          alt: 'A gloved hand holding a labelled filter-pack cartridge just removed from a field air-sampling station.',
+          placeholder: true,
+          credit: 'CASTNet filter pack, Shenandoah National Park. Photo by Mary O’Neill, U.S. National Park Service — public domain, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Ozone_and_Dry_Deposition_(22a01cff-831c-42a6-a5f2-78e0e869be9b).jpg'
+        },
+        "Optimization Tests": {
+          src: PHOTO_DIR + 'air-sampler-filter.jpg',
+          alt: 'A gloved hand holding a labelled filter-pack cartridge just removed from a field air-sampling station.',
+          placeholder: true,
+          credit: 'CASTNet filter pack, Shenandoah National Park. Photo by Mary O’Neill, U.S. National Park Service — public domain, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Ozone_and_Dry_Deposition_(22a01cff-831c-42a6-a5f2-78e0e869be9b).jpg'
+        },
+        "ARDEC Pilot Study": {
+          src: PHOTO_DIR + 'center-pivot-field.jpg',
+          alt: 'A centre-pivot irrigation boom spraying a green forage field under a clear sky on the Colorado plains.',
+          placeholder: true,
+          credit: 'Centre-pivot irrigation, Adams County, Colorado. Photo by Jeffrey Beall, CC BY 4.0, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Center_pivot_irrigation_in_Colorado.JPG'
+        }
+      },
+      location: {
+        "CPER": {
+          src: 'assets/hero-image-1.jpg',
+          alt: 'Wide shortgrass prairie at the Central Plains Experimental Range under a cumulus-filled sky.'
+        },
+        "SGRC": {
+          src: PHOTO_DIR + 'sgrc-cottonwoods.jpg',
+          alt: 'A fallen cottonwood limb arching across a grazed cottonwood grove, with cattle in the distance.'
+        },
+        "NWT": {
+          src: PHOTO_DIR + 'niwot-ridge-tower.jpg',
+          alt: 'An instrumented research tower on alpine tundra at Niwot Ridge, above a sea of valley cloud.'
+        },
+        "IMPROVE": {
+          src: PHOTO_DIR + 'improve-network.jpg',
+          alt: 'Sunrise over an alpine meadow below a rocky ridgeline.',
+          placeholder: true,
+          credit: 'Stock image supplied as a stand-in — source and licence not yet confirmed.'
+        },
+
+        // Representative placeholders — see the `placeholder` note above.
+        "ARDEC": {
+          src: PHOTO_DIR + 'center-pivot-field.jpg',
+          alt: 'A centre-pivot irrigation boom spraying a green forage field under a clear sky on the Colorado plains.',
+          placeholder: true,
+          credit: 'Centre-pivot irrigation, Adams County, Colorado. Photo by Jeffrey Beall, CC BY 4.0, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Center_pivot_irrigation_in_Colorado.JPG'
+        },
+        "Foothills Campus": {
+          src: PHOTO_DIR + 'foothills-horsetooth.jpg',
+          alt: 'Horsetooth Reservoir seen from the pine-covered foothills west of Fort Collins, looking east over the hogback ridges to the plains.',
+          placeholder: true,
+          credit: 'Horsetooth Reservoir, west of Fort Collins. Photo by Lvaughn7, CC BY-SA 4.0, via Wikimedia Commons.',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Horsetooth_Reservoir_panorama.jpg'
+        },
+        "Big Spring, Texas": {
+          src: PHOTO_DIR + 'west-texas-rangeland.jpg',
+          alt: 'A flat-topped mesa rising from open mesquite-and-grass rangeland in West Texas, with instrument masts on the rim.',
+          placeholder: true,
+          credit: 'Gail Mountain, Borden County, Texas, north of Big Spring. Photo by Leaflet, CC BY-SA 3.0, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Gail_Mountain_Borden_County_Texas.jpg'
+        },
+        "PGF": {
+          src: PHOTO_DIR + 'research-greenhouse.jpg',
+          alt: 'Rows of mesh plant-isolation cages under the arched roof of a research greenhouse.',
+          placeholder: true,
+          credit: 'USDA APHIS research greenhouse, Edinburg, Texas. USDA photo by Christophe Paul — public domain, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:APHIS-Moore_Air_Base_in_Texas-Plant_Protection_and_Quarantine_Science_and_Technology_Insect_Management_and_Molecular_Diagnostics_Laboratory_(20230621-CDP-APHIS-0069).jpg'
+        }
+      }
+    };
+
+    // Resolves the registered photo for a slice, or null when none exists.
+    function getSlicePhoto(category, group) {
+      if (!group) return null;
+      var table = category === SLICE_CATEGORIES.PROJECT  ? SLICE_PHOTOS.project
+                : category === SLICE_CATEGORIES.LOCATION ? SLICE_PHOTOS.location
+                : null;
+      return (table && table[group]) || null;
+    }
+
     // Returns true when any filter dimension is active
     function isFilterActive() {
       return filterState.slice.category !== null || filterState.tags.length > 0;
@@ -363,9 +604,96 @@
       return a;
     }
 
-    // Shows or hides the project-context banner based on filterState.slice.
-    // Only visible when category === PROJECT and a group is selected.
-    function updateProjectBanner() {
+    // Hover text for a stand-in photo: flags it as a placeholder, carries the full
+    // citation, and tells the team they can send their own shot to replace it.
+    function placeholderTooltip(photo) {
+      return 'Placeholder image!\n\n' + photo.credit +
+        '\n\nThis is a stand-in, not a photo of the site itself. ' +
+        'Have your own photo of this project or location? Send it to the BROADN team to replace it.';
+    }
+
+    // Builds the caption under a banner photo: a "Placeholder image!" flag when the
+    // picture only stands in for the site, the attribution line, and a link to the
+    // source/licence page. Hidden entirely for BROADN's own uncredited photos.
+    // The caption stays visible even though the tooltip repeats it — CC BY / BY-SA
+    // attribution has to be on the page, not only behind a hover.
+    function renderPhotoCredit(creditEl, photo) {
+      creditEl.innerHTML = '';
+      creditEl.removeAttribute('title');
+      if (!photo || !photo.credit) {
+        creditEl.classList.add('hidden');
+        return;
+      }
+      if (photo.placeholder) {
+        creditEl.title = placeholderTooltip(photo);
+        var flag = document.createElement('span');
+        flag.className = 'font-semibold text-stone-600';
+        flag.textContent = 'Placeholder image! ';
+        creditEl.appendChild(flag);
+      }
+      creditEl.appendChild(document.createTextNode(photo.credit));
+      if (photo.creditUrl) {
+        creditEl.appendChild(document.createTextNode(' '));
+        var a = document.createElement('a');
+        a.href = photo.creditUrl;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'underline underline-offset-2 hover:text-stone-700';
+        a.textContent = 'Source';
+        creditEl.appendChild(a);
+      }
+      creditEl.classList.remove('hidden');
+    }
+
+    // Paints (or clears) the banner's field photograph from the SLICE_PHOTOS entry.
+    // A 'badge' entry goes in the icon square; anything else becomes the wide strip.
+    // Slices with no registered photo keep the generic map-pin icon and no strip.
+    function updateBannerPhoto(banner, photo) {
+      var figure   = banner.querySelector('.project-banner-photo');
+      var img      = banner.querySelector('.project-banner-photo-img');
+      var creditEl = banner.querySelector('.project-banner-photo-credit');
+      var badge    = banner.querySelector('.project-banner-badge');
+      var iconSvg  = banner.querySelector('.project-banner-icon-svg');
+      if (!figure || !img || !badge || !iconSvg) return;
+
+      var isBadge = !!(photo && photo.kind === 'badge');
+      var isStrip = !!(photo && !isBadge);
+
+      // Wide strip
+      if (isStrip) {
+        img.src = photo.src;
+        img.alt = photo.alt || '';
+        img.style.objectPosition = photo.position || 'center';
+        // Hovering the photo itself surfaces the placeholder notice + citation.
+        if (photo.placeholder) { img.title = placeholderTooltip(photo); }
+        else { img.removeAttribute('title'); }
+        figure.classList.remove('hidden');
+        renderPhotoCredit(creditEl, photo);
+      } else {
+        figure.classList.add('hidden');
+        img.removeAttribute('src');       // stop the old photo loading/showing
+        img.alt = '';
+        img.removeAttribute('title');
+        renderPhotoCredit(creditEl, null);
+      }
+
+      // Icon square: project mark, or the default map-pin glyph
+      if (isBadge) {
+        badge.src = photo.src;
+        badge.alt = photo.alt || '';      // decorative — the name sits beside it
+        badge.classList.remove('hidden');
+        iconSvg.classList.add('hidden');
+      } else {
+        badge.removeAttribute('src');
+        badge.classList.add('hidden');
+        iconSvg.classList.remove('hidden');
+      }
+    }
+
+    // Shows or hides the slice-context banner based on filterState.slice.
+    // Visible when category === PROJECT or LOCATION and a group is selected, and
+    // that slice has content or a photo to show — never as an empty shell.
+    function updateSliceBanner() {
       var banner = document.getElementById('project-banner');
       if (!banner) return;
       var cat = filterState.slice.category;
@@ -374,13 +702,26 @@
       var peopleEl = banner.querySelector('.project-banner-people');
       var linksEl  = banner.querySelector('.project-banner-links');
 
-      if (cat === SLICE_CATEGORIES.PROJECT && group) {
-        var content = PROJECT_CONTENT[group];
-        banner.querySelector('.project-banner-name').textContent = group;
+      var isProject  = cat === SLICE_CATEGORIES.PROJECT;
+      var isLocation = cat === SLICE_CATEGORIES.LOCATION;
+      var content    = !group ? null
+                     : isProject  ? PROJECT_CONTENT[group]
+                     : isLocation ? LOCATION_CONTENT[group]
+                     : null;
+      var photo      = (isProject || isLocation) ? getSlicePhoto(cat, group) : null;
+      var blurb      = (isProject && group) ? PROJECT_DESCRIPTIONS[group] : null;
+
+      if ((isProject || isLocation) && group && (content || photo || blurb)) {
+        updateBannerPhoto(banner, photo);
+
+        // Locations show their full site_name; the view title above carries only the code.
+        var entry = getSliceEntry(cat, group);
+        banner.querySelector('.project-banner-name').textContent =
+          (isLocation && entry && entry.site_name) ? entry.site_name : group;
 
         // Description: prefer rich summary, then short blurb, then generic fallback
         banner.querySelector('.project-banner-desc').textContent =
-          (content && content.summary) || PROJECT_DESCRIPTIONS[group] ||
+          (content && content.summary) || blurb ||
           'Description not yet available — contact the project team.';
 
         // Location chip
@@ -425,10 +766,12 @@
           peopleEl.classList.add('hidden');
         }
 
-        // Links: publications / data accessions (open in a new tab). When the active project's
+        // Links: publications / data accessions (open in a new tab). When the active slice's
         // layout owns these via a link_chip widget, the banner yields (link_chip draws them in-grid).
         linksEl.innerHTML = '';
-        var resolvedLayout = getLayoutFor('project', { project_id: group });   // override-aware resolver
+        var resolvedLayout = isLocation                                        // override-aware resolver
+          ? getLayoutFor('location', { site_code: group })
+          : getLayoutFor('project', { project_id: group });
         var linksOwnedByWidget = USE_RENDER_SLICE && resolvedLayout &&
           resolvedLayout.widgets.some(function(w) { return w.type === 'link_chip'; });
         if (!linksOwnedByWidget && content && content.links && content.links.length) {
@@ -5031,9 +5374,9 @@
       // Update aria-selected on group items
       updateGroupItemSelection();
 
-      // Update tag filter banner and project-context banner for the visible slice container
+      // Update tag filter banner and slice-context banner for the visible slice container
       updateTagBanner();
-      updateProjectBanner();
+      updateSliceBanner();
 
       // Scroll slice container into view
       sliceContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
