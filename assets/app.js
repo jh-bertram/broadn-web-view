@@ -608,45 +608,63 @@
       return a;
     }
 
-    // Hover text for a stand-in photo: flags it as a placeholder, carries the full
-    // citation, and tells the team they can send their own shot to replace it.
-    function placeholderTooltip(photo) {
-      return 'Placeholder image!\n\n' + photo.credit +
-        '\n\nThis is a stand-in, not a photo of the site itself. ' +
-        'Have your own photo of this project or location? Send it to the BROADN team to replace it.';
+    // Hover text for a banner photo. The banner has no visible caption, so this
+    // carries the whole story: the placeholder flag, the citation, and the nudge
+    // that the team can send their own shot to replace it. Returns '' for BROADN's
+    // own uncredited field photography, which needs neither.
+    function photoTooltip(photo) {
+      if (!photo) return '';
+      var parts = [];
+      if (photo.placeholder) { parts.push('Placeholder image!'); }
+      if (photo.credit)      { parts.push(photo.credit); }
+      if (photo.placeholder) {
+        parts.push('This is a stand-in, not a photo of the site itself. ' +
+          'Have your own photo of this project or location? Send it to the BROADN team to replace it.');
+      }
+      return parts.join('\n\n');
     }
 
-    // Builds the caption under a banner photo: a "Placeholder image!" flag when the
-    // picture only stands in for the site, the attribution line, and a link to the
-    // source/licence page. Hidden entirely for BROADN's own uncredited photos.
-    // The caption stays visible even though the tooltip repeats it — CC BY / BY-SA
-    // attribution has to be on the page, not only behind a hover.
-    function renderPhotoCredit(creditEl, photo) {
-      creditEl.innerHTML = '';
-      creditEl.removeAttribute('title');
-      if (!photo || !photo.credit) {
-        creditEl.classList.add('hidden');
-        return;
-      }
-      if (photo.placeholder) {
-        creditEl.title = placeholderTooltip(photo);
-        var flag = document.createElement('span');
-        flag.className = 'font-semibold text-stone-600';
-        flag.textContent = 'Placeholder image! ';
-        creditEl.appendChild(flag);
-      }
-      creditEl.appendChild(document.createTextNode(photo.credit));
-      if (photo.creditUrl) {
-        creditEl.appendChild(document.createTextNode(' '));
-        var a = document.createElement('a');
-        a.href = photo.creditUrl;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.className = 'underline underline-offset-2 hover:text-stone-700';
-        a.textContent = 'Source';
-        creditEl.appendChild(a);
-      }
-      creditEl.classList.remove('hidden');
+    // Every distinct credited photo, deduped by src. Both the banner tooltips and
+    // the footer credit list read from here, so the two can never drift apart.
+    function creditedPhotos() {
+      var seen = {};
+      var out = [];
+      ['project', 'location'].forEach(function(kind) {
+        Object.keys(SLICE_PHOTOS[kind]).forEach(function(key) {
+          var photo = SLICE_PHOTOS[kind][key];
+          if (!photo.credit || seen[photo.src]) return;
+          seen[photo.src] = true;
+          out.push(photo);
+        });
+      });
+      return out.sort(function(a, b) { return a.credit.localeCompare(b.credit); });
+    }
+
+    // Renders the footer's Photography credit list. The slice banners deliberately
+    // carry no visible caption — the project/location text takes priority there —
+    // so this list is where the CC BY / BY-SA attribution requirements are met on
+    // the page itself, rather than only in hover text.
+    function renderPhotoCreditsList() {
+      var list = document.getElementById('photo-credits');
+      if (!list) return;
+      list.innerHTML = '';
+      creditedPhotos().forEach(function(photo) {
+        var li = document.createElement('li');
+        li.className = 'text-sm leading-relaxed text-stone-400';
+        li.appendChild(document.createTextNode(photo.credit + ' '));
+        if (photo.creditUrl) {
+          var a = document.createElement('a');
+          a.href = photo.creditUrl;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'text-[var(--color-accent)] underline underline-offset-2 hover:decoration-2 ' +
+            'outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ' +
+            'focus-visible:outline-[var(--color-accent)] rounded';
+          a.textContent = 'Source';
+          li.appendChild(a);
+        }
+        list.appendChild(li);
+      });
     }
 
     // Paints (or clears) the banner's field photograph from the SLICE_PHOTOS entry.
@@ -655,7 +673,6 @@
     function updateBannerPhoto(banner, photo) {
       var figure   = banner.querySelector('.project-banner-photo');
       var img      = banner.querySelector('.project-banner-photo-img');
-      var creditEl = banner.querySelector('.project-banner-photo-credit');
       var badge    = banner.querySelector('.project-banner-badge');
       var iconSvg  = banner.querySelector('.project-banner-icon-svg');
       if (!figure || !img || !badge || !iconSvg) return;
@@ -668,17 +685,16 @@
         img.src = photo.src;
         img.alt = photo.alt || '';
         img.style.objectPosition = photo.position || 'center';
-        // Hovering the photo itself surfaces the placeholder notice + citation.
-        if (photo.placeholder) { img.title = placeholderTooltip(photo); }
-        else { img.removeAttribute('title'); }
+        // The banner shows no caption, so hovering the photo is where the
+        // placeholder notice and the citation surface.
+        var tip = photoTooltip(photo);
+        if (tip) { img.title = tip; } else { img.removeAttribute('title'); }
         figure.classList.remove('hidden');
-        renderPhotoCredit(creditEl, photo);
       } else {
         figure.classList.add('hidden');
         img.removeAttribute('src');       // stop the old photo loading/showing
         img.alt = '';
         img.removeAttribute('title');
-        renderPhotoCredit(creditEl, null);
       }
 
       // Icon square: project mark, or the default map-pin glyph
@@ -5749,6 +5765,10 @@
       }
 
       appData = data;
+
+      // Footer photography credits — static, but rendered from SLICE_PHOTOS so the
+      // list cannot drift from what the banners actually show.
+      renderPhotoCreditsList();
 
       // -- Wire event listeners ONCE (not in renderView) --
 

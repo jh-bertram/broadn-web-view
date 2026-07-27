@@ -298,7 +298,9 @@
           <!-- Slice context banner — shown in the Project and Location slice views when a group
                is selected. When SLICE_PHOTOS has a landscape for the slice, the figure below
                renders full-bleed above the bio row (negative margins cancel the card's p-5);
-               badge-kind photos swap into the icon square instead and the strip stays hidden. -->
+               badge-kind photos swap into the icon square instead and the strip stays hidden.
+               No visible caption: the project/location text is what matters here, so attribution
+               lives in the image's hover title and in the footer's Photography credit list. -->
           <div id="project-banner" class="hidden bg-white border border-stone-200 rounded-lg p-5 mb-4">
             <figure class="project-banner-photo hidden -mx-5 -mt-5 mb-5">
               <!-- 7px, not rounded-t-lg: nests inside the card's 8px radius minus its 1px border -->
@@ -307,7 +309,6 @@
                 <img class="project-banner-photo-img w-full h-28 sm:h-36 md:h-44 object-cover block"
                      alt="" loading="lazy" decoding="async" />
               </div>
-              <figcaption class="project-banner-photo-credit hidden text-[11px] leading-snug text-stone-500 px-5 pt-2"></figcaption>
             </figure>
             <div class="flex items-start gap-4">
               <div class="project-banner-icon w-20 h-20 rounded-lg flex items-center justify-center shrink-0 overflow-hidden" style="background:#f0fdfd;color:#0e7474" aria-hidden="true">
@@ -983,6 +984,14 @@
                 <p class="text-sm leading-relaxed text-stone-400">The National Ecological Observatory Network is a program sponsored by the National Science Foundation and operated under cooperative agreement by Battelle. This material is based in part upon work supported by the National Science Foundation through the NEON Program. Data collected/used in this research were obtained through the NEON Assignable Assets program. <a href="https://www.neonscience.org/data/guidelines-policies/citing" rel="noopener noreferrer" class="text-[var(--color-accent)] underline underline-offset-2 hover:decoration-2 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] rounded">NEON data citation &amp; acknowledgement guidelines</a></p>
                 <p class="text-sm leading-relaxed text-stone-400">IMPROVE is a collaborative association of state, tribal, and federal agencies, and international partners. US Environmental Protection Agency is the primary funding source, with contracting and research support from the National Park Service. The Air Quality Research Center at the University of California, Davis is the central analytical laboratory, with ion analysis provided by Research Triangle Institute, and carbon analysis provided by Desert Research Institute.</p>
               </div>
+            </div>
+            <div>
+              <!-- Populated from SLICE_PHOTOS by renderPhotoCreditsList(). The slice
+                   banners carry attribution in hover text only, so this list is where
+                   the CC BY / BY-SA credit requirements are met on the page itself. -->
+              <h3 class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Photography</h3>
+              <p class="text-sm leading-relaxed text-stone-400 mb-3">Banner photographs marked as placeholders are stand-ins that represent a site rather than depict it. Field photography by the BROADN team is uncredited below.</p>
+              <ul id="photo-credits" class="space-y-2 list-none"></ul>
             </div>
             <div>
               <h3 class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Site Access &amp; Facilities</h3>

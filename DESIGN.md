@@ -370,7 +370,7 @@ Base unit: `4px` (Tailwind default)
 | **Error state** | `bg-stone-100 border border-stone-200 rounded-lg p-8 text-center`. Message: `text-stone-600`. No red background — reserved for inline field errors only. |
 | **Chart tooltip** | `position: fixed`, `background: rgba(28,25,23,0.92)`, `color: white`, `border-radius: 4px`, `font-size: 12px`, `padding: 10px 14px`, `max-width: 220px`. No border. |
 | **Section heading** | `<h2>` at `text-3xl font-extrabold text-stone-900` + `text-lg text-stone-600` description below. Section intro description max-width: `max-w-3xl`. |
-| **Slice banner photo** | Full-bleed strip at the top of `#project-banner`: `figure.project-banner-photo` with `-mx-5 -mt-5 mb-5` to cancel the card's `p-5`, inner `overflow-hidden rounded-t-[7px]` (7px nests inside the card's 8px radius less its 1px border), image `w-full h-28 sm:h-36 md:h-44 object-cover`. Credit caption: `text-[11px] leading-snug text-stone-500 px-5 pt-2` (stone-500 = 4.8:1 on white, AA pass — do not lighten to stone-400). |
+| **Slice banner photo** | Full-bleed strip at the top of `#project-banner`: `figure.project-banner-photo` with `-mx-5 -mt-5 mb-5` to cancel the card's `p-5`, inner `overflow-hidden rounded-t-[7px]` (7px nests inside the card's 8px radius less its 1px border), image `w-full h-28 sm:h-36 md:h-44 object-cover`. **No visible caption** — the project/location text is the priority in this card, so attribution lives in the image's hover `title` and in the footer's Photography credit list. Do not reintroduce a caption element here. |
 
 ## Slice Photography (`SLICE_PHOTOS`)
 
@@ -383,9 +383,17 @@ with no photo — **never substitute an unrelated image to fill the slot.**
 | `src` | Stored under `assets/photos/`, pre-cropped to a **3.2:1** letterbox. That ratio sits between the banner's widest (~6:1 desktop) and narrowest (~2.8:1 mobile) box, so `object-cover` only ever trims. Keep the subject near the vertical centre of the stored crop or it is cut off on desktop. |
 | `alt` | Descriptive sentence. `''` is permitted **only** for the decorative badge, whose meaning is carried by the project name beside it. |
 | `kind: 'badge'` | Swaps the image into the banner's icon square instead of the strip. For project marks and logos — never landscapes. |
-| `credit` | **Required** for every image BROADN does not own. Rendered as a visible caption, not tooltip-only: CC BY / BY-SA attribution has to be on the page. Note cropping — those licences require indicating modifications. |
-| `creditUrl` | Link to the source/licence page, rendered as a trailing "Source" link. |
-| `placeholder: true` | For any image that only *represents* a site rather than depicting it. Renders a bold **"Placeholder image!"** caption prefix plus a hover tooltip carrying the full citation and an invitation for the team to submit their own photo. Set this on every stand-in so the page never implies a borrowed shot was taken at the site. |
+| `credit` | **Required** for every image BROADN does not own. Note cropping — CC BY / BY-SA require indicating modifications. |
+| `creditUrl` | Link to the source/licence page, rendered as a trailing "Source" link in the footer list. |
+| `placeholder: true` | For any image that only *represents* a site rather than depicting it. Renders a hover tooltip led by **"Placeholder image!"**, carrying the full citation and an invitation for the team to submit their own photo. Set this on every stand-in so the page never implies a borrowed shot was taken at the site. |
+
+**Where attribution appears.** The banner shows no caption, so credit lives in two
+places, both generated from `SLICE_PHOTOS` so they cannot drift: the image's hover
+`title`, and the **Photography** list in the Acknowledgements footer, rendered by
+`renderPhotoCreditsList()`. The footer list is what satisfies CC BY / BY-SA — hover
+text alone is not attribution on the page. **Any new credited photo must therefore
+be added to `SLICE_PHOTOS` and nowhere else**; hand-writing a credit into the footer
+markup would break that guarantee.
 
 Third-party files are **downloaded and self-hosted** — Wikimedia Commons must not be
 hotlinked. Prefer US-government public domain (USDA / NOAA / NPS / USGS) over CC BY-SA
