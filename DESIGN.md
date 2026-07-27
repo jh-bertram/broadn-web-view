@@ -372,6 +372,41 @@ Base unit: `4px` (Tailwind default)
 | **Section heading** | `<h2>` at `text-3xl font-extrabold text-stone-900` + `text-lg text-stone-600` description below. Section intro description max-width: `max-w-3xl`. |
 | **Slice banner photo** | Full-bleed strip at the top of `#project-banner`: `figure.project-banner-photo` with `-mx-5 -mt-5 mb-5` to cancel the card's `p-5`, inner `overflow-hidden rounded-t-[7px]` (7px nests inside the card's 8px radius less its 1px border), image `w-full h-28 sm:h-36 md:h-44 object-cover`. **No visible caption** — the project/location text is the priority in this card, so attribution lives in the image's hover `title` and in the footer's Photography credit list. Do not reintroduce a caption element here. |
 
+## Explorer Columns (`EXPLORER_COLUMNS`)
+
+The Data Explorer table is driven entirely by the `EXPLORER_COLUMNS` registry in
+`assets/app.js`. The `<thead>`, every row's cells, the CSV export, the empty-state
+colspan and the column picker all derive from it. **`index.html` must not hardcode
+`<th>` elements** — `renderExplorerHeader()` owns the header.
+
+Adding a column means adding one registry entry, and nothing else.
+
+| Field | Rule |
+|---|---|
+| `key` | Stable id, also the localStorage token. Renaming silently drops a user's saved choice. |
+| `label` | Header text, or a function evaluated per render (for units or state that can change). |
+| `csvLabel` | Export header when the on-screen label is abbreviated for width — e.g. `Stage` → `Pipeline Stage`. The CSV has no width pressure; spell it out. |
+| `group` | Section heading in the picker: Identity / Collection / Processing / Weather (modeled) / Action. |
+| `sortKey` | Row property to sort on. Omit for non-sortable columns. |
+| `numeric` | Sort numerically. **Required for any number column** — without it `9` sorts after `10`. |
+| `locked` | Always visible, never offered in the picker. Only `id` (the row header) and `request` (a control). |
+| `defaultOn` | In the default column set. |
+| `rowHeader` | Render as `<th scope="row">` instead of `<td>`. |
+| `text(row)` | Plain text. Used by the CSV, and as the cell unless `html()` exists. **Escaped by the caller** — do not escape here. |
+| `html(row)` | Cell markup for badges and controls. **Owns its own escaping.** |
+| `noCsv` | Exclude from the export — for controls, which are not data. |
+
+Rules the renderer relies on:
+
+- Header and body are built from the **same** `explorerVisibleColumns()` call per
+  render, so they cannot disagree and the colspan cannot drift.
+- Sort handling is **delegated on `<thead>`**, never bound per button — the buttons
+  are rebuilt whenever a column is toggled.
+- Hiding the actively-sorted column **clears the sort**; rows ordered by an invisible
+  column read as a bug.
+- Toggling one column repaints only the count badge, not the checkbox list — a full
+  re-render would destroy the element under the user's focus mid-interaction.
+
 ## Slice Photography (`SLICE_PHOTOS`)
 
 Banner imagery is registered in `assets/app.js` → `SLICE_PHOTOS`, keyed by `project_id`

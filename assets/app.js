@@ -2504,8 +2504,9 @@
       wireCartRowDelegation();
       wireCartPanelBodyDelegation();
 
-      var cartHeaderTh = document.querySelector('#explorer-table thead th:last-child');
-      if (cartHeaderTh) { cartHeaderTh.textContent = 'Cart'; }
+      // The Request/Cart header used to be poked here via th:last-child. It is now the
+      // 'request' column's own label function, resolved on every header render, so it
+      // stays correct no matter when the cart config lands or where the column sits.
 
       updateCartBadge();
     }
@@ -2523,6 +2524,8 @@
         var c = s.covariates;
         s.covariates_temp = c ? c.temp : null;
         s.covariates_humidity = c ? c.humidity : null;
+        s.covariates_wind_speed = c ? c.wind_speed : null;
+        s.covariates_precipitation = c ? c.precipitation : null;
         s.covariates_fidelity = c ? c.fidelity : null;
       });
     }
@@ -2581,6 +2584,301 @@
       // Re-render the current page in place — the sort order cannot change, so the
       // page number stays valid and there is nothing to recompute beyond the cells.
       if (appData && appData.all_samples) { renderTable(appData.all_samples, tableCurrentPage); }
+    }
+
+    // =============================================================================
+    // EXPLORER COLUMN REGISTRY
+    // =============================================================================
+    // Single source of truth for the Data Explorer table. The <thead>, every row's
+    // cells, the CSV export, the empty-state colspan and the column picker all derive
+    // from this one list. Before it existed those were four parallel hardcoded lists,
+    // so adding a column meant editing all four and the colspan drifted silently.
+    //
+    //   key        stable id; also the localStorage token — renaming drops a saved choice
+    //   label      header text, or a function evaluated at render time
+    //   group      section heading in the picker
+    //   sortKey    row property to sort on; omitted for non-sortable columns
+    //   numeric    sort numerically instead of by string collation
+    //   locked     always shown, never offered in the picker
+    //   defaultOn  shown on a first visit
+    //   rowHeader  render as <th scope="row"> rather than <td>
+    //   text(row)  plain text — used by the CSV, and as the cell unless html() exists
+    //   html(row)  cell markup, for badge and control columns
+    //   csvLabel   CSV header override; a function for units that follow the toggle
+    var EXPLORER_COLUMN_STORAGE_KEY = 'broadn.explorer.columns';
+
+    function dashIfBlank(v) { return (v === null || v === undefined || v === '') ? '—' : String(v); }
+    function badgeHtml(cls, text) {
+      return '<span class="px-2 py-1 rounded-full text-xs font-medium ' + cls + '">' + escapeHtml(text) + '</span>';
+    }
+
+    var EXPLORER_COLUMNS = [
+      // --- Identity ---------------------------------------------------------
+      { key: 'id', label: 'Sample ID', group: 'Identity', sortKey: 'id', locked: true, rowHeader: true,
+        text: function(r) { return r.id; } },
+      { key: 'date', label: 'Date', group: 'Identity', sortKey: 'date', defaultOn: true,
+        text: function(r) { return dashIfBlank(r.date); } },
+      { key: 'site', label: 'Site', group: 'Identity', sortKey: 'site', defaultOn: true,
+        text: function(r) { return dashIfBlank(r.site); } },
+      { key: 'project', label: 'Project', group: 'Identity', sortKey: 'project',
+        text: function(r) { return dashIfBlank(r.project); } },
+      { key: 'project_group', label: 'Project Group', group: 'Identity', sortKey: 'project_group',
+        text: function(r) { return dashIfBlank(r.project_group); } },
+      { key: 'lab_group', label: 'Lab Group', group: 'Identity', sortKey: 'lab_group',
+        text: function(r) { return dashIfBlank(r.lab_group); } },
+
+      // --- Collection -------------------------------------------------------
+      { key: 'type', label: 'Type', group: 'Collection', sortKey: 'type', defaultOn: true,
+        text: function(r) { return dashIfBlank(r.type); },
+        html: function(r) { return badgeHtml(getTypeBadgeClasses(r.type), r.type || '—'); } },
+      { key: 'medium', label: 'Medium', csvLabel: 'Collection Medium', group: 'Collection', sortKey: 'medium', defaultOn: true,
+        headerAria: 'Sort by collection medium — what the sample was captured onto or into',
+        text: function(r) { return dashIfBlank(r.medium); } },
+      { key: 'sampler', label: 'Sampler', csvLabel: 'Sampler Type', group: 'Collection', sortKey: 'sampler', defaultOn: true,
+        headerAria: 'Sort by sampling equipment — the device or method used to collect the sample',
+        text: function(r) { return dashIfBlank(r.sampler); } },
+      { key: 'am_pm', label: 'AM/PM', csvLabel: 'Sample AM/PM', group: 'Collection', sortKey: 'am_pm',
+        text: function(r) { return dashIfBlank(r.am_pm); } },
+      { key: 'replicate', label: 'Replicate', group: 'Collection', sortKey: 'replicate',
+        text: function(r) { return dashIfBlank(r.replicate); } },
+      { key: 'quadrant', label: 'Quadrant', group: 'Collection', sortKey: 'quadrant',
+        text: function(r) { return dashIfBlank(r.quadrant); } },
+      { key: 'position', label: 'Position', group: 'Collection', sortKey: 'position',
+        text: function(r) { return dashIfBlank(r.position); } },
+      { key: 'field_control', label: 'Field Control', group: 'Collection', sortKey: 'field_control',
+        text: function(r) { return dashIfBlank(r.field_control); } },
+
+      // --- Processing -------------------------------------------------------
+      { key: 'category', label: 'Category', group: 'Processing', sortKey: 'category', defaultOn: true,
+        text: function(r) { return dashIfBlank(r.category); },
+        html: function(r) { return badgeHtml(getCategoryBadgeClasses(r.category), r.category || '—'); } },
+      { key: 'pipeline_stage', label: 'Stage', csvLabel: 'Pipeline Stage', group: 'Processing', sortKey: 'pipeline_stage', defaultOn: true,
+        text: function(r) { return STAGE_LABELS[r.pipeline_stage] || r.pipeline_stage || '—'; },
+        html: function(r) {
+          return badgeHtml(STAGE_BADGE_CLASSES[r.pipeline_stage] || 'bg-stone-100 text-stone-600',
+            STAGE_LABELS[r.pipeline_stage] || r.pipeline_stage || '—');
+        } },
+
+      // --- Weather (modeled) ------------------------------------------------
+      // All four are modeled grid-cell estimates; the bar above the table says so once
+      // rather than each header repeating it.
+      { key: 'covariates_temp', group: 'Weather (modeled)', sortKey: 'covariates_temp', numeric: true, defaultOn: true,
+        label: function() { return 'Temp ' + tempUnitLabel() + ' (Modeled)'; },
+        csvLabel: function() { return 'Temperature (' + tempUnitLabel() + ')'; },
+        headerAria: 'Sort by Temperature — modeled grid-cell estimate, not a site measurement',
+        text: function(r) { return formatExplorerTemp(r.covariates_temp, r.covariates_fidelity); } },
+      { key: 'covariates_humidity', label: 'Humidity (Modeled)', group: 'Weather (modeled)',
+        sortKey: 'covariates_humidity', numeric: true, defaultOn: true, csvLabel: 'Humidity (%)',
+        headerAria: 'Sort by Humidity — modeled grid-cell estimate, not a site measurement',
+        text: function(r) { return formatExplorerWeather(r.covariates_humidity, r.covariates_fidelity, 0, '%'); } },
+      { key: 'covariates_wind_speed', label: 'Wind (Modeled)', group: 'Weather (modeled)',
+        sortKey: 'covariates_wind_speed', numeric: true, csvLabel: 'Wind Speed (m/s)',
+        headerAria: 'Sort by wind speed — modeled grid-cell estimate, not a site measurement',
+        text: function(r) { return formatExplorerWeather(r.covariates_wind_speed, r.covariates_fidelity, 1, ' m/s'); } },
+      { key: 'covariates_precipitation', label: 'Precip. (Modeled)', group: 'Weather (modeled)',
+        sortKey: 'covariates_precipitation', numeric: true, csvLabel: 'Precipitation (mm)',
+        headerAria: 'Sort by precipitation — modeled grid-cell estimate, not a site measurement',
+        text: function(r) { return formatExplorerWeather(r.covariates_precipitation, r.covariates_fidelity, 1, ' mm'); } },
+
+      // --- Action -----------------------------------------------------------
+      // Locked and never exported: it is a control, not data. The label follows cart
+      // configuration and is resolved per render, so load order cannot strand it.
+      { key: 'request', group: 'Action', locked: true, noCsv: true,
+        label: function() { return isRequestConfigured() ? 'Cart' : 'Request'; },
+        html: function(r) { return cartButtonHtml(r); } }
+    ];
+
+    function explorerColumn(key) {
+      for (var i = 0; i < EXPLORER_COLUMNS.length; i++) {
+        if (EXPLORER_COLUMNS[i].key === key) { return EXPLORER_COLUMNS[i]; }
+      }
+      return null;
+    }
+    function explorerColumnBySortKey(sortKey) {
+      for (var i = 0; i < EXPLORER_COLUMNS.length; i++) {
+        if (EXPLORER_COLUMNS[i].sortKey === sortKey) { return EXPLORER_COLUMNS[i]; }
+      }
+      return null;
+    }
+    function colLabel(col) { return typeof col.label === 'function' ? col.label() : (col.label || ''); }
+    function colCsvLabel(col) {
+      if (typeof col.csvLabel === 'function') { return col.csvLabel(); }
+      return col.csvLabel || colLabel(col);
+    }
+    function defaultColumnKeys() {
+      return EXPLORER_COLUMNS.filter(function(c) { return c.locked || c.defaultOn; })
+        .map(function(c) { return c.key; });
+    }
+
+    // Selected non-locked columns. Locked columns are never stored — they are added
+    // back by explorerVisibleColumns(), so a future locked/unlocked change cannot be
+    // contradicted by a stale saved list.
+    var explorerColumnChoice = null;   // null until loadColumnChoice() runs
+
+    function loadColumnChoice() {
+      explorerColumnChoice = defaultColumnKeys();
+      try {
+        var raw = window.localStorage.getItem(EXPLORER_COLUMN_STORAGE_KEY);
+        if (!raw) { return; }
+        var saved = JSON.parse(raw);
+        if (!Array.isArray(saved)) { return; }
+        // Drop unknown keys so a removed column in a saved list is ignored rather
+        // than throwing, and keep registry order rather than saved order.
+        var wanted = {};
+        saved.forEach(function(k) { wanted[k] = true; });
+        explorerColumnChoice = EXPLORER_COLUMNS
+          .filter(function(c) { return c.locked || wanted[c.key]; })
+          .map(function(c) { return c.key; });
+      } catch (e) { /* corrupt or unavailable storage — keep defaults */ }
+    }
+
+    function saveColumnChoice() {
+      try {
+        window.localStorage.setItem(EXPLORER_COLUMN_STORAGE_KEY, JSON.stringify(explorerColumnChoice));
+      } catch (e) { /* non-fatal */ }
+    }
+
+    function explorerVisibleColumns() {
+      if (explorerColumnChoice === null) { loadColumnChoice(); }
+      var chosen = {};
+      explorerColumnChoice.forEach(function(k) { chosen[k] = true; });
+      return EXPLORER_COLUMNS.filter(function(c) { return c.locked || chosen[c.key]; });
+    }
+
+    function isColumnVisible(key) {
+      return explorerVisibleColumns().some(function(c) { return c.key === key; });
+    }
+
+    // Toggling a column cannot change the row set, only which cells are drawn — so
+    // this re-renders in place and keeps the current page and sort. If the column
+    // being hidden is the active sort, the sort is cleared: leaving rows ordered by
+    // an invisible column looks like a bug from the reader's side.
+    function setColumnVisible(key, visible) {
+      var col = explorerColumn(key);
+      if (!col || col.locked) { return; }
+      explorerVisibleColumns();   // ensure explorerColumnChoice is loaded
+      var idx = explorerColumnChoice.indexOf(key);
+      if (visible && idx === -1) { explorerColumnChoice.push(key); }
+      else if (!visible && idx !== -1) { explorerColumnChoice.splice(idx, 1); }
+      else { return; }
+      if (!visible && explorerSort.key && explorerSort.key === col.sortKey) {
+        explorerSort.key = null;
+        explorerSort.dir = 'asc';
+      }
+      saveColumnChoice();
+      // Only the count is repainted, NOT the whole list: re-rendering would destroy
+      // the checkbox the user is standing on and drop keyboard focus to <body>
+      // mid-interaction. The checkbox already carries its own new state.
+      updateColumnPickerCount();
+      if (appData && appData.all_samples) { renderTable(appData.all_samples, tableCurrentPage); }
+    }
+
+    function resetColumnChoice() {
+      explorerColumnChoice = defaultColumnKeys();
+      saveColumnChoice();
+      renderColumnPicker();
+      if (appData && appData.all_samples) { renderTable(appData.all_samples, tableCurrentPage); }
+    }
+
+    // Rebuilds the picker's checkbox list from EXPLORER_COLUMNS, grouped by section.
+    // Locked columns are left out entirely rather than shown disabled — a checkbox
+    // that cannot be changed is noise.
+    function renderColumnPicker() {
+      var list = document.getElementById('column-picker-list');
+      if (!list) { return; }
+      var visible = {};
+      explorerVisibleColumns().forEach(function(c) { visible[c.key] = true; });
+
+      var groups = [];
+      EXPLORER_COLUMNS.forEach(function(col) {
+        if (col.locked) { return; }
+        var g = groups.filter(function(x) { return x.name === col.group; })[0];
+        if (!g) { g = { name: col.group, cols: [] }; groups.push(g); }
+        g.cols.push(col);
+      });
+
+      list.innerHTML = '';
+      groups.forEach(function(group) {
+        var section = document.createElement('div');
+        var heading = document.createElement('p');
+        heading.className = 'text-xs font-semibold uppercase tracking-wide text-stone-500 mb-1';
+        heading.textContent = group.name;
+        section.appendChild(heading);
+
+        group.cols.forEach(function(col) {
+          var id = 'colpick-' + col.key;
+          var label = document.createElement('label');
+          label.className = 'flex items-center gap-2 py-0.5 text-sm text-stone-700 cursor-pointer';
+          label.setAttribute('for', id);
+
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.id = id;
+          cb.className = 'accent-[var(--color-teal-deep)]';
+          cb.checked = !!visible[col.key];
+          cb.setAttribute('data-column-key', col.key);
+          cb.addEventListener('change', function() {
+            setColumnVisible(col.key, cb.checked);
+          });
+
+          var span = document.createElement('span');
+          span.textContent = colLabel(col);
+
+          label.appendChild(cb);
+          label.appendChild(span);
+          section.appendChild(label);
+        });
+        list.appendChild(section);
+      });
+
+      updateColumnPickerCount();
+    }
+
+    // "n/m optional columns shown" badge on the picker button. Split out from
+    // renderColumnPicker() so a single toggle can refresh it without rebuilding —
+    // and destroying focus on — the checkbox list.
+    function updateColumnPickerCount() {
+      var countEl = document.getElementById('column-picker-count');
+      if (!countEl) { return; }
+      var visible = {};
+      explorerVisibleColumns().forEach(function(c) { visible[c.key] = true; });
+      var optional = EXPLORER_COLUMNS.filter(function(c) { return !c.locked; });
+      var on = optional.filter(function(c) { return visible[c.key]; }).length;
+      countEl.textContent = on + '/' + optional.length;
+    }
+
+    function setColumnPickerOpen(open) {
+      var btn = document.getElementById('column-picker-btn');
+      var panel = document.getElementById('column-picker-panel');
+      if (!btn || !panel) { return; }
+      panel.classList.toggle('hidden', !open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    function isColumnPickerOpen() {
+      var btn = document.getElementById('column-picker-btn');
+      return !!btn && btn.getAttribute('aria-expanded') === 'true';
+    }
+
+    // Rebuilds <thead> from the visible columns. Sort buttons are re-created on every
+    // pass, so their click handling is delegated on the (static) <thead> element
+    // rather than bound per button.
+    function renderExplorerHeader() {
+      var thead = document.querySelector('#explorer-table thead');
+      if (!thead) { return; }
+      var cells = explorerVisibleColumns().map(function(col) {
+        var label = escapeHtml(colLabel(col));
+        if (!col.sortKey) {
+          return '<th scope="col" class="px-6 py-3" data-col-key="' + col.key + '">' + label + '</th>';
+        }
+        var aria = escapeHtml(col.headerAria || ('Sort by ' + colLabel(col)));
+        return '<th scope="col" class="px-6 py-3" aria-sort="none" data-col-key="' + col.key + '">' +
+          '<button type="button" data-sort-key="' + col.sortKey + '"' +
+          ' class="inline-flex items-center gap-1 hover:text-stone-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded"' +
+          ' aria-label="' + aria + '">' + label +
+          ' <span class="sort-indicator" aria-hidden="true"></span></button></th>';
+      });
+      thead.innerHTML = '<tr>' + cells.join('') + '</tr>';
     }
 
     // Single source of truth for "what the Explorer shows" — dashboard slice/tag filter (Step A),
@@ -2664,9 +2962,10 @@
         if (a.date > b.date) return 1;
         return 0;
       }
-      if (key === 'covariates_temp' || key === 'covariates_humidity') {
-        return a[key] - b[key];
-      }
+      // Numeric vs string collation is declared once per column in EXPLORER_COLUMNS,
+      // so a new numeric column sorts correctly without touching this comparator.
+      var col = explorerColumnBySortKey(key);
+      if (col && col.numeric) { return a[key] - b[key]; }
       return String(a[key]).localeCompare(String(b[key]), undefined, { sensitivity: 'base' });
     }
 
@@ -2742,31 +3041,29 @@
       var tbody = document.getElementById('explorer-tbody');
       tbody.innerHTML = '';
 
+      // Header and body are built from the SAME visible-column list on every pass, so
+      // the two can never disagree and the colspan cannot drift out of sync.
+      renderExplorerHeader();
+      var visibleCols = explorerVisibleColumns();
+
       if (pageRows.length === 0) {
         var tr = document.createElement('tr');
-        // colspan tracks the header: ID, Date, Site, Type, Medium, Sampler,
-        // Category, Stage, Temp, Humidity, Request.
-        tr.innerHTML = '<td colspan="11" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
+        tr.innerHTML = '<td colspan="' + visibleCols.length +
+          '" class="px-6 py-8 text-center text-stone-500">No samples match the selected filters.</td>';
         tbody.appendChild(tr);
       } else {
         pageRows.forEach(function(row) {
           var tr = document.createElement('tr');
           tr.className = 'bg-white hover:bg-stone-50 transition-colors';
-          var typeCls = getTypeBadgeClasses(row.type);
-          var catCls  = getCategoryBadgeClasses(row.category);
-          tr.innerHTML =
-            '<th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">' + escapeHtml(row.id) + '</th>' +
-            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.date) + '</td>' +
-            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.site) + '</td>' +
-            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + typeCls + '">' + escapeHtml(row.type) + '</span></td>' +
-            // Sampler ~75% filled, medium ~36% — the em dash is the common case, not an error.
-            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.medium || '—') + '</td>' +
-            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(row.sampler || '—') + '</td>' +
-            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + catCls + '">' + escapeHtml(row.category) + '</span></td>' +
-            '<td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-medium ' + (STAGE_BADGE_CLASSES[row.pipeline_stage] || 'bg-stone-100 text-stone-600') + '">' + escapeHtml(STAGE_LABELS[row.pipeline_stage] || row.pipeline_stage || '—') + '</span></td>' +
-            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerTemp(row.covariates_temp, row.covariates_fidelity)) + '</td>' +
-            '<td class="px-6 py-4 text-stone-600">' + escapeHtml(formatExplorerWeather(row.covariates_humidity, row.covariates_fidelity, 0, '%')) + '</td>' +
-            '<td class="px-6 py-4">' + cartButtonHtml(row) + '</td>';
+          tr.innerHTML = visibleCols.map(function(col) {
+            // html() owns its own escaping (badges, the cart button); text() is plain
+            // and is escaped here, so a column author cannot forget to.
+            var content = col.html ? col.html(row) : escapeHtml(col.text(row));
+            if (col.rowHeader) {
+              return '<th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">' + content + '</th>';
+            }
+            return '<td class="px-6 py-4' + (col.html ? '' : ' text-stone-600') + '">' + content + '</td>';
+          }).join('');
           tbody.appendChild(tr);
         });
       }
@@ -2827,25 +3124,24 @@
       return '"' + str.replace(/"/g, '""') + '"';
     }
 
-    // Column order mirrors the table header exactly. The temperature header is built
-    // per export rather than being a constant, so the CSV is labelled in whichever
-    // unit the toggle is showing — a file headed °C holding °F values would be worse
-    // than either choice on its own.
-    var EXPLORER_CSV_FIELDS = ['id', 'date', 'site', 'type', 'medium', 'sampler', 'category', 'pipeline_stage'];
+    // The export mirrors what is on screen: same columns, same order, same cell text,
+    // all from EXPLORER_COLUMNS (p13 DRY contract). Control columns opt out with
+    // noCsv. Headers are built per export rather than being a constant, so a unit
+    // that follows the toggle is labelled correctly — a file headed °C holding °F
+    // values would be worse than either choice on its own.
+    function explorerCsvColumns() {
+      return explorerVisibleColumns().filter(function(col) { return !col.noCsv; });
+    }
 
     function explorerCsvHeader() {
-      return ['Sample ID', 'Date', 'Site', 'Type', 'Collection Medium', 'Sampler',
-              'Category', 'Pipeline Stage', 'Temperature (' + tempUnitLabel() + ')', 'Humidity (%)'];
+      return explorerCsvColumns().map(colCsvLabel);
     }
 
     function buildExplorerCsv(rows) {
-      var lines = [explorerCsvHeader().map(csvCell).join(',')];
+      var cols = explorerCsvColumns();
+      var lines = [cols.map(colCsvLabel).map(csvCell).join(',')];
       rows.forEach(function(row) {
-        var cells = EXPLORER_CSV_FIELDS.map(function(f) { return csvCell(row[f]); });
-        // Same shared formatter as the table cell — structural table/CSV parity (p13 DRY contract).
-        cells.push(csvCell(formatExplorerTemp(row.covariates_temp, row.covariates_fidelity)));
-        cells.push(csvCell(formatExplorerWeather(row.covariates_humidity, row.covariates_fidelity, 0, '%')));
-        lines.push(cells.join(','));
+        lines.push(cols.map(function(col) { return csvCell(col.text(row)); }).join(','));
       });
       // UTF-8 BOM so Excel detects the encoding correctly.
       return '﻿' + lines.join('\r\n');
@@ -6063,9 +6359,14 @@
 
       // Explorer sortable column headers — bound once; the thead is static HTML, not
       // re-rendered per page, so this listener persists across every renderTable() pass.
-      var sortButtons = document.querySelectorAll('#explorer-table thead [data-sort-key]');
-      sortButtons.forEach(function(btn) {
-        btn.addEventListener('click', function() {
+      // Sort handling is DELEGATED on <thead>, not bound per button: renderExplorerHeader()
+      // rebuilds those buttons on every render, so per-button listeners would be lost the
+      // first time a column was toggled.
+      var explorerThead = document.querySelector('#explorer-table thead');
+      if (explorerThead) {
+        explorerThead.addEventListener('click', function(e) {
+          var btn = e.target.closest('[data-sort-key]');
+          if (!btn) { return; }
           var key = btn.getAttribute('data-sort-key');
           if (explorerSort.key === key) {
             explorerSort.dir = explorerSort.dir === 'asc' ? 'desc' : 'asc';
@@ -6076,6 +6377,35 @@
           tableCurrentPage = 1;
           renderTable(appData.all_samples, 1);
         });
+      }
+
+      // Column picker — restore the saved choice before the first render so the table
+      // never paints the default set and then reflows.
+      loadColumnChoice();
+      renderColumnPicker();
+      var pickerBtn = document.getElementById('column-picker-btn');
+      var pickerRoot = document.getElementById('column-picker');
+      if (pickerBtn) {
+        pickerBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          setColumnPickerOpen(!isColumnPickerOpen());
+        });
+      }
+      var pickerReset = document.getElementById('column-picker-reset');
+      if (pickerReset) {
+        pickerReset.addEventListener('click', function() { resetColumnChoice(); });
+      }
+      // Dismiss on an outside click or Escape, the way a menu is expected to behave.
+      document.addEventListener('click', function(e) {
+        if (!isColumnPickerOpen()) { return; }
+        if (pickerRoot && pickerRoot.contains(e.target)) { return; }
+        setColumnPickerOpen(false);
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isColumnPickerOpen()) {
+          setColumnPickerOpen(false);
+          if (pickerBtn) { pickerBtn.focus(); }
+        }
       });
 
       // Temperature unit toggle — restore the saved choice before the first render
