@@ -181,7 +181,7 @@
     "collection_site": "SGRC",
     "lat": 40.809,
     "lon": -104.776,
-    "description": "Eastern sampling position at the Shortgrass Steppe Research Center (SGRC) in Nunn, Colorado, capturing aerobiome on the eastern perimeter of the primary grassland research area."
+    "description": "Eastern sampling position at the Semi-Arid Grasslands Research Center (SGRC) in Nunn, Colorado, capturing aerobiome on the eastern perimeter of the primary grassland research area."
   },
   {
     "code": "SS",
@@ -189,7 +189,7 @@
     "collection_site": "SGRC",
     "lat": 40.809,
     "lon": -104.777,
-    "description": "Southern sampling position at the Shortgrass Steppe Research Center (SGRC) in Nunn, Colorado, providing directional contrast for aerobiome source attribution studies."
+    "description": "Southern sampling position at the Semi-Arid Grasslands Research Center (SGRC) in Nunn, Colorado, providing directional contrast for aerobiome source attribution studies."
   },
   {
     "code": "SN",
@@ -197,7 +197,7 @@
     "collection_site": "SGRC",
     "lat": 40.809,
     "lon": -104.777,
-    "description": "General environment sampling across the Shortgrass Steppe Research Center (SGRC) in Nunn, Colorado, including soil and plant matrices in addition to air filters."
+    "description": "General environment sampling across the Semi-Arid Grasslands Research Center (SGRC) in Nunn, Colorado, including soil and plant matrices in addition to air filters."
   },
   {
     "code": "TA",

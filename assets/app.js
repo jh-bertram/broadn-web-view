@@ -308,9 +308,13 @@
         summary: "Early pilot collection at the Agricultural Research, Development and Education Center (ARDEC) to characterize the background aerobiome before exposure to agricultural activity.",
         lead: LEAD.kreidenweis
       },
+      // Was "SGRC, Southern Great Plains" — wrong on both counts. SGRC is on
+      // Colorado's eastern plains (40.809, -104.777), and the samples split
+      // SGRC / Foothills Campus, both northern Colorado. The southern Great
+      // Plains work is the Big Spring, Texas deployment, not this one.
       "2024 Summer": {
-        location: "SGRC, Southern Great Plains",
-        summary: "Summer 2024 aerobiome collection at the SGRC site, extending the program's spatial coverage into the southern Great Plains.",
+        location: "SGRC and CSU Foothills Campus, Colorado",
+        summary: "Summer 2024 aerobiome collection split between the Semi-Arid Grasslands Research Center and the CSU Foothills Campus, pairing open grassland with the urban-influenced mountain–plains interface.",
         lead: LEAD.borlee
       }
     };
@@ -328,7 +332,8 @@
       },
       "SGRC": {
         location: "Nunn, Colorado",
-        summary: "Grassland research site near Nunn, a few kilometres from CPER. East and South sampling positions give directional contrast for aerobiome source attribution, and general-environment collections add soil and plant matrices to the air filters."
+        summary: "The Semi-Arid Grasslands Research Center, a Colorado State University and USDA-ARS partnership on Colorado's eastern plains. East and South sampling positions give directional contrast for aerobiome source attribution, and general-environment collections add soil and plant matrices to the air filters.",
+        links: [{ label: "Semi-Arid Grasslands Research Center", url: "https://sgrc.colostate.edu" }]
       },
       "NWT": {
         location: "Niwot Ridge LTER, Colorado",

@@ -824,7 +824,10 @@ LOCATION_NAMES: dict[str, str] = {
     "NWT": "Niwot Ridge (NWT)",
     "Other": "Other",
     "PGF": "PGF",
-    "SGRC": "SGRC (Sagebrush Grassland Research Center)",
+    # Official name per https://sgrc.colostate.edu — a CSU / USDA-ARS partnership.
+    # Was "Sagebrush Grassland Research Center" here and "Shortgrass Steppe
+    # Research Center" in data/sites.json; both were wrong.
+    "SGRC": "SGRC (Semi-Arid Grasslands Research Center)",
     "Unknown": "Unknown",
 }
 
