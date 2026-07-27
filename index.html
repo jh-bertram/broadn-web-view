@@ -926,8 +926,11 @@
                     Columns
                     <span id="column-picker-count" class="text-xs text-stone-500"></span>
                   </button>
+                  <!-- w-64 but never wider than the viewport; setColumnPickerOpen() then nudges
+                       it back on screen, because right-anchoring to the button hangs the panel
+                       off the left edge once this toolbar wraps on a narrow phone. -->
                   <div id="column-picker-panel" role="group" aria-labelledby="column-picker-btn"
-                    class="hidden absolute right-0 z-20 mt-1 w-64 max-h-96 overflow-y-auto rounded-md border border-stone-300 bg-white shadow-lg p-3 text-left">
+                    class="hidden absolute right-0 z-20 mt-1 w-64 max-w-[calc(100vw-1rem)] max-h-96 overflow-y-auto rounded-md border border-stone-300 bg-white shadow-lg p-3 text-left">
                     <div id="column-picker-list" class="space-y-3"></div>
                     <div class="mt-3 pt-2 border-t border-stone-200">
                       <button type="button" id="column-picker-reset"

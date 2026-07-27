@@ -2564,15 +2564,15 @@
       return formatExplorerWeather(value, fidelity, 1, tempUnitLabel());
     }
 
-    // Repaints the toggle's pressed state and the Temp column header unit.
+    // Repaints the toggle's pressed state. The Temp column header is NOT touched here:
+    // it is the covariates_temp column's label function, rebuilt by renderExplorerHeader()
+    // on every render, so it follows the unit on its own.
     function updateTempUnitUi() {
       document.querySelectorAll('.temp-unit-btn').forEach(function(btn) {
         var active = btn.getAttribute('data-temp-unit') === explorerTempUnit;
         btn.setAttribute('aria-pressed', active ? 'true' : 'false');
         btn.classList.toggle('temp-unit-btn--active', active);
       });
-      var unitEl = document.getElementById('temp-col-unit');
-      if (unitEl) { unitEl.textContent = tempUnitLabel(); }
     }
 
     function setExplorerTempUnit(unit) {
@@ -2853,6 +2853,26 @@
       if (!btn || !panel) { return; }
       panel.classList.toggle('hidden', !open);
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) { clampColumnPickerPanel(); } else { panel.style.transform = ''; }
+    }
+
+    // The panel is right-anchored to its button, which is correct on desktop but hangs
+    // it off the left edge of a phone once the Explorer toolbar wraps and the button is
+    // no longer near the right edge (measured at -85px on a 328px viewport). Nudge it
+    // back inside the viewport after it is shown. Anchor-agnostic on purpose — it
+    // corrects an overflow on either side, so changing the anchor later cannot
+    // silently reintroduce the bug.
+    var COLUMN_PICKER_VIEWPORT_MARGIN = 8;
+    function clampColumnPickerPanel() {
+      var panel = document.getElementById('column-picker-panel');
+      if (!panel || panel.classList.contains('hidden')) { return; }
+      panel.style.transform = '';                  // measure unshifted
+      var r = panel.getBoundingClientRect();
+      var m = COLUMN_PICKER_VIEWPORT_MARGIN;
+      var shift = 0;
+      if (r.left < m) { shift = m - r.left; }
+      else if (r.right > window.innerWidth - m) { shift = (window.innerWidth - m) - r.right; }
+      if (shift) { panel.style.transform = 'translateX(' + Math.round(shift) + 'px)'; }
     }
 
     function isColumnPickerOpen() {
@@ -6406,6 +6426,11 @@
           setColumnPickerOpen(false);
           if (pickerBtn) { pickerBtn.focus(); }
         }
+      });
+      // Rotating the phone changes the overflow, so re-clamp rather than leaving a
+      // shift computed for the old width.
+      window.addEventListener('resize', function() {
+        if (isColumnPickerOpen()) { clampColumnPickerPanel(); }
       });
 
       // Temperature unit toggle — restore the saved choice before the first render
