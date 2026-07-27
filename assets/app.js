@@ -385,21 +385,19 @@
     const PHOTO_DIR = 'assets/photos/';
     const SLICE_PHOTOS = {
       project: {
-        // Supplied with the photo drop, but neither depicts its project's actual
-        // ground (this project samples South Carolina; IMPROVE samples U.S. national
-        // parks) and neither arrived with provenance. Flagged as placeholders until
-        // the team either confirms the rights or sends a real field photo.
         "IMPROVE Fungi": {
           src: PHOTO_DIR + 'improve-network.jpg',
-          alt: 'Sunrise over an alpine meadow below a rocky ridgeline.',
+          alt: 'A National Park Service air-quality monitoring station in Rocky Mountain National Park — an instrument shelter with a lattice sensor tower in a conifer-edged meadow below the peaks.',
           placeholder: true,
-          credit: 'Stock image supplied as a stand-in — source and licence not yet confirmed.'
+          credit: 'Air-quality monitoring station, Rocky Mountain National Park — an ozone site, not an IMPROVE aerosol sampler. National Park Service, public domain (cropped).',
+          creditUrl: 'https://www.nps.gov/subjects/air/air-monitoring.htm'
         },
         "Fragmented Landscape": {
           src: PHOTO_DIR + 'fragmented-landscape.jpg',
-          alt: 'A dark lava flow spreading in patches across a pale open plain, with hazy hills behind.',
+          alt: 'A broad mown field in the South Carolina Piedmont running up against a dense treeline of mixed pine and hardwood forest, with a tractor mowing in the distance.',
           placeholder: true,
-          credit: 'Stock image supplied as a stand-in — source and licence not yet confirmed.'
+          credit: 'Field and mixed pine–hardwood edge, Cowpens National Battlefield, South Carolina. Photo by Ken Lund, CC BY-SA 2.0, via Wikimedia Commons (cropped).',
+          creditUrl: 'https://commons.wikimedia.org/wiki/File:Site_of_the_Battle,_Cowpens_National_Battlefield,_South_Carolina_(5810492835).jpg'
         },
         "Fall Plant Circle": {
           src: PHOTO_DIR + 'fall-plant-circle.jpg',
@@ -515,9 +513,10 @@
         },
         "IMPROVE": {
           src: PHOTO_DIR + 'improve-network.jpg',
-          alt: 'Sunrise over an alpine meadow below a rocky ridgeline.',
+          alt: 'A National Park Service air-quality monitoring station in Rocky Mountain National Park — an instrument shelter with a lattice sensor tower in a conifer-edged meadow below the peaks.',
           placeholder: true,
-          credit: 'Stock image supplied as a stand-in — source and licence not yet confirmed.'
+          credit: 'Air-quality monitoring station, Rocky Mountain National Park — an ozone site, not an IMPROVE aerosol sampler. National Park Service, public domain (cropped).',
+          creditUrl: 'https://www.nps.gov/subjects/air/air-monitoring.htm'
         },
 
         // Representative placeholders — see the `placeholder` note above.
