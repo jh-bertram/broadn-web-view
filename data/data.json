@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generated": "2026-07-27T18:06:36Z",
-    "total_rows": 7846,
+    "generated": "2026-08-28T17:57:55Z",
+    "total_rows": 7838,
     "field_samples": 4494,
-    "derivatives": 3352
+    "derivatives": 3344
   },
   "kpis": {
     "field_samples": 4494,
     "unique_sites": 29,
     "active_since": "2021",
-    "sequenced": 2926
+    "sequenced": 2929
   },
   "temporal": [
     {
@@ -515,8 +515,8 @@
   ],
   "pipeline": {
     "collected": 4494,
-    "dna_extracted": 3217,
-    "sequenced": 2926
+    "dna_extracted": 3208,
+    "sequenced": 2929
   },
   "sites": [
     {
@@ -1726,7 +1726,7 @@
       "category": "Field Sample",
       "project": "ARDEC Pilot Study",
       "project_group": null,
-      "lab_group": null,
+      "lab_group": "Kreidenweis",
       "sampler": "SASS",
       "medium": null,
       "am_pm": "AM",
@@ -1826,7 +1826,7 @@
       "category": "Field Sample",
       "project": "ARDEC Pilot Study",
       "project_group": null,
-      "lab_group": null,
+      "lab_group": "Kreidenweis",
       "sampler": "SASS",
       "medium": null,
       "am_pm": "PM",
@@ -1951,7 +1951,7 @@
       "category": "Field Sample",
       "project": "ARDEC Pilot Study",
       "project_group": null,
-      "lab_group": null,
+      "lab_group": "Kreidenweis",
       "sampler": "SASS",
       "medium": null,
       "am_pm": "AM",
@@ -2076,7 +2076,7 @@
       "category": "Field Sample",
       "project": "ARDEC Pilot Study",
       "project_group": null,
-      "lab_group": null,
+      "lab_group": "Kreidenweis",
       "sampler": "SASS",
       "medium": null,
       "am_pm": "PM",
@@ -2151,7 +2151,7 @@
       "category": "Field Sample",
       "project": "ARDEC Pilot Study",
       "project_group": null,
-      "lab_group": null,
+      "lab_group": "Trivedi",
       "sampler": null,
       "medium": null,
       "am_pm": null,
@@ -2176,7 +2176,7 @@
       "category": "Field Sample",
       "project": "ARDEC Pilot Study",
       "project_group": null,
-      "lab_group": null,
+      "lab_group": "Trivedi",
       "sampler": null,
       "medium": null,
       "am_pm": null,
@@ -2301,7 +2301,7 @@
       "category": "Field Sample",
       "project": "ARDEC Pilot Study",
       "project_group": null,
-      "lab_group": null,
+      "lab_group": "Trivedi",
       "sampler": null,
       "medium": null,
       "am_pm": null,
@@ -2324,7 +2324,7 @@
       "site": "ARDEC",
       "type": "Liquid",
       "category": "Field Sample",
-      "project": null,
+      "project": "ARDEC Pilot Study",
       "project_group": null,
       "lab_group": "Trivedi",
       "sampler": "SKC BioSampler",
@@ -45909,7 +45909,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 10.9,
         "humidity": 35,
@@ -45934,7 +45934,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 5.8,
         "humidity": 43,
@@ -45959,7 +45959,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 11.4,
         "humidity": 25,
@@ -45984,7 +45984,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 7.7,
         "humidity": 28,
@@ -46009,7 +46009,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 1.9,
         "humidity": 35,
@@ -46084,7 +46084,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 1.2,
         "humidity": 62,
@@ -46109,7 +46109,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 8.2,
         "humidity": 60,
@@ -46134,7 +46134,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 13.7,
         "humidity": 41,
@@ -46159,7 +46159,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "sequenced",
+      "pipeline_stage": "collected",
       "covariates": {
         "temp": 8.6,
         "humidity": 61,
@@ -59710,7 +59710,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 26.6,
         "humidity": 55,
@@ -59728,14 +59728,14 @@
       "project": "Algae Bloom",
       "project_group": null,
       "lab_group": "Hancock",
-      "sampler": null,
+      "sampler": "Nalgene",
       "medium": "Polycarbonate",
       "am_pm": null,
       "replicate": null,
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 16.9,
         "humidity": 68,
@@ -59760,7 +59760,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 26.6,
         "humidity": 55,
@@ -59778,14 +59778,14 @@
       "project": "Algae Bloom",
       "project_group": null,
       "lab_group": "Hancock",
-      "sampler": null,
+      "sampler": "Nalgene",
       "medium": "Polycarbonate",
       "am_pm": null,
       "replicate": null,
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 25.5,
         "humidity": 81,
@@ -59810,7 +59810,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 26.6,
         "humidity": 56,
@@ -59828,14 +59828,14 @@
       "project": "Algae Bloom",
       "project_group": null,
       "lab_group": "Hancock",
-      "sampler": null,
+      "sampler": "Nalgene",
       "medium": "Polycarbonate",
       "am_pm": null,
       "replicate": null,
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 20.6,
         "humidity": 58,
@@ -59853,14 +59853,14 @@
       "project": "Algae Bloom",
       "project_group": null,
       "lab_group": "Hancock",
-      "sampler": null,
+      "sampler": "Nalgene",
       "medium": "Polycarbonate",
       "am_pm": null,
       "replicate": null,
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 24.5,
         "humidity": 71,
@@ -59885,7 +59885,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 28.1,
         "humidity": 63,
@@ -59910,7 +59910,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 26.6,
         "humidity": 56,
@@ -59928,14 +59928,14 @@
       "project": "Algae Bloom",
       "project_group": null,
       "lab_group": "Hancock",
-      "sampler": null,
+      "sampler": "Nalgene",
       "medium": "Polycarbonate",
       "am_pm": null,
       "replicate": null,
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 26.6,
         "humidity": 55,
@@ -59953,14 +59953,14 @@
       "project": "Algae Bloom",
       "project_group": null,
       "lab_group": "Hancock",
-      "sampler": null,
+      "sampler": "Nalgene",
       "medium": "Polycarbonate",
       "am_pm": null,
       "replicate": null,
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 24.3,
         "humidity": 78,
@@ -59985,7 +59985,7 @@
       "quadrant": null,
       "position": null,
       "field_control": null,
-      "pipeline_stage": "extracted",
+      "pipeline_stage": "sequenced",
       "covariates": {
         "temp": 26.6,
         "humidity": 56,
@@ -110283,11 +110283,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 48
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 48
                 }
               ]
@@ -110320,11 +110320,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 48
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 48
                 }
               ]
@@ -110359,11 +110359,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -110396,11 +110396,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -110433,11 +110433,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -110470,11 +110470,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -110655,11 +110655,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -110692,11 +110692,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -110729,11 +110729,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -110766,11 +110766,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -111142,15 +111142,15 @@
               },
               "sampler_type_dist": [
                 {
+                  "sampler": "RusThistle",
+                  "count": 15
+                },
+                {
                   "sampler": "Tall Grass",
                   "count": 15
                 },
                 {
                   "sampler": "Sagegrass",
-                  "count": 15
-                },
-                {
-                  "sampler": "RusThistle",
                   "count": 15
                 }
               ]
@@ -111183,15 +111183,15 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Tall Grass",
-                  "count": 15
-                },
-                {
                   "sampler": "Sagegrass",
                   "count": 15
                 },
                 {
                   "sampler": "RusThistle",
+                  "count": 15
+                },
+                {
+                  "sampler": "Tall Grass",
                   "count": 15
                 }
               ]
@@ -114071,8 +114071,8 @@
         ],
         "pipeline": {
           "collected": 68,
-          "dna_extracted": 68,
-          "sequenced": 68
+          "dna_extracted": 59,
+          "sequenced": 59
         },
         "temporal": [
           {
@@ -114151,8 +114151,8 @@
         "type_pipeline_crossTab": {
           "Air": {
             "collected": 68,
-            "dna_extracted": 68,
-            "sequenced": 68
+            "dna_extracted": 59,
+            "sequenced": 59
           }
         },
         "pipeline_type_crossTab": {
@@ -114165,13 +114165,13 @@
           "dna_extracted": [
             {
               "type": "Air",
-              "count": 68
+              "count": 59
             }
           ],
           "sequenced": [
             {
               "type": "Air",
-              "count": 68
+              "count": 59
             }
           ]
         },
@@ -114184,8 +114184,8 @@
         "sampler_pipeline": {
           "SASS": {
             "collected": 68,
-            "dna_extracted": 68,
-            "sequenced": 68
+            "dna_extracted": 59,
+            "sequenced": 59
           }
         },
         "replicate_tags": {
@@ -114243,8 +114243,8 @@
               ],
               "pipeline": {
                 "collected": 36,
-                "dna_extracted": 36,
-                "sequenced": 36
+                "dna_extracted": 31,
+                "sequenced": 31
               },
               "sampler_type_dist": [
                 {
@@ -114280,8 +114280,8 @@
               ],
               "pipeline": {
                 "collected": 32,
-                "dna_extracted": 32,
-                "sequenced": 32
+                "dna_extracted": 28,
+                "sequenced": 28
               },
               "sampler_type_dist": [
                 {
@@ -114356,8 +114356,8 @@
               ],
               "pipeline": {
                 "collected": 32,
-                "dna_extracted": 32,
-                "sequenced": 32
+                "dna_extracted": 28,
+                "sequenced": 28
               },
               "sampler_type_dist": [
                 {
@@ -114389,8 +114389,8 @@
               ],
               "pipeline": {
                 "collected": 12,
-                "dna_extracted": 12,
-                "sequenced": 12
+                "dna_extracted": 7,
+                "sequenced": 7
               },
               "sampler_type_dist": [
                 {
@@ -114936,7 +114936,7 @@
       },
       {
         "project_id": "ARDEC Pilot Study",
-        "sample_count": 26,
+        "sample_count": 27,
         "sample_types": [
           {
             "type": "Air",
@@ -114945,17 +114945,21 @@
           {
             "type": "Soil",
             "count": 7
+          },
+          {
+            "type": "Liquid",
+            "count": 1
           }
         ],
         "pipeline": {
-          "collected": 26,
+          "collected": 27,
           "dna_extracted": 19,
           "sequenced": 18
         },
         "temporal": [
           {
             "month": "2022-03",
-            "count": 26,
+            "count": 27,
             "types": [
               {
                 "type": "Air",
@@ -114964,6 +114968,10 @@
               {
                 "type": "Soil",
                 "count": 7
+              },
+              {
+                "type": "Liquid",
+                "count": 1
               }
             ],
             "weather": {
@@ -114971,7 +114979,7 @@
               "humidity": 29,
               "wind_speed": 7.1,
               "precipitation": 0.0,
-              "n": 26,
+              "n": 27,
               "fidelity": "date_only"
             }
           }
@@ -114986,6 +114994,11 @@
             "collected": 7,
             "dna_extracted": 7,
             "sequenced": 6
+          },
+          "Liquid": {
+            "collected": 1,
+            "dna_extracted": 0,
+            "sequenced": 0
           }
         },
         "pipeline_type_crossTab": {
@@ -114997,6 +115010,10 @@
             {
               "type": "Soil",
               "count": 7
+            },
+            {
+              "type": "Liquid",
+              "count": 1
             }
           ],
           "dna_extracted": [
@@ -115007,6 +115024,10 @@
             {
               "type": "Soil",
               "count": 7
+            },
+            {
+              "type": "Liquid",
+              "count": 0
             }
           ],
           "sequenced": [
@@ -115017,13 +115038,17 @@
             {
               "type": "Soil",
               "count": 6
+            },
+            {
+              "type": "Liquid",
+              "count": 0
             }
           ]
         },
         "sampler_type_dist": [
           {
             "sampler": "SKC BioSampler",
-            "count": 7
+            "count": 8
           },
           {
             "sampler": "SASS",
@@ -115037,7 +115062,7 @@
             "sequenced": 4
           },
           "SKC BioSampler": {
-            "collected": 7,
+            "collected": 8,
             "dna_extracted": 0,
             "sequenced": 0
           }
@@ -116800,11 +116825,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -116837,11 +116862,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -117086,11 +117111,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -117123,11 +117148,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -117160,11 +117185,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -117197,11 +117222,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -118752,7 +118777,7 @@
           "Air": {
             "collected": 199,
             "dna_extracted": 199,
-            "sequenced": 194
+            "sequenced": 199
           },
           "Plant": {
             "collected": 117,
@@ -118767,7 +118792,7 @@
           "Liquid": {
             "collected": 7,
             "dna_extracted": 7,
-            "sequenced": 0
+            "sequenced": 7
           }
         },
         "pipeline_type_crossTab": {
@@ -118814,7 +118839,7 @@
             },
             {
               "type": "Air",
-              "count": 194
+              "count": 199
             },
             {
               "type": "Plant",
@@ -118822,7 +118847,7 @@
             },
             {
               "type": "Liquid",
-              "count": 0
+              "count": 7
             }
           ]
         },
@@ -118832,12 +118857,12 @@
             "count": 194
           },
           {
-            "sampler": "SASS",
-            "count": 5
+            "sampler": "Nalgene",
+            "count": 7
           },
           {
-            "sampler": "Nalgene",
-            "count": 1
+            "sampler": "SASS",
+            "count": 5
           }
         ],
         "replicate_tags": {
@@ -119269,8 +119294,8 @@
         "type_pipeline_crossTab": {
           "Air": {
             "collected": 48,
-            "dna_extracted": 48,
-            "sequenced": 48
+            "dna_extracted": 39,
+            "sequenced": 39
           }
         },
         "pipeline_type_crossTab": {
@@ -119283,13 +119308,13 @@
           "dna_extracted": [
             {
               "type": "Air",
-              "count": 48
+              "count": 39
             }
           ],
           "sequenced": [
             {
               "type": "Air",
-              "count": 48
+              "count": 39
             }
           ]
         },
@@ -119354,8 +119379,8 @@
               ],
               "pipeline": {
                 "collected": 25,
-                "dna_extracted": 25,
-                "sequenced": 25
+                "dna_extracted": 20,
+                "sequenced": 20
               },
               "sampler_type_dist": [
                 {
@@ -119391,8 +119416,8 @@
               ],
               "pipeline": {
                 "collected": 23,
-                "dna_extracted": 23,
-                "sequenced": 23
+                "dna_extracted": 19,
+                "sequenced": 19
               },
               "sampler_type_dist": [
                 {
@@ -119430,8 +119455,8 @@
               ],
               "pipeline": {
                 "collected": 20,
-                "dna_extracted": 20,
-                "sequenced": 20
+                "dna_extracted": 16,
+                "sequenced": 16
               },
               "sampler_type_dist": [
                 {
@@ -119463,8 +119488,8 @@
               ],
               "pipeline": {
                 "collected": 12,
-                "dna_extracted": 12,
-                "sequenced": 12
+                "dna_extracted": 7,
+                "sequenced": 7
               },
               "sampler_type_dist": [
                 {
@@ -120626,11 +120651,11 @@
       },
       {
         "group_name": "Kreidenweis",
-        "sample_count": 1188,
+        "sample_count": 1192,
         "sample_types": [
           {
             "type": "Air",
-            "count": 1166
+            "count": 1170
           },
           {
             "type": "Liquid",
@@ -120642,9 +120667,9 @@
           }
         ],
         "pipeline": {
-          "collected": 1188,
-          "dna_extracted": 738,
-          "sequenced": 698
+          "collected": 1192,
+          "dna_extracted": 742,
+          "sequenced": 702
         },
         "temporal": [
           {
@@ -120667,19 +120692,19 @@
           },
           {
             "month": "2022-03",
-            "count": 23,
+            "count": 27,
             "types": [
               {
                 "type": "Air",
-                "count": 23
+                "count": 27
               }
             ],
             "weather": {
-              "temp": -2.8,
-              "humidity": 49,
-              "wind_speed": 3.7,
-              "precipitation": 0.4,
-              "n": 23,
+              "temp": -1.6,
+              "humidity": 46,
+              "wind_speed": 4.2,
+              "precipitation": 0.3,
+              "n": 27,
               "fidelity": "date_only"
             }
           },
@@ -120860,9 +120885,9 @@
         ],
         "type_pipeline_crossTab": {
           "Air": {
-            "collected": 1166,
-            "dna_extracted": 735,
-            "sequenced": 695
+            "collected": 1170,
+            "dna_extracted": 739,
+            "sequenced": 699
           },
           "Liquid": {
             "collected": 21,
@@ -120879,7 +120904,7 @@
           "collected": [
             {
               "type": "Air",
-              "count": 1166
+              "count": 1170
             },
             {
               "type": "Liquid",
@@ -120893,7 +120918,7 @@
           "dna_extracted": [
             {
               "type": "Air",
-              "count": 735
+              "count": 739
             },
             {
               "type": "Liquid",
@@ -120907,7 +120932,7 @@
           "sequenced": [
             {
               "type": "Air",
-              "count": 695
+              "count": 699
             },
             {
               "type": "Liquid",
@@ -120922,7 +120947,7 @@
         "sampler_type_dist": [
           {
             "sampler": "SASS",
-            "count": 525
+            "count": 529
           },
           {
             "sampler": "Impactor",
@@ -120969,8 +120994,8 @@
         },
         "tag_groups": {
           "AM/PM": {
-            "AM": 283,
-            "PM": 264
+            "AM": 285,
+            "PM": 266
           },
           "Replicate": {
             "Extra": 119,
@@ -120999,7 +121024,7 @@
               "temporal": [
                 {
                   "month": "2022-03",
-                  "count": 4
+                  "count": 6
                 },
                 {
                   "month": "2022-09",
@@ -121021,18 +121046,18 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 283
+                  "count": 285
                 }
               ],
               "pipeline": {
-                "collected": 283,
-                "dna_extracted": 176,
-                "sequenced": 176
+                "collected": 285,
+                "dna_extracted": 178,
+                "sequenced": 178
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 156
+                  "count": 158
                 },
                 {
                   "sampler": "Polycarbonate",
@@ -121048,7 +121073,7 @@
               "temporal": [
                 {
                   "month": "2022-03",
-                  "count": 4
+                  "count": 6
                 },
                 {
                   "month": "2022-09",
@@ -121070,18 +121095,18 @@
               "sample_types": [
                 {
                   "type": "Air",
-                  "count": 264
+                  "count": 266
                 }
               ],
               "pipeline": {
-                "collected": 264,
-                "dna_extracted": 162,
-                "sequenced": 160
+                "collected": 266,
+                "dna_extracted": 164,
+                "sequenced": 162
               },
               "sampler_type_dist": [
                 {
                   "sampler": "SASS",
-                  "count": 148
+                  "count": 150
                 },
                 {
                   "sampler": "Polycarbonate",
@@ -121499,11 +121524,11 @@
                   "count": 15
                 },
                 {
-                  "sampler": "BioSpot VIVAS",
+                  "sampler": "SASS",
                   "count": 5
                 },
                 {
-                  "sampler": "SASS",
+                  "sampler": "BioSpot VIVAS",
                   "count": 5
                 }
               ]
@@ -121570,7 +121595,7 @@
       },
       {
         "group_name": "Trivedi",
-        "sample_count": 1102,
+        "sample_count": 1105,
         "sample_types": [
           {
             "type": "Plant",
@@ -121578,7 +121603,7 @@
           },
           {
             "type": "Soil",
-            "count": 388
+            "count": 391
           },
           {
             "type": "Air",
@@ -121590,14 +121615,14 @@
           }
         ],
         "pipeline": {
-          "collected": 1102,
-          "dna_extracted": 663,
-          "sequenced": 661
+          "collected": 1105,
+          "dna_extracted": 666,
+          "sequenced": 663
         },
         "temporal": [
           {
             "month": "2022-03",
-            "count": 12,
+            "count": 15,
             "types": [
               {
                 "type": "Air",
@@ -121605,7 +121630,7 @@
               },
               {
                 "type": "Soil",
-                "count": 4
+                "count": 7
               },
               {
                 "type": "Liquid",
@@ -121613,11 +121638,11 @@
               }
             ],
             "weather": {
-              "temp": 7.7,
-              "humidity": 26,
-              "wind_speed": 6.8,
+              "temp": 7.3,
+              "humidity": 27,
+              "wind_speed": 6.9,
               "precipitation": 0.0,
-              "n": 12,
+              "n": 15,
               "fidelity": "date_only"
             }
           },
@@ -121725,9 +121750,9 @@
             "sequenced": 38
           },
           "Soil": {
-            "collected": 388,
-            "dna_extracted": 230,
-            "sequenced": 230
+            "collected": 391,
+            "dna_extracted": 233,
+            "sequenced": 232
           },
           "Liquid": {
             "collected": 1,
@@ -121748,7 +121773,7 @@
             },
             {
               "type": "Soil",
-              "count": 388
+              "count": 391
             },
             {
               "type": "Air",
@@ -121766,7 +121791,7 @@
             },
             {
               "type": "Soil",
-              "count": 230
+              "count": 233
             },
             {
               "type": "Air",
@@ -121784,7 +121809,7 @@
             },
             {
               "type": "Soil",
-              "count": 230
+              "count": 232
             },
             {
               "type": "Air",
@@ -122292,11 +122317,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -122329,11 +122354,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 },
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 }
               ]
@@ -122578,11 +122603,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -122615,11 +122640,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -122652,11 +122677,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -122689,11 +122714,11 @@
               },
               "sampler_type_dist": [
                 {
-                  "sampler": "Salsola",
+                  "sampler": "Sagegrass",
                   "count": 16
                 },
                 {
-                  "sampler": "Sagegrass",
+                  "sampler": "Salsola",
                   "count": 16
                 }
               ]
@@ -123380,8 +123405,8 @@
         ],
         "pipeline": {
           "collected": 76,
-          "dna_extracted": 76,
-          "sequenced": 76
+          "dna_extracted": 67,
+          "sequenced": 67
         },
         "temporal": [
           {
@@ -123496,8 +123521,8 @@
         "type_pipeline_crossTab": {
           "Air": {
             "collected": 76,
-            "dna_extracted": 76,
-            "sequenced": 76
+            "dna_extracted": 67,
+            "sequenced": 67
           }
         },
         "pipeline_type_crossTab": {
@@ -123510,13 +123535,13 @@
           "dna_extracted": [
             {
               "type": "Air",
-              "count": 76
+              "count": 67
             }
           ],
           "sequenced": [
             {
               "type": "Air",
-              "count": 76
+              "count": 67
             }
           ]
         },
@@ -123586,8 +123611,8 @@
               ],
               "pipeline": {
                 "collected": 36,
-                "dna_extracted": 36,
-                "sequenced": 36
+                "dna_extracted": 31,
+                "sequenced": 31
               },
               "sampler_type_dist": [
                 {
@@ -123623,8 +123648,8 @@
               ],
               "pipeline": {
                 "collected": 32,
-                "dna_extracted": 32,
-                "sequenced": 32
+                "dna_extracted": 28,
+                "sequenced": 28
               },
               "sampler_type_dist": [
                 {
@@ -123699,8 +123724,8 @@
               ],
               "pipeline": {
                 "collected": 32,
-                "dna_extracted": 32,
-                "sequenced": 32
+                "dna_extracted": 28,
+                "sequenced": 28
               },
               "sampler_type_dist": [
                 {
@@ -123732,8 +123757,8 @@
               ],
               "pipeline": {
                 "collected": 12,
-                "dna_extracted": 12,
-                "sequenced": 12
+                "dna_extracted": 7,
+                "sequenced": 7
               },
               "sampler_type_dist": [
                 {
@@ -123960,7 +123985,7 @@
         "pipeline": {
           "collected": 12,
           "dna_extracted": 12,
-          "sequenced": 0
+          "sequenced": 12
         },
         "temporal": [
           {
@@ -124008,12 +124033,12 @@
           "Air": {
             "collected": 5,
             "dna_extracted": 5,
-            "sequenced": 0
+            "sequenced": 5
           },
           "Liquid": {
             "collected": 7,
             "dna_extracted": 7,
-            "sequenced": 0
+            "sequenced": 7
           }
         },
         "pipeline_type_crossTab": {
@@ -124039,23 +124064,23 @@
           ],
           "sequenced": [
             {
-              "type": "Air",
-              "count": 0
+              "type": "Liquid",
+              "count": 7
             },
             {
-              "type": "Liquid",
-              "count": 0
+              "type": "Air",
+              "count": 5
             }
           ]
         },
         "sampler_type_dist": [
           {
-            "sampler": "SASS",
-            "count": 5
+            "sampler": "Nalgene",
+            "count": 7
           },
           {
-            "sampler": "Nalgene",
-            "count": 1
+            "sampler": "SASS",
+            "count": 5
           }
         ],
         "replicate_tags": {
@@ -124075,8 +124100,8 @@
   "type_pipeline_crossTab": {
     "Air": {
       "collected": 2919,
-      "dna_extracted": 2152,
-      "sequenced": 1869
+      "dna_extracted": 2143,
+      "sequenced": 1865
     },
     "Soil": {
       "collected": 704,
@@ -124086,7 +124111,7 @@
     "Liquid": {
       "collected": 29,
       "dna_extracted": 9,
-      "sequenced": 2
+      "sequenced": 9
     },
     "Unknown": {
       "collected": 1,
@@ -124125,7 +124150,7 @@
     "dna_extracted": [
       {
         "type": "Air",
-        "count": 2152
+        "count": 2143
       },
       {
         "type": "Soil",
@@ -124147,7 +124172,7 @@
     "sequenced": [
       {
         "type": "Air",
-        "count": 1869
+        "count": 1865
       },
       {
         "type": "Soil",
@@ -124159,7 +124184,7 @@
       },
       {
         "type": "Liquid",
-        "count": 2
+        "count": 9
       },
       {
         "type": "Unknown",
@@ -124284,12 +124309,12 @@
   "data_management": {
     "n_field_samples": 4494,
     "archived": {
-      "count": 3984,
+      "count": 3988,
       "pct": 88.7
     },
     "amplicon": {
-      "count": 2926,
-      "pct": 65.1
+      "count": 2929,
+      "pct": 65.2
     },
     "metagenomics": {
       "count": 63,
@@ -124298,13 +124323,13 @@
     },
     "uploaded": {
       "strict": {
-        "count": 623,
-        "pct": 13.9,
+        "count": 635,
+        "pct": 14.1,
         "label": "Deposited in public data repositories"
       },
       "broad": {
-        "count": 780,
-        "pct": 17.4,
+        "count": 792,
+        "pct": 17.6,
         "label": "Linked to a publication or public record"
       }
     },
